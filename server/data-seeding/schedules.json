@@ -1,0 +1,119 @@
+[
+  
+  {
+    "ClassId": 1,
+    "LessonId": 1,
+    "day": "Monday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 2,
+    "day": "Monday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 3,
+    "day": "Monday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 4,
+    "day": "Monday"
+  },
+  
+  
+  
+  {
+    "ClassId": 1,
+    "LessonId": 4,
+    "day": "Tuesday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 3,
+    "day": "Tuesday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 2,
+    "day": "Tuesday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 1,
+    "day": "Tuesday"
+  },
+  
+  
+  
+  {
+    "ClassId": 1,
+    "LessonId": 2,
+    "day": "Wednesday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 1,
+    "day": "Wednesday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 3,
+    "day": "Wednesday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 4,
+    "day": "Wednesday"
+  },
+  
+  
+  
+  
+  {
+    "ClassId": 1,
+    "LessonId": 3,
+    "day": "Thursday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 1,
+    "day": "Thursday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 4,
+    "day": "Thursday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 2,
+    "day": "Thursday"
+  },
+  
+  
+  
+  {
+    "ClassId": 1,
+    "LessonId": 4,
+    "day": "Friday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 1,
+    "day": "Friday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 3,
+    "day": "Friday"
+  },
+  {
+    "ClassId": 1,
+    "LessonId": 2,
+    "day": "Friday"
+  } 
+  
+  
+   
+]

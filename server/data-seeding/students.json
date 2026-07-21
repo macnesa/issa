@@ -1,0 +1,248 @@
+[
+  {
+    "NIM": "0203202303",
+    "name": "Ali Akbar",
+    "age": 10,
+    "gender": "Male",
+    "birthDate": "2013-09-22",
+    "feedback": "Perlu meningkatkan konsentrasi dan ketelitian dalam mengerjakan tugas",
+    "imgUrl": "https://live.staticflickr.com/65535/52734780053_0b8b4383ca_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202304",
+    "name": "Siti Aisyah",
+    "age": 12,
+    "gender": "Female",
+    "birthDate": "2011-06-07",
+    "feedback": "Perlu meningkatkan partisipasi dalam diskusi kelas",
+    "imgUrl": "https://live.staticflickr.com/65535/52734778958_3e9d8fb040_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202305",
+    "name": "Budi Santoso",
+    "age": 11,
+    "gender": "Male",
+    "birthDate": "2012-11-14",
+    "feedback": "Perlu lebih fokus pada pelajaran Matematika",
+    "imgUrl": "https://randomuser.me/api/portraits/men/3.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202303",
+    "name": "Rizky Andika",
+    "age": 10,
+    "gender": "Male",
+    "birthDate": "2012-05-09",
+    "feedback": "Sering berbicara di kelas, diharapkan untuk lebih fokus pada pelajaran",
+    "imgUrl": "https://live.staticflickr.com/65535/52734711795_df6fbd99be_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202304",
+    "name": "Lia Putri",
+    "age": 11,
+    "gender": "Female",
+    "birthDate": "2011-02-23",
+    "feedback": "Kurang percaya diri saat presentasi, diharapkan untuk lebih berani dan mempersiapkan presentasi dengan baik",
+    "imgUrl": "https://live.staticflickr.com/65535/52734551104_d6e3243a4f_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202305",
+    "name": "Farhan Hadi",
+    "age": 9,
+    "gender": "Male",
+    "birthDate": "2013-08-15",
+    "feedback": "Sulit berkonsentrasi saat pelajaran berlangsung, diharapkan untuk lebih fokus pada pelajaran",
+    "imgUrl": "https://live.staticflickr.com/65535/52734781253_65086c51ec_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202306",
+    "name": "Nadia Pratiwi",
+    "age": 12,
+    "gender": "Female",
+    "birthDate": "2010-11-27",
+    "feedback": "Kurang aktif saat diskusi kelas, diharapkan untuk lebih berpartisipasi",
+    "imgUrl": "https://live.staticflickr.com/65535/52734713895_6e0579564d_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0308202310",
+    "name": "Alya Azzahra",
+    "age": 8,
+    "gender": "Female",
+    "birthDate": "2014-03-08",
+    "feedback": "Perlu lebih fokus saat belajar dan mengerjakan pekerjaan rumah.",
+    "imgUrl": "https://live.staticflickr.com/65535/52734781838_46d4ce8294_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0405202320",
+    "name": "Firman Permana",
+    "age": 9,
+    "gender": "Male",
+    "birthDate": "2013-05-04",
+    "feedback": "Perlu meningkatkan konsentrasi saat belajar dan mengerjakan tugas.",
+    "imgUrl": "https://live.staticflickr.com/65535/52734552179_f904171cf3_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "1010202330",
+    "name": "Dewi Ayu",
+    "age": 11,
+    "gender": "Female",
+    "birthDate": "2011-10-10",
+    "feedback": "Terus tingkatkan kemampuan membaca dan menulis.",
+    "imgUrl": "https://live.staticflickr.com/65535/52734300126_2f151077ed_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202303",
+    "name": "Ari Wibowo",
+    "age": 10,
+    "gender": "Male",
+    "birthDate": "2013-05-12",
+    "feedback": "Perlu meningkatkan kerja keras di kelas",
+    "imgUrl": "https://live.staticflickr.com/65535/52734553204_debf8349b2_n.jpg",
+    "ClassId": 1
+  },
+  {
+    "NIM": "0203202304",
+    "name": "Sari Wulandari",
+    "age": 11,
+    "gender": "Female",
+    "birthDate": "2012-04-24",
+    "feedback": "Berprestasi di kelas dan aktif dalam kegiatan ekstrakurikuler",
+    "imgUrl": "https://live.staticflickr.com/65535/52734298886_c8f4d8168d_n.jpg",
+    "ClassId": 1
+  },
+  
+  
+  
+   
+    {
+    "NIM": "0203202321",
+    "name": "Rani Fitriani",
+    "age": 10,
+    "gender": "Female",
+    "birthDate": "2012-03-21",
+    "feedback": "Perlu lebih rajin dalam mengerjakan pekerjaan rumah",
+    "imgUrl": "https://live.staticflickr.com/65535/52734550019_033f1daced_n.jpg",
+    "ClassId": 2
+    },
+    {
+    "NIM": "0203202322",
+    "name": "Ahmad Fauzi",
+    "age": 11,
+    "gender": "Male",
+    "birthDate": "2011-12-09",
+    "feedback": "Sudah bagus dalam mengerjakan tugas, namun perlu lebih berani dalam bertanya",
+    "imgUrl": "https://live.staticflickr.com/65535/52734779853_867bcbd309_n.jpg",
+    "ClassId": 2
+    },
+    {
+    "NIM": "0203202323",
+    "name": "Dinda Nurmalasari",
+    "age": 12,
+    "gender": "Female",
+    "birthDate": "2010-09-18",
+    "feedback": "Sudah baik dalam partisipasi kelas, namun perlu meningkatkan konsentrasi saat belajar",
+    "imgUrl": "https://live.staticflickr.com/65535/52734297656_ed75d0333f_n.jpg",
+    "ClassId": 2
+    },
+    {
+    "NIM": "0203202324",
+    "name": "Irfan Pratama",
+    "age": 10,
+    "gender": "Male",
+    "birthDate": "2012-08-01",
+    "feedback": "Sudah cukup baik dalam mengerjakan tugas, namun perlu lebih aktif saat diskusi kelas",
+    "imgUrl": "https://live.staticflickr.com/65535/52734712075_1ca8501319_n.jpg",
+    "ClassId": 2
+    },
+    {
+    "NIM": "0203202325",
+    "name": "Lina Mustika",
+    "age": 9,
+    "gender": "Female",
+    "birthDate": "2013-01-15",
+    "feedback": "Perlu lebih fokus saat belajar dan mengerjakan pekerjaan rumah",
+    "imgUrl": "https://live.staticflickr.com/65535/52734779543_d78eca2eb0_n.jpg",
+    "ClassId": 2
+    },
+    {
+    "NIM": "0203202326",
+    "name": "Dedi Setiawan",
+    "age": 11,
+    "gender": "Male",
+    "birthDate": "2011-02-23",
+    "feedback": "Sudah cukup aktif dalam diskusi kelas, namun perlu meningkatkan kemampuan membaca dan menulis",
+    "imgUrl": "https://live.staticflickr.com/65535/52734712145_ab983819b3_n.jpg",
+    "ClassId": 2
+    },
+    {
+      "NIM": "0203202303",
+      "name": "Siti Rahmah",
+      "age": 10,
+      "gender": "Female",
+      "birthDate": "2012-04-09",
+      "feedback": "Perlu meningkatkan partisipasi dalam diskusi kelas",
+      "imgUrl": "https://live.staticflickr.com/65535/52734552554_5ff15a75b3_n.jpg",
+      "ClassId": 2
+    },
+    {
+      "NIM": "0203202304",
+      "name": "Muhammad Iqbal",
+      "age": 11,
+      "gender": "Male",
+      "birthDate": "2010-11-14",
+      "feedback": "Perlu lebih fokus pada pelajaran Matematika",
+      "imgUrl": "https://live.staticflickr.com/65535/52734553139_2445e787fc_n.jpg",
+      "ClassId": 2
+    },
+    {
+      "NIM": "0203202305",
+      "name": "Siti Nurjanah",
+      "age": 9,
+      "gender": "Female",
+      "birthDate": "2013-08-15",
+      "feedback": "Sulit berkonsentrasi saat pelajaran berlangsung, diharapkan untuk lebih fokus pada pelajaran",
+      "imgUrl": "https://live.staticflickr.com/65535/52733775122_53507e3328_n.jpg",
+      "ClassId": 2
+    },
+    {
+      "NIM": "0203202306",
+      "name": "Rudi Susanto",
+      "age": 11,
+      "gender": "Male",
+      "birthDate": "2010-12-23",
+      "feedback": "Perlu meningkatkan konsentrasi dan ketelitian dalam mengerjakan tugas",
+      "imgUrl": "https://live.staticflickr.com/65535/52734781113_947f370d29_n.jpg",
+      "ClassId": 2
+    },
+    {
+      "NIM": "0203202307",
+      "name": "Ratna Dewi",
+      "age": 10,
+      "gender": "Female",
+      "birthDate": "2012-08-17",
+      "feedback": "Perlu meningkatkan konsentrasi dan ketelitian dalam mengerjakan tugas",
+      "imgUrl": "https://live.staticflickr.com/65535/52734780633_2697ca8c78_n.jpg",
+      "ClassId": 2
+    },
+    {
+      "NIM": "0203202308",
+      "name": "Agus Setiawan",
+      "age": 9,
+      "gender": "Male",
+      "birthDate": "2013-04-03",
+      "feedback": "Sulit berkonsentrasi saat pelajaran berlangsung, diharapkan untuk lebih fokus pada pelajaran",
+      "imgUrl": "https://live.staticflickr.com/65535/52734552954_3b7f970a3e_n.jpg",
+      "ClassId": 2
+    } 
+  
+  
+]

@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Boy Scout Uniform",
+        "additional1": "hat",
+        "additional2": "neckerchief", 
+        "additional3": "scout stick" 
+    },
+    {
+        "name": "Batik",
+        "additional1": "",
+        "additional2": "", 
+        "additional3": "" 
+    },
+    {
+        "name": "Basic Uniform",
+        "additional1": "hat",
+        "additional2": "tie", 
+        "additional3": "belt" 
+    }
+]

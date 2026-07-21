@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Upacara Bendera",
+    "date": "2023-04-03",
+    "desc": "Kegiatan rutin yang dilakukan setiap hari Senin sebagai wujud penghormatan terhadap bendera negara dan bangsa Indonesia."
+  },
+  {
+    "name": "Lomba Menulis Cerpen",
+    "date": "2023-04-10",
+    "desc": "Lomba menulis cerita pendek yang bertujuan untuk mengembangkan kreativitas dan kemampuan menulis siswa."
+  },
+  {
+    "name": "Pertandingan Futsal Antar Kelas",
+    "date": "2023-04-17",
+    "desc": "Turnamen futsal yang diadakan antar kelas untuk mempromosikan olahraga dan semangat kebersamaan di antara siswa."
+  },
+  {
+    "name": "Lomba Pidato Bahasa Inggris",
+    "date": "2023-04-24",
+    "desc": "Lomba pidato dalam bahasa Inggris untuk melatih kemampuan berbicara di depan umum dan meningkatkan keterampilan berbahasa Inggris siswa."
+  },
+  {
+    "name": "Kunjungan Industri",
+    "date": "2023-05-08",
+    "desc": "Kegiatan kunjungan ke perusahaan atau pabrik untuk memberikan pemahaman yang lebih baik tentang dunia kerja dan memperkenalkan siswa pada berbagai macam profesi."
+  },
+  {
+    "name": "Festival Seni Budaya",
+    "date": "2023-05-15",
+    "desc": "Acara yang menampilkan berbagai macam pertunjukan seni dan budaya dari daerah-daerah di Indonesia, untuk memperkenalkan keanekaragaman budaya dan tradisi kepada siswa."
+  },
+  {
+    "name": "Lomba Puisi",
+    "date": "2023-05-22",
+    "desc": "Lomba menulis puisi yang bertujuan untuk mengembangkan kemampuan menulis dan mengungkapkan perasaan dengan bahasa yang indah."
+  },
+  {
+    "name": "Pertandingan Basket Antar Sekolah",
+    "date": "2023-06-05",
+    "desc": "Turnamen basket antar sekolah yang diadakan untuk meningkatkan semangat persaingan sehat dan mempromosikan olahraga."
+  },
+  {
+    "name": "Lomba Desain Poster",
+    "date": "2023-06-12",
+    "desc": "Lomba desain poster untuk mengembangkan kreativitas dan kemampuan desain siswa dalam menyampaikan pesan yang efektif."
+  },
+  {
+    "name": "Pembagian Raport",
+    "date": "2023-06-19",
+    "desc": "Kegiatan akhir semester yang melibatkan pembagian raport siswa kepada orang tua, sebagai evaluasi hasil belajar siswa selama satu semester."
+  }
+]

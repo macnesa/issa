@@ -1,0 +1,415 @@
+[
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 1,
+    "value":80,
+    "category": "B",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 2,
+    "value": 85,
+    "category": "B",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 3,
+    "value": 90,
+    "category": "A",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 4,
+    "value": 95,
+    "category": "A",
+    "desc": "Very Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 5,
+    "value": 75,
+    "category": "B-",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 6,
+    "value": 90,
+    "category": "A",
+    "desc": "Very Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 7,
+    "value": 50,
+    "category": "C",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 8,
+    "value": 100,
+    "category": "A+",
+    "desc": "Excelent",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 9,
+    "value": 40,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 10,
+    "value": 50,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 1,
+    "AssignmentId": 11,
+    "value": 80,
+    "category": "B",
+    "desc": "Good",
+    "status": false
+  },
+  
+  
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 12,
+    "value":87,
+    "category": "B",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 13,
+    "value": 80,
+    "category": "B",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 14,
+    "value": 95,
+    "category": "A",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 15,
+    "value": 90,
+    "category": "A",
+    "desc": "Very Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 16,
+    "value": 70,
+    "category": "B-",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 17,
+    "value": 95,
+    "category": "A",
+    "desc": "Very Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 18,
+    "value": 55,
+    "category": "C",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 19,
+    "value": 100,
+    "category": "A+",
+    "desc": "Excelent",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 20,
+    "value": 45,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 21,
+    "value": 55,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 2,
+    "AssignmentId": 22,
+    "value": 70,
+    "category": "c",
+    "desc": "Bad",
+    "status": false
+  },
+  
+  
+  
+  
+  
+  
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 23,
+    "value":70,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 24,
+    "value":75,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 25,
+    "value":70,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 26,
+    "value": 80,
+    "category": "B",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 27,
+    "value": 70,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 28,
+    "value":60,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 29,
+    "value":74,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 30,
+    "value": 76,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 31,
+    "value":90,
+    "category": "A",
+    "desc": "Very Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 32,
+    "value": 70,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 3,
+    "AssignmentId": 33,
+    "value": 80,
+    "category": "A",
+    "desc": "Good",
+    "status": true
+  },
+  
+  
+  
+  
+  
+  
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 34,
+    "value":60,
+    "category": "C-",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 35,
+    "value":60,
+    "category": "C-",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 36,
+    "value":64,
+    "category": "C-",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 37,
+    "value": 82,
+    "category": "B",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 38,
+    "value": 70,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 39,
+    "value":50,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 40,
+    "value":70,
+    "category": "C",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 41,
+    "value": 50,
+    "category": "C-",
+    "desc": "Not Good",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 42,
+    "value":60,
+    "category": "C-",
+    "desc": "Good",
+    "status": true
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 43,
+    "value": 50,
+    "category": "C-",
+    "desc": "Bad",
+    "status": false
+  },
+  {
+    "StudentId": 1,
+    "LessonId": 4,
+    "AssignmentId": 44,
+    "value": 70,
+    "category": "C",
+    "desc": "Good",
+    "status": true
+  }
+  
+  
+]
+

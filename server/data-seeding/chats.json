@@ -1,0 +1,20 @@
+[
+  {
+    "fromUserId": 2,
+    "toUserId": 1,
+    "roomId": 2,
+    "message": "Selamat pagi"
+  },
+  {
+    "fromUserId": 3,
+    "toUserId": 1,
+    "roomId": 3,
+    "message": "Selamat siang"
+  },
+  {
+    "fromUserId": 4,
+    "toUserId": 1,
+    "roomId": 4,
+    "message": "Selamat sore"
+  }
+]

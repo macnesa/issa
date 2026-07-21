@@ -1,0 +1,149 @@
+const { Student, Attendance, Score, Lesson, Class, Teacher, Assignment, History } = require('../models');
+const { Sequelize, Op } = require("sequelize");
+
+class StudentController {
+  static async allStudents(req, res, next) {
+    const { pageIndex, name } = req.query;
+    const paramQuerySQL = {
+      where: { ClassId: req.user.classId },
+      include: [
+        {
+          model: Attendance
+        },
+        {
+          model: Class,
+          include: {
+            model: Teacher,
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+          },
+        },
+        {
+          model: Score,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: {
+            model: Lesson,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+        },
+      ],
+    };
+    let limit;
+    let offset;
+    let pageSize = 7;
+
+    if (name !== "" && typeof name !== "undefined") {
+      paramQuerySQL.where.name = { [Op.iLike]: `%${name}%` };
+    }
+
+
+    // pagination
+    if (pageSize !== '' && typeof pageSize !== 'undefined') {
+      if (pageSize !== '' && typeof pageSize !== 'undefined') {
+        limit = pageSize;
+        paramQuerySQL.limit = limit;
+      }
+
+      if (pageIndex !== '' && typeof pageIndex !== 'undefined') {
+        offset = pageIndex * limit - limit;
+        paramQuerySQL.offset = offset;
+      }
+    } else {
+      limit = 5 // limit 5 item
+      offset = 1;
+      paramQuerySQL.limit = limit;
+      paramQuerySQL.offset = offset;
+    }
+
+    try {
+
+      const data = await Student.findAndCountAll(paramQuerySQL)
+      if (pageSize || pageIndex) {
+        data.page = pageIndex
+        data.totalPages = Math.ceil(data.count / pageSize)
+      }
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async studentById(req, res, next) {
+    try {
+      const id = req.params.id;
+      const data = await Student.findOne({
+        where: { id, ClassId: req.user.classId },
+        include: [
+          {
+            model: Attendance,
+          },
+          {
+            model: Score,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              { model: Assignment, attributes: { exclude: ['createdAt', 'updatedAt'] } },
+              {
+                model: Lesson,
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+            ],
+          },
+        ],
+      });
+      if (!data) {
+        throw { name: 'notFound' };
+      }
+      // const scoreExam = data.Scores.filter((x) => x.Assignment.type == 'Exam').map((y) => {
+      //   return y.value * 0.45;
+      // });
+      // console.log(scoreExam);
+      const scoreTask = data.Scores.filter((x) => x.Assignment.type == 'Task').map((y) => {
+        return y.value * 0.45;
+      });
+      console.log(scoreTask);
+      // const scoreExam = data.Scores.filter((x) => x.assignmentType == 'Exam').map((y) => {
+      //   return y.value * 0.45;
+      // });
+      // console.log(scoreExam);
+
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async addStudent(req, res, next) {
+    try {
+      const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
+
+      const { NIM, name, age, gender, birthDate, feedback, imgUrl } = req.body;
+      const data = await Student.create({ NIM, name, age, gender, birthDate, feedback, ClassId: teacherClass.id, imgUrl });
+      const history = await History.create({ description: `student with name ${data.name} has been created`, createdBy: teacherClass.Teacher.name })
+      res.status(201).json({ data, history });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async deleteStudent(req, res, next) {
+    return res.status(403).json({ msg: 'Student deletion is disabled for demo' });
+  }
+  static async editStudent(req, res, next) {
+    try {
+      const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
+      const id = req.params.id;
+      const check = await Student.findOne({ where: { id, ClassId: req.user.classId } });
+      if (!check) throw { name: `notFound` };
+
+      const fields = ['NIM', 'name', 'age', 'gender', 'birthDate', 'feedback', 'imgUrl'];
+      const updates = Object.fromEntries(
+        fields
+          .filter((field) => Object.prototype.hasOwnProperty.call(req.body, field))
+          .map((field) => [field, req.body[field]])
+      );
+      const data = await check.update(updates);
+      const history = await History.create({ description: `student with name ${check.name} has been edited`, createdBy: teacherClass.Teacher.name })
+
+      res.status(200).json({ status: `updated`, data, history });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+module.exports = StudentController;
