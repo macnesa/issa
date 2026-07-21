@@ -1,0 +1,59 @@
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    function renderImg() {
+      // if (Object.keys(productById).length) {
+      // if (productById.Images.length) {
+      // console.log('kokmasuk');
+      return (
+        productById.Images.map(each => {
+          return (
+            <div className='w-full border border-black'>
+              <img src={each.imgUrl} />
+            </div>
+          )
+        })
+      )
+      // } else {
+      //   return <p>No Images Available</p>
+      // }
+      // }
+    }
+
+
+
+
+        <div className=" w-full mx-auto box-border border border-black ">
+
+          <div className=' mt-[100px]  w-full mx-auto    p-[20px] box-border border border-blue-800 grid grid-flow-col grid-cols-[1fr_1fr] "'>
+
+            <div className='border border-black  '>
+              {/* {renderImg()} */}
+            </div>
+            <div className='border border-black'>
+              <div className='w-full sticky top-[90px] p-4 bg-gray-200'>
+                <p className=' '> {productById.Type.name} </p>
+                <h1 className='font-bold text-[2rem]'> {productById.name} </h1>
+                <h1 className='mt-4'> {productById.description} </h1>
+                <h1 className='mt-4'> {productById.Category.name} </h1>
+                <h1 className='mt-4 font-bold'>Rp. {productById.price.toLocaleString("id-ID")} </h1>
+
+                <button className='w-full border border-black py-3 mt-12 '>Add to cart</button>
+
+              </div>
+            </div>
+
+          </div>
+
+          <div>
+            <p>YOU MAY ALSO LIKE</p>
+            <Carousel />
+          </div>
+
+        </div>
