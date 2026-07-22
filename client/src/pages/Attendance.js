@@ -1,93 +1,99 @@
-import { useEffect, useState, useRef } from "react";
+import { useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import HeatmapDua from '../components/HeatmapChartDua';
+import { fetchStudentDetail } from '../store/actions/actionCreator';
+import { EmptyState, ErrorState, LoadingState } from '../components/runtime/ResourceStates';
+import { getAttendanceCounts, getAttendanceHistory, getTodayAttendance } from '../utils/studentOverview';
 
-import { Link, useNavigate } from "react-router-dom";
+const statuses = ['Hadir', 'Sakit', 'Izin', 'Alfa'];
+const statusModifiers = {
+  Hadir: 'status-badge--hadir',
+  Sakit: 'status-badge--sakit',
+  Izin: 'status-badge--izin',
+  Alfa: 'status-badge--alfa',
+};
 
-import { useSelector, useDispatch } from "react-redux";
+function formatAttendanceDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Tanggal tidak tersedia';
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 
-import { fetchStudentDetail } from "../store/actions/actionCreator";
-
-import ScrollReveal from "scrollreveal";
-
-import HeatmapDua from "../components/HeatmapChartDua";
-
-export default function AttendancePage(props) {
+export default function AttendancePage() {
   const dispatch = useDispatch();
+  const { studentDetail: attendanceResource } = useSelector((state) => state.student);
+  const { data: studentDetail, loading, loaded, error } = attendanceResource;
+  const { attendance } = studentDetail;
+  const todayAttendance = useMemo(() => getTodayAttendance(attendance), [attendance]);
+  const counts = useMemo(() => getAttendanceCounts(attendance), [attendance]);
+  const history = useMemo(() => getAttendanceHistory(attendance), [attendance]);
 
-  const {
-    student: { studentDetail },
-  } = useSelector((state) => state);
+  if (loading) return <main className="page-container"><LoadingState label="Memuat kehadiran..." /></main>;
+  if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchStudentDetail())} /></main>;
 
-  const { Attendances } = studentDetail;
+  return (
+    <main className="page-container space-y-4">
+      <section>
+        <h1 className="page-title">Kehadiran</h1>
+        <p className="page-supporting-text mt-1">Histori dan ringkasan kehadiran siswa.</p>
+      </section>
 
-  let result;
-  if (Attendances?.length) {
-    result = Attendances.reduce((acc, cur) => {
-      const date = new Date(cur.createdAt);
-      const month = date.toLocaleString("default", { month: "long" });
-      const status = cur.status;
-
-      if (!acc[month]) {
-        acc[month] = {
-          Hadir: 0,
-          Sakit: 0,
-          Izin: 0,
-          Alfa: 0,
-        };
-      }
-
-      acc[month][status]++;
-
-      return acc;
-    }, {});
-  }
-
-  console.log(result, "lech");
-  // console.log(result);
-
-  useEffect(() => {}, []);
-
-  if (Attendances?.length) {
-    return (
-      <>
-        <div className=" max-w-screen-lg mb-20 mx-auto pt-4 dark:bg-gray-900 p-3 sm:p-5 ">
-          <h5 class="text-xl font-semibold mt-10 tracking-tight text-gray-900 dark:text-white">
-            {" "}
-            Rekap   Kehadiran{" "}
-          </h5>
-
-          <div style={{backgroundImage: "url(https://cdn.pixabay.com/photo/2017/09/06/11/41/clean-2721102__340.jpg)"}} className=" bg-[#fce4bb] rounded-2xl mt-4 grid items-center overflow-scroll border-red-800">
-            {/* <div className='transform scale-[2] ' > */}
-
-            <HeatmapDua data={Attendances} />
-
-            {/* </div> */}
+      <section className="surface p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="section-heading">Kehadiran Hari Ini</h2>
+            <p className="page-supporting-text mt-1">{todayAttendance ? 'Kehadiran hari ini sudah tercatat.' : 'Belum ada catatan kehadiran hari ini.'}</p>
           </div>
+          <span className={`status-badge ${statusModifiers[todayAttendance?.status] || 'status-badge--neutral'}`}>{todayAttendance?.status || 'Belum tercatat'}</span>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-[1fr_1fr_1fr] mt-10   border-black justify-items-center gap-4 ">
-            {Object.keys(result).map((month) => (
-              <div className="  text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <a
-                  href="#"
-                  aria-current="true"
-                  className="block w-full font-bold px-4 py-2 text-white bg-gray-700 border-b border-gray-200 rounded-t-lg cursor-pointer dark:bg-gray-800 dark:border-gray-600"
-                >
-                  {month}
-                </a>
-                {Object.keys(result[month]).map((status) => (
-                  <>
-                    <a
-                      href="#"
-                      className="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white"
-                    >
-                      {status}: {result[month][status]}
-                    </a> 
-                  </>
-                ))}
+      <section className="surface p-5">
+        <h2 className="section-heading">Ringkasan Kehadiran</h2>
+        <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {statuses.map((status) => (
+            <div key={status} className="metric-card">
+              <dt className="metric-label">{status}</dt>
+              <dd className="metric-value">{counts[status]}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="surface p-5">
+        <h2 className="section-heading">Histori Kehadiran</h2>
+        {!history.length ? (
+          <EmptyState message="Belum ada kehadiran yang tercatat." />
+        ) : (
+          <div className="mt-4 space-y-5">
+            {history.map((group) => (
+              <div key={group.key}>
+                <h3 className="text-sm font-semibold text-[var(--issa-text-secondary)]">{group.label}</h3>
+                <ul className="mt-2 divide-y divide-[var(--issa-border)]">
+                  {group.records.map((record) => (
+                    <li key={record.id ?? `${record.createdAt}-${record.status}`} className="flex items-center justify-between gap-4 py-3 text-sm">
+                      <time className="text-[var(--issa-text-secondary)]">{formatAttendanceDate(record.createdAt)}</time>
+                      <span className={`status-badge ${statusModifiers[record.status] || 'status-badge--neutral'}`}>{record.status || 'Status belum tersedia'}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
-        </div>
-      </>
-    );
-  }
+        )}
+      </section>
+
+      {!!attendance.length && (
+        <section className="surface p-5">
+          <h2 className="section-heading">Visual Kehadiran</h2>
+          <p className="page-supporting-text mt-1">Visual pendukung histori kehadiran.</p>
+          <div className="mt-4 overflow-x-auto rounded-[var(--issa-radius-sm)] bg-[var(--issa-surface-soft)] p-3">
+            <HeatmapDua data={attendance} />
+          </div>
+        </section>
+      )}
+
+      {loaded && !attendance.length && <span className="sr-only">Attendance data is empty.</span>}
+    </main>
+  );
 }

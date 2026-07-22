@@ -1,33 +1,41 @@
 
 import { Outlet } from "react-router"
 import Header from "../components/Header"
-
-import Footer from "../components/Footer"
 import BottomNav from "../components/BottomNav" 
 import { fetchStudentDetail } from "../store/actions/actionCreator"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
+import { hasParentSession } from '../utils/session'
+import { ErrorState, EmptyState, LoadingState } from '../components/runtime/ResourceStates'
 
 export default function Container() { 
   const dispatch = useDispatch()
   
   const {
-    student: { studentDetail },
+    student: { studentDetail: studentDetailResource },
   } = useSelector((state) => state);
   
   
   useEffect(() => {  
-    if(!Object.keys(studentDetail).length) {
+    if (hasParentSession() && !studentDetailResource.loaded && !studentDetailResource.loading) {
       dispatch(fetchStudentDetail())
     } 
-  }, []);
+  }, [dispatch, studentDetailResource.loaded, studentDetailResource.loading]);
+
+  const { data: studentDetail, loading, loaded, error } = studentDetailResource;
+  const content = loading && !studentDetail.profile.id
+    ? <LoadingState label="Loading student profile..." />
+    : error
+      ? <ErrorState error={error} onRetry={() => dispatch(fetchStudentDetail())} />
+      : loaded && studentDetail.profile.id === null
+        ? <EmptyState message="Student profile is not available." />
+        : <Outlet />;
   
   return (
-    <div className="pt-4"  style={{minHeight: "100vh", backgroundImage: "url(https://i.pinimg.com/736x/8c/98/99/8c98994518b575bfd8c949e91d20548b.jpg)"}}>
+    <div className="app-shell">
       <Header />
-      <Outlet />
+      {content}
       <BottomNav/>
-      {/* <Footer /> */}
     </div>
   )
 }

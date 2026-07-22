@@ -9,6 +9,7 @@ import LoginPage from "../pages/Login"
 import TotalNilai from "../pages/TotalNilai"
 import EventPage from "../pages/Event"
 import NotFound from "../pages/NotFound"
+import { hasParentSession } from '../utils/session';
 
   
 const router = createBrowserRouter(
@@ -17,7 +18,7 @@ const router = createBrowserRouter(
       path: "/",
       element: <Container />,
       loader: () => {
-        if(!localStorage.getItem('access_token')) {
+        if(!hasParentSession()) {
           return redirect('/login')
         }
         return null
@@ -32,26 +33,43 @@ const router = createBrowserRouter(
           element: <AttendancePage />,
         },
         {
-          path: "total",
+          path: "progress",
           element: <TotalNilai />,
         }, 
         {
-          path: "lesson",
+          path: "schedule",
           element: <LessonsList />,
         },
         {
-          path: "lesson/:id",
+          path: "progress/:lessonId",
           element: <LessonDetail />
         },
         {
-          path: "event",
+          path: "activities",
           element: <EventPage />
+        },
+        {
+          path: "total",
+          loader: () => redirect('/progress'),
+        },
+        {
+          path: "lesson",
+          loader: () => redirect('/schedule'),
+        },
+        {
+          path: "lesson/:id",
+          loader: ({ params }) => redirect(`/progress/${params.id}`),
+        },
+        {
+          path: "event",
+          loader: () => redirect('/activities'),
         }
       ]
     },
     {
       path: "/login",
       element: <LoginPage />,
+      loader: () => hasParentSession() ? redirect('/') : null,
     },
     {
       path: "*",

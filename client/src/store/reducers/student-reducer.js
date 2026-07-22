@@ -1,26 +1,29 @@
-import {LOADING, FETCH_SCHEDULE, FETCH_STATUS ,  FETCH_CLASSMATE, FETCH_STUDENT_DETAIL, FETCH_CLASS_SCHEDULE, FETCH_ACTIVIY, FETCH_SPP, FETCH_STATISTIC } from '../actions/actionTypes'
+import { FETCH_SCHEDULE, FETCH_STATUS, FETCH_SPP, FETCH_STATISTIC, STUDENT_DETAIL_REQUEST, STUDENT_DETAIL_SUCCESS, STUDENT_DETAIL_FAILURE, CLASSMATE_REQUEST, CLASSMATE_SUCCESS, CLASSMATE_FAILURE, CLASS_SCHEDULE_REQUEST, CLASS_SCHEDULE_SUCCESS, CLASS_SCHEDULE_FAILURE, ACTIVITY_REQUEST, ACTIVITY_SUCCESS, ACTIVITY_FAILURE, RESET_PARENT_SESSION } from '../actions/actionTypes'
+import { emptyStudentDetail } from '../../mappers/studentDetail'
 
-let initialState = {
+const createResource = (data) => ({ data, loading: false, loaded: false, error: null });
+
+const createInitialState = () => ({
     schedule: [],
-    classmate: [],
-    studentDetail: "",
-    classSchedule: [],
-    activiy: [],
+    classmate: createResource([]),
+    studentDetail: createResource(emptyStudentDetail()),
+    classSchedule: createResource([]),
+    activity: createResource([]),
     SPP: [],
     statistic: [],
     casts: [],
     status: [],
-    loading: false,
-    error: null
-}
+});
+
+const initialState = createInitialState();
 
 export default function reducer(state = initialState, action) {
 
     switch (action.type) {
-        case LOADING:
+        case STUDENT_DETAIL_REQUEST:
             return {
                 ...state,
-                loading: true
+                studentDetail: { ...state.studentDetail, loading: true, error: null }
             }
         case FETCH_SCHEDULE:
             return {
@@ -28,30 +31,56 @@ export default function reducer(state = initialState, action) {
                 schedule: action.payload
             }
 
-        case FETCH_CLASSMATE:
+        case CLASSMATE_REQUEST:
             return {
                 ...state,
-                classmate: action.payload
+                classmate: { ...state.classmate, loading: true, error: null }
             }
 
-        case FETCH_STUDENT_DETAIL:
+        case CLASSMATE_SUCCESS:
             return {
                 ...state,
-                loading: false,
-                studentDetail: action.payload
+                classmate: { data: action.payload, loading: false, loaded: true, error: null }
             }
 
-        case FETCH_CLASS_SCHEDULE:
+        case CLASSMATE_FAILURE:
             return {
                 ...state,
-                classSchedule: action.payload
+                classmate: { ...state.classmate, loading: false, loaded: true, error: action.payload }
             }
 
-        case FETCH_ACTIVIY:
+        case STUDENT_DETAIL_SUCCESS:
             return {
                 ...state,
-                activiy: action.payload
+                studentDetail: { data: action.payload, loading: false, loaded: true, error: null }
             }
+
+        case STUDENT_DETAIL_FAILURE:
+            return {
+                ...state,
+                studentDetail: { ...state.studentDetail, loading: false, loaded: true, error: action.payload }
+            }
+
+        case CLASS_SCHEDULE_REQUEST:
+            return { ...state, classSchedule: { ...state.classSchedule, loading: true, error: null } }
+
+        case CLASS_SCHEDULE_SUCCESS:
+            return { ...state, classSchedule: { data: action.payload, loading: false, loaded: true, error: null } }
+
+        case CLASS_SCHEDULE_FAILURE:
+            return { ...state, classSchedule: { ...state.classSchedule, loading: false, loaded: true, error: action.payload } }
+
+        case ACTIVITY_REQUEST:
+            return { ...state, activity: { ...state.activity, loading: true, error: null } }
+
+        case ACTIVITY_SUCCESS:
+            return { ...state, activity: { data: action.payload, loading: false, loaded: true, error: null } }
+
+        case ACTIVITY_FAILURE:
+            return { ...state, activity: { ...state.activity, loading: false, loaded: true, error: action.payload } }
+
+        case RESET_PARENT_SESSION:
+            return createInitialState()
 
         case FETCH_SPP:
             return {

@@ -1,11 +1,12 @@
 import { LOADING, COUNTER_INCREMENTER, WRITE_PRODUCTS, WRITE_PRODUCT, WRITE_PRODUCT_FAILED, WRITE_PRODUCTS_BY_TYPE, WRITE_CATEGORIES, WRITE_CATEGORIES_FAILED, WRITE_LESSON } from './actionTypes';
 
-import { FETCH_STATUS, FETCH_SCHEDULE, FETCH_CLASSMATE, FETCH_STUDENT_DETAIL, FETCH_CLASS_SCHEDULE, FETCH_ACTIVIY, FETCH_SPP, FETCH_STATISTIC } from './actionTypes';
-import axios from 'axios';
+import { FETCH_STATUS, FETCH_SCHEDULE, FETCH_SPP, FETCH_STATISTIC, STUDENT_DETAIL_REQUEST, STUDENT_DETAIL_SUCCESS, STUDENT_DETAIL_FAILURE, CLASSMATE_REQUEST, CLASSMATE_SUCCESS, CLASSMATE_FAILURE, CLASS_SCHEDULE_REQUEST, CLASS_SCHEDULE_SUCCESS, CLASS_SCHEDULE_FAILURE, ACTIVITY_REQUEST, ACTIVITY_SUCCESS, ACTIVITY_FAILURE, RESET_PARENT_SESSION } from './actionTypes';
+import axios from '../../config/apiClient';
 import baseUrl from '../../config/api';
-
-// DEVELOPING PURPOSES'
-//   localStorage.setItem('access_token', "eyJhbGciOiJIUzI1NiJ9.MDIwMzIwMjMwMw.KonkCxKvwN64cDI51mdvjWs2OcebdJUylynmQ17kaPo" )
+import apiClient, { resetSessionExpiryHandling } from '../../config/apiClient';
+import { mapStudentDetail } from '../../mappers/studentDetail';
+import { mapSchedule } from '../../mappers/schedule';
+import normalizeApiError from '../../utils/normalizeApiError';
 
 // export const conterIncremented = (payload) => {
 //   return { type: COUNTER_INCREMENTER, payload }
@@ -40,25 +41,16 @@ export function writeTodayLesson(payload) {
 export function act_login(data) {
   return async (dispatch) => {
     try {
-      const request = await fetch(baseUrl + `/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      let respon = await request.json();
+      const { data: response } = await apiClient.post('/users/login', data);
 
-      if (!request.ok) throw respon;
-
-      localStorage.setItem('access_token', respon.access_token);
-      localStorage.setItem('userId', respon.id);
-      localStorage.setItem('teacherId', respon.teacherId);
-
-      return true;
+      localStorage.setItem('access_token', response.access_token);
+      if (response.id !== undefined && response.id !== null) {
+        localStorage.setItem('userId', String(response.id));
+      }
+      resetSessionExpiryHandling();
+      return response;
     } catch (error) {
-      console.log(error);
-      throw error;
+      throw normalizeApiError(error);
     }
   };
 }
@@ -69,34 +61,6 @@ export function act_login(data) {
 export const insert_Schedule_redux = (payload) => {
   return {
     type: FETCH_SCHEDULE,
-    payload: payload,
-  };
-};
-
-export const insert_Classmate_redux = (payload) => {
-  return {
-    type: FETCH_CLASSMATE,
-    payload: payload,
-  };
-};
-
-export const insert_StudentDetail_redux = (payload) => {
-  return {
-    type: FETCH_STUDENT_DETAIL,
-    payload: payload,
-  };
-};
-
-export const insert_ClassSchedule_redux = (payload) => {
-  return {
-    type: FETCH_CLASS_SCHEDULE,
-    payload: payload,
-  };
-};
-
-export const insert_Activity_redux = (payload) => {
-  return {
-    type: FETCH_ACTIVIY,
     payload: payload,
   };
 };
@@ -124,22 +88,7 @@ export const insert_status_redux = (payload) => {
 
 // handle login | logout
 export const handleLogin = (dataLogin) => {
-  return async (dispatch, getState) => {
-    try {
-      // let query = `?`
-      let { data } = await axios({
-        url: baseUrl + `/users/login`,
-        method: `POST`,
-        data: {
-          NIM: dataLogin.NIM,
-          password: dataLogin.password,
-        },
-      });
-      localStorage.access_token = data.access_token;
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-    }
-  };
+  return act_login(dataLogin);
 };
 
 //! fetching API
@@ -155,72 +104,72 @@ export const fetchScheduleLesson = (day) => {
       });
       dispatch(insert_Schedule_redux(data));
     } catch (error) {
-      console.log(error);
+      return normalizeApiError(error);
     }
   };
 };
 
 // teman2 satu kelas
 export const fetchClassmate = (day) => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
+    dispatch({ type: CLASSMATE_REQUEST });
     try {
-      let { data } = await axios({
-        url: baseUrl + `/public/classmate`,
-        headers: { access_token: localStorage.access_token },
-      });
-      dispatch(insert_Classmate_redux(data));
+      const { data } = await apiClient.get('/public/classmate');
+      dispatch({ type: CLASSMATE_SUCCESS, payload: Array.isArray(data) ? data : [] });
     } catch (error) {
-      console.log(error);
+      if (error?.response?.status !== 401) {
+        dispatch({ type: CLASSMATE_FAILURE, payload: normalizeApiError(error) });
+      }
     }
   };
 };
 
 // detail siswa (nama, nilai, kelas dll)
 export const fetchStudentDetail = (day) => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
+    dispatch({ type: STUDENT_DETAIL_REQUEST });
     try {
-      dispatch(loading());
-      let { data } = await axios({
-        url: baseUrl + `/public/detail`,
-        headers: { access_token: localStorage.access_token },
-      });
-      dispatch(insert_StudentDetail_redux(data));
+      const { data } = await apiClient.get('/public/detail');
+      dispatch({ type: STUDENT_DETAIL_SUCCESS, payload: mapStudentDetail(data) });
     } catch (error) {
-      console.log(error);
+      if (error?.response?.status !== 401) {
+        dispatch({ type: STUDENT_DETAIL_FAILURE, payload: normalizeApiError(error) });
+      }
     }
   };
 };
 
 // jadwal 1 minggu per kelas
 export const fetchClassSchedule = (day) => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
+    dispatch({ type: CLASS_SCHEDULE_REQUEST });
     try {
-      let { data } = await axios({
-        url: baseUrl + `/public/schedule`,
-        headers: { access_token: localStorage.access_token },
-      });
-      console.log(data, 'melech');
-      dispatch(insert_ClassSchedule_redux(data));
+      const { data } = await apiClient.get('/public/schedule');
+      dispatch({ type: CLASS_SCHEDULE_SUCCESS, payload: mapSchedule(data) });
     } catch (error) {
-      console.log(error);
+      if (error?.response?.status !== 401) {
+        dispatch({ type: CLASS_SCHEDULE_FAILURE, payload: normalizeApiError(error) });
+      }
     }
   };
 };
 
 // aktifitas satu sekolah
 export const fetchActivity = (day) => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
+    dispatch({ type: ACTIVITY_REQUEST });
     try {
-      let { data } = await axios({
-        url: baseUrl + `/public/activity`,
-        headers: { access_token: localStorage.access_token },
-      });
-      dispatch(insert_Activity_redux(data));
+      const { data } = await apiClient.get('/public/activity');
+      dispatch({ type: ACTIVITY_SUCCESS, payload: Array.isArray(data) ? data : [] });
     } catch (error) {
-      console.log(error);
+      if (error?.response?.status !== 401) {
+        dispatch({ type: ACTIVITY_FAILURE, payload: normalizeApiError(error) });
+      }
     }
   };
 };
+
+export const resetParentSession = () => ({ type: RESET_PARENT_SESSION });
 
 // history table pembayaran SPP
 export const fetchSPP = (day) => {
@@ -232,7 +181,7 @@ export const fetchSPP = (day) => {
       });
       dispatch(insert_SPP_redux(data));
     } catch (error) {
-      console.log(error);
+      return normalizeApiError(error);
     }
   };
 };
@@ -247,7 +196,7 @@ export const fetchStatistic = (day) => {
       });
       dispatch(insert_Statistic_redux(data));
     } catch (error) {
-      console.log(error);
+      return normalizeApiError(error);
     }
   };
 };
@@ -263,28 +212,7 @@ export function getPaymentStatus() {
 
       dispatch(insert_status_redux(data));
     } catch (error) {
-      console.log(error);
-    }
-  };
-}
-
-export function snap(id) {
-  return async (dispatch, getState) => {
-    try {
-      let { data } = await axios({
-        method: 'post',
-        url: baseUrl + `/users/generate-midtrans/` + id,
-        headers: { access_token: localStorage.access_token },
-      });
-
-      window.snap.pay(data.transactionToken, {
-        onSuccess: function (result) {
-          console.log(result);
-          dispatch(fetchSPP());
-        },
-      });
-    } catch (error) {
-      console.log(error);
+      return normalizeApiError(error);
     }
   };
 }

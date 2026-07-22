@@ -52,8 +52,8 @@ export const FETCH_CLASS_SCHEDULE = (type) => {
   return `SCHEDULE_CLASS/fetchAll`
 }
 
-export const FETCH_ACTIVIY = (type) => {
-  return `ACTIVIY/fetchAll`
+export const FETCH_ACTIVITY = (type) => {
+  return `ACTIVITY/fetchAll`
 }
 
 export const FETCH_SPP = (type) => {
@@ -67,3 +67,17 @@ export const FETCH_STATISTIC = (type) => {
 export const FETCH_STATUS = (type) => {
   return `STATUS/fetchAll`
 }
+
+export const STUDENT_DETAIL_REQUEST = 'STUDENT_DETAIL/request';
+export const STUDENT_DETAIL_SUCCESS = 'STUDENT_DETAIL/success';
+export const STUDENT_DETAIL_FAILURE = 'STUDENT_DETAIL/failure';
+export const CLASSMATE_REQUEST = 'CLASSMATE/request';
+export const CLASSMATE_SUCCESS = 'CLASSMATE/success';
+export const CLASSMATE_FAILURE = 'CLASSMATE/failure';
+export const CLASS_SCHEDULE_REQUEST = 'SCHEDULE_CLASS/request';
+export const CLASS_SCHEDULE_SUCCESS = 'SCHEDULE_CLASS/success';
+export const CLASS_SCHEDULE_FAILURE = 'SCHEDULE_CLASS/failure';
+export const ACTIVITY_REQUEST = 'ACTIVITY/request';
+export const ACTIVITY_SUCCESS = 'ACTIVITY/success';
+export const ACTIVITY_FAILURE = 'ACTIVITY/failure';
+export const RESET_PARENT_SESSION = 'PARENT_SESSION/reset';

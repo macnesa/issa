@@ -1,53 +1,68 @@
+import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchStudentDetail } from '../store/actions/actionCreator';
+import { EmptyState, ErrorState, LoadingState } from '../components/runtime/ResourceStates';
+import { getProgressOverview } from '../utils/academicProgress';
 
+function formatValue(value) {
+  return value === null ? '-' : value.toLocaleString('id-ID', { maximumFractionDigits: 1 });
+}
 
-import { useSelector } from 'react-redux';
-import BubbleChartDua from '../components/BubbleChartDua';
+export default function TotalNilai() {
+  const dispatch = useDispatch();
+  const { studentDetail: scoreResource } = useSelector((state) => state.student);
+  const { data: studentDetail, loading, loaded, error } = scoreResource;
+  const progress = useMemo(() => getProgressOverview(studentDetail.scores), [studentDetail.scores]);
 
-export default function TotalNilai(props) {
-
-
-  const {
-    student: {
-      studentDetail
-    }
-  } = useSelector((state) => state)
-
-  const statistic = Object.values(
-    (studentDetail?.Scores || []).reduce((lessons, score) => {
-      const name = score.Lesson?.name;
-      const value = Number(score.value);
-
-      if (!name || !Number.isFinite(value)) return lessons;
-
-      if (!lessons[name]) {
-        lessons[name] = { name, total: 0, count: 0 };
-      }
-
-      lessons[name].total += value;
-      lessons[name].count += 1;
-      return lessons;
-    }, {})
-  ).map(({ name, total, count }) => ({ name, avg: total / count }));
-  
-  if(!statistic.length) {
-    return(
-      <p>Belum ada nilai.</p>
-    )
-  }
+  if (loading) return <main className="page-container"><LoadingState label="Memuat perkembangan akademik..." /></main>;
+  if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchStudentDetail())} /></main>;
 
   return (
-    <>
-      <div className='bg-gray-50 max-w-screen-lg mx-auto pt-10 dark:bg-gray-900 p-3 sm:p-5 '>
-      <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white"> Overview </h5>
+    <main className="page-container space-y-4">
+      <section>
+        <h1 className="page-title">Perkembangan Akademik</h1>
+        <p className="page-supporting-text mt-1">Ringkasan nilai berdasarkan mata pelajaran.</p>
+      </section>
 
-        <div className=' bg-[] rounded-2xl mt-4 grid justify-center items-center overflow-scroll border-red-800'>
+      {!progress.assessmentCount ? (
+        <EmptyState message="Belum ada nilai yang tercatat." />
+      ) : (
+        <>
+          <section className="grid grid-cols-2 gap-3">
+            <div className="metric-card p-5">
+              <p className="metric-label">Rata-rata keseluruhan</p>
+              <p className="mt-1 text-2xl font-bold text-[var(--issa-text)]">{formatValue(progress.overallAverage)}</p>
+            </div>
+            <div className="metric-card p-5">
+              <p className="metric-label">Mata pelajaran</p>
+              <p className="mt-1 text-2xl font-bold text-[var(--issa-text)]">{progress.lessonCount}</p>
+            </div>
+          </section>
 
-          <BubbleChartDua data={statistic} />
+          <section className="surface p-5">
+            <h2 className="section-heading">Daftar Mata Pelajaran</h2>
+            <ul className="mt-3 divide-y divide-[var(--issa-border)]">
+              {progress.lessons.map((lesson) => (
+                <li key={lesson.id ?? lesson.name} className="py-3">
+                  <Link to={`/progress/${lesson.id}`} className="flex items-center justify-between gap-4 rounded-[var(--issa-radius-sm)] p-1 hover:bg-[var(--issa-primary-soft)]">
+                    <div>
+                      <p className="font-semibold text-[var(--issa-text)]">{lesson.name}</p>
+                      <p className="mt-1 text-sm text-[var(--issa-text-secondary)]">{lesson.assessmentCount} assessment · KKM {lesson.kkm ?? '-'}</p>
+                    </div>
+                    <span className="text-right">
+                      <span className="block text-lg font-bold text-[var(--issa-text)]">{formatValue(lesson.average)}</span>
+                      <span className="text-link text-xs">Detail</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-        </div>
-
-      </div>
-
-    </>
-  )
+      {loaded && !progress.assessmentCount && <span className="sr-only">Score data is empty.</span>}
+    </main>
+  );
 }
