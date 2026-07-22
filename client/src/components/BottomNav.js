@@ -5,7 +5,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navigasi utama"
-      className="bottom-nav fixed bottom-4 left-1/2 z-50 h-16 max-w-lg -translate-x-1/2 rounded-2xl md:hidden"
+      className="bottom-nav issa-bottom-nav fixed bottom-4 left-1/2 z-50 h-16 max-w-lg -translate-x-1/2 rounded-2xl md:hidden"
     >
       <div className="grid h-full grid-cols-5 mx-auto">
         {parentNavigation.map((item) => (
@@ -13,7 +13,7 @@ export default function BottomNav() {
             key={item.path}
             to={item.path}
             end={item.end}
-            className={({ isActive }) => `bottom-nav-link inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-semibold ${isActive ? 'is-active' : ''}`}
+            className={({ isActive }) => `bottom-nav-link issa-bottom-nav__link inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-semibold ${isActive ? 'is-active' : ''}`}
           >
             <NavigationIcon path={item.path} />
             <span>{item.label}</span>

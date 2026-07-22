@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: `status is required` },
         },
       },
+      attendanceDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+      },
     },
     {
       sequelize,

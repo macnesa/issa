@@ -46,11 +46,10 @@ export const studentById = (id) => {
         access_token: localStorage.access_token,
       },
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(response);
-        }
-        return response.json();
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.msg || 'Student tidak dapat dimuat.');
+        return data;
       })
       .then((data) => {
         dispatch(studentFetchSuccessById(data));

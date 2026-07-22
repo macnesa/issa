@@ -12,14 +12,15 @@ export default function TodayAttendance({ attendance }) {
     : 'Belum ada catatan kehadiran hari ini.';
 
   return (
-    <section className="surface p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section className="overview-today-attendance">
+      <div>
         <div>
-          <h2 className="section-heading">Kehadiran Hari Ini</h2>
-          <p className="mt-1 text-sm text-[var(--issa-text-secondary)]">{message}</p>
+          <p className="overview-kicker">Hari ini</p>
+          <h2>Kehadiran</h2>
+          <p>{message}</p>
         </div>
-        <span className={`status-badge ${modifier}`}>{status}</span>
       </div>
+      <span className={`status-badge ${modifier}`}>{status}</span>
     </section>
   );
 }

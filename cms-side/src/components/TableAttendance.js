@@ -1,60 +1,24 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addAttendances, editAttendance, studentById } from "../store/action/ActionCreator";
+import { addAttendances, editAttendance } from "../store/action/ActionCreator";
 import ModalAttendances from "./ModalAttendances";
+import { StatusBadge } from "./ui";
 
-const supportedStatuses = ["Hadir", "Sakit", "Alfa", "Izin"];
+const supportedStatuses = ["Hadir", "Sakit", "Izin", "Alfa"];
 
-function isToday(dateValue) {
-  if (!dateValue) return false;
-  const date = new Date(dateValue);
-  const today = new Date();
-  return date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate();
-}
-
-export default function TableAttendances({ data, index }) {
+export default function TableAttendances({ data, attendanceDate }) {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
-  const todayAttendance = (data.Attendances || []).find((attendance) => isToday(attendance.createdAt));
+  const [pending, setPending] = useState(false);
+  const selectedAttendance = (data.Attendances || []).find((attendance) => attendance.attendanceDate === attendanceDate);
 
   const handleStatusChange = (event) => {
     const status = event.target.value;
     if (!supportedStatuses.includes(status)) return;
-
-    const payload = { StudentId: data.id, status };
-    const action = todayAttendance ? editAttendance(payload) : addAttendances(payload);
-    setMessage("");
-    dispatch(action).catch((error) => setMessage(error.message || "Attendance gagal diperbarui."));
+    const action = selectedAttendance ? editAttendance({ StudentId: data.id, status, attendanceDate }) : addAttendances({ StudentId: data.id, status, attendanceDate });
+    setPending(true); setMessage("");
+    dispatch(action).then(() => setMessage(selectedAttendance ? "Attendance diperbarui." : "Attendance dicatat.")).catch((error) => setMessage(error.message || "Attendance gagal diperbarui.")).finally(() => setPending(false));
   };
 
-  const handleStudentId = () => {
-    dispatch(studentById(data.id));
-  };
-
-  return (
-    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-      <td className="w-4 p-4">{index + 1}</td>
-      <th scope="row" className="flex justify-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-        <img className="w-10 h-10 rounded-full" src={data.imgUrl} alt={data.name} />
-        <div className="pl-3"><div className="text-base font-semibold">{data.name}</div><div className="font-normal text-gray-900 dark:text-white">{data.age} Tahun</div></div>
-      </th>
-      <td className="px-6 py-4 text-gray-900 dark:text-white">{data.Class?.name}</td>
-      <td className="px-6 py-4">
-        <select
-          value={todayAttendance?.status || ""}
-          onChange={handleStatusChange}
-          name="status"
-          className="bg-gray-50 border border-gray-900 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-        >
-          <option value="" disabled>Input Attendance</option>
-          {supportedStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
-        </select>
-        {message && <p role="status" className="mt-1 text-red-600">{message}</p>}
-      </td>
-      <td onClick={handleStudentId}>
-        <label htmlFor={data.id} className="btn bg-gray-900 hover:bg-transparent hover:text-black dark:bg-gray-700">Attendance</label>
-        <ModalAttendances data={data.Attendances || []} id={data.id} />
-      </td>
-    </tr>
-  );
+  return <tr className="border-t border-[var(--border)] align-top hover:bg-slate-50"><th scope="row" className="px-5 py-4"><div className="flex items-center gap-3"><img className="h-10 w-10 rounded-full border border-[var(--border)] object-cover" src={data.imgUrl} alt={data.name} /><div><p className="font-semibold text-[var(--text)]">{data.name}</p><p className="text-xs font-normal text-[var(--muted)]">NIM {data.NIM || "-"}</p></div></div></th><td className="px-4 py-4 text-[var(--text)]">{data.Class?.name || "-"}</td><td className="px-4 py-4"><div className="flex min-w-44 flex-col gap-2"><select value={selectedAttendance?.status || ""} onChange={handleStatusChange} disabled={pending} aria-label={`Status attendance ${data.name}`} className="min-h-10 rounded-lg border border-[var(--border-strong)] bg-white px-3 text-sm text-[var(--text)] outline-none focus:ring-4 focus:ring-[var(--focus)] disabled:opacity-60"><option value="" disabled>{pending ? "Menyimpan..." : "Pilih status"}</option>{supportedStatuses.map((status) => <option key={status} value={status}>{status}</option>)}</select>{selectedAttendance && <StatusBadge status={selectedAttendance.status} />}{message && <p role="status" className="text-xs text-[var(--muted)]">{message}</p>}</div></td><td className="px-5 py-4 text-right"><ModalAttendances data={data.Attendances || []} id={`attendance-${data.id}`} studentName={data.name} /></td></tr>;
 }

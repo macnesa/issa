@@ -1,5 +1,26 @@
-const { Student, Attendance, Score, Lesson, Class, Teacher, Assignment, History } = require('../models');
+const { Student, Attendance, Score, Lesson, Class, Teacher, Assignment, History, StudentFeedback, sequelize } = require('../models');
 const { Sequelize, Op } = require("sequelize");
+
+function normalizeObservedAt(value) {
+  if (typeof value !== 'string' || !value.trim()) throw { name: 'invalidObservedAt' };
+
+  const input = value.trim();
+  const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+  const isoDateTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/;
+  if (!isoDate.test(input) && !isoDateTime.test(input)) throw { name: 'invalidObservedAt' };
+
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) throw { name: 'invalidObservedAt' };
+
+  if (isoDate.test(input)) {
+    const [year, month, day] = input.split('-').map(Number);
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) {
+      throw { name: 'invalidObservedAt' };
+    }
+  }
+
+  return date;
+}
 
 class StudentController {
   static async allStudents(req, res, next) {
@@ -109,6 +130,29 @@ class StudentController {
       next(error);
     }
   }
+  static async feedbackHistory(req, res, next) {
+    try {
+      const id = req.params.id;
+      const student = await Student.findOne({
+        where: { id, ClassId: req.user.classId },
+        attributes: ['id'],
+      });
+      if (!student) throw { name: 'notFound' };
+
+      const data = await StudentFeedback.findAll({
+        where: { StudentId: student.id },
+        attributes: ['id', 'content', 'observedAt', 'createdAt'],
+        include: {
+          model: Teacher,
+          attributes: ['id', 'name'],
+        },
+        order: [['observedAt', 'DESC'], ['createdAt', 'DESC']],
+      });
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
   static async addStudent(req, res, next) {
     try {
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
@@ -131,14 +175,45 @@ class StudentController {
       const check = await Student.findOne({ where: { id, ClassId: req.user.classId } });
       if (!check) throw { name: `notFound` };
 
-      const fields = ['NIM', 'name', 'age', 'gender', 'birthDate', 'feedback', 'imgUrl'];
+      const fields = ['NIM', 'name', 'age', 'gender', 'birthDate', 'imgUrl'];
       const updates = Object.fromEntries(
         fields
           .filter((field) => Object.prototype.hasOwnProperty.call(req.body, field))
           .map((field) => [field, req.body[field]])
       );
-      const data = await check.update(updates);
-      const history = await History.create({ description: `student with name ${check.name} has been edited`, createdBy: teacherClass.Teacher.name })
+
+      const hasFeedback = Object.prototype.hasOwnProperty.call(req.body, 'feedback');
+      let feedback;
+      let observedAt;
+      if (hasFeedback) {
+        feedback = typeof req.body.feedback === 'string' ? req.body.feedback.trim() : '';
+        if (!feedback) throw { name: 'invalidFeedback' };
+        observedAt = Object.prototype.hasOwnProperty.call(req.body, 'observedAt')
+          ? normalizeObservedAt(req.body.observedAt)
+          : new Date();
+      }
+
+      const { data, history } = await sequelize.transaction(async (transaction) => {
+        const feedbackChanged = hasFeedback && feedback !== check.feedback;
+        if (feedbackChanged) updates.feedback = feedback;
+
+        const updatedStudent = await check.update(updates, { transaction });
+        if (feedbackChanged) {
+          await StudentFeedback.create({
+            StudentId: check.id,
+            TeacherId: req.user.teacherId,
+            content: feedback,
+            observedAt,
+          }, { transaction });
+        }
+
+        const updateHistory = await History.create({
+          description: `student with name ${check.name} has been edited`,
+          createdBy: teacherClass.Teacher.name,
+        }, { transaction });
+
+        return { data: updatedStudent, history: updateHistory };
+      });
 
       res.status(200).json({ status: `updated`, data, history });
     } catch (error) {

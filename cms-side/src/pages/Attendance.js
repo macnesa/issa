@@ -2,107 +2,35 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TableAttendances from "../components/TableAttendance";
 import { studentsFetch } from "../store/action/ActionCreator";
-import ClipLoader from "react-spinners/ClipLoader";
 import Pagination from "../components/Pagination";
+import { localDateValue } from "../utils/recordDates";
+import { EmptyState, ErrorState, FormField, LoadingState, PageContainer, PageHeader, PrimaryButton, Surface } from "../components/ui";
 
-export default function Attendance(props) {
+export default function Attendance() {
   const dispatch = useDispatch();
   const students = useSelector((state) => state.students.students);
-
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [query, setQuery] = useState({ name: "" });
+  const [attendanceDate, setAttendanceDate] = useState(localDateValue());
 
-  useEffect(() => {
-    setLoading(true);
-    dispatch(studentsFetch()).finally(() => setLoading(false));
-  }, [dispatch]);
+  const loadStudents = (nextQuery) => { setLoading(true); setError(""); return dispatch(studentsFetch(nextQuery)).catch((requestError) => setError(requestError.message || "Attendance siswa tidak dapat dimuat.")).finally(() => setLoading(false)); };
+  useEffect(() => { loadStudents(); }, [dispatch]);
+  const submitQuery = (event) => { event.preventDefault(); loadStudents(query); };
+  const rows = Array.isArray(students.rows) ? students.rows : [];
 
-  const changeInputHandler = (event) => {
-    setQuery({ name: event.target.value });
-  };
-
-  const submitQuery = (e) => {
-    e.preventDefault();
-    dispatch(studentsFetch(query));
-  };
-
-  return (
-    <>
-      {loading ? (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mr-6 mt-[18rem] w-full md:w-full sm:[50%]">
-          <div className="flex content-center justify-center my-auto ">
-            <ClipLoader color={"gray-900"} loading={loading} size={100} aria-label="Loading Spinner" data-testid="loader" />
-          </div>
-        </div>
-      ) : (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mr-6 mt-[2rem] w-full md:w-full sm:[50%] ">
-          {/* <p className="dark:text-white font-raleway italic font-semibold text-[1.3rem]  ml-10 ">Attendances</p> */}
-          <div className="flex items-center justify-center pb-4 bg-white dark:bg-gray-900">
-            <div className="grow-0 shrink-1 md:shrink-0 basis-auto xl:w-4/12 lg:w-4/12 md:w-7/12 mb-12 md:mb-[5rem] ">
-              <div className="w-[70%] mask mask-squircle mx-auto">
-                <img src="https://res.cloudinary.com/dslzpyibe/image/upload/v1678271532/assets%20finalproject/undraw_Process_re_gws7_jhcurm.png" />
-              </div>
-              <p className="dark:text-white font-Comfortaa font-semibold text-[1.3rem] text-center mt-6">ATTENDANCES</p>
-            </div>
-          </div>
-          <form onSubmit={submitQuery} className="flex items-center justify-end pb-4 bg-white dark:bg-gray-900 w-[50%] mx-auto">
-            <div className="flex justify-between">
-              <div>
-                <input
-                  onChange={changeInputHandler}
-                  value={query.name}
-                  type="text"
-                  name="name"
-                  placeholder="Search By Name"
-                  className="input input-bordered  max-w-xs block p-2 pl-10 text-sm text-gray-900 border border-gray-900 rounded-lg w-80 dark:bg-gray-700 focus:ring-blue-500 focus:border-blue-500  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-10"
-                />
-              </div>
-              <div className="ml-4">
-                <button
-                  className="inline-flex items-center  dark:bg-gray-700 border border-gray-900 focus:outline-none bg-gray-900 text-white dark:text-white focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 :bg-gray-800  h-10"
-                  type="submit"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </form>
-          <table className="w-[90%] text-sm text-left text-gray-500 dark:text-gray-400  mx-auto mt-[2rem] items-center">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
-              <tr>
-                <th scope="col" className="p-4">
-                  No
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Profile
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Class
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Attendances
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  History Attendances
-                </th>
-                {/* <th scope="col" className="px-6 py-3">
-                Action
-              </th> */}
-              </tr>
-            </thead>
-            <tbody className="text-center ">
-              {students.rows?.map((el, index) => {
-                return <TableAttendances key={el.id} data={el} index={index} />;
-              })}
-            </tbody>
-          </table>
-          {/* Pagination */}
-          <div className="mb-[5rem]">
-            <Pagination data={students} />
-          </div>
-        </div>
-      )}
-    </>
-  );
+  return <PageContainer>
+    <PageHeader eyebrow="Class record" title="Attendance" description="Pilih tanggal kejadian, lalu catat atau perbarui status attendance setiap siswa di kelas Anda." />
+    <Surface>
+      <form onSubmit={submitQuery} className="grid gap-3 border-b border-[var(--border)] p-5 md:grid-cols-[220px_minmax(0,1fr)_auto] md:items-end">
+        <FormField label="Tanggal attendance"><input id="attendance-date" type="date" value={attendanceDate} onChange={(event) => setAttendanceDate(event.target.value)} onInput={(event) => setAttendanceDate(event.target.value)} className="min-h-10 w-full rounded-lg border border-[var(--border-strong)] px-3 text-sm outline-none focus:ring-4 focus:ring-[var(--focus)]" /></FormField>
+        <FormField label="Cari siswa"><input value={query.name} onChange={(event) => setQuery({ name: event.target.value })} type="search" name="name" placeholder="Cari nama siswa" className="min-h-10 w-full rounded-lg border border-[var(--border-strong)] px-3 text-sm outline-none focus:ring-4 focus:ring-[var(--focus)]" /></FormField>
+        <PrimaryButton type="submit">Cari</PrimaryButton>
+      </form>
+      {loading && <div className="p-5"><LoadingState label="Memuat attendance siswa..." /></div>}
+      {!loading && error && <div className="p-5"><ErrorState message={error} onRetry={() => loadStudents(query)} /></div>}
+      {!loading && !error && rows.length === 0 && <div className="p-5"><EmptyState title="Belum ada siswa" description="Tidak ada siswa yang dapat ditampilkan untuk pencarian ini." /></div>}
+      {!loading && !error && rows.length > 0 && <><div className="overflow-x-auto"><table className="min-w-[760px] w-full text-left text-sm"><thead className="bg-slate-50 text-xs uppercase tracking-wide text-[var(--muted)]"><tr><th className="px-5 py-3">Siswa</th><th className="px-4 py-3">Kelas</th><th className="px-4 py-3">Attendance {attendanceDate}</th><th className="px-5 py-3 text-right">Record</th></tr></thead><tbody>{rows.map((student, index) => <TableAttendances key={student.id} data={student} index={index} attendanceDate={attendanceDate} />)}</tbody></table></div><div className="border-t border-[var(--border)] p-4"><Pagination data={students} /></div></>}
+    </Surface>
+  </PageContainer>;
 }

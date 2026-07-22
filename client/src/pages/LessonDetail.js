@@ -31,33 +31,32 @@ export default function LessonDetail() {
   }
 
   return (
-    <main className="page-container space-y-4">
-      <section>
+    <main className="page-container lesson-detail-page">
+      <section className="lesson-detail-page__heading">
         <Link to="/progress" className="text-link inline-block">Kembali ke Perkembangan</Link>
         <h1 className="page-title mt-4">{lesson.name}</h1>
         <p className="page-supporting-text mt-1">KKM: {lesson.kkm ?? '-'}</p>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section className="lesson-detail-page__metrics">
         {[
           ['Rata-rata', formatValue(lesson.average)],
           ['Assessment', lesson.assessmentCount],
           ['Tertinggi', formatValue(lesson.max)],
           ['Terendah', formatValue(lesson.min)],
         ].map(([label, value]) => (
-          <div key={label} className="metric-card">
-            <p className="metric-label">{label}</p>
-            <p className="metric-value">{value}</p>
+          <div key={label}>
+            <p>{label}</p><strong>{value}</strong>
           </div>
         ))}
       </section>
 
       <AssessmentHistory records={lesson.records} />
 
-      <section className="surface p-5">
-        <h2 className="section-heading">Visual Nilai</h2>
-        <p className="page-supporting-text mt-1">Visual pendukung histori assessment.</p>
-        <div className="mt-4 min-w-0">
+      <section className="lesson-detail-page__chart">
+        <p className="overview-kicker">Visual pendukung</p><h2>Visual Nilai</h2>
+        <p>Visual pendukung histori assessment.</p>
+        <div>
           <LineChart data={lesson.records} />
         </div>
       </section>

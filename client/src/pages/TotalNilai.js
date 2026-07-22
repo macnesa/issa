@@ -19,8 +19,8 @@ export default function TotalNilai() {
   if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchStudentDetail())} /></main>;
 
   return (
-    <main className="page-container space-y-4">
-      <section>
+    <main className="page-container progress-page">
+      <section className="editorial-page-heading progress-page__heading">
         <h1 className="page-title">Perkembangan Akademik</h1>
         <p className="page-supporting-text mt-1">Ringkasan nilai berdasarkan mata pelajaran.</p>
       </section>
@@ -29,29 +29,26 @@ export default function TotalNilai() {
         <EmptyState message="Belum ada nilai yang tercatat." />
       ) : (
         <>
-          <section className="grid grid-cols-2 gap-3">
-            <div className="metric-card p-5">
-              <p className="metric-label">Rata-rata keseluruhan</p>
-              <p className="mt-1 text-2xl font-bold text-[var(--issa-text)]">{formatValue(progress.overallAverage)}</p>
+          <section className="progress-page__summary">
+            <div className="progress-page__metric">
+              <p>Rata-rata keseluruhan</p><strong>{formatValue(progress.overallAverage)}</strong>
             </div>
-            <div className="metric-card p-5">
-              <p className="metric-label">Mata pelajaran</p>
-              <p className="mt-1 text-2xl font-bold text-[var(--issa-text)]">{progress.lessonCount}</p>
+            <div className="progress-page__metric">
+              <p>Mata pelajaran</p><strong>{progress.lessonCount}</strong>
             </div>
           </section>
 
-          <section className="surface p-5">
-            <h2 className="section-heading">Daftar Mata Pelajaran</h2>
-            <ul className="mt-3 divide-y divide-[var(--issa-border)]">
+          <section className="progress-page__lessons">
+            <p className="overview-kicker">Academic record</p><h2>Daftar Mata Pelajaran</h2>
+            <ul>
               {progress.lessons.map((lesson) => (
-                <li key={lesson.id ?? lesson.name} className="py-3">
-                  <Link to={`/progress/${lesson.id}`} className="flex items-center justify-between gap-4 rounded-[var(--issa-radius-sm)] p-1 hover:bg-[var(--issa-primary-soft)]">
+                <li key={lesson.id ?? lesson.name}>
+                  <Link to={`/progress/${lesson.id}`}>
                     <div>
-                      <p className="font-semibold text-[var(--issa-text)]">{lesson.name}</p>
-                      <p className="mt-1 text-sm text-[var(--issa-text-secondary)]">{lesson.assessmentCount} assessment · KKM {lesson.kkm ?? '-'}</p>
+                      <p>{lesson.name}</p><p>{lesson.assessmentCount} assessment · KKM {lesson.kkm ?? '-'}</p>
                     </div>
                     <span className="text-right">
-                      <span className="block text-lg font-bold text-[var(--issa-text)]">{formatValue(lesson.average)}</span>
+                      <span>{formatValue(lesson.average)}</span>
                       <span className="text-link text-xs">Detail</span>
                     </span>
                   </Link>

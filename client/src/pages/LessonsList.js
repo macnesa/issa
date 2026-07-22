@@ -46,8 +46,8 @@ export default function LessonsList() {
   if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchClassSchedule())} /></main>;
 
   return (
-    <main className="page-container space-y-4">
-      <section>
+    <main className="page-container schedule-page">
+      <section className="editorial-page-heading schedule-page__heading">
         <h1 className="page-title">Jadwal</h1>
         <p className="page-supporting-text mt-1">Jadwal mingguan untuk kelas siswa.</p>
       </section>
@@ -55,7 +55,7 @@ export default function LessonsList() {
       {!days.length ? (
         <EmptyState message="Belum ada jadwal yang tersedia." />
       ) : (
-        <section className="space-y-3">
+        <section className="schedule-page__list">
           {days.map(([day, lessons]) => (
             <ScheduleList key={day} day={dayLabels[day] || day} lessons={lessons} />
           ))}

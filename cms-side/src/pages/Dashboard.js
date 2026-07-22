@@ -1,81 +1,51 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import ClipLoader from "react-spinners/ClipLoader";
 import Pagination from "../components/Pagination";
 import TableStudent from "../components/TableStudents";
 import { studentsFetch } from "../store/action/ActionCreator";
+import { EmptyState, ErrorState, LoadingState, MetricCard, PageContainer, PageHeader, PrimaryButton, Surface } from "../components/ui";
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const students = useSelector((state) => state.students.students);
   const [query, setQuery] = useState({ name: "" });
 
-  useEffect(() => {
+  const loadStudents = (nextQuery) => {
     setLoading(true);
-    dispatch(studentsFetch()).finally(() => setLoading(false));
-  }, [dispatch]);
-
-  const changeInputHandler = (event) => {
-    setQuery({ name: event.target.value });
+    setError("");
+    return dispatch(studentsFetch(nextQuery)).catch((requestError) => setError(requestError.message || "Daftar siswa tidak dapat dimuat.")).finally(() => setLoading(false));
   };
 
-  const submitQuery = (event) => {
-    event.preventDefault();
-    dispatch(studentsFetch(query));
-  };
+  useEffect(() => { loadStudents(); }, [dispatch]);
 
-  return (
-    <>
-      {loading ? (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mr-6 mt-[18rem] w-full md:w-full sm:[50%]">
-          <div className="flex content-center justify-center my-auto">
-            <ClipLoader color="gray-900" loading={loading} size={100} aria-label="Loading Spinner" data-testid="loader" />
-          </div>
-        </div>
-      ) : (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mr-6 mt-[3rem] w-full md:w-full sm:[50%]">
-          <div className="flex items-center justify-between pb-4 bg-white dark:bg-gray-900 ml-6 mr-6">
-            <div className="flex row">
-              <div className="flex items-center dark:text-white"><div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2" /> Hadir</div>
-              <div className="flex items-center ml-4 dark:text-white"><div className="h-2.5 w-2.5 rounded-full bg-yellow-500 mr-2" /> Sakit</div>
-              <div className="flex items-center ml-4 dark:text-white"><div className="h-2.5 w-2.5 rounded-full bg-blue-500 mr-2" /> Izin</div>
-              <div className="flex items-center ml-4 dark:text-white"><div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2" /> Alfa</div>
-            </div>
-            <form className="flex justify-between" onSubmit={submitQuery}>
-              <input
-                onChange={changeInputHandler}
-                value={query.name}
-                type="text"
-                name="name"
-                placeholder="Search By Name"
-                className="input input-bordered max-w-xs block p-2 pl-10 text-sm text-gray-900 border border-gray-900 rounded-lg w-80 dark:bg-gray-700 dark:text-white h-10"
-              />
-              <button className="ml-4 inline-flex items-center dark:bg-gray-700 border border-gray-900 bg-gray-900 text-white rounded-lg text-sm px-3 py-1.5 h-10" type="submit">
-                Search
-              </button>
-            </form>
-          </div>
+  const submitQuery = (event) => { event.preventDefault(); loadStudents(query); };
+  const rows = Array.isArray(students.rows) ? students.rows : [];
+  const className = rows[0]?.Class?.name || "Kelas Anda";
 
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-6">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
-              <tr>
-                <th scope="col" className="p-4">No</th>
-                <th scope="col" className="px-6 py-3">Name</th>
-                <th scope="col" className="px-6 py-3">NIS</th>
-                <th scope="col" className="px-6 py-3">Gender</th>
-                <th scope="col" className="px-6 py-3">Birth Day</th>
-                <th scope="col" className="px-6 py-3">Class</th>
-                <th scope="col" className="px-6 py-3">Attendances</th>
-                <th scope="col" className="px-6 py-3">Action</th>
-              </tr>
-            </thead>
-            {Array.isArray(students.rows) && students.rows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}
-          </table>
-
-          <div className="mb-[5rem]"><Pagination data={students} /></div>
-        </div>
-      )}
-    </>
-  );
+  return <PageContainer>
+    <PageHeader eyebrow="Teacher workspace" title="Dashboard siswa" description="Mulai dari daftar siswa kelas Anda untuk melihat rekam perkembangan, mencatat feedback, attendance, dan score." />
+    <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <MetricCard label="Kelas aktif" value={className} detail="Scope akses teacher" />
+      <MetricCard label="Siswa pada halaman ini" value={rows.length} detail="Data dari kelas sendiri" />
+      <MetricCard label="Alur hari ini" value="Catat & tinjau" detail="Feedback, attendance, score" />
+    </div>
+    <Surface>
+      <div className="flex flex-col gap-4 border-b border-[var(--border)] p-5 lg:flex-row lg:items-end lg:justify-between">
+        <div><h2 className="text-lg font-semibold text-[var(--text)]">Daftar siswa</h2><p className="mt-1 text-sm text-[var(--muted)]">Buka detail untuk melanjutkan pencatatan perkembangan siswa.</p></div>
+        <form className="flex w-full gap-2 sm:w-auto" onSubmit={submitQuery}>
+          <input value={query.name} onChange={(event) => setQuery({ name: event.target.value })} type="search" name="name" placeholder="Cari nama siswa" className="min-h-10 w-full rounded-lg border border-[var(--border-strong)] bg-white px-3 text-sm outline-none focus:ring-4 focus:ring-[var(--focus)] sm:w-64" />
+          <PrimaryButton type="submit">Cari</PrimaryButton>
+        </form>
+      </div>
+      {loading && <div className="p-5"><LoadingState label="Memuat daftar siswa..." /></div>}
+      {!loading && error && <div className="p-5"><ErrorState message={error} onRetry={() => loadStudents(query)} /></div>}
+      {!loading && !error && rows.length === 0 && <div className="p-5"><EmptyState title="Belum ada siswa" description="Tidak ada siswa yang cocok dengan pencarian ini." /></div>}
+      {!loading && !error && rows.length > 0 && <>
+        <div className="overflow-x-auto"><table className="min-w-[760px] w-full text-left text-sm"><thead className="bg-slate-50 text-xs uppercase tracking-wide text-[var(--muted)]"><tr><th className="px-5 py-3">Siswa</th><th className="px-4 py-3">NIM</th><th className="px-4 py-3">Kelas</th><th className="px-4 py-3">Attendance hari ini</th><th className="px-5 py-3 text-right">Aksi</th></tr></thead><tbody>{rows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}</tbody></table></div>
+        <div className="border-t border-[var(--border)] p-4"><Pagination data={students} /></div>
+      </>}
+    </Surface>
+  </PageContainer>;
 }

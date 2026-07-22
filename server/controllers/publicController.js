@@ -38,7 +38,6 @@ class StudentController {
           },
           {
             model: Score,
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
             include: [
               { model: Assignment, attributes: { exclude: ['createdAt', 'updatedAt'] } },
               {

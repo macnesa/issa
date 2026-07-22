@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
 
 function formatAverage(value) {
-  return value === null ? '-' : value.toLocaleString('id-ID', { maximumFractionDigits: 1 });
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue.toLocaleString('id-ID', { maximumFractionDigits: 1 }) : '-';
 }
 
 export default function AcademicSummary({ summary }) {
+  const score = Math.max(0, Math.min(100, Number(summary.overallAverage) || 0));
+
   return (
-    <section className="surface p-5">
+    <section className="overview-academic-summary">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="section-heading">Perkembangan Akademik</h2>
+        <div><p className="overview-kicker">Catatan akademik</p><h2>Perkembangan Akademik</h2></div>
         <Link to="/progress" className="text-link">Lihat perkembangan</Link>
       </div>
 
@@ -16,21 +19,21 @@ export default function AcademicSummary({ summary }) {
         <p className="mt-3 text-sm text-[var(--issa-text-secondary)]">Belum ada nilai yang tercatat.</p>
       ) : (
         <>
-          <dl className="mt-4 grid grid-cols-2 gap-3">
-            <div className="metric-card">
-              <dt className="metric-label">Rata-rata keseluruhan</dt>
-              <dd className="metric-value">{formatAverage(summary.overallAverage)}</dd>
+          <div className="overview-academic-summary__main">
+            <div className="overview-academic-summary__orb" style={{ '--overview-score': `${score}%` }} aria-label={`Rata-rata keseluruhan ${formatAverage(summary.overallAverage)}`}>
+              <span>{formatAverage(summary.overallAverage)}</span>
+              <small>rata-rata</small>
             </div>
-            <div className="metric-card">
-              <dt className="metric-label">Mata pelajaran bernilai</dt>
-              <dd className="metric-value">{summary.lessonCount}</dd>
-            </div>
-          </dl>
-          <ul className="mt-4 divide-y divide-[var(--issa-border)]">
+            <dl>
+              <div><dt>Rata-rata keseluruhan</dt><dd>{formatAverage(summary.overallAverage)}</dd></div>
+              <div><dt>Mata pelajaran bernilai</dt><dd>{summary.lessonCount}</dd></div>
+            </dl>
+          </div>
+          <ul className="overview-academic-summary__lessons">
             {summary.preview.map((lesson) => (
-              <li key={lesson.id ?? lesson.name} className="flex items-center justify-between py-3 text-sm">
-                <span className="font-medium text-[var(--issa-text)]">{lesson.name}</span>
-                <span className="text-[var(--issa-text-secondary)]">{formatAverage(lesson.average)} · {lesson.assessmentCount} assessment</span>
+              <li key={lesson.id ?? lesson.name}>
+                <span>{lesson.name}</span>
+                <span>{formatAverage(lesson.average)} · {lesson.assessmentCount} assessment</span>
               </li>
             ))}
           </ul>

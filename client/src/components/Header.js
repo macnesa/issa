@@ -21,9 +21,9 @@ export default function Header() {
   }
 
   return (
-    <nav className="app-header relative z-50 px-2 py-2.5 sm:px-4">
+    <nav className="app-header issa-header relative z-50 px-2 py-2.5 sm:px-4">
       <div className="flex flex-wrap items-center justify-between">
-        <NavLink to="/" className="ml-2 flex items-center justify-center" aria-label="Ringkasan ISSA">
+        <NavLink to="/" className="issa-header__brand ml-2 flex items-center justify-center" aria-label="Ringkasan ISSA">
           <img
             src="https://live.staticflickr.com/65535/52735891608_e4bb396871_w.jpg"
             className="h-7 sm:h-9"
@@ -37,7 +37,7 @@ export default function Header() {
               <NavLink
                 to={item.path}
                 end={item.end}
-                className={({ isActive }) => `app-nav-link block px-3 py-2 text-sm ${isActive ? 'is-active' : ''}`}
+                className={({ isActive }) => `app-nav-link issa-header__link block px-3 py-2 text-sm ${isActive ? 'is-active' : ''}`}
               >
                 {item.label}
               </NavLink>
@@ -51,7 +51,7 @@ export default function Header() {
             onClick={() => setIsProfileMenuOpen((open) => !open)}
             aria-expanded={isProfileMenuOpen}
             aria-controls="parent-profile-menu"
-            className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full border border-[var(--issa-border)]"
+            className="issa-header__profile h-9 w-9 flex-shrink-0 overflow-hidden rounded-full border border-[var(--issa-border)]"
           >
             {imageUrl ? (
               <img className="w-full h-full object-cover" src={imageUrl} alt="Profil siswa" />

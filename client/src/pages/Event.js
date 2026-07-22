@@ -33,8 +33,8 @@ export default function EventPage() {
   if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchActivity())} /></main>;
 
   return (
-    <main className="page-container space-y-4">
-      <section>
+    <main className="page-container activities-page">
+      <section className="editorial-page-heading activities-page__heading">
         <h1 className="page-title">Aktivitas</h1>
         <p className="page-supporting-text mt-1">Publikasi aktivitas terbaru dari kelas.</p>
       </section>
@@ -42,12 +42,11 @@ export default function EventPage() {
       {!activities.length ? (
         <EmptyState message="Belum ada aktivitas yang tersedia." />
       ) : (
-        <section className="surface p-5">
-          <ol className="divide-y divide-[var(--issa-border)]">
+        <section className="activities-page__feed">
+          <ol>
             {activities.map((item) => (
-              <li key={item.id ?? `${item.name}-${item.createdAt}`} className="py-4 first:pt-0 last:pb-0">
-                <h2 className="text-sm font-semibold text-[var(--issa-text)]">{item.name}</h2>
-                <time className="mt-1 block text-sm text-[var(--issa-text-muted)]">Dipublikasikan {formatDate(item.createdAt)}</time>
+              <li key={item.id ?? `${item.name}-${item.createdAt}`}>
+                <h2>{item.name}</h2><time>Dipublikasikan {formatDate(item.createdAt)}</time>
               </li>
             ))}
           </ol>

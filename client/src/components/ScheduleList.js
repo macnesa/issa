@@ -1,10 +1,10 @@
 export default function ScheduleList({ day, lessons }) {
   return (
-    <section className="surface overflow-hidden">
-      <h2 className="border-b border-[var(--issa-border)] bg-[var(--issa-primary-soft)] px-5 py-3 text-sm font-semibold text-[var(--issa-primary)]">{day}</h2>
-      <ul className="divide-y divide-[var(--issa-border)] px-5">
+    <section className="schedule-day">
+      <h2>{day}</h2>
+      <ul>
         {lessons.map((lesson, index) => (
-          <li key={`${day}-${lesson}-${index}`} className="py-3 text-sm text-[var(--issa-text-secondary)]">{lesson}</li>
+          <li key={`${day}-${lesson}-${index}`}>{lesson}</li>
         ))}
       </ul>
     </section>

@@ -1,12 +1,25 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import Editable from "./EditTable";
 import { editScores } from "../store/action/ActionCreator";
+import { formatRecordedDate, toIsoDateTime } from "../utils/recordDates";
+import { PrimaryButton, SecondaryButton, StatusBadge } from "./ui";
+
+const inputClassName = "w-20 rounded-md border border-[var(--border-strong)] px-2 py-1.5 text-sm outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--focus)]";
 
 export default function TableScores({ data, student }) {
   const dispatch = useDispatch();
+  const [editing, setEditing] = useState(false);
   const [value, setValue] = useState("");
+  const [recordedAt, setRecordedAt] = useState("");
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const startEdit = () => {
+    setValue(String(data.value ?? ""));
+    setRecordedAt("");
+    setMessage("");
+    setEditing(true);
+  };
 
   const submitForm = (event) => {
     event.preventDefault();
@@ -15,29 +28,34 @@ export default function TableScores({ data, student }) {
       setMessage("Nilai harus berupa angka bulat 0–100.");
       return;
     }
+    const normalizedRecordedAt = toIsoDateTime(recordedAt);
+    if (recordedAt && !normalizedRecordedAt) {
+      setMessage("Tanggal pencatatan tidak valid.");
+      return;
+    }
+    const payload = { ScoreId: data.id, value: nextValue };
+    if (normalizedRecordedAt) payload.recordedAt = normalizedRecordedAt;
 
+    setSubmitting(true);
     setMessage("");
-    dispatch(editScores(student.id, { ScoreId: data.id, value: nextValue }))
-      .then(() => setValue(""))
-      .catch((error) => setMessage(error.message || "Score gagal diperbarui."));
+    dispatch(editScores(student.id, payload))
+      .then(() => { setEditing(false); setRecordedAt(""); })
+      .catch((error) => setMessage(error.message || "Score gagal diperbarui."))
+      .finally(() => setSubmitting(false));
   };
 
+  const status = data.status === true ? "Lulus" : data.status === false ? "Belum lulus" : undefined;
+
   return (
-    <tr className="bg-white dark:bg-gray-800">
-      <th scope="row" className="px-6 py-4 font-medium text-gray-500 whitespace-nowrap dark:text-white">{data.Assignment?.name}</th>
-      <th scope="row" className="px-6 py-4 font-medium text-gray-500 whitespace-nowrap dark:text-white">{data.Lesson?.name}</th>
-      <td className="px-6 py-4">{data.Lesson?.KKM}</td>
-      <td className="px-6 py-4">
-        <Editable text="" value={data.value} type="input">
-          <form onSubmit={submitForm}>
-            <input min="0" max="100" step="1" type="number" placeholder={data.value} onChange={(event) => setValue(event.target.value)} value={value} />
-            <button type="submit" className="ml-2 hover:text-blue-800">save</button>
-          </form>
-        </Editable>
-        {message && <p role="status" className="text-red-600">{message}</p>}
-      </td>
-      <td className="px-6 py-4">{data.category}</td>
-      <td className="px-6 py-4 max-w-[100px]">{data.desc}</td>
+    <tr className="border-t border-[var(--border)] align-top text-[var(--text)]">
+      <td className="px-4 py-4 font-medium">{data.Assignment?.name || "Assessment belum tersedia"}</td>
+      <td className="px-4 py-4">{data.Lesson?.name || "—"}</td>
+      <td className="px-4 py-4">{data.Lesson?.KKM ?? "—"}</td>
+      <td className="px-4 py-4">{editing ? <input aria-label="Nilai score" className={inputClassName} min="0" max="100" step="1" type="number" value={value} onChange={(event) => setValue(event.target.value)} /> : data.value ?? "—"}</td>
+      <td className="px-4 py-4">{data.category || "—"}</td>
+      <td className="px-4 py-4"><StatusBadge status={status} /></td>
+      <td className="px-4 py-4"><div>{formatRecordedDate(data.recordedAt)}</div>{editing && <input aria-label="Tanggal pencatatan score" type="datetime-local" value={recordedAt} onChange={(event) => setRecordedAt(event.target.value)} className="mt-2 rounded-md border border-[var(--border-strong)] px-2 py-1.5 text-xs outline-none focus:border-[var(--accent)]" />}</td>
+      <td className="px-4 py-4"><form onSubmit={submitForm} className="min-w-28">{editing ? <div className="flex gap-2"><PrimaryButton type="submit" className="min-h-8 px-3 py-1 text-xs" disabled={submitting}>{submitting ? "..." : "Simpan"}</PrimaryButton><SecondaryButton type="button" className="min-h-8 px-3 py-1 text-xs" onClick={() => setEditing(false)} disabled={submitting}>Batal</SecondaryButton></div> : <SecondaryButton type="button" className="min-h-8 px-3 py-1 text-xs" onClick={startEdit}>Ubah</SecondaryButton>}{message && <p role="status" className="mt-2 text-xs text-rose-700">{message}</p>}</form></td>
     </tr>
   );
 }

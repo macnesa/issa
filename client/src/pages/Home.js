@@ -34,7 +34,7 @@ export default function Home() {
   const latestActivities = useMemo(() => getLatestActivities(activity.data), [activity.data]);
 
   return (
-    <main className="page-container space-y-4">
+    <main className="page-container overview-page">
       <StudentIdentity profile={detail.profile} />
       <TodayAttendance attendance={todayAttendance} />
       <AttendanceSummary counts={attendanceCounts} />

@@ -3,9 +3,20 @@ function errorHandler(err, req, res, next) {
         msg = "Internal Server Error"
     switch (err.name) {
         case "SequelizeValidationError":
-        case "SequelizeUniqueConstraintError":
             statusCode = 400;
             msg = err.errors[0].message
+            break;
+
+        case "SequelizeUniqueConstraintError":
+            if (['attendances_student_attendance_date_unique', 'scores_student_lesson_assignment_unique'].includes(err.parent?.constraint)) {
+                statusCode = 409;
+                msg = err.parent.constraint === 'attendances_student_attendance_date_unique'
+                    ? 'Attendance already exists for the selected date'
+                    : 'Score already exists for this student, lesson, and assignment';
+            } else {
+                statusCode = 400;
+                msg = err.errors[0].message;
+            }
             break;
 
         case "loginError":
@@ -51,13 +62,33 @@ function errorHandler(err, req, res, next) {
             statusCode = 400;
             msg = "Invalid attendance status";
             break;
+        case "invalidAttendanceDate":
+            statusCode = 400;
+            msg = "attendanceDate must be a valid YYYY-MM-DD date";
+            break;
         case "attendanceAlreadyExists":
             statusCode = 409;
-            msg = "Attendance already exists for today";
+            msg = "Attendance already exists for the selected date";
             break;
         case "invalidScoreValue":
             statusCode = 400;
             msg = "Score value must be an integer from 0 to 100";
+            break;
+        case "invalidRecordedAt":
+            statusCode = 400;
+            msg = "recordedAt must be a valid ISO-8601 date";
+            break;
+        case "invalidLessonKkm":
+            statusCode = 400;
+            msg = "Lesson KKM must be a valid number";
+            break;
+        case "invalidFeedback":
+            statusCode = 400;
+            msg = "Feedback must not be empty";
+            break;
+        case "invalidObservedAt":
+            statusCode = 400;
+            msg = "observedAt must be a valid ISO-8601 date";
             break;
         case "duplicateScore":
             statusCode = 409;

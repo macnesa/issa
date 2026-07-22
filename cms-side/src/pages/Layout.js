@@ -3,18 +3,11 @@ import Sidebar from "../components/Sidebar";
 
 export default function Layout() {
   return (
-    <div className="flex bg-white dark:bg-gray-900">
-      <div className="flex">
-        <Sidebar />
-      </div>
-      <Outlet />
-
-      {/* <aside class="fixed">
-        <Sidebar />
-      </aside>
-      <main class="flex-1 ml-44">
+    <div className="min-h-screen bg-[var(--page)] md:flex">
+      <Sidebar />
+      <div className="min-w-0 flex-1">
         <Outlet />
-      </main> */}
+      </div>
     </div>
   );
 }

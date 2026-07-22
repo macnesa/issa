@@ -1,15 +1,51 @@
-const { Op } = require('sequelize');
 const { Attendance, Student, History, Teacher, Class } = require('../models');
 
 const attendanceStatuses = new Set(['Hadir', 'Sakit', 'Alfa', 'Izin']);
+const defaultTimeZone = 'Asia/Jakarta';
 
-function todayRange() {
-  const now = new Date();
-  const start = new Date(now);
-  const end = new Date(now);
-  start.setHours(0, 0, 0, 0);
-  end.setHours(23, 59, 59, 999);
-  return { start, end };
+function dateInTimeZone(timeZone) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function currentAttendanceDate() {
+  try {
+    return dateInTimeZone(process.env.APP_TIMEZONE || defaultTimeZone);
+  } catch (error) {
+    return dateInTimeZone(defaultTimeZone);
+  }
+}
+
+function normalizeAttendanceDate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    throw { name: 'invalidAttendanceDate' };
+  }
+
+  const [year, month, day] = value.split('-').map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    throw { name: 'invalidAttendanceDate' };
+  }
+
+  return value;
+}
+
+function requestedAttendanceDate(body) {
+  if (Object.prototype.hasOwnProperty.call(body, 'attendanceDate')) {
+    return normalizeAttendanceDate(body.attendanceDate);
+  }
+
+  return currentAttendanceDate();
 }
 
 function validateStatus(status) {
@@ -48,15 +84,14 @@ class AttendanceController {
       });
       if (!student) throw { name: 'notFound' };
 
-      const { start, end } = todayRange();
+      const attendanceDate = requestedAttendanceDate(req.body);
       const attendance = await Attendance.findOne({
-        where: { StudentId, createdAt: { [Op.between]: [start, end] } },
-        order: [['createdAt', 'DESC']],
+        where: { StudentId, attendanceDate },
       });
       if (attendance) throw { name: 'attendanceAlreadyExists' };
 
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
-      const data = await Attendance.create({ StudentId, status });
+      const data = await Attendance.create({ StudentId, status, attendanceDate });
       await History.create({
         description: `attendance ${student.name} has been created`,
         createdBy: teacherClass.Teacher.name,
@@ -77,10 +112,9 @@ class AttendanceController {
       });
       if (!student) throw { name: 'notFound' };
 
-      const { start, end } = todayRange();
+      const attendanceDate = requestedAttendanceDate(req.body);
       const attendance = await Attendance.findOne({
-        where: { StudentId, createdAt: { [Op.between]: [start, end] } },
-        order: [['createdAt', 'DESC']],
+        where: { StudentId, attendanceDate },
       });
       if (!attendance) throw { name: 'notFound' };
 

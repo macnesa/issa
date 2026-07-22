@@ -33,10 +33,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--issa-page)] px-4 py-8 sm:px-6">
-      <form onSubmit={triggerLogin} className="surface w-full max-w-md space-y-5 p-6 sm:p-8">
+    <main className="issa-login flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
+      <form onSubmit={triggerLogin} className="issa-login__form w-full max-w-md space-y-5 p-6 sm:p-8">
         <div>
-          <p className="section-kicker font-semibold tracking-wide">ISSA PARENT</p>
+          <p className="issa-login__kicker">ISSA PARENT</p>
           <h1 className="page-title mt-1">Masuk ke akun parent</h1>
           <p className="page-supporting-text mt-2">Pantau perkembangan siswa dalam satu tempat.</p>
         </div>
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
         {error && <p className="rounded-[var(--issa-radius-sm)] bg-[var(--issa-danger-soft)] px-3 py-2 text-sm font-medium text-[var(--issa-danger)]" role="alert">{error}</p>}
 
-        <label className="flex items-center gap-3 rounded-[var(--issa-radius-sm)] border border-[var(--issa-border)] px-3 py-3 text-sm text-[var(--issa-text-secondary)]">
+        <label className="issa-login__role flex items-center gap-3 px-3 py-3 text-sm text-[var(--issa-text-secondary)]">
           <input id="parent-role" type="radio" name="parent-role" required className="h-4 w-4 accent-[var(--issa-primary)]" />
           <span>Saya adalah parent</span>
         </label>

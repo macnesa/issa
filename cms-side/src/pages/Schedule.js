@@ -1,65 +1,36 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { scheduleFetch } from "../store/action/ActionCreator";
-import ClipLoader from "react-spinners/ClipLoader";
-import Item from "../components/ItemCardSchedule";
+import { EmptyState, ErrorState, LoadingState, PageContainer, PageHeader, Surface } from "../components/ui";
 
-export default function Schedule(props) {
-  const [loading, setLoading] = useState(false);
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+export default function Schedule() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
-
   const schedules = useSelector((state) => state.schedules.schedules);
 
-  useEffect(() => {
+  const loadSchedule = useCallback(() => {
     setLoading(true);
-    dispatch(scheduleFetch()).finally(() => setLoading(false));
+    setError("");
+    return dispatch(scheduleFetch())
+      .catch((requestError) => setError(requestError?.message || "Jadwal tidak dapat dimuat."))
+      .finally(() => setLoading(false));
   }, [dispatch]);
 
-  const result1 = schedules?.filter((el) => el.day == "Monday");
-  const result2 = schedules?.filter((el) => el.day == "Tuesday");
-  const result3 = schedules?.filter((el) => el.day == "Wednesday");
-  const result4 = schedules?.filter((el) => el.day == "Thursday");
-  const result5 = schedules?.filter((el) => el.day == "Friday");
+  useEffect(() => { loadSchedule(); }, [loadSchedule]);
 
-  const day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  if (loading) return <PageContainer><LoadingState label="Memuat jadwal kelas..." /></PageContainer>;
+  if (error) return <PageContainer><ErrorState message={error} onRetry={loadSchedule} /></PageContainer>;
 
   return (
-    <>
-      {loading && (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mr-6 mt-[18rem] w-full md:w-full sm:[50%] ">
-          <div className="flex content-center justify-center my-auto ">
-            <ClipLoader color={"gray-900"} loading={loading} size={100} aria-label="Loading Spinner" data-testid="loader" />
-          </div>
-        </div>
-      )}
-      {!loading && (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mr-6 mt-[4rem] w-full md:w-full sm:[50%]">
-          <div className="flex items-center justify-center pb-4 bg-white dark:bg-gray-900 ml-6 mr-6">
-            <div className="grow-0 shrink-1 md:shrink-0 basis-auto xl:w-4/12 lg:w-4/12 md:w-7/12 mb-12 md:mb-[5rem] ">
-              <div className="w-[70%] mask mask-squircle mx-auto">
-                <img src="https://res.cloudinary.com/dslzpyibe/image/upload/v1678369993/assets%20finalproject/undraw_Checking_boxes_re_9h8m_sb5nqo.png" />
-              </div>
-              <p className="dark:text-white font-Comfortaa font-semibold text-[1.3rem] text-center mt-6">SCHEDULE</p>
-            </div>
-          </div>
-          <div className="flex justify-center items-center">
-            <div className="grid grid-cols-3 gap-4 ">
-              {day?.map((el, index) => {
-                return (
-                  <div class="max-w-sm bg-[#d4d4d4] border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div class="p-5">
-                      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">{el.toUpperCase()}</h5>
-                      <ul className="list-disc ml-2">
-                        <Item key={el.id} day={el} data={schedules} />
-                      </ul>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    <PageContainer>
+      <PageHeader eyebrow="Kelas saya" title="Jadwal kelas" description="Daftar mata pelajaran per hari untuk kelas yang Anda ampu." />
+      {!schedules?.length ? <EmptyState title="Jadwal belum tersedia" description="Belum ada mata pelajaran yang dijadwalkan untuk kelas ini." /> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{days.map((day) => {
+        const entries = schedules.filter((schedule) => schedule.day === day);
+        return <Surface key={day} className="p-5"><h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{day}</h2>{entries.length ? <ul className="mt-4 divide-y divide-[var(--border)]">{entries.map((schedule) => <li key={schedule.id} className="py-3 first:pt-0 last:pb-0"><p className="font-medium text-[var(--text)]">{schedule.Lesson?.name || "Mata pelajaran belum tersedia"}</p><p className="mt-1 text-sm text-[var(--muted)]">{schedule.Lesson?.KKM != null ? `KKM ${schedule.Lesson.KKM}` : "Detail KKM belum tersedia"}</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">Belum ada mata pelajaran.</p>}</Surface>;
+      })}</div>}
+    </PageContainer>
   );
 }

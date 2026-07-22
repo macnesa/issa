@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Student.belongsTo(models.Class);
       Student.hasMany(models.Attendance);
       Student.hasMany(models.Score);
+      Student.hasMany(models.StudentFeedback);
       Student.hasOne(models.User);
       Student.hasMany(models.Transaction);
     }

@@ -8,18 +8,18 @@ function formatRecordedAt(value) {
 
 export default function AssessmentHistory({ records }) {
   return (
-    <section className="surface p-5">
-      <h2 className="section-heading">Histori Assessment</h2>
-      <ul className="mt-3 divide-y divide-[var(--issa-border)]">
+    <section className="assessment-history">
+      <p className="overview-kicker">Rekam penilaian</p><h2>Histori Assessment</h2>
+      <ul>
         {records.map((record) => (
-          <li key={record.id ?? `${record.assignmentId}-${record.recordedAt}`} className="py-3">
-            <div className="flex items-start justify-between gap-4">
+          <li key={record.id ?? `${record.assignmentId}-${record.recordedAt}`}>
+            <div>
               <div>
-                <p className="text-sm font-semibold text-[var(--issa-text)]">{record.assignment?.description || 'Assessment tanpa deskripsi'}</p>
-                <p className="mt-1 text-xs text-[var(--issa-text-secondary)]">{record.category || 'Kategori belum tersedia'}</p>
-                <time className="mt-1 block text-xs text-[var(--issa-text-muted)]">{formatRecordedAt(record.recordedAt)}</time>
+                <p>{record.assignment?.description || 'Assessment tanpa deskripsi'}</p>
+                <p>{record.category || 'Kategori belum tersedia'}</p>
+                <time>{formatRecordedAt(record.recordedAt)}</time>
               </div>
-              <span className="text-lg font-bold text-[var(--issa-text)]">{record.value}</span>
+              <span>{record.value}</span>
             </div>
           </li>
         ))}

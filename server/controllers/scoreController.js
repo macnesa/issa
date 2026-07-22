@@ -6,6 +6,16 @@ function validateValue(value) {
   }
 }
 
+function normalizeRecordedAt(value) {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw { name: 'invalidRecordedAt' };
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) throw { name: 'invalidRecordedAt' };
+  return parsed;
+}
+
 function scoreCategory(value) {
   if (value >= 85) return 'A';
   if (value >= 75) return 'B';
@@ -14,8 +24,10 @@ function scoreCategory(value) {
   return 'E';
 }
 
-function scoreStatus(value) {
-  return value >= 70;
+function scoreStatus(value, lesson) {
+  const kkm = Number(lesson.KKM);
+  if (!Number.isFinite(kkm)) throw { name: 'invalidLessonKkm' };
+  return value >= kkm;
 }
 
 async function findStudentInClass(StudentId, classId) {
@@ -25,7 +37,7 @@ async function findStudentInClass(StudentId, classId) {
 class ScoreController {
   static async addScore(req, res, next) {
     try {
-      const { StudentId, LessonId, AssignmentId, value, desc } = req.body;
+      const { StudentId, LessonId, AssignmentId, value, desc, recordedAt } = req.body;
       validateValue(value);
 
       const [student, lesson, assignment] = await Promise.all([
@@ -47,7 +59,8 @@ class ScoreController {
         value,
         desc,
         category: scoreCategory(value),
-        status: scoreStatus(value),
+        status: scoreStatus(value, lesson),
+        recordedAt: typeof recordedAt === 'undefined' ? new Date() : normalizeRecordedAt(recordedAt),
       });
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
       const history = await History.create({
@@ -62,7 +75,7 @@ class ScoreController {
 
   static async editScore(req, res, next) {
     try {
-      const { ScoreId, StudentId, LessonId, AssignmentId, value } = req.body;
+      const { ScoreId, StudentId, LessonId, AssignmentId, value, recordedAt } = req.body;
       validateValue(value);
 
       let score;
@@ -82,11 +95,14 @@ class ScoreController {
       ]);
       if (!student || !lesson || !assignment) throw { name: 'notFound' };
 
-      const data = await score.update({
+      const updates = {
         value,
         category: scoreCategory(value),
-        status: scoreStatus(value),
-      });
+        status: scoreStatus(value, lesson),
+      };
+      if (typeof recordedAt !== 'undefined') updates.recordedAt = normalizeRecordedAt(recordedAt);
+
+      const data = await score.update(updates);
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
       const history = await History.create({
         description: `Score ${student.name} lesson ${lesson.name} has been edited`,

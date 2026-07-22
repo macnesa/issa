@@ -32,47 +32,46 @@ export default function AttendancePage() {
   if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchStudentDetail())} /></main>;
 
   return (
-    <main className="page-container space-y-4">
-      <section>
+    <main className="page-container attendance-page">
+      <section className="editorial-page-heading">
         <h1 className="page-title">Kehadiran</h1>
         <p className="page-supporting-text mt-1">Histori dan ringkasan kehadiran siswa.</p>
       </section>
 
-      <section className="surface p-5">
+      <section className="attendance-today">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="section-heading">Kehadiran Hari Ini</h2>
-            <p className="page-supporting-text mt-1">{todayAttendance ? 'Kehadiran hari ini sudah tercatat.' : 'Belum ada catatan kehadiran hari ini.'}</p>
+            <p className="overview-kicker">Hari ini</p><h2>Kehadiran</h2>
+            <p>{todayAttendance ? 'Kehadiran hari ini sudah tercatat.' : 'Belum ada catatan kehadiran hari ini.'}</p>
           </div>
           <span className={`status-badge ${statusModifiers[todayAttendance?.status] || 'status-badge--neutral'}`}>{todayAttendance?.status || 'Belum tercatat'}</span>
         </div>
       </section>
 
-      <section className="surface p-5">
-        <h2 className="section-heading">Ringkasan Kehadiran</h2>
-        <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section className="attendance-summary">
+        <div><p className="overview-kicker">Rekam rutin</p><h2>Ringkasan Kehadiran</h2></div>
+        <dl className="attendance-summary__grid">
           {statuses.map((status) => (
-            <div key={status} className="metric-card">
-              <dt className="metric-label">{status}</dt>
-              <dd className="metric-value">{counts[status]}</dd>
+            <div key={status} className={`attendance-summary__metric attendance-summary__metric--${status.toLowerCase()}`}>
+              <dt>{status}</dt><dd>{counts[status]}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <section className="surface p-5">
-        <h2 className="section-heading">Histori Kehadiran</h2>
+      <section className="attendance-history">
+        <p className="overview-kicker">Rekam kehadiran</p><h2>Histori Kehadiran</h2>
         {!history.length ? (
           <EmptyState message="Belum ada kehadiran yang tercatat." />
         ) : (
           <div className="mt-4 space-y-5">
             {history.map((group) => (
-              <div key={group.key}>
-                <h3 className="text-sm font-semibold text-[var(--issa-text-secondary)]">{group.label}</h3>
-                <ul className="mt-2 divide-y divide-[var(--issa-border)]">
+              <div key={group.key} className="attendance-history__month">
+                <h3>{group.label}</h3>
+                <ul>
                   {group.records.map((record) => (
-                    <li key={record.id ?? `${record.createdAt}-${record.status}`} className="flex items-center justify-between gap-4 py-3 text-sm">
-                      <time className="text-[var(--issa-text-secondary)]">{formatAttendanceDate(record.createdAt)}</time>
+                    <li key={record.id ?? `${record.createdAt}-${record.status}`}>
+                      <time>{formatAttendanceDate(record.createdAt)}</time>
                       <span className={`status-badge ${statusModifiers[record.status] || 'status-badge--neutral'}`}>{record.status || 'Status belum tersedia'}</span>
                     </li>
                   ))}
@@ -84,10 +83,10 @@ export default function AttendancePage() {
       </section>
 
       {!!attendance.length && (
-        <section className="surface p-5">
-          <h2 className="section-heading">Visual Kehadiran</h2>
-          <p className="page-supporting-text mt-1">Visual pendukung histori kehadiran.</p>
-          <div className="mt-4 overflow-x-auto rounded-[var(--issa-radius-sm)] bg-[var(--issa-surface-soft)] p-3">
+        <section className="attendance-heatmap">
+          <p className="overview-kicker">Visual pendukung</p><h2>Visual Kehadiran</h2>
+          <p>Visual pendukung histori kehadiran.</p>
+          <div className="attendance-heatmap__chart">
             <HeatmapDua data={attendance} />
           </div>
         </section>

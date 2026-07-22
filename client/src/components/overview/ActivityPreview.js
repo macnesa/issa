@@ -9,20 +9,20 @@ function formatDate(value) {
 
 export default function ActivityPreview({ resource, activities, onRetry }) {
   return (
-    <section className="surface p-5">
+    <section className="overview-activity-preview">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="section-heading">Aktivitas Terbaru</h2>
+        <div><p className="overview-kicker">Kabar sekolah</p><h2>Aktivitas Terbaru</h2></div>
         <Link to="/activities" className="text-link">Lihat aktivitas</Link>
       </div>
       {resource.loading && <LoadingState label="Loading activities..." />}
       {resource.error && <ErrorState error={resource.error} onRetry={onRetry} />}
       {resource.loaded && !activities.length && <EmptyState message="No activities are available yet." />}
       {!!activities.length && !resource.loading && !resource.error && (
-        <ol className="mt-3 divide-y divide-[var(--issa-border)]">
+        <ol className="overview-activity-preview__list">
           {activities.map((item) => (
-            <li key={item.id ?? `${item.name}-${item.createdAt}`} className="py-3 first:pt-0 last:pb-0">
-              <p className="text-sm font-semibold text-[var(--issa-text)]">{item.name}</p>
-              <time className="mt-0.5 block text-xs text-[var(--issa-text-muted)]">{formatDate(item.createdAt)}</time>
+            <li key={item.id ?? `${item.name}-${item.createdAt}`}>
+              <p>{item.name}</p>
+              <time>{formatDate(item.createdAt)}</time>
             </li>
           ))}
         </ol>

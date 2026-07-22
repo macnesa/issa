@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: `LessonId is required` },
         },
       },
+      recordedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,
