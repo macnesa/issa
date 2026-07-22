@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { useSelector, useDispatch } from 'react-redux';
 
-import { getProductById, fetchStudentDetail, fetchClassmate } from '../store/actions/actionCreator';
+import { fetchStudentDetail, fetchClassmate } from '../store/actions/actionCreator';
 
 import ScrollReveal from 'scrollreveal';
 

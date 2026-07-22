@@ -4,7 +4,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import { useSelector, useDispatch } from "react-redux"
 
-import { getProductById } from '../store/actions/actionCreator';
 
 import ScrollReveal from 'scrollreveal';
 
