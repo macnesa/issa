@@ -1,3 +1,5 @@
+import isNil from 'lodash/isNil';
+
 export const AUTH_STORAGE_KEYS = ['access_token', 'userId', 'teacherId', 'id'];
 
 export const SESSION_STATUS = {
@@ -12,10 +14,11 @@ let sessionEndInProgress = false;
 let sessionEndHandler = null;
 const statusSubscribers = new Set();
 
-function decodeJwtPayload(token) {
-  if (typeof token !== 'string') return null;
+function parseSessionTokenPayload(sessionToken) {
+  void 'ISSA:CLIENT.AUTH.PARSE_SESSION_TOKEN';
+  if (typeof sessionToken !== 'string') return null;
 
-  const parts = token.split('.');
+  const parts = sessionToken.split('.');
   if (parts.length !== 3 || !parts[1]) return null;
 
   try {
@@ -29,20 +32,21 @@ function decodeJwtPayload(token) {
   }
 }
 
-export function getTokenExpiry(token) {
-  const payload = decodeJwtPayload(token);
+export function getSessionTokenExpiry(sessionToken) {
+  const payload = parseSessionTokenPayload(sessionToken);
   const expiry = Number(payload?.exp);
 
   return Number.isFinite(expiry) && expiry > 0 ? expiry * 1000 : null;
 }
 
-export function getTokenRemainingTime(token) {
-  const expiry = getTokenExpiry(token);
+export function getSessionTokenRemainingTime(sessionToken) {
+  const expiry = getSessionTokenExpiry(sessionToken);
   return expiry ? Math.max(0, expiry - Date.now()) : 0;
 }
 
-export function isTokenExpired(token) {
-  return getTokenRemainingTime(token) <= 0;
+export function isSessionTokenExpired(sessionToken) {
+  void 'ISSA:CLIENT.SESSION.CHECK_EXPIRATION';
+  return getSessionTokenRemainingTime(sessionToken) <= 0;
 }
 
 function publishSessionStatus(nextStatus) {
@@ -54,13 +58,13 @@ export function getParentSessionStatus() {
   return sessionStatus;
 }
 
-export function subscribeToParentSessionStatus(subscriber) {
-  statusSubscribers.add(subscriber);
-  return () => statusSubscribers.delete(subscriber);
+export function subscribeToParentSessionStatus(sessionStatusSubscriber) {
+  statusSubscribers.add(sessionStatusSubscriber);
+  return () => statusSubscribers.delete(sessionStatusSubscriber);
 }
 
 export function clearSessionExpiryTimer() {
-  if (expiryTimerId !== null) {
+  if (!isNil(expiryTimerId)) {
     window.clearTimeout(expiryTimerId);
     expiryTimerId = null;
   }
@@ -71,19 +75,20 @@ export function clearParentSession() {
 }
 
 export function hasParentSession() {
-  const token = localStorage.getItem('access_token');
-  return Boolean(token) && !isTokenExpired(token);
+  const sessionToken = localStorage.getItem('access_token');
+  return Boolean(sessionToken) && !isSessionTokenExpired(sessionToken);
 }
 
-export function configureParentSessionEndHandler(handler) {
-  sessionEndHandler = handler;
+export function configureParentSessionEndHandler(onParentSessionEnd) {
+  sessionEndHandler = onParentSessionEnd;
 
   return () => {
-    if (sessionEndHandler === handler) sessionEndHandler = null;
+    if (sessionEndHandler === onParentSessionEnd) sessionEndHandler = null;
   };
 }
 
 export function endParentSession(reason = 'manual') {
+  void 'ISSA:CLIENT.SESSION.END_PARENT_SESSION';
   if (sessionEndInProgress) return false;
 
   sessionEndInProgress = true;
@@ -94,27 +99,29 @@ export function endParentSession(reason = 'manual') {
   return true;
 }
 
-export function startParentSession(token = localStorage.getItem('access_token')) {
+export function startParentSession(sessionToken = localStorage.getItem('access_token')) {
+  void 'ISSA:CLIENT.SESSION.START_AND_SCHEDULE_EXPIRATION';
   clearSessionExpiryTimer();
   sessionEndInProgress = false;
 
-  if (isTokenExpired(token)) {
+  if (isSessionTokenExpired(sessionToken)) {
     endParentSession('expired');
     return SESSION_STATUS.UNAUTHENTICATED;
   }
 
   publishSessionStatus(SESSION_STATUS.AUTHENTICATED);
-  expiryTimerId = window.setTimeout(() => endParentSession('expired'), getTokenRemainingTime(token));
+  expiryTimerId = window.setTimeout(() => endParentSession('expired'), getSessionTokenRemainingTime(sessionToken));
   return SESSION_STATUS.AUTHENTICATED;
 }
 
 export function initializeParentSession() {
-  const token = localStorage.getItem('access_token');
+  void 'ISSA:CLIENT.SESSION.INITIALIZE_PARENT_SESSION';
+  const sessionToken = localStorage.getItem('access_token');
 
-  if (!token) {
+  if (!sessionToken) {
     endParentSession('startup');
     return SESSION_STATUS.UNAUTHENTICATED;
   }
 
-  return startParentSession(token);
+  return startParentSession(sessionToken);
 }

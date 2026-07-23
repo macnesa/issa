@@ -1,9 +1,11 @@
 const { Student, Attendance, Transaction, Score, Lesson, Class, Teacher, Assignment, Schedule, Activity, sequelize } = require('../models');
+const isEmpty = require('lodash/isEmpty');
+const isNil = require('lodash/isNil');
 
-class StudentController {
-  static async allStudent(req, res, next) {
+class PublicStudentController {
+  static async getClassmates(req, res, next) {
     try {
-      const data = await Student.findAll({
+      const classmates = await Student.findAll({
         where: { ClassId: req.user.classId },
         include: [
           {
@@ -16,14 +18,15 @@ class StudentController {
           },
         ],
       });
-      res.status(200).json(data);
+      res.status(200).json(classmates);
     } catch (error) {
       next(error);
     }
   }
-  static async studentById(req, res, next) {
+  static async getPublicStudentDetail(req, res, next) {
+    void 'ISSA:SERVER.PUBLIC.GET_STUDENT_DETAIL';
     try {
-      const data = await Student.findOne({
+      const student = await Student.findOne({
         where: { id: req.user.studentId },
         include: [
           {
@@ -48,13 +51,13 @@ class StudentController {
           },
         ],
       });
-      if (!data) {
+      if (isNil(student)) {
         throw { name: 'notFound' };
       }
       //   const scoreTask = data.Scores.filter((x) => x.Assignment.type == 'Task').map((y) => {
       //     return y.value * 0.45;
       //   });
-      res.status(200).json(data);
+      res.status(200).json(student);
     } catch (error) {
       next(error);
     }
@@ -62,32 +65,32 @@ class StudentController {
   static async studentlessondetail(req, res, next) {
     try {
       const { day } = req.query;
-      if (!day) throw { name: `notFound` };
+      if (isEmpty(day)) throw { name: `notFound` };
       const data = await Schedule.findAll({ include: { model: Lesson }, where: { day, ClassId: req.user.classId } });
-      if (data.length == 0) throw { name: `notFound` };
+      if (isEmpty(data)) throw { name: `notFound` };
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
       next(error);
     }
   }
-  static async schedules(req, res, next) {
+  static async getPublicClassSchedule(req, res, next) {
     try {
-      const data = await Schedule.findAll({
+      const scheduleEntries = await Schedule.findAll({
         where: { ClassId: req.user.classId },
         include: {
           model: Lesson,
         },
       });
-      res.status(200).json(data);
+      res.status(200).json(scheduleEntries);
     } catch (err) {
       next(err);
     }
   }
-  static async allActivities(req, res, next) {
+  static async getSchoolActivities(req, res, next) {
     try {
-      const data = await Activity.findAll();
-      res.status(200).json(data);
+      const schoolActivities = await Activity.findAll();
+      res.status(200).json(schoolActivities);
     } catch (error) {
       next(error);
     }
@@ -137,4 +140,4 @@ class StudentController {
     }
   }
 }
-module.exports = StudentController;
+module.exports = PublicStudentController;

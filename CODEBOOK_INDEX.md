@@ -1,0 +1,110 @@
+# ISSA Codebook Index
+
+## Client
+
+- `ISSA:CLIENT.ACTIVITY.FETCH_SCHOOL_ACTIVITIES`
+  - `client/src/store/actions/actionCreator.js:153`
+- `ISSA:CLIENT.ATTENDANCE.CALCULATE_SUMMARY`
+  - `client/src/features/student-overview/helpers.js:39`
+- `ISSA:CLIENT.ATTENDANCE.GROUP_HISTORY_BY_MONTH`
+  - `client/src/features/student-overview/helpers.js:49`
+- `ISSA:CLIENT.AUTH.HANDLE_UNAUTHORIZED_RESPONSE`
+  - `client/src/config/apiClient.js:21`
+- `ISSA:CLIENT.AUTH.PARSE_SESSION_TOKEN`
+  - `client/src/utils/session.js:18`
+- `ISSA:CLIENT.AUTH.SUBMIT_PARENT_LOGIN`
+  - `client/src/store/actions/actionCreator.js:42`
+- `ISSA:CLIENT.PROGRESS.BUILD_OVERVIEW`
+  - `client/src/features/progress/helpers.js:41`
+- `ISSA:CLIENT.SCHEDULE.FETCH_CLASS_SCHEDULE`
+  - `client/src/store/actions/actionCreator.js:137`
+- `ISSA:CLIENT.SCHEDULE.MAP_RESPONSE_TO_ENTRIES`
+  - `client/src/mappers/schedule.js:6`
+- `ISSA:CLIENT.SESSION.CHECK_EXPIRATION`
+  - `client/src/utils/session.js:48`
+- `ISSA:CLIENT.SESSION.END_PARENT_SESSION`
+  - `client/src/utils/session.js:91`
+- `ISSA:CLIENT.SESSION.INITIALIZE_PARENT_SESSION`
+  - `client/src/utils/session.js:118`
+- `ISSA:CLIENT.SESSION.START_AND_SCHEDULE_EXPIRATION`
+  - `client/src/utils/session.js:103`
+- `ISSA:CLIENT.STUDENT.BUILD_ACADEMIC_SUMMARY`
+  - `client/src/features/student-overview/helpers.js:81`
+- `ISSA:CLIENT.STUDENT.FETCH_OVERVIEW`
+  - `client/src/store/actions/actionCreator.js:121`
+- `ISSA:CLIENT.STUDENT.MAP_RESPONSE_TO_OVERVIEW`
+  - `client/src/mappers/studentDetail.js:22`
+
+## CMS
+
+- `ISSA:CMS.ATTENDANCE.CREATE_RECORD`
+  - `cms-side/src/store/action/ActionCreator.js:575`
+- `ISSA:CMS.ATTENDANCE.UPDATE_RECORD`
+  - `cms-side/src/store/action/ActionCreator.js:599`
+- `ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION`
+  - `cms-side/src/router/index.jsx:11`
+- `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
+  - `cms-side/src/pages/Login.jsx:17`
+- `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
+  - `cms-side/src/pages/AddStudent.jsx:27`
+- `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
+  - `cms-side/src/pages/AddStudent.jsx:52`
+- `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
+  - `cms-side/src/store/action/ActionCreator.js:625`
+- `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
+  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:37`
+- `ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE`
+  - `cms-side/src/store/action/ActionCreator.js:549`
+- `ISSA:CMS.STUDENT.FETCH_DETAIL`
+  - `cms-side/src/store/action/ActionCreator.js:43`
+- `ISSA:CMS.STUDENT.FETCH_LIST`
+  - `cms-side/src/store/action/ActionCreator.js:9`
+- `ISSA:CMS.STUDENT.UPDATE_RECORD`
+  - `cms-side/src/store/action/ActionCreator.js:115`
+
+## Server
+
+- `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
+  - `server/controllers/attendance.js:83`
+- `ISSA:SERVER.ATTENDANCE.GET_RECORDS`
+  - `server/controllers/attendance.js:61`
+- `ISSA:SERVER.ATTENDANCE.UPDATE_RECORD`
+  - `server/controllers/attendance.js:112`
+- `ISSA:SERVER.ATTENDANCE.VALIDATE_DATE`
+  - `server/controllers/attendance.js:28`
+- `ISSA:SERVER.ATTENDANCE.VALIDATE_STATUS`
+  - `server/controllers/attendance.js:55`
+- `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT`
+  - `server/controllers/userController.js:7`
+- `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT_REQUEST`
+  - `server/middlewares/authentication.js:33`
+- `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER`
+  - `server/controllers/teacherController.js:6`
+- `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER_REQUEST`
+  - `server/middlewares/authentication.js:5`
+- `ISSA:SERVER.AUTH.VERIFY_TOKEN`
+  - `server/helpers/index.js:13`
+- `ISSA:SERVER.FEEDBACK.GET_HISTORY`
+  - `server/controllers/studentController.js:139`
+- `ISSA:SERVER.FEEDBACK.UPDATE_HISTORY`
+  - `server/controllers/studentController.js:178`
+- `ISSA:SERVER.FEEDBACK.VALIDATE_OBSERVED_AT`
+  - `server/controllers/studentController.js:7`
+- `ISSA:SERVER.PUBLIC.GET_STUDENT_DETAIL`
+  - `server/controllers/publicController.js:27`
+- `ISSA:SERVER.SCHEDULE.GET_CLASS_SCHEDULE`
+  - `server/controllers/scheduleController.js:17`
+- `ISSA:SERVER.SCHEDULE.VALIDATE_PAYLOAD`
+  - `server/controllers/scheduleController.js:8`
+- `ISSA:SERVER.SCORE.CALCULATE_STATUS`
+  - `server/controllers/scoreController.js:30`
+- `ISSA:SERVER.SCORE.CREATE_STUDENT_SCORE`
+  - `server/controllers/scoreController.js:42`
+- `ISSA:SERVER.SCORE.UPDATE_STUDENT_SCORE`
+  - `server/controllers/scoreController.js:81`
+- `ISSA:SERVER.SCORE.VALIDATE_VALUE`
+  - `server/controllers/scoreController.js:5`
+- `ISSA:SERVER.STUDENT.GET_DETAIL`
+  - `server/controllers/studentController.js:95`
+- `ISSA:SERVER.STUDENT.GET_LIST`
+  - `server/controllers/studentController.js:30`

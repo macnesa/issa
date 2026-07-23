@@ -1,11 +1,14 @@
-const asRecord = (value) => (value && typeof value === 'object' ? value : {});
+import isPlainObject from 'lodash/isPlainObject';
 
-export function mapSchedule(payload) {
-  if (!Array.isArray(payload)) return [];
+const toPlainObjectRecord = (unknownValue) => (isPlainObject(unknownValue) ? unknownValue : {});
 
-  return payload.map((record) => {
-    const schedule = asRecord(record);
-    const lesson = asRecord(schedule.Lesson);
+export function mapScheduleResponseToEntries(scheduleResponse) {
+  void 'ISSA:CLIENT.SCHEDULE.MAP_RESPONSE_TO_ENTRIES';
+  if (!Array.isArray(scheduleResponse)) return [];
+
+  return scheduleResponse.map((scheduleEntryResponse) => {
+    const schedule = toPlainObjectRecord(scheduleEntryResponse);
+    const lesson = toPlainObjectRecord(schedule.Lesson);
 
     return {
       id: schedule.id ?? null,

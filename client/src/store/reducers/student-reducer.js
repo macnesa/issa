@@ -1,23 +1,23 @@
 import { FETCH_SCHEDULE, FETCH_STATUS, FETCH_SPP, FETCH_STATISTIC, STUDENT_DETAIL_REQUEST, STUDENT_DETAIL_SUCCESS, STUDENT_DETAIL_FAILURE, CLASSMATE_REQUEST, CLASSMATE_SUCCESS, CLASSMATE_FAILURE, CLASS_SCHEDULE_REQUEST, CLASS_SCHEDULE_SUCCESS, CLASS_SCHEDULE_FAILURE, ACTIVITY_REQUEST, ACTIVITY_SUCCESS, ACTIVITY_FAILURE, RESET_PARENT_SESSION } from '../actions/actionTypes'
-import { emptyStudentDetail } from '../../mappers/studentDetail'
+import { emptyStudentOverview } from '../../mappers/studentDetail'
 
-const createResource = (data) => ({ data, loading: false, loaded: false, error: null });
+const createResourceState = (resourceData) => ({ data: resourceData, loading: false, loaded: false, error: null });
 
-const createInitialState = () => ({
+const createInitialStudentState = () => ({
     schedule: [],
-    classmate: createResource([]),
-    studentDetail: createResource(emptyStudentDetail()),
-    classSchedule: createResource([]),
-    activity: createResource([]),
+    classmate: createResourceState([]),
+    studentDetail: createResourceState(emptyStudentOverview()),
+    classSchedule: createResourceState([]),
+    activity: createResourceState([]),
     SPP: [],
     statistic: [],
     casts: [],
     status: [],
 });
 
-const initialState = createInitialState();
+const initialState = createInitialStudentState();
 
-export default function reducer(state = initialState, action) {
+export default function studentReducer(state = initialState, action) {
 
     switch (action.type) {
         case STUDENT_DETAIL_REQUEST:
@@ -80,7 +80,7 @@ export default function reducer(state = initialState, action) {
             return { ...state, activity: { ...state.activity, loading: false, loaded: true, error: action.payload } }
 
         case RESET_PARENT_SESSION:
-            return createInitialState()
+            return createInitialStudentState()
 
         case FETCH_SPP:
             return {

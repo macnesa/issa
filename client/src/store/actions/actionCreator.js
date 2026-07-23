@@ -2,10 +2,11 @@ import { LOADING, COUNTER_INCREMENTER, WRITE_PRODUCTS, WRITE_PRODUCT, WRITE_PROD
 
 import { FETCH_STATUS, FETCH_SCHEDULE, FETCH_SPP, FETCH_STATISTIC, STUDENT_DETAIL_REQUEST, STUDENT_DETAIL_SUCCESS, STUDENT_DETAIL_FAILURE, CLASSMATE_REQUEST, CLASSMATE_SUCCESS, CLASSMATE_FAILURE, CLASS_SCHEDULE_REQUEST, CLASS_SCHEDULE_SUCCESS, CLASS_SCHEDULE_FAILURE, ACTIVITY_REQUEST, ACTIVITY_SUCCESS, ACTIVITY_FAILURE, RESET_PARENT_SESSION } from './actionTypes';
 import apiClient from '../../config/apiClient';
-import { mapStudentDetail } from '../../mappers/studentDetail';
-import { mapSchedule } from '../../mappers/schedule';
+import { mapStudentResponseToOverview } from '../../mappers/studentDetail';
+import { mapScheduleResponseToEntries } from '../../mappers/schedule';
 import normalizeApiError from '../../utils/normalizeApiError';
 import { startParentSession } from '../../utils/session';
+import isNil from 'lodash/isNil';
 
 // export const conterIncremented = (payload) => {
 //   return { type: COUNTER_INCREMENTER, payload }
@@ -37,19 +38,20 @@ export function writeTodayLesson(payload) {
 // FUNCTIONS /////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////
 
-export function act_login(data) {
+export function submitParentLogin(loginCredentials) {
+  void 'ISSA:CLIENT.AUTH.SUBMIT_PARENT_LOGIN';
   return async (dispatch) => {
     try {
-      const { data: response } = await apiClient.post('/users/login', data);
+      const { data: loginResponse } = await apiClient.post('/users/login', loginCredentials);
 
-      localStorage.setItem('access_token', response.access_token);
-      if (response.id !== undefined && response.id !== null) {
-        localStorage.setItem('userId', String(response.id));
+      localStorage.setItem('access_token', loginResponse.access_token);
+      if (!isNil(loginResponse.id)) {
+        localStorage.setItem('userId', String(loginResponse.id));
       }
-      startParentSession(response.access_token);
-      return response;
-    } catch (error) {
-      throw normalizeApiError(error);
+      startParentSession(loginResponse.access_token);
+      return loginResponse;
+    } catch (apiError) {
+      throw normalizeApiError(apiError);
     }
   };
 }
@@ -85,11 +87,6 @@ export const insert_status_redux = (payload) => {
   };
 };
 
-// handle login | logout
-export const handleLogin = (dataLogin) => {
-  return act_login(dataLogin);
-};
-
 //! fetching API
 
 // jadwal pelajaran kelas per hari nya
@@ -120,51 +117,54 @@ export const fetchClassmate = (day) => {
 };
 
 // detail siswa (nama, nilai, kelas dll)
-export const fetchStudentDetail = (day) => {
+export const fetchStudentOverview = () => {
+  void 'ISSA:CLIENT.STUDENT.FETCH_OVERVIEW';
   return async (dispatch) => {
     dispatch({ type: STUDENT_DETAIL_REQUEST });
     try {
-      const { data } = await apiClient.get('/public/detail');
-      dispatch({ type: STUDENT_DETAIL_SUCCESS, payload: mapStudentDetail(data) });
-    } catch (error) {
-      if (error?.response?.status !== 401) {
-        dispatch({ type: STUDENT_DETAIL_FAILURE, payload: normalizeApiError(error) });
+      const { data: studentResponse } = await apiClient.get('/public/detail');
+      dispatch({ type: STUDENT_DETAIL_SUCCESS, payload: mapStudentResponseToOverview(studentResponse) });
+    } catch (apiError) {
+      if (apiError?.response?.status !== 401) {
+        dispatch({ type: STUDENT_DETAIL_FAILURE, payload: normalizeApiError(apiError) });
       }
     }
   };
 };
 
 // jadwal 1 minggu per kelas
-export const fetchClassSchedule = (day) => {
+export const fetchClassSchedule = () => {
+  void 'ISSA:CLIENT.SCHEDULE.FETCH_CLASS_SCHEDULE';
   return async (dispatch) => {
     dispatch({ type: CLASS_SCHEDULE_REQUEST });
     try {
-      const { data } = await apiClient.get('/public/schedule');
-      dispatch({ type: CLASS_SCHEDULE_SUCCESS, payload: mapSchedule(data) });
-    } catch (error) {
-      if (error?.response?.status !== 401) {
-        dispatch({ type: CLASS_SCHEDULE_FAILURE, payload: normalizeApiError(error) });
+      const { data: scheduleResponse } = await apiClient.get('/public/schedule');
+      dispatch({ type: CLASS_SCHEDULE_SUCCESS, payload: mapScheduleResponseToEntries(scheduleResponse) });
+    } catch (apiError) {
+      if (apiError?.response?.status !== 401) {
+        dispatch({ type: CLASS_SCHEDULE_FAILURE, payload: normalizeApiError(apiError) });
       }
     }
   };
 };
 
 // aktifitas satu sekolah
-export const fetchActivity = (day) => {
+export const fetchSchoolActivities = () => {
+  void 'ISSA:CLIENT.ACTIVITY.FETCH_SCHOOL_ACTIVITIES';
   return async (dispatch) => {
     dispatch({ type: ACTIVITY_REQUEST });
     try {
-      const { data } = await apiClient.get('/public/activity');
-      dispatch({ type: ACTIVITY_SUCCESS, payload: Array.isArray(data) ? data : [] });
-    } catch (error) {
-      if (error?.response?.status !== 401) {
-        dispatch({ type: ACTIVITY_FAILURE, payload: normalizeApiError(error) });
+      const { data: activityResponse } = await apiClient.get('/public/activity');
+      dispatch({ type: ACTIVITY_SUCCESS, payload: Array.isArray(activityResponse) ? activityResponse : [] });
+    } catch (apiError) {
+      if (apiError?.response?.status !== 401) {
+        dispatch({ type: ACTIVITY_FAILURE, payload: normalizeApiError(apiError) });
       }
     }
   };
 };
 
-export const resetParentSession = () => ({ type: RESET_PARENT_SESSION });
+export const clearParentAuthenticationState = () => ({ type: RESET_PARENT_SESSION });
 
 // history table pembayaran SPP
 export const fetchSPP = (day) => {

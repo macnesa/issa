@@ -1,82 +1,87 @@
 const { Score, Student, Lesson, Assignment, Class, Teacher, History } = require('../models');
+const isNil = require('lodash/isNil');
 
-function validateValue(value) {
-  if (!Number.isInteger(value) || value < 0 || value > 100) {
+function validateScoreValue(scoreValue) {
+  void 'ISSA:SERVER.SCORE.VALIDATE_VALUE';
+  if (!Number.isInteger(scoreValue) || scoreValue < 0 || scoreValue > 100) {
     throw { name: 'invalidScoreValue' };
   }
 }
 
-function normalizeRecordedAt(value) {
-  if (typeof value !== 'string' || value.trim() === '') {
+function validateScoreRecordedAt(recordedAt) {
+  if (typeof recordedAt !== 'string' || recordedAt.trim() === '') {
     throw { name: 'invalidRecordedAt' };
   }
 
-  const parsed = new Date(value);
+  const parsed = new Date(recordedAt);
   if (Number.isNaN(parsed.getTime())) throw { name: 'invalidRecordedAt' };
   return parsed;
 }
 
-function scoreCategory(value) {
-  if (value >= 85) return 'A';
-  if (value >= 75) return 'B';
-  if (value >= 60) return 'C';
-  if (value >= 50) return 'D';
+function calculateScoreCategory(scoreValue) {
+  if (scoreValue >= 85) return 'A';
+  if (scoreValue >= 75) return 'B';
+  if (scoreValue >= 60) return 'C';
+  if (scoreValue >= 50) return 'D';
   return 'E';
 }
 
-function scoreStatus(value, lesson) {
+function calculateScoreStatus(scoreValue, lesson) {
+  void 'ISSA:SERVER.SCORE.CALCULATE_STATUS';
   const kkm = Number(lesson.KKM);
   if (!Number.isFinite(kkm)) throw { name: 'invalidLessonKkm' };
-  return value >= kkm;
+  return scoreValue >= kkm;
 }
 
-async function findStudentInClass(StudentId, classId) {
-  return Student.findOne({ where: { id: StudentId, ClassId: classId } });
+async function findStudentForClass(studentId, classId) {
+  return Student.findOne({ where: { id: studentId, ClassId: classId } });
 }
 
 class ScoreController {
-  static async addScore(req, res, next) {
+  static async createStudentScore(req, res, next) {
+    void 'ISSA:SERVER.SCORE.CREATE_STUDENT_SCORE';
     try {
       const { StudentId, LessonId, AssignmentId, value, desc, recordedAt } = req.body;
-      validateValue(value);
+      validateScoreValue(value);
 
       const [student, lesson, assignment] = await Promise.all([
-        findStudentInClass(StudentId, req.user.classId),
+        findStudentForClass(StudentId, req.user.classId),
         Lesson.findByPk(LessonId),
         Assignment.findByPk(AssignmentId),
       ]);
-      if (!student || !lesson || !assignment) throw { name: 'notFound' };
+      if (isNil(student) || isNil(lesson) || isNil(assignment)) throw { name: 'notFound' };
 
-      const duplicate = await Score.findOne({
+      const existingScore = await Score.findOne({
         where: { StudentId, LessonId, AssignmentId },
       });
-      if (duplicate) throw { name: 'duplicateScore' };
+      if (existingScore) throw { name: 'duplicateScore' };
 
-      const data = await Score.create({
+      const scoreRecord = await Score.create({
         StudentId,
         LessonId,
         AssignmentId,
         value,
         desc,
-        category: scoreCategory(value),
-        status: scoreStatus(value, lesson),
-        recordedAt: typeof recordedAt === 'undefined' ? new Date() : normalizeRecordedAt(recordedAt),
+        category: calculateScoreCategory(value),
+        status: calculateScoreStatus(value, lesson),
+        recordedAt: typeof recordedAt === 'undefined' ? new Date() : validateScoreRecordedAt(recordedAt),
       });
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
       const history = await History.create({
         description: `Score ${student.name} lesson ${lesson.name} has been created`,
         createdBy: teacherClass.Teacher.name,
       });
-      res.status(201).json({ data, history });
+      res.status(201).json({ data: scoreRecord, history });
     } catch (error) {
       next(error);
     }
   }
 
-  static async editScore(req, res, next) {
+  static async updateStudentScore(req, res, next) {
+    void 'ISSA:SERVER.SCORE.UPDATE_STUDENT_SCORE';
     try {
       const { ScoreId, StudentId, LessonId, AssignmentId, value, recordedAt } = req.body;
-      validateValue(value);
+      validateScoreValue(value);
 
       let score;
       if (ScoreId) {
@@ -86,29 +91,29 @@ class ScoreController {
           where: { StudentId, LessonId, AssignmentId },
         });
       }
-      if (!score) throw { name: 'notFound' };
+      if (isNil(score)) throw { name: 'notFound' };
 
       const [student, lesson, assignment] = await Promise.all([
-        findStudentInClass(score.StudentId, req.user.classId),
+        findStudentForClass(score.StudentId, req.user.classId),
         Lesson.findByPk(score.LessonId),
         Assignment.findByPk(score.AssignmentId),
       ]);
-      if (!student || !lesson || !assignment) throw { name: 'notFound' };
+      if (isNil(student) || isNil(lesson) || isNil(assignment)) throw { name: 'notFound' };
 
       const updates = {
         value,
-        category: scoreCategory(value),
-        status: scoreStatus(value, lesson),
+        category: calculateScoreCategory(value),
+        status: calculateScoreStatus(value, lesson),
       };
-      if (typeof recordedAt !== 'undefined') updates.recordedAt = normalizeRecordedAt(recordedAt);
+      if (typeof recordedAt !== 'undefined') updates.recordedAt = validateScoreRecordedAt(recordedAt);
 
-      const data = await score.update(updates);
+      const updatedScore = await score.update(updates);
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
       const history = await History.create({
         description: `Score ${student.name} lesson ${lesson.name} has been edited`,
         createdBy: teacherClass.Teacher.name,
       });
-      res.status(200).json({ data, history });
+      res.status(200).json({ data: updatedScore, history });
     } catch (error) {
       next(error);
     }

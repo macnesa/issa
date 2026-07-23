@@ -1460,4 +1460,256 @@
   .issa-header__link { padding: 0.62rem 0.72rem; }
 }
 
-@media (prefers-reduced-motion: reduce) { .issa-header__link, .issa-bottom-nav__link, .progress-page__lessons li a { transition: none; } }
+/* Login record access interface. The form and the record cover share one frame. */
+.issa-login {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(180deg, transparent 0, transparent 3.15rem, rgba(107, 191, 188, 0.08) 3.19rem, transparent 3.24rem),
+    linear-gradient(125deg, #eef7f8 0%, #f8fbfc 52%, #f5f0ff 100%);
+}
+
+.issa-login::before {
+  top: auto;
+  bottom: -10rem;
+  left: -8rem;
+  width: 25rem;
+  height: 25rem;
+  border-radius: 50% 45% 55% 48%;
+  background: rgba(199, 225, 235, 0.68);
+  transform: rotate(-22deg);
+}
+
+.issa-login::after {
+  right: -6rem;
+  bottom: auto;
+  top: 4rem;
+  width: 15rem;
+  height: 15rem;
+  border: 1.05rem solid rgba(242, 226, 145, 0.58);
+}
+
+.issa-login__frame {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(100%, 68rem);
+  overflow: hidden;
+  border: 1.5px solid #173e52;
+  border-radius: 1.35rem 1.35rem 3.4rem 1.35rem;
+  background: #fffaf2;
+  box-shadow: 0.85rem 0.95rem 0 rgba(23, 62, 82, 0.14), 0 1.4rem 3.5rem rgba(29, 70, 91, 0.1);
+  animation: login-frame-in 440ms both;
+}
+
+.issa-login__frame::after {
+  position: absolute;
+  z-index: 2;
+  top: clamp(8.7rem, 26%, 11rem);
+  left: calc(42% - 0.35rem);
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 0.18rem solid #fffaf2;
+  border-radius: 999px;
+  background: #6bbfbc;
+  content: "";
+}
+
+.issa-login__record {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: 2.4rem;
+  background-color: #1c4d63;
+  background-image:
+    radial-gradient(circle at 22% 22%, rgba(199, 225, 235, 0.22) 0 0.12rem, transparent 0.15rem),
+    linear-gradient(135deg, #0e2a3a, #265367);
+  background-size: 0.72rem 0.72rem, auto;
+  color: white;
+}
+
+.issa-login__record::before {
+  position: absolute;
+  top: 1.45rem;
+  bottom: 1.45rem;
+  left: 1.35rem;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, #f2e291 17%, #f2e291 82%, transparent);
+  content: "";
+}
+
+.issa-login__record::after {
+  position: absolute;
+  right: -3.6rem;
+  bottom: -4rem;
+  width: 13.5rem;
+  height: 13.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.29);
+  border-radius: 48% 52% 38% 62%;
+  background: rgba(107, 191, 188, 0.14);
+  content: "";
+  transform: rotate(18deg);
+}
+
+.issa-login__seal {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 5.15rem;
+  height: 2.55rem;
+  margin-left: 0.7rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0.58rem 0.58rem 1rem 0.3rem;
+  background: rgba(14, 42, 58, 0.46);
+  box-shadow: 0.28rem 0.3rem 0 rgba(242, 226, 145, 0.72);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.issa-login__record .issa-login__kicker {
+  position: relative;
+  z-index: 1;
+  margin: 3.4rem 0 0 0.7rem;
+  color: #c7e1eb;
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.issa-login__record h2 {
+  position: relative;
+  z-index: 1;
+  max-width: 19rem;
+  margin: 0.45rem 0 0 0.7rem;
+  color: white;
+  font-size: clamp(1.75rem, 3vw, 2.55rem);
+  font-weight: 850;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+
+.issa-login__record > p:last-child {
+  position: relative;
+  z-index: 1;
+  max-width: 17rem;
+  margin: 1rem 0 0 0.7rem;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.issa-login__form {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  gap: 1.15rem;
+  min-width: 0;
+  overflow: visible;
+  padding: 2.65rem clamp(2rem, 5vw, 4.2rem);
+  border: 0;
+  border-left: 1px solid #c8dce7;
+  border-radius: 0;
+  background: #fffaf2;
+  box-shadow: none;
+  animation: login-form-in 460ms 70ms both;
+}
+
+.issa-login__form::before { display: none; }
+
+.issa-login__form-heading { padding-left: 0.95rem; border-left: 0.28rem solid #6bbfbc; }
+.issa-login__form-kicker { margin: 0; color: #356d8d; font-size: 0.72rem; font-weight: 850; letter-spacing: 0.15em; text-transform: uppercase; }
+.issa-login__form .page-title { margin: 0.3rem 0 0; font-size: clamp(1.7rem, 3.2vw, 2.2rem); }
+.issa-login__form .page-supporting-text { margin: 0.45rem 0 0; }
+
+.issa-login__fields { display: grid; gap: 0.88rem; }
+.issa-login .form-label { color: #315f62; }
+.issa-login .form-input { border-color: #c8dce7; border-radius: 0.72rem 0.4rem 0.72rem 0.4rem; background: #fff; padding: 0.7rem 0.78rem; }
+.issa-login .form-input:focus { border-color: #356d8d; box-shadow: 0 0 0 3px rgba(107, 191, 188, 0.25); }
+
+.issa-login__message { min-height: 0; }
+.issa-login__message p { margin: 0; border-radius: 0.72rem 0.4rem 0.72rem 0.4rem; }
+
+.issa-login__role {
+  min-height: 3rem;
+  border-color: #bfd8e2;
+  border-radius: 0.72rem 0.4rem 0.72rem 0.4rem;
+  background: #f6fbfc;
+}
+
+.issa-login__privacy { margin: 0; color: var(--issa-text-muted); font-size: 0.72rem; line-height: 1.5; text-align: center; }
+.issa-login .primary-button { min-height: 2.8rem; border-radius: 0.72rem 0.4rem 0.72rem 0.4rem; background: #245b70; box-shadow: 0.22rem 0.24rem 0 rgba(23, 62, 82, 0.15); }
+.issa-login .primary-button:hover { background: #173e52; }
+
+@keyframes login-frame-in {
+  from { opacity: 0; transform: translateY(0.75rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes login-form-in {
+  from { opacity: 0; transform: translateX(0.65rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (min-width: 768px) {
+  .issa-login__frame { grid-template-columns: minmax(0, 0.83fr) minmax(25rem, 1.17fr); min-height: 33rem; }
+  .issa-login__record { padding: 2.8rem; }
+  .issa-login__role-check {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    appearance: none;
+    border: 1px solid #71808a;
+    border-radius: 999px;
+    background: #fff;
+  }
+  .issa-login__role-check:checked { border-color: #245b70; box-shadow: inset 0 0 0 0.23rem #245b70; }
+  .issa-login__role-check:focus-visible { outline: 3px solid rgba(107, 191, 188, 0.42); outline-offset: 2px; }
+}
+
+@media (max-width: 767px) {
+  .issa-login { min-height: 0 !important; align-items: start; padding: 0.75rem 0.9rem 1rem; }
+  .issa-login::before { bottom: -9.5rem; left: -11rem; width: 20rem; height: 20rem; }
+  .issa-login::after { top: auto; right: -6rem; bottom: -4rem; width: 10rem; height: 10rem; }
+  .issa-login__frame { grid-template-columns: minmax(0, 1fr); width: min(100%, 31rem); border-radius: 1rem 1rem 2.5rem 1rem; box-shadow: 0.55rem 0.62rem 0 rgba(23, 62, 82, 0.12); }
+  .issa-login__frame::after { top: 6.65rem; left: auto; right: 1.15rem; width: 0.5rem; height: 0.5rem; }
+  .issa-login__record { min-height: 7.1rem; padding: 0.68rem 1.18rem 0.62rem; }
+  .issa-login__record::before { top: 0.62rem; bottom: 0.62rem; left: 0.64rem; }
+  .issa-login__record::after { right: -4.8rem; bottom: -7.3rem; width: 9.5rem; height: 9.5rem; }
+  .issa-login__seal { width: 3.72rem; height: 1.65rem; margin-left: 0.2rem; font-size: 0.58rem; }
+  .issa-login__record .issa-login__kicker { margin: 0.48rem 0 0 0.2rem; font-size: 0.55rem; letter-spacing: 0.13em; }
+  .issa-login__record h2 { max-width: 18rem; margin: 0.18rem 0 0 0.2rem; font-size: clamp(1.25rem, 5.8vw, 1.42rem); line-height: 1; }
+  .issa-login__record > p:last-child { display: block; max-width: none; margin: 0.22rem 0 0 0.2rem; font-size: clamp(0.58rem, 2.5vw, 0.64rem); line-height: 1.25; white-space: nowrap; }
+  .issa-login__form { gap: 0.76rem; padding: 1rem 1.2rem 0.98rem; border-top: 1px solid #c8dce7; border-left: 0; }
+  .issa-login__form-heading { padding-left: 0.7rem; }
+  .issa-login__form-kicker { font-size: 0.61rem; letter-spacing: 0.13em; }
+  .issa-login__form .page-title { margin-top: 0.22rem; font-size: clamp(1.875rem, 7.7vw, 1.98rem); line-height: 1.04; }
+  .issa-login__form .page-supporting-text { margin-top: 0.3rem; font-size: 0.94rem; line-height: 1.38; }
+  .issa-login__fields { gap: 0.68rem; }
+  .issa-login .form-label { font-size: 0.84rem; }
+  .issa-login .form-input { min-height: 3.5rem; padding: 0.66rem 0.78rem; font-size: 0.95rem; }
+  .issa-login__message { min-height: 0; }
+  .issa-login__role { min-height: 2.75rem; padding-top: 0.56rem; padding-bottom: 0.56rem; font-size: 0.85rem; }
+  .issa-login__role-check { flex: 0 0 auto; width: 1.08rem; height: 1.08rem; border-radius: 0.28rem; accent-color: #245b70; }
+  .issa-login__role-check:focus-visible { outline: 3px solid rgba(107, 191, 188, 0.42); outline-offset: 2px; }
+  .issa-login__privacy { font-size: 0.66rem; line-height: 1.42; }
+  .issa-login .primary-button { min-height: 3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .issa-header__link,
+  .issa-bottom-nav__link,
+  .progress-page__lessons li a,
+  .issa-login__frame,
+  .issa-login__form {
+    transition: none;
+    animation: none;
+  }
+}

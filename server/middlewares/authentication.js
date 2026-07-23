@@ -1,26 +1,27 @@
-const { decodeToken } = require('../helpers');
+const { verifyAuthenticationToken } = require('../helpers');
 const { Teacher, User, Student, Class } = require('../models');
 
-async function teacherAuth(req, res, next) {
+async function authenticateTeacherRequest(req, res, next) {
+  void 'ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER_REQUEST';
   try {
-    let { access_token } = req.headers;
-    if (!access_token) throw { name: `unAuthentication` };
+    const { access_token: authenticationToken } = req.headers;
+    if (!authenticationToken) throw { name: `unAuthentication` };
 
-    let payload = decodeToken(access_token);
-    if (payload.role !== 'teacher' || !payload.teacherId || !payload.classId) {
+    const authenticationTokenPayload = verifyAuthenticationToken(authenticationToken);
+    if (authenticationTokenPayload.role !== 'teacher' || !authenticationTokenPayload.teacherId || !authenticationTokenPayload.classId) {
       throw { name: 'unAuthentication' };
     }
 
-    let teacher = await Teacher.findByPk(payload.teacherId);
-    if (!teacher) throw { name: `unAuthentication` };
-    let teacherClass = await Class.findOne({
-      where: { id: payload.classId, TeacherId: teacher.id },
+    const authenticatedTeacher = await Teacher.findByPk(authenticationTokenPayload.teacherId);
+    if (!authenticatedTeacher) throw { name: `unAuthentication` };
+    const authenticatedTeacherClass = await Class.findOne({
+      where: { id: authenticationTokenPayload.classId, TeacherId: authenticatedTeacher.id },
     });
-    if (!teacherClass) throw { name: 'notFound' };
+    if (!authenticatedTeacherClass) throw { name: 'notFound' };
 
     req.user = {
-      teacherId: teacher.id,
-      classId: teacherClass.id,
+      teacherId: authenticatedTeacher.id,
+      classId: authenticatedTeacherClass.id,
       role: 'teacher',
     };
     next();
@@ -28,25 +29,26 @@ async function teacherAuth(req, res, next) {
     next(error);
   }
 }
-async function userAuth(req, res, next) {
+async function authenticateParentRequest(req, res, next) {
+  void 'ISSA:SERVER.AUTH.AUTHENTICATE_PARENT_REQUEST';
   try {
-    let { access_token } = req.headers;
-    if (!access_token) throw { name: `unAuthentication` };
+    const { access_token: authenticationToken } = req.headers;
+    if (!authenticationToken) throw { name: `unAuthentication` };
 
-    let payload = decodeToken(access_token);
-    if (payload.role !== 'parent' || !payload.userId || !payload.studentId) {
+    const authenticationTokenPayload = verifyAuthenticationToken(authenticationToken);
+    if (authenticationTokenPayload.role !== 'parent' || !authenticationTokenPayload.userId || !authenticationTokenPayload.studentId) {
       throw { name: 'unAuthentication' };
     }
 
-    let user = await User.findByPk(payload.userId);
-    if (!user || user.StudentId !== payload.studentId) throw { name: `unAuthentication` };
-    let student = await Student.findByPk(payload.studentId);
-    if (!student) throw { name: `unAuthentication` };
+    const authenticatedParent = await User.findByPk(authenticationTokenPayload.userId);
+    if (!authenticatedParent || authenticatedParent.StudentId !== authenticationTokenPayload.studentId) throw { name: `unAuthentication` };
+    const authenticatedStudent = await Student.findByPk(authenticationTokenPayload.studentId);
+    if (!authenticatedStudent) throw { name: `unAuthentication` };
 
     req.user = {
-      userId: user.id,
-      studentId: student.id,
-      classId: student.ClassId,
+      userId: authenticatedParent.id,
+      studentId: authenticatedStudent.id,
+      classId: authenticatedStudent.ClassId,
       role: 'parent',
     };
     next();
@@ -55,4 +57,4 @@ async function userAuth(req, res, next) {
   }
 }
 
-module.exports = { teacherAuth, userAuth };
+module.exports = { authenticateTeacherRequest, authenticateParentRequest };

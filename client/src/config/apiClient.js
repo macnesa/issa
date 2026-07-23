@@ -4,28 +4,29 @@ import { endParentSession } from '../utils/session';
 
 const apiClient = axios.create({ baseURL });
 
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use((requestConfig) => {
   const token = localStorage.getItem('access_token');
 
   if (token) {
-    config.headers = config.headers || {};
-    config.headers.access_token = token;
+    requestConfig.headers = requestConfig.headers || {};
+    requestConfig.headers.access_token = token;
   }
 
-  return config;
+  return requestConfig;
 });
 
 apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const requestUrl = error?.config?.url || '';
+  (apiResponse) => apiResponse,
+  (apiError) => {
+    void 'ISSA:CLIENT.AUTH.HANDLE_UNAUTHORIZED_RESPONSE';
+    const requestUrl = apiError?.config?.url || '';
     const isLoginRequest = requestUrl === '/users/login' || requestUrl.endsWith('/users/login');
 
-    if (error?.response?.status === 401 && !isLoginRequest) {
+    if (apiError?.response?.status === 401 && !isLoginRequest) {
       endParentSession('expired');
     }
 
-    return Promise.reject(error);
+    return Promise.reject(apiError);
   }
 );
 

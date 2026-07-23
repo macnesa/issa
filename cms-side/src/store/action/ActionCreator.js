@@ -5,9 +5,10 @@ import baseUrl from '../../config/api';
 
 // STUDENT ONLY //
 
-export const studentsFetch = (query = {}, pageIndex) => {
+export const fetchStudentList = (studentSearchQuery = {}, pageIndex) => {
+  void 'ISSA:CMS.STUDENT.FETCH_LIST';
   const params = new URLSearchParams();
-  if (query.name?.trim()) params.set('name', query.name.trim());
+  if (studentSearchQuery.name?.trim()) params.set('name', studentSearchQuery.name.trim());
   if (pageIndex) params.set('pageIndex', pageIndex);
   const url = `${baseUrl}/students${params.toString() ? `?${params.toString()}` : ''}`;
 
@@ -23,24 +24,25 @@ export const studentsFetch = (query = {}, pageIndex) => {
         }
         return response.json();
       })
-      .then((data) => {
-        dispatch(studentsFetchSuccess(data));
-        return data;
+      .then((studentListResponse) => {
+        dispatch(storeStudentList(studentListResponse));
+        return studentListResponse;
       })
       .catch((error) => Promise.reject(error));
   };
 };
 
-export const studentsFetchSuccess = (payload) => {
+export const storeStudentList = (studentListResponse) => {
   return {
     type: FETCH_STUDENT,
-    payload: payload,
+    payload: studentListResponse,
   };
 };
 
-export const studentById = (id) => {
+export const fetchStudentDetail = (studentId) => {
+  void 'ISSA:CMS.STUDENT.FETCH_DETAIL';
   return (dispatch, getState) => {
-    return fetch(`${baseUrl}/students/${id}`, {
+    return fetch(`${baseUrl}/students/${studentId}`, {
       method: 'GET',
       headers: {
         access_token: localStorage.access_token,
@@ -51,18 +53,18 @@ export const studentById = (id) => {
         if (!response.ok) throw new Error(data.msg || 'Student tidak dapat dimuat.');
         return data;
       })
-      .then((data) => {
-        dispatch(studentFetchSuccessById(data));
-        return data;
+      .then((studentDetailResponse) => {
+        dispatch(storeStudentDetail(studentDetailResponse));
+        return studentDetailResponse;
       })
       .catch((error) => Promise.reject(error));
   };
 };
 
-export const studentFetchSuccessById = (payload) => {
+export const storeStudentDetail = (studentDetailResponse) => {
   return {
     type: FETCH_STUDENT_BYID,
-    payload: payload,
+    payload: studentDetailResponse,
   };
 };
 
@@ -95,7 +97,7 @@ export const studentAdd = (payload) => {
         //   showConfirmButton: false,
         //   timer: 1500,
         // });
-        dispatch(studentsFetch());
+        dispatch(fetchStudentList());
         console.log('masuk nih');
       })
       .catch((error) => {
@@ -109,25 +111,26 @@ export const studentAdd = (payload) => {
   };
 };
 
-export const editStudent = (id, payload) => {
+export const updateStudentRecord = (studentId, studentUpdatePayload) => {
+  void 'ISSA:CMS.STUDENT.UPDATE_RECORD';
   return (dispatch, getState) => {
-    return fetch(`${baseUrl}/students/${id}`, {
+    return fetch(`${baseUrl}/students/${studentId}`, {
       method: 'PUT',
       headers: {
         access_token: localStorage.access_token,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(studentUpdatePayload),
     })
       .then(async (response) => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.msg || 'Unable to update student');
         return data;
       })
-      .then((data) => {
-        dispatch(studentFetchSuccessById(data.data));
-        dispatch(studentsFetch());
-        return data;
+      .then((studentUpdateResponse) => {
+        dispatch(storeStudentDetail(studentUpdateResponse.data));
+        dispatch(fetchStudentList());
+        return studentUpdateResponse;
       })
       .catch((error) => Promise.reject(error));
   };
@@ -149,7 +152,7 @@ export const studentDelete = (id) => {
       })
       .then((data) => {
         // console.log("Success:", data);
-        dispatch(studentsFetch());
+        dispatch(fetchStudentList());
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -542,7 +545,8 @@ export const lessonDelete = (id) => {
 
 // ONLY SCORES //
 
-export const editScores = (id, payload) => {
+export const updateStudentScore = (studentId, scoreUpdatePayload) => {
+  void 'ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE';
   return (dispatch, getState) => {
     return fetch(`${baseUrl}/scores`, {
       method: 'PUT',
@@ -550,7 +554,7 @@ export const editScores = (id, payload) => {
         access_token: localStorage.access_token,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(scoreUpdatePayload),
     })
       .then(async (response) => {
         const data = await response.json();
@@ -558,7 +562,7 @@ export const editScores = (id, payload) => {
         return data;
       })
       .then((data) => {
-        dispatch(studentById(id));
+        dispatch(fetchStudentDetail(studentId));
         return data;
       })
       .catch((error) => Promise.reject(error));
@@ -567,7 +571,8 @@ export const editScores = (id, payload) => {
 
 // ATTENDANCE ONLY //
 
-export const addAttendances = (payload) => {
+export const createAttendanceRecord = (attendancePayload) => {
+  void 'ISSA:CMS.ATTENDANCE.CREATE_RECORD';
   return (dispatch, getState) => {
     return fetch(`${baseUrl}/attendances`, {
       method: 'POST',
@@ -575,7 +580,7 @@ export const addAttendances = (payload) => {
         'Content-Type': 'application/json',
         access_token: localStorage.access_token,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(attendancePayload),
     })
       .then(async (response) => {
         const data = await response.json();
@@ -583,14 +588,15 @@ export const addAttendances = (payload) => {
         return data;
       })
       .then((data) => {
-        dispatch(studentsFetch());
+        dispatch(fetchStudentList());
         return data;
       })
       .catch((error) => Promise.reject(error));
   };
 };
 
-export const editAttendance = (payload) => {
+export const updateAttendanceRecord = (attendancePayload) => {
+  void 'ISSA:CMS.ATTENDANCE.UPDATE_RECORD';
   return (dispatch, getState) => {
     return fetch(`${baseUrl}/attendances`, {
       method: 'PUT',
@@ -598,7 +604,7 @@ export const editAttendance = (payload) => {
         access_token: localStorage.access_token,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(attendancePayload),
     })
       .then(async (response) => {
         const data = await response.json();
@@ -606,7 +612,7 @@ export const editAttendance = (payload) => {
         return data;
       })
       .then((data) => {
-        dispatch(studentsFetch());
+        dispatch(fetchStudentList());
         return data;
       })
       .catch((error) => Promise.reject(error));
@@ -615,7 +621,8 @@ export const editAttendance = (payload) => {
 
 // SCHEDULE ONLY //
 
-export const scheduleFetch = (payload) => {
+export const fetchClassSchedule = () => {
+  void 'ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE';
   return (dispatch, getState) => {
     return fetch(`${baseUrl}/schedules`, {
       headers: {
@@ -703,7 +710,7 @@ export const addSchedule = (payload) => {
         //   showConfirmButton: false,
         //   timer: 1500,
         // });
-        dispatch(scheduleFetch());
+        dispatch(fetchClassSchedule());
         // console.log("masuk nih");
       })
       .catch((error) => {
@@ -735,7 +742,7 @@ export const editSchedule = (payload, id) => {
       })
       .then((data) => {
         // console.log("Success:", data);
-        dispatch(scheduleFetch());
+        dispatch(fetchClassSchedule());
       })
       .catch((error) => {
         // console.error("Error:", error);
@@ -759,7 +766,7 @@ export const scheduleDelete = (id) => {
       })
       .then((data) => {
         // console.log("Success:", data);
-        dispatch(scheduleFetch());
+        dispatch(fetchClassSchedule());
       })
       .catch((error) => {
         console.error('Error:', error);

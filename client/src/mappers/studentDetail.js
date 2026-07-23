@@ -1,4 +1,7 @@
-const createEmptyStudentDetail = () => ({
+import isNil from 'lodash/isNil';
+import isPlainObject from 'lodash/isPlainObject';
+
+const createEmptyStudentOverview = () => ({
   profile: {
     id: null,
     name: '',
@@ -13,12 +16,13 @@ const createEmptyStudentDetail = () => ({
   scores: [],
 });
 
-const asRecord = (value) => (value && typeof value === 'object' ? value : {});
+const toPlainObjectRecord = (unknownValue) => (isPlainObject(unknownValue) ? unknownValue : {});
 
-export function mapStudentDetail(payload) {
-  const student = asRecord(payload);
-  const classroom = asRecord(student.Class);
-  const teacher = asRecord(classroom.Teacher);
+export function mapStudentResponseToOverview(studentResponse) {
+  void 'ISSA:CLIENT.STUDENT.MAP_RESPONSE_TO_OVERVIEW';
+  const student = toPlainObjectRecord(studentResponse);
+  const classroom = toPlainObjectRecord(student.Class);
+  const teacher = toPlainObjectRecord(classroom.Teacher);
   const attendance = Array.isArray(student.Attendances) ? student.Attendances : [];
   const scores = Array.isArray(student.Scores) ? student.Scores : [];
 
@@ -33,33 +37,33 @@ export function mapStudentDetail(payload) {
       className: classroom.name ?? '',
       teacherName: teacher.name ?? '',
     },
-    attendance: attendance.map((record) => {
-      const item = asRecord(record);
+    attendance: attendance.map((attendanceResponse) => {
+      const attendanceRecord = toPlainObjectRecord(attendanceResponse);
 
       return {
-        id: item.id ?? null,
-        status: item.status ?? '',
-        createdAt: item.createdAt ?? null,
+        id: attendanceRecord.id ?? null,
+        status: attendanceRecord.status ?? '',
+        createdAt: attendanceRecord.createdAt ?? null,
       };
     }),
-    scores: scores.map((record) => {
-      const score = asRecord(record);
-      const lesson = asRecord(score.Lesson);
-      const assignment = asRecord(score.Assignment);
-      const value = Number(score.value);
+    scores: scores.map((scoreResponse) => {
+      const score = toPlainObjectRecord(scoreResponse);
+      const lesson = toPlainObjectRecord(score.Lesson);
+      const assignment = toPlainObjectRecord(score.Assignment);
+      const scoreValue = Number(score.value);
       const rawKkm = lesson.KKM;
-      const kkm = rawKkm === null || rawKkm === undefined || rawKkm === ''
+      const kkm = isNil(rawKkm) || rawKkm === ''
         ? null
         : Number(rawKkm);
       const rawStatus = String(score.status ?? '').toLowerCase();
       const passedFromStatus = rawStatus === 'lulus' || rawStatus === 'passed';
-      const passedFromValue = Number.isFinite(value) && Number.isFinite(kkm) && value >= kkm;
+      const passedFromValue = Number.isFinite(scoreValue) && Number.isFinite(kkm) && scoreValue >= kkm;
 
       return {
         id: score.id ?? null,
         lessonId: score.LessonId ?? lesson.id ?? null,
         assignmentId: score.AssignmentId ?? assignment.id ?? null,
-        value: Number.isFinite(value) ? value : null,
+        value: Number.isFinite(scoreValue) ? scoreValue : null,
         category: score.category ?? '',
         passed: passedFromStatus || passedFromValue,
         recordedAt: score.createdAt ?? null,
@@ -77,4 +81,4 @@ export function mapStudentDetail(payload) {
   };
 }
 
-export const emptyStudentDetail = createEmptyStudentDetail;
+export const emptyStudentOverview = createEmptyStudentOverview;

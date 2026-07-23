@@ -1,29 +1,30 @@
-const { compareHash, createToken } = require('../helpers');
+const { isPasswordMatch, createToken } = require('../helpers');
 const { Teacher, Class, History } = require('../models');
 
 class TeacherController {
-  static async login(req, res, next) {
+  static async authenticateTeacher(req, res, next) {
+    void 'ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER';
     try {
       const { NIP, password } = req.body;
       if (!NIP || !password) throw { name: `loginError` };
 
-      const data = await Teacher.findOne({ where: { NIP } });
-      if (!data) {
+      const teacher = await Teacher.findOne({ where: { NIP } });
+      if (!teacher) {
         throw { name: 'loginError' };
       }
 
-      const kelas = await Class.findOne({ where: { TeacherId: data.id } });
-      if (!kelas) throw { name: 'notFound' };
+      const teacherClass = await Class.findOne({ where: { TeacherId: teacher.id } });
+      if (!teacherClass) throw { name: 'notFound' };
 
-      const isValid = compareHash(password, data.password);
-      if (!isValid) throw { name: 'loginError' };
+      const isPasswordValid = isPasswordMatch(password, teacher.password);
+      if (!isPasswordValid) throw { name: 'loginError' };
 
       const access_token = createToken({
         role: 'teacher',
-        teacherId: data.id,
-        classId: kelas.id,
+        teacherId: teacher.id,
+        classId: teacherClass.id,
       });
-      res.status(200).json({ id: data.id, access_token, ClassId: kelas.id });
+      res.status(200).json({ id: teacher.id, access_token, ClassId: teacherClass.id });
     } catch (error) {
       next(error);
     }
@@ -43,13 +44,13 @@ class TeacherController {
     }
   }
 
-  static async allTeacher(req, res, next) {
+  static async getTeacherList(req, res, next) {
     try {
-      const data = await Teacher.findAll({
+      const teachers = await Teacher.findAll({
         attributes: { exclude: ['password'] },
       });
 
-      res.status(200).json(data);
+      res.status(200).json(teachers);
     } catch (error) {
       next(error);
     }

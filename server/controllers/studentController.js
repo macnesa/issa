@@ -1,31 +1,35 @@
 const { Student, Attendance, Score, Lesson, Class, Teacher, Assignment, History, StudentFeedback, sequelize } = require('../models');
 const { Sequelize, Op } = require("sequelize");
+const isEqual = require('lodash/isEqual');
+const isNil = require('lodash/isNil');
 
-function normalizeObservedAt(value) {
-  if (typeof value !== 'string' || !value.trim()) throw { name: 'invalidObservedAt' };
+function validateObservedAt(observedAt) {
+  void 'ISSA:SERVER.FEEDBACK.VALIDATE_OBSERVED_AT';
+  if (typeof observedAt !== 'string' || !observedAt.trim()) throw { name: 'invalidObservedAt' };
 
-  const input = value.trim();
+  const observedAtInput = observedAt.trim();
   const isoDate = /^\d{4}-\d{2}-\d{2}$/;
   const isoDateTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/;
-  if (!isoDate.test(input) && !isoDateTime.test(input)) throw { name: 'invalidObservedAt' };
+  if (!isoDate.test(observedAtInput) && !isoDateTime.test(observedAtInput)) throw { name: 'invalidObservedAt' };
 
-  const date = new Date(input);
-  if (Number.isNaN(date.getTime())) throw { name: 'invalidObservedAt' };
+  const parsedObservedAt = new Date(observedAtInput);
+  if (Number.isNaN(parsedObservedAt.getTime())) throw { name: 'invalidObservedAt' };
 
-  if (isoDate.test(input)) {
-    const [year, month, day] = input.split('-').map(Number);
-    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) {
+  if (isoDate.test(observedAtInput)) {
+    const [year, month, day] = observedAtInput.split('-').map(Number);
+    if (parsedObservedAt.getUTCFullYear() !== year || parsedObservedAt.getUTCMonth() + 1 !== month || parsedObservedAt.getUTCDate() !== day) {
       throw { name: 'invalidObservedAt' };
     }
   }
 
-  return date;
+  return parsedObservedAt;
 }
 
 class StudentController {
-  static async allStudents(req, res, next) {
+  static async getStudentList(req, res, next) {
+    void 'ISSA:SERVER.STUDENT.GET_LIST';
     const { pageIndex, name } = req.query;
-    const paramQuerySQL = {
+    const studentListQuery = {
       where: { ClassId: req.user.classId },
       include: [
         {
@@ -52,8 +56,8 @@ class StudentController {
     let offset;
     let pageSize = 7;
 
-    if (name !== "" && typeof name !== "undefined") {
-      paramQuerySQL.where.name = { [Op.iLike]: `%${name}%` };
+    if (name !== "" && !isNil(name)) {
+      studentListQuery.where.name = { [Op.iLike]: `%${name}%` };
     }
 
 
@@ -61,37 +65,38 @@ class StudentController {
     if (pageSize !== '' && typeof pageSize !== 'undefined') {
       if (pageSize !== '' && typeof pageSize !== 'undefined') {
         limit = pageSize;
-        paramQuerySQL.limit = limit;
+        studentListQuery.limit = limit;
       }
 
       if (pageIndex !== '' && typeof pageIndex !== 'undefined') {
         offset = pageIndex * limit - limit;
-        paramQuerySQL.offset = offset;
+        studentListQuery.offset = offset;
       }
     } else {
       limit = 5 // limit 5 item
       offset = 1;
-      paramQuerySQL.limit = limit;
-      paramQuerySQL.offset = offset;
+      studentListQuery.limit = limit;
+      studentListQuery.offset = offset;
     }
 
     try {
 
-      const data = await Student.findAndCountAll(paramQuerySQL)
+      const studentList = await Student.findAndCountAll(studentListQuery)
       if (pageSize || pageIndex) {
-        data.page = pageIndex
-        data.totalPages = Math.ceil(data.count / pageSize)
+        studentList.page = pageIndex
+        studentList.totalPages = Math.ceil(studentList.count / pageSize)
       }
-      res.status(200).json(data);
+      res.status(200).json(studentList);
     } catch (error) {
       next(error);
     }
   }
-  static async studentById(req, res, next) {
+  static async getStudentDetail(req, res, next) {
+    void 'ISSA:SERVER.STUDENT.GET_DETAIL';
     try {
-      const id = req.params.id;
-      const data = await Student.findOne({
-        where: { id, ClassId: req.user.classId },
+      const studentId = req.params.id;
+      const student = await Student.findOne({
+        where: { id: studentId, ClassId: req.user.classId },
         include: [
           {
             model: Attendance,
@@ -109,37 +114,38 @@ class StudentController {
           },
         ],
       });
-      if (!data) {
+      if (isNil(student)) {
         throw { name: 'notFound' };
       }
       // const scoreExam = data.Scores.filter((x) => x.Assignment.type == 'Exam').map((y) => {
       //   return y.value * 0.45;
       // });
       // console.log(scoreExam);
-      const scoreTask = data.Scores.filter((x) => x.Assignment.type == 'Task').map((y) => {
-        return y.value * 0.45;
+      const taskScoreWeights = student.Scores.filter((scoreRecord) => scoreRecord.Assignment.type == 'Task').map((scoreRecord) => {
+        return scoreRecord.value * 0.45;
       });
-      console.log(scoreTask);
+      console.log(taskScoreWeights);
       // const scoreExam = data.Scores.filter((x) => x.assignmentType == 'Exam').map((y) => {
       //   return y.value * 0.45;
       // });
       // console.log(scoreExam);
 
-      res.status(200).json(data);
+      res.status(200).json(student);
     } catch (error) {
       next(error);
     }
   }
-  static async feedbackHistory(req, res, next) {
+  static async getStudentFeedbackHistory(req, res, next) {
+    void 'ISSA:SERVER.FEEDBACK.GET_HISTORY';
     try {
-      const id = req.params.id;
+      const studentId = req.params.id;
       const student = await Student.findOne({
-        where: { id, ClassId: req.user.classId },
+        where: { id: studentId, ClassId: req.user.classId },
         attributes: ['id'],
       });
-      if (!student) throw { name: 'notFound' };
+      if (isNil(student)) throw { name: 'notFound' };
 
-      const data = await StudentFeedback.findAll({
+      const feedbackHistory = await StudentFeedback.findAll({
         where: { StudentId: student.id },
         attributes: ['id', 'content', 'observedAt', 'createdAt'],
         include: {
@@ -148,19 +154,19 @@ class StudentController {
         },
         order: [['observedAt', 'DESC'], ['createdAt', 'DESC']],
       });
-      res.status(200).json(data);
+      res.status(200).json(feedbackHistory);
     } catch (error) {
       next(error);
     }
   }
-  static async addStudent(req, res, next) {
+  static async createStudent(req, res, next) {
     try {
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
 
       const { NIM, name, age, gender, birthDate, feedback, imgUrl } = req.body;
-      const data = await Student.create({ NIM, name, age, gender, birthDate, feedback, ClassId: teacherClass.id, imgUrl });
-      const history = await History.create({ description: `student with name ${data.name} has been created`, createdBy: teacherClass.Teacher.name })
-      res.status(201).json({ data, history });
+      const student = await Student.create({ NIM, name, age, gender, birthDate, feedback, ClassId: teacherClass.id, imgUrl });
+      const history = await History.create({ description: `student with name ${student.name} has been created`, createdBy: teacherClass.Teacher.name })
+      res.status(201).json({ data: student, history });
     } catch (error) {
       next(error);
     }
@@ -168,15 +174,16 @@ class StudentController {
   static async deleteStudent(req, res, next) {
     return res.status(403).json({ msg: 'Student deletion is disabled for demo' });
   }
-  static async editStudent(req, res, next) {
+  static async updateStudent(req, res, next) {
+    void 'ISSA:SERVER.FEEDBACK.UPDATE_HISTORY';
     try {
       const teacherClass = await Class.findByPk(req.user.classId, { include: Teacher });
-      const id = req.params.id;
-      const check = await Student.findOne({ where: { id, ClassId: req.user.classId } });
-      if (!check) throw { name: `notFound` };
+      const studentId = req.params.id;
+      const existingStudent = await Student.findOne({ where: { id: studentId, ClassId: req.user.classId } });
+      if (isNil(existingStudent)) throw { name: `notFound` };
 
       const fields = ['NIM', 'name', 'age', 'gender', 'birthDate', 'imgUrl'];
-      const updates = Object.fromEntries(
+      const studentUpdatePayload = Object.fromEntries(
         fields
           .filter((field) => Object.prototype.hasOwnProperty.call(req.body, field))
           .map((field) => [field, req.body[field]])
@@ -189,28 +196,28 @@ class StudentController {
         feedback = typeof req.body.feedback === 'string' ? req.body.feedback.trim() : '';
         if (!feedback) throw { name: 'invalidFeedback' };
         observedAt = Object.prototype.hasOwnProperty.call(req.body, 'observedAt')
-          ? normalizeObservedAt(req.body.observedAt)
+          ? validateObservedAt(req.body.observedAt)
           : new Date();
       }
 
-      const { data, history } = await sequelize.transaction(async (transaction) => {
-        const feedbackChanged = hasFeedback && feedback !== check.feedback;
-        if (feedbackChanged) updates.feedback = feedback;
+      const { data, history } = await sequelize.transaction(async (databaseTransaction) => {
+        const hasFeedbackChanged = hasFeedback && !isEqual(feedback, existingStudent.feedback);
+        if (hasFeedbackChanged) studentUpdatePayload.feedback = feedback;
 
-        const updatedStudent = await check.update(updates, { transaction });
-        if (feedbackChanged) {
+        const updatedStudent = await existingStudent.update(studentUpdatePayload, { transaction: databaseTransaction });
+        if (hasFeedbackChanged) {
           await StudentFeedback.create({
-            StudentId: check.id,
+            StudentId: existingStudent.id,
             TeacherId: req.user.teacherId,
             content: feedback,
             observedAt,
-          }, { transaction });
+          }, { transaction: databaseTransaction });
         }
 
         const updateHistory = await History.create({
-          description: `student with name ${check.name} has been edited`,
+          description: `student with name ${existingStudent.name} has been edited`,
           createdBy: teacherClass.Teacher.name,
-        }, { transaction });
+        }, { transaction: databaseTransaction });
 
         return { data: updatedStudent, history: updateHistory };
       });

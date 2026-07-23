@@ -1,0 +1,4 @@
+- Core function baru yang memiliki domain rule, side effect, transaction, atau auth responsibility harus diberi marker CODEBOOK.
+- Jika purpose, input, output, side effect, atau rule function berubah, entry `CODEBOOK.json` wajib diperbarui dalam perubahan yang sama.
+- Perubahan implementasi internal yang tidak mengubah contract tidak membutuhkan perubahan dictionary.
+- Jalankan `codebook:check` sebelum menyelesaikan sprint.

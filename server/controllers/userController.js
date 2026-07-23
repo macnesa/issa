@@ -1,32 +1,34 @@
-const { compareHash, createToken } = require('../helpers');
+const { isPasswordMatch, createToken } = require('../helpers');
 const { User, Student, Attendance, Score, Lesson, Class, Teacher } = require('../models');
+const isNil = require('lodash/isNil');
 
 class UserController {
-  static async login(req, res, next) {
+  static async authenticateParent(req, res, next) {
+    void 'ISSA:SERVER.AUTH.AUTHENTICATE_PARENT';
     try {
       const { NIM, password } = req.body;
       if (!NIM || !password) throw { name: `loginError` };
 
-      const data = await User.findOne({
+      const parentAccount = await User.findOne({
         where: { NIM },
         include: {
           model: Student,
           include: { model: Class },
         },
       });
-      if (!data) {
+      if (isNil(parentAccount)) {
         throw { name: 'loginError' };
       } else {
-        const isValid = compareHash(password, data.password);
-        if (!isValid) {
+        const isPasswordValid = isPasswordMatch(password, parentAccount.password);
+        if (!isPasswordValid) {
           throw { name: 'loginError' };
         } else {
           const access_token = createToken({
             role: 'parent',
-            userId: data.id,
-            studentId: data.StudentId,
+            userId: parentAccount.id,
+            studentId: parentAccount.StudentId,
           });
-          res.status(200).json({ access_token, id: data.id, teacherId: data.Student.Class.TeacherId });
+          res.status(200).json({ access_token, id: parentAccount.id, teacherId: parentAccount.Student.Class.TeacherId });
         }
       }
     } catch (error) {
