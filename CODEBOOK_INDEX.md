@@ -75,11 +75,11 @@
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_STATUS`
   - `server/modules/attendance/attendance.validator.js:51`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT`
-  - `server/controllers/userController.js:7`
+  - `server/modules/authentication/authentication.service.js:11`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT_REQUEST`
   - `server/middlewares/authentication.js:33`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER`
-  - `server/controllers/teacherController.js:6`
+  - `server/modules/authentication/authentication.service.js:39`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER_REQUEST`
   - `server/middlewares/authentication.js:5`
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
@@ -91,11 +91,9 @@
 - `ISSA:SERVER.FEEDBACK.VALIDATE_OBSERVED_AT`
   - `server/modules/feedback/feedback.validator.js:2`
 - `ISSA:SERVER.PUBLIC.GET_STUDENT_DETAIL`
-  - `server/controllers/publicController.js:27`
+  - `server/modules/public-student/public-student.service.js:12`
 - `ISSA:SERVER.SCHEDULE.GET_CLASS_SCHEDULE`
-  - `server/controllers/scheduleController.js:17`
-- `ISSA:SERVER.SCHEDULE.VALIDATE_PAYLOAD`
-  - `server/controllers/scheduleController.js:8`
+  - `server/modules/schedule/schedule.service.js:4`
 - `ISSA:SERVER.SCORE.CALCULATE_STATUS`
   - `server/modules/score/score.service.js:18`
 - `ISSA:SERVER.SCORE.CREATE_STUDENT_SCORE`
@@ -105,6 +103,6 @@
 - `ISSA:SERVER.SCORE.VALIDATE_VALUE`
   - `server/modules/score/score.validator.js:2`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
-  - `server/controllers/studentController.js:72`
+  - `server/modules/student/student.service.js:32`
 - `ISSA:SERVER.STUDENT.GET_LIST`
-  - `server/controllers/studentController.js:7`
+  - `server/modules/student/student.service.js:16`

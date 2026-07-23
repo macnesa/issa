@@ -1,28 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const userRouter = require('./user');
-const studentRouter = require('./student');
-const teacherRouter = require('./teacher');
-const lessonRouter = require('./lesson');
-const assignmentRouter = require('./assignment');
-const scheduleRouter = require('./schedule');
-const publicRouter = require('./public');
 const attendanceRouter = require('../modules/attendance/attendance.route');
+const assignmentRouter = require('../modules/assignment/assignment.route');
 const feedbackRouter = require('../modules/feedback/feedback.route');
+const lessonRouter = require('../modules/lesson/lesson.route');
+const parentRouter = require('../modules/parent/parent.route');
+const publicStudentRouter = require('../modules/public-student/public-student.route');
+const scheduleRouter = require('../modules/schedule/schedule.route');
 const scoreRouter = require('../modules/score/score.route');
-const { authenticateTeacherRequest } = require('../middlewares/authentication');
+const studentRouter = require('../modules/student/student.route');
+const teacherRouter = require('../modules/teacher/teacher.route');
 
-router.use('/public', publicRouter);
-router.use('/users', userRouter);
+router.use('/public', publicStudentRouter);
+router.use('/users', parentRouter);
 router.use('/teachers', teacherRouter);
 
 router.use('/students', feedbackRouter);
-router.use('/students', authenticateTeacherRequest, studentRouter);
-router.use('/assignments', authenticateTeacherRequest, assignmentRouter);
-router.use('/lessons', authenticateTeacherRequest, lessonRouter);
+router.use('/students', studentRouter);
+router.use('/assignments', assignmentRouter);
+router.use('/lessons', lessonRouter);
 router.use('/scores', scoreRouter);
 router.use('/attendances', attendanceRouter);
-router.use('/schedules', authenticateTeacherRequest, scheduleRouter);
+router.use('/schedules', scheduleRouter);
 
 router.get('/', (req, res) => {
   res.json({ status: 'ok' });

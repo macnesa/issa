@@ -55,6 +55,18 @@ bila responsibility domain membutuhkannya.
 Dependency memakai direct CommonJS import. Jangan menambahkan DI container,
 dependency resolver berbasis string, positional injection, route generation,
 `BaseController`, atau controller inheritance.
+Login berada di Authentication service; route Parent/Teacher tetap eksplisit.
+Verifikasi JWT request tetap menjadi middleware infrastructure global.
+
+## Internal module dan public read model
+
+Module internal, seperti Student, mempertahankan workflow dan response khusus
+Teacher CMS. Public Student adalah aggregation read model terpisah untuk Parent
+App dan tidak memakai controller atau service module internal.
+
+Public repository boleh membaca beberapa model global secara langsung untuk
+membangun response Parent, selama flow tetap read-only dan authorization berasal
+dari authenticated parent identity.
 
 ## Contoh flow Feedback
 
