@@ -9,6 +9,7 @@ import StudentIdentity from '../features/student-overview/components/StudentIden
 import TeacherFeedback from '../features/student-overview/components/TeacherFeedback';
 import TodayAttendance from '../features/student-overview/components/TodayAttendance';
 import { buildAcademicSummary, calculateAttendanceSummary, getLatestSchoolActivities, getTodayAttendance, getUpcomingWeeklySchedule } from '../features/student-overview/helpers';
+import '../features/student-overview/student-overview.css';
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ export default function Home() {
   const latestActivities = useMemo(() => getLatestSchoolActivities(activity.data), [activity.data]);
 
   return (
-    <main className="page-container overview-page">
+    <main className="page-container overview-page relative isolate grid items-start gap-5 min-[900px]:grid-cols-[minmax(0,1.06fr)_minmax(0,0.94fr)] min-[900px]:gap-x-6 min-[900px]:gap-y-[1.4rem]">
       <StudentIdentity profile={studentOverview.profile} />
       <TodayAttendance attendance={todayAttendance} />
       <AttendanceSummary counts={attendanceSummary} />

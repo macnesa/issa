@@ -32,7 +32,7 @@ export default function ParentLayout() {
         : <Outlet />;
   
   return (
-    <div className="app-shell">
+    <div className="min-h-screen bg-[var(--issa-page)] pt-4">
       <Header />
       {content}
       <BottomNav/>

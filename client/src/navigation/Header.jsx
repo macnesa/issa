@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { parentNavigation } from '../config/parentNavigation';
 import { endParentSession } from '../utils/session';
+import './navigation.css';
 
 export default function Header() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -15,24 +16,24 @@ export default function Header() {
   }
 
   return (
-    <nav className="app-header issa-header relative z-50 px-2 py-2.5 sm:px-4">
-      <div className="flex flex-wrap items-center justify-between">
-        <NavLink to="/" className="issa-header__brand ml-2 flex items-center justify-center" aria-label="Ringkasan ISSA">
+    <nav className="issa-header relative z-50 mx-auto w-[min(calc(100%-2rem),var(--issa-container))] overflow-hidden border px-2 py-2.5 shadow-[var(--issa-shadow)] sm:px-4 md:min-h-[4.55rem] md:px-[0.8rem] md:py-[0.55rem] min-[900px]:min-h-[3.8rem] min-[900px]:px-[0.7rem] min-[900px]:py-[0.45rem]">
+      <div className="relative z-10 flex flex-wrap items-center justify-between">
+        <NavLink to="/" className="issa-header__brand relative ml-2 flex items-center justify-center" aria-label="Ringkasan ISSA">
           <img
             src="https://live.staticflickr.com/65535/52735891608_e4bb396871_w.jpg"
-            className="h-7 sm:h-9"
+            className="relative z-10 h-7 sm:h-9"
             alt="ISSA"
           />
           <span className="issa-header__brand-mark" aria-hidden="true">ISSA</span>
         </NavLink>
 
-        <ul className="hidden items-center gap-1 md:order-1 md:flex">
+        <ul className="hidden items-center gap-1 md:order-1 md:flex md:px-[0.65rem] min-[900px]:px-[0.2rem]">
           {parentNavigation.map((navigationItem) => (
             <li key={navigationItem.path}>
               <NavLink
                 to={navigationItem.path}
                 end={navigationItem.end}
-                className={({ isActive }) => `app-nav-link issa-header__link block px-3 py-2 text-sm ${isActive ? 'is-active' : ''}`}
+                className={({ isActive }) => `issa-header__link relative block rounded-[var(--issa-radius-sm)] px-3 py-2 text-sm font-semibold text-[var(--issa-text-secondary)] transition-[transform,color,background] duration-[180ms] md:rounded-none md:px-[0.82rem] md:py-[0.8rem] md:text-[0.78rem] md:tracking-[0.015em] min-[900px]:px-[0.72rem] min-[900px]:py-[0.62rem] ${isActive ? 'is-active' : ''}`}
               >
                 {navigationItem.label}
               </NavLink>
@@ -46,7 +47,7 @@ export default function Header() {
             onClick={() => setIsProfileMenuOpen((open) => !open)}
             aria-expanded={isProfileMenuOpen}
             aria-controls="parent-profile-menu"
-            className="issa-header__profile h-9 w-9 flex-shrink-0 overflow-hidden rounded-full border border-[var(--issa-border)]"
+            className="issa-header__profile relative h-9 w-9 flex-shrink-0 overflow-hidden rounded-full border"
           >
             {imageUrl ? (
               <img className="w-full h-full object-cover" src={imageUrl} alt="Profil siswa" />
@@ -62,7 +63,7 @@ export default function Header() {
           {isProfileMenuOpen && (
             <div
               id="parent-profile-menu"
-              className="profile-menu absolute right-0 top-11 z-50 w-52 text-base"
+              className="absolute right-0 top-11 z-50 w-52 rounded-[var(--issa-radius-sm)] border border-[var(--issa-border)] bg-[var(--issa-surface)] text-base shadow-[var(--issa-shadow)]"
             >
               <div className="border-b border-[var(--issa-border)] px-4 py-3">
                 <span className="block text-sm font-semibold text-[var(--issa-text)]">{name}</span>

@@ -65,15 +65,15 @@
 ## Server
 
 - `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
-  - `server/controllers/attendance.js:83`
+  - `server/modules/attendance/attendance.service.js:25`
 - `ISSA:SERVER.ATTENDANCE.GET_RECORDS`
-  - `server/controllers/attendance.js:61`
+  - `server/modules/attendance/attendance.service.js:15`
 - `ISSA:SERVER.ATTENDANCE.UPDATE_RECORD`
-  - `server/controllers/attendance.js:112`
+  - `server/modules/attendance/attendance.service.js:60`
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_DATE`
-  - `server/controllers/attendance.js:28`
+  - `server/modules/attendance/attendance.validator.js:24`
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_STATUS`
-  - `server/controllers/attendance.js:55`
+  - `server/modules/attendance/attendance.validator.js:51`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT`
   - `server/controllers/userController.js:7`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT_REQUEST`
@@ -85,11 +85,11 @@
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
   - `server/helpers/index.js:13`
 - `ISSA:SERVER.FEEDBACK.GET_HISTORY`
-  - `server/controllers/studentController.js:139`
+  - `server/modules/feedback/feedback.service.js:8`
 - `ISSA:SERVER.FEEDBACK.UPDATE_HISTORY`
-  - `server/controllers/studentController.js:178`
+  - `server/modules/feedback/feedback.service.js:31`
 - `ISSA:SERVER.FEEDBACK.VALIDATE_OBSERVED_AT`
-  - `server/controllers/studentController.js:7`
+  - `server/modules/feedback/feedback.validator.js:2`
 - `ISSA:SERVER.PUBLIC.GET_STUDENT_DETAIL`
   - `server/controllers/publicController.js:27`
 - `ISSA:SERVER.SCHEDULE.GET_CLASS_SCHEDULE`
@@ -97,14 +97,14 @@
 - `ISSA:SERVER.SCHEDULE.VALIDATE_PAYLOAD`
   - `server/controllers/scheduleController.js:8`
 - `ISSA:SERVER.SCORE.CALCULATE_STATUS`
-  - `server/controllers/scoreController.js:30`
+  - `server/modules/score/score.service.js:18`
 - `ISSA:SERVER.SCORE.CREATE_STUDENT_SCORE`
-  - `server/controllers/scoreController.js:42`
+  - `server/modules/score/score.service.js:45`
 - `ISSA:SERVER.SCORE.UPDATE_STUDENT_SCORE`
-  - `server/controllers/scoreController.js:81`
+  - `server/modules/score/score.service.js:110`
 - `ISSA:SERVER.SCORE.VALIDATE_VALUE`
-  - `server/controllers/scoreController.js:5`
+  - `server/modules/score/score.validator.js:2`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
-  - `server/controllers/studentController.js:95`
+  - `server/controllers/studentController.js:72`
 - `ISSA:SERVER.STUDENT.GET_LIST`
-  - `server/controllers/studentController.js:30`
+  - `server/controllers/studentController.js:7`

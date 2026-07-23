@@ -5,15 +5,15 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navigasi utama"
-      className="bottom-nav issa-bottom-nav fixed bottom-4 left-1/2 z-50 h-16 max-w-lg -translate-x-1/2 rounded-2xl md:hidden"
+      className="issa-bottom-nav fixed bottom-4 left-1/2 z-50 h-16 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden border md:hidden"
     >
-      <div className="grid h-full grid-cols-5 mx-auto">
+      <div className="mx-auto grid h-full grid-cols-5">
         {parentNavigation.map((navigationItem) => (
           <NavLink
             key={navigationItem.path}
             to={navigationItem.path}
             end={navigationItem.end}
-            className={({ isActive }) => `bottom-nav-link issa-bottom-nav__link inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-semibold ${isActive ? 'is-active' : ''}`}
+            className={({ isActive }) => `issa-bottom-nav__link relative z-[1] inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 rounded-[0.85rem_0.85rem_0.55rem_0.55rem] px-1 text-[10px] font-semibold text-[rgba(255,255,255,0.67)] transition-[color,background,transform] duration-[180ms] ${isActive ? 'is-active' : ''}`}
           >
             <NavigationIcon path={navigationItem.path} />
             <span>{navigationItem.label}</span>

@@ -1,6 +1,6 @@
 export default function TeacherFeedback({ profile }) {
   return (
-    <section className="overview-feedback">
+    <section className="overview-feedback grid grid-cols-[auto_minmax(0,1fr)] gap-[0.7rem] p-[1.4rem]">
       <div className="overview-feedback__mark" aria-hidden="true">“</div>
       <div>
       <p className="overview-kicker">Catatan manusia</p>

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { submitParentLogin } from '../store/actions/actionCreator';
 import LoginForm from '../features/authentication/components/LoginForm';
 import LoginIdentityZone from '../features/authentication/components/LoginIdentityZone';
+import '../features/authentication/authentication.css';
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -41,8 +42,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="issa-login flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
-      <div className="issa-login__frame">
+      <main className="issa-login relative grid min-h-[100svh] place-items-center overflow-hidden px-4 py-8 sm:px-6 max-[767px]:items-start max-[767px]:px-[0.9rem] max-[767px]:pb-4 max-[767px]:pt-3">
+      <div className="issa-login__frame relative z-10 grid w-[min(100%,68rem)] overflow-hidden">
         <LoginIdentityZone />
         <LoginForm
           error={error}

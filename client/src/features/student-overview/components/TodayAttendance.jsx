@@ -12,7 +12,7 @@ export default function TodayAttendance({ attendance }) {
     : 'Belum ada catatan kehadiran hari ini.';
 
   return (
-    <section className="overview-today-attendance">
+    <section className="overview-today-attendance flex items-center justify-between gap-4 px-[1.35rem] py-[1.2rem]">
       <div>
         <div>
           <p className="overview-kicker">Hari ini</p>
