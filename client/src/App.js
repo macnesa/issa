@@ -1,25 +1,44 @@
 
 import { RouterProvider } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
  
 import router from "./router"
 import { Provider, useDispatch } from "react-redux"
 import store from "./store"
 import { resetParentSession } from './store/actions/actionCreator';
-import { SESSION_EXPIRED_EVENT } from './utils/session';
+import {
+  SESSION_STATUS,
+  clearSessionExpiryTimer,
+  configureParentSessionEndHandler,
+  getParentSessionStatus,
+  initializeParentSession,
+  subscribeToParentSessionStatus,
+} from './utils/session';
 
 function SessionRuntime() {
   const dispatch = useDispatch();
+  const [sessionStatus, setSessionStatus] = useState(getParentSessionStatus);
 
   useEffect(() => {
-    const handleSessionExpired = () => {
+    const handleSessionEnd = (reason) => {
       dispatch(resetParentSession());
-      router.navigate('/login?session=expired', { replace: true });
+      router.navigate(reason === 'expired' ? '/login?session=expired' : '/login', { replace: true });
     };
 
-    window.addEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired);
-    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired);
+    const unsubscribe = subscribeToParentSessionStatus(setSessionStatus);
+    const removeSessionEndHandler = configureParentSessionEndHandler(handleSessionEnd);
+    initializeParentSession();
+
+    return () => {
+      unsubscribe();
+      removeSessionEndHandler();
+      clearSessionExpiryTimer();
+    };
   }, [dispatch]);
+
+  if (sessionStatus === SESSION_STATUS.CHECKING) {
+    return <main className="runtime-state min-h-screen">Memeriksa sesi...</main>;
+  }
 
   return <RouterProvider router={router} />;
 }
@@ -33,4 +52,3 @@ export default function App() {
     </Provider>
   );
 }
-

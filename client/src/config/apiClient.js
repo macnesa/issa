@@ -1,8 +1,6 @@
 import axios from 'axios';
 import baseURL from './api';
-import { clearParentSession, SESSION_EXPIRED_EVENT } from '../utils/session';
-
-let sessionExpiryHandled = false;
+import { endParentSession } from '../utils/session';
 
 const apiClient = axios.create({ baseURL });
 
@@ -20,20 +18,15 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginRequest = error?.config?.url === '/users/login';
+    const requestUrl = error?.config?.url || '';
+    const isLoginRequest = requestUrl === '/users/login' || requestUrl.endsWith('/users/login');
 
-    if (error?.response?.status === 401 && !isLoginRequest && !sessionExpiryHandled) {
-      sessionExpiryHandled = true;
-      clearParentSession();
-      window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+    if (error?.response?.status === 401 && !isLoginRequest) {
+      endParentSession('expired');
     }
 
     return Promise.reject(error);
   }
 );
-
-export function resetSessionExpiryHandling() {
-  sessionExpiryHandled = false;
-}
 
 export default apiClient;

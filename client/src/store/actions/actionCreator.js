@@ -1,12 +1,11 @@
 import { LOADING, COUNTER_INCREMENTER, WRITE_PRODUCTS, WRITE_PRODUCT, WRITE_PRODUCT_FAILED, WRITE_PRODUCTS_BY_TYPE, WRITE_CATEGORIES, WRITE_CATEGORIES_FAILED, WRITE_LESSON } from './actionTypes';
 
 import { FETCH_STATUS, FETCH_SCHEDULE, FETCH_SPP, FETCH_STATISTIC, STUDENT_DETAIL_REQUEST, STUDENT_DETAIL_SUCCESS, STUDENT_DETAIL_FAILURE, CLASSMATE_REQUEST, CLASSMATE_SUCCESS, CLASSMATE_FAILURE, CLASS_SCHEDULE_REQUEST, CLASS_SCHEDULE_SUCCESS, CLASS_SCHEDULE_FAILURE, ACTIVITY_REQUEST, ACTIVITY_SUCCESS, ACTIVITY_FAILURE, RESET_PARENT_SESSION } from './actionTypes';
-import axios from '../../config/apiClient';
-import baseUrl from '../../config/api';
-import apiClient, { resetSessionExpiryHandling } from '../../config/apiClient';
+import apiClient from '../../config/apiClient';
 import { mapStudentDetail } from '../../mappers/studentDetail';
 import { mapSchedule } from '../../mappers/schedule';
 import normalizeApiError from '../../utils/normalizeApiError';
+import { startParentSession } from '../../utils/session';
 
 // export const conterIncremented = (payload) => {
 //   return { type: COUNTER_INCREMENTER, payload }
@@ -47,7 +46,7 @@ export function act_login(data) {
       if (response.id !== undefined && response.id !== null) {
         localStorage.setItem('userId', String(response.id));
       }
-      resetSessionExpiryHandling();
+      startParentSession(response.access_token);
       return response;
     } catch (error) {
       throw normalizeApiError(error);
@@ -97,11 +96,7 @@ export const handleLogin = (dataLogin) => {
 export const fetchScheduleLesson = (day) => {
   return async (dispatch, getState) => {
     try {
-      let query = `?day=${day}`;
-      let { data } = await axios({
-        url: baseUrl + `/public/lesson` + query,
-        headers: { access_token: localStorage.access_token },
-      });
+      const { data } = await apiClient.get('/public/lesson', { params: { day } });
       dispatch(insert_Schedule_redux(data));
     } catch (error) {
       return normalizeApiError(error);
@@ -175,10 +170,7 @@ export const resetParentSession = () => ({ type: RESET_PARENT_SESSION });
 export const fetchSPP = (day) => {
   return async (dispatch, getState) => {
     try {
-      let { data } = await axios({
-        url: baseUrl + `/public/transaction`,
-        headers: { access_token: localStorage.access_token },
-      });
+      const { data } = await apiClient.get('/public/transaction');
       dispatch(insert_SPP_redux(data));
     } catch (error) {
       return normalizeApiError(error);
@@ -190,10 +182,7 @@ export const fetchSPP = (day) => {
 export const fetchStatistic = (day) => {
   return async (dispatch, getState) => {
     try {
-      let { data } = await axios({
-        url: baseUrl + `/public/statistic`,
-        headers: { access_token: localStorage.access_token },
-      });
+      const { data } = await apiClient.get('/public/statistic');
       dispatch(insert_Statistic_redux(data));
     } catch (error) {
       return normalizeApiError(error);
@@ -204,11 +193,7 @@ export const fetchStatistic = (day) => {
 export function getPaymentStatus() {
   return async (dispatch) => {
     try {
-      let { data } = await axios({
-        method: 'get',
-        url: baseUrl + `/public/transaction`,
-        headers: { access_token: localStorage.access_token },
-      });
+      const { data } = await apiClient.get('/public/transaction');
 
       dispatch(insert_status_redux(data));
     } catch (error) {

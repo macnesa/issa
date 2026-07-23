@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { parentNavigation } from '../config/parentNavigation';
-import { clearParentSession } from '../utils/session';
-import { resetParentSession } from '../store/actions/actionCreator';
+import { endParentSession } from '../utils/session';
 
 export default function Header() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -11,13 +10,8 @@ export default function Header() {
     student: { studentDetail: studentDetailResource },
   } = useSelector((state) => state);
   const { imageUrl, name, nim } = studentDetailResource.data.profile;
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   function triggerSignOut() {
-    clearParentSession();
-    dispatch(resetParentSession());
-    navigate('/login', { replace: true });
+    endParentSession('manual');
   }
 
   return (
@@ -29,6 +23,7 @@ export default function Header() {
             className="h-7 sm:h-9"
             alt="ISSA"
           />
+          <span className="issa-header__brand-mark" aria-hidden="true">ISSA</span>
         </NavLink>
 
         <ul className="hidden items-center gap-1 md:order-1 md:flex">

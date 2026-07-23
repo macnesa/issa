@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { act_login } from '../store/actions/actionCreator';
@@ -14,6 +14,12 @@ export default function LoginPage() {
       ? 'Sesi Anda telah berakhir. Silakan masuk kembali.'
       : ''
   ));
+
+  useEffect(() => {
+    if (new URLSearchParams(location.search).get('session') === 'expired') {
+      setError('Sesi Anda telah berakhir. Silakan masuk kembali.');
+    }
+  }, [location.search]);
 
   function updateForm(event) {
     const { name, value } = event.target;
