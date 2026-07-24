@@ -1,119 +1,227 @@
 [
-  
   {
-    "ClassId": 1,
-    "LessonId": 1,
+    "classCode": "1A",
+    "lessonCode": "MAT-1",
     "day": "Monday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 2,
+    "classCode": "1A",
+    "lessonCode": "BIN-1",
     "day": "Monday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 3,
+    "classCode": "1A",
+    "lessonCode": "SEN-1",
     "day": "Monday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 4,
+    "classCode": "1A",
+    "lessonCode": "IPA-1",
+    "day": "Tuesday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "BIG-1",
+    "day": "Tuesday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "PJO-1",
+    "day": "Tuesday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "MAT-1",
+    "day": "Wednesday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "AGM-1",
+    "day": "Wednesday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "IPS-1",
+    "day": "Wednesday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "BIN-1",
+    "day": "Thursday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "IPA-1",
+    "day": "Thursday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "SEN-1",
+    "day": "Thursday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "BIG-1",
+    "day": "Friday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "PJO-1",
+    "day": "Friday"
+  },
+  {
+    "classCode": "1A",
+    "lessonCode": "MAT-1",
+    "day": "Friday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "BIN-1",
     "day": "Monday"
   },
-  
-  
-  
   {
-    "ClassId": 1,
-    "LessonId": 4,
+    "classCode": "1B",
+    "lessonCode": "MAT-1",
+    "day": "Monday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "PJO-1",
+    "day": "Monday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "IPS-1",
     "day": "Tuesday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 3,
+    "classCode": "1B",
+    "lessonCode": "BIG-1",
     "day": "Tuesday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 2,
+    "classCode": "1B",
+    "lessonCode": "SEN-1",
     "day": "Tuesday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 1,
+    "classCode": "1B",
+    "lessonCode": "IPA-1",
+    "day": "Wednesday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "MAT-1",
+    "day": "Wednesday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "AGM-1",
+    "day": "Wednesday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "BIN-1",
+    "day": "Thursday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "SEN-1",
+    "day": "Thursday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "IPS-1",
+    "day": "Thursday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "MAT-1",
+    "day": "Friday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "BIG-1",
+    "day": "Friday"
+  },
+  {
+    "classCode": "1B",
+    "lessonCode": "PJO-1",
+    "day": "Friday"
+  },
+  {
+    "classCode": "2A",
+    "lessonCode": "IPA-1",
+    "day": "Monday"
+  },
+  {
+    "classCode": "2A",
+    "lessonCode": "MAT-1",
+    "day": "Monday"
+  },
+  {
+    "classCode": "2A",
+    "lessonCode": "BIN-1",
+    "day": "Monday"
+  },
+  {
+    "classCode": "2A",
+    "lessonCode": "BIG-1",
     "day": "Tuesday"
   },
-  
-  
-  
   {
-    "ClassId": 1,
-    "LessonId": 2,
+    "classCode": "2A",
+    "lessonCode": "IPS-1",
+    "day": "Tuesday"
+  },
+  {
+    "classCode": "2A",
+    "lessonCode": "AGM-1",
+    "day": "Tuesday"
+  },
+  {
+    "classCode": "2A",
+    "lessonCode": "MAT-1",
     "day": "Wednesday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 1,
+    "classCode": "2A",
+    "lessonCode": "SEN-1",
     "day": "Wednesday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 3,
+    "classCode": "2A",
+    "lessonCode": "PJO-1",
     "day": "Wednesday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 4,
-    "day": "Wednesday"
-  },
-  
-  
-  
-  
-  {
-    "ClassId": 1,
-    "LessonId": 3,
+    "classCode": "2A",
+    "lessonCode": "BIN-1",
     "day": "Thursday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 1,
+    "classCode": "2A",
+    "lessonCode": "IPA-1",
     "day": "Thursday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 4,
+    "classCode": "2A",
+    "lessonCode": "BIG-1",
     "day": "Thursday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 2,
-    "day": "Thursday"
-  },
-  
-  
-  
-  {
-    "ClassId": 1,
-    "LessonId": 4,
+    "classCode": "2A",
+    "lessonCode": "IPS-1",
     "day": "Friday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 1,
+    "classCode": "2A",
+    "lessonCode": "MAT-1",
     "day": "Friday"
   },
   {
-    "ClassId": 1,
-    "LessonId": 3,
+    "classCode": "2A",
+    "lessonCode": "AGM-1",
     "day": "Friday"
-  },
-  {
-    "ClassId": 1,
-    "LessonId": 2,
-    "day": "Friday"
-  } 
-  
-  
-   
+  }
 ]

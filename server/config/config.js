@@ -1,6 +1,10 @@
 'use strict';
 
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
+const productionUsesSsl = process.env.DATABASE_SSL !== 'false';
 
 module.exports = {
   development: {
@@ -25,11 +29,11 @@ module.exports = {
     use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
     logging: false,
-    dialectOptions: {
+    dialectOptions: productionUsesSsl ? {
       ssl: {
         require: true,
         rejectUnauthorized: false,
       },
-    },
+    } : {},
   },
 };

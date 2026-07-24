@@ -1,303 +1,146 @@
-
-[ 
+[
   {
-    "name": "Task",
+    "assignmentCode": "ASM-01",
+    "name": "Latihan Penjumlahan",
     "type": "Task",
-    "desc": "Task Bab 1 Math"
+    "desc": "Assessment latihan penjumlahan."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 1 Math"
+    "assignmentCode": "ASM-02",
+    "name": "Kuis Pecahan",
+    "type": "Quiz",
+    "desc": "Assessment kuis pecahan."
   },
   {
-    "name": "Task",
+    "assignmentCode": "ASM-03",
+    "name": "Pemecahan Masalah",
+    "type": "Quiz",
+    "desc": "Assessment pemecahan masalah."
+  },
+  {
+    "assignmentCode": "ASM-04",
+    "name": "Membaca Pemahaman",
     "type": "Task",
-    "desc": "Task Bab 2 Math"
+    "desc": "Assessment membaca pemahaman."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 2 Math"
+    "assignmentCode": "ASM-05",
+    "name": "Menulis Paragraf",
+    "type": "Quiz",
+    "desc": "Assessment menulis paragraf."
   },
   {
-    "name": "Task",
+    "assignmentCode": "ASM-06",
+    "name": "Presentasi Cerita",
+    "type": "Quiz",
+    "desc": "Assessment presentasi cerita."
+  },
+  {
+    "assignmentCode": "ASM-07",
+    "name": "Vocabulary Quiz",
     "type": "Task",
-    "desc": "Task Bab 3 Math"
+    "desc": "Assessment vocabulary quiz."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 3 Math"
+    "assignmentCode": "ASM-08",
+    "name": "Dialog Sederhana",
+    "type": "Quiz",
+    "desc": "Assessment dialog sederhana."
   },
   {
-    "name": "Task",
+    "assignmentCode": "ASM-09",
+    "name": "Reading Challenge",
+    "type": "Quiz",
+    "desc": "Assessment reading challenge."
+  },
+  {
+    "assignmentCode": "ASM-10",
+    "name": "Eksperimen Sederhana",
     "type": "Task",
-    "desc": "Task Bab 4 Math"
+    "desc": "Assessment eksperimen sederhana."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 4 Math"
+    "assignmentCode": "ASM-11",
+    "name": "Laporan Pengamatan",
+    "type": "Quiz",
+    "desc": "Assessment laporan pengamatan."
   },
   {
-    "name": "Task",
+    "assignmentCode": "ASM-12",
+    "name": "Kuis Makhluk Hidup",
+    "type": "Quiz",
+    "desc": "Assessment kuis makhluk hidup."
+  },
+  {
+    "assignmentCode": "ASM-13",
+    "name": "Peta Lingkungan",
     "type": "Task",
-    "desc": "Task Bab 5 Math"
+    "desc": "Assessment peta lingkungan."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 5 Math"
+    "assignmentCode": "ASM-14",
+    "name": "Proyek Lingkungan",
+    "type": "Quiz",
+    "desc": "Assessment proyek lingkungan."
   },
   {
-    "name": "Main Exam",
-    "type": "Main Exam",
-    "desc": "Main Exam Math"
+    "assignmentCode": "ASM-15",
+    "name": "Kuis Tokoh Daerah",
+    "type": "Quiz",
+    "desc": "Assessment kuis tokoh daerah."
   },
-  
-  
-  
-  
-  
-  
-  
-  
-  
   {
-    "name": "Task",
+    "assignmentCode": "ASM-16",
+    "name": "Praktik Nilai Harian",
     "type": "Task",
-    "desc": "Task Bab 1 Science"
+    "desc": "Assessment praktik nilai harian."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 1 Science"
+    "assignmentCode": "ASM-17",
+    "name": "Refleksi Kebaikan",
+    "type": "Quiz",
+    "desc": "Assessment refleksi kebaikan."
   },
   {
-    "name": "Task",
+    "assignmentCode": "ASM-18",
+    "name": "Hafalan Pilihan",
+    "type": "Quiz",
+    "desc": "Assessment hafalan pilihan."
+  },
+  {
+    "assignmentCode": "ASM-19",
+    "name": "Kolase Warna",
     "type": "Task",
-    "desc": "Task Bab 2 Science"
+    "desc": "Assessment kolase warna."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 2 Science"
+    "assignmentCode": "ASM-20",
+    "name": "Proyek Poster",
+    "type": "Quiz",
+    "desc": "Assessment proyek poster."
   },
   {
-    "name": "Task",
+    "assignmentCode": "ASM-21",
+    "name": "Irama dan Gerak",
+    "type": "Quiz",
+    "desc": "Assessment irama dan gerak."
+  },
+  {
+    "assignmentCode": "ASM-22",
+    "name": "Praktik Gerak Dasar",
     "type": "Task",
-    "desc": "Task Bab 3 Science"
+    "desc": "Assessment praktik gerak dasar."
   },
   {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 3 Science"
+    "assignmentCode": "ASM-23",
+    "name": "Permainan Kelompok",
+    "type": "Quiz",
+    "desc": "Assessment permainan kelompok."
   },
   {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 4 Science"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 4 Science"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 5 Science"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 5 Science"
-  },
-  {
-    "name": "Main Exam",
-    "type": "Main Exam",
-    "desc": "Main Exam Science"
-  },
-  
-  
-  
-  
-  
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 1 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 1 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 2 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 2 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 3 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 3 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 4 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 4 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 5 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 5 English"
-  },
-  {
-    "name": "Main Exam",
-    "type": "Main Exam",
-    "desc": "Main Exam English"
-  },
-  
-  
-  
-  
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 1 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 1 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 2 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 2 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 3 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 3 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 4 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 4 English"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 5 English"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 5 English"
-  },
-  {
-    "name": "Main Exam",
-    "type": "Main Exam",
-    "desc": "Main Exam English"
-  },
-  
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 1 Art"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 1 Art"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 2 Art"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 2 Art"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 3 Art"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 3 Art"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 4 Art"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 4 Art"
-  },
-  {
-    "name": "Task",
-    "type": "Task",
-    "desc": "Task Bab 5 Art"
-  },
-  {
-    "name": "Semi Exam",
-    "type": "Semi Exam",
-    "desc": "Semi Exam Bab 5 Art"
-  },
-  {
-    "name": "Main Exam",
-    "type": "Main Exam",
-    "desc": "Main Exam Art"
+    "assignmentCode": "ASM-24",
+    "name": "Kebugaran Pagi",
+    "type": "Quiz",
+    "desc": "Assessment kebugaran pagi."
   }
-  
-  
-  
-  
-  
-  
 ]

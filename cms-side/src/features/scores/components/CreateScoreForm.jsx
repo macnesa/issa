@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import baseUrl from "../../../config/api";
-import { FormField, PrimaryButton, Surface } from "../../../shared/ui/ui";
+import { PrimaryButton, Surface } from "../../../shared/ui/ui";
 import { toIsoDateTime } from "../../../utils/recordDates";
-
-const inputClassName = "w-full rounded-lg border border-[var(--border-strong)] bg-white px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--focus)]";
+import SelectField from "../../../shared/ui/form-controls/SelectField";
+import ComboboxField from "../../../shared/ui/form-controls/ComboboxField";
+import DateTimeField from "../../../shared/ui/form-controls/DateTimeField";
+import NumberField from "../../../shared/ui/form-controls/NumberField";
 
 export default function CreateScoreForm({ studentId, onCreated }) {
   const [lessons, setLessons] = useState([]);
@@ -31,6 +33,14 @@ export default function CreateScoreForm({ studentId, onCreated }) {
   const selectedLesson = useMemo(
     () => lessons.find((lesson) => String(lesson.id) === form.LessonId),
     [form.LessonId, lessons],
+  );
+  const lessonOptions = useMemo(
+    () => lessons.map((lesson) => ({ value: String(lesson.id), label: lesson.name })),
+    [lessons],
+  );
+  const assignmentOptions = useMemo(
+    () => assignments.map((assignment) => ({ value: String(assignment.id), label: assignment.name })),
+    [assignments],
   );
 
   const handleStudentScoreSubmit = (event) => {
@@ -73,30 +83,21 @@ export default function CreateScoreForm({ studentId, onCreated }) {
   };
 
   return (
-    <Surface className="p-5">
-      <div className="mb-4"><h2 className="font-semibold text-[var(--text)]">Catat score</h2><p className="mt-1 text-sm text-[var(--muted)]">Pilih satu assessment untuk siswa ini.</p></div>
-      <form onSubmit={handleStudentScoreSubmit} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <FormField label="Mata pelajaran">
-          <select required disabled={loadingOptions} value={form.LessonId} onChange={(event) => setForm({ ...form, LessonId: event.target.value })} className={inputClassName}>
-            <option value="">{loadingOptions ? "Memuat..." : "Pilih mata pelajaran"}</option>
-            {lessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
-          </select>
-        </FormField>
-        <FormField label="Assessment">
-          <select required disabled={loadingOptions} value={form.AssignmentId} onChange={(event) => setForm({ ...form, AssignmentId: event.target.value })} className={inputClassName}>
-            <option value="">{loadingOptions ? "Memuat..." : "Pilih assessment"}</option>
-            {assignments.map((assignment) => <option key={assignment.id} value={assignment.id}>{assignment.name}</option>)}
-          </select>
-        </FormField>
-        <FormField label="Nilai" hint={selectedLesson?.KKM != null ? `KKM: ${selectedLesson.KKM}` : "Pilih mata pelajaran untuk melihat KKM."}>
-          <input required min="0" max="100" step="1" type="number" value={form.value} onChange={(event) => setForm({ ...form, value: event.target.value })} className={inputClassName} />
-        </FormField>
-        <FormField label="Tanggal pencatatan" hint="Opsional">
-          <input type="datetime-local" value={form.recordedAt} onChange={(event) => setForm({ ...form, recordedAt: event.target.value })} className={inputClassName} />
-        </FormField>
-        <div className="sm:col-span-2 xl:col-span-4"><PrimaryButton type="submit" disabled={loadingOptions || submitting}>{submitting ? "Menyimpan..." : "Simpan score"}</PrimaryButton></div>
+    <Surface className="score-entry-ledger">
+      <div className="score-entry-ledger__header"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#745594]">Entry register</p><h2 className="mt-1 font-semibold text-[var(--text)]">Catat nilai</h2><p className="mt-1 text-sm text-[var(--muted)]">Pilih satu assessment untuk siswa ini.</p></div>
+      <form onSubmit={handleStudentScoreSubmit} className="score-entry-ledger__form">
+        <div className="score-entry-ledger__context">
+        <SelectField id="score-lesson" label="Mata pelajaran" required disabled={loadingOptions} value={form.LessonId} onChange={(LessonId) => setForm({ ...form, LessonId })} options={lessonOptions} placeholder={loadingOptions ? "Memuat..." : "Pilih mata pelajaran"} tone="score" />
+        <ComboboxField id="score-assignment" label="Assessment" required disabled={loadingOptions} value={form.AssignmentId} onChange={(AssignmentId) => setForm({ ...form, AssignmentId })} options={assignmentOptions} placeholder={loadingOptions ? "Memuat..." : "Cari assessment"} tone="score" />
+        <div className="score-entry-ledger__threshold" aria-live="polite"><span>Reference threshold</span><strong>{selectedLesson?.KKM != null ? `KKM ${selectedLesson.KKM}` : "KKM —"}</strong><small>{selectedLesson?.KKM != null ? "Ambang mata pelajaran terpilih" : "Pilih mata pelajaran terlebih dahulu"}</small></div>
+        </div>
+        <div className="score-entry-ledger__input-area">
+        <NumberField id="student-score" label="Nilai siswa" required min="0" max="100" step="1" value={form.value} onChange={(value) => setForm({ ...form, value })} className="issa-control-tone--score score-entry-ledger__score-field" />
+        <DateTimeField id="score-recorded-at" label="Tanggal pencatatan" value={form.recordedAt} onChange={(recordedAt) => setForm({ ...form, recordedAt })} optional tone="score" />
+        <div className="score-entry-ledger__submit"><PrimaryButton type="submit" disabled={loadingOptions || submitting}>{submitting ? "Menyimpan..." : "Simpan score"}</PrimaryButton></div>
+        </div>
       </form>
-      {message && <p role="status" className={`mt-3 text-sm ${message.includes("berhasil") ? "text-emerald-700" : "text-rose-700"}`}>{message}</p>}
+      {message && <p role="status" className={`score-entry-ledger__message text-sm ${message.includes("berhasil") ? "text-emerald-700" : "text-rose-700"}`}>{message}</p>}
     </Surface>
   );
 }

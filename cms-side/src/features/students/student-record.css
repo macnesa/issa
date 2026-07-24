@@ -1,0 +1,183 @@
+.teacher-dashboard__heading,
+.student-case-file > header {
+  position: relative;
+  border-bottom-color: #aac9ca;
+}
+
+.teacher-dashboard__heading::after,
+.student-case-file > header::after {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 6.5rem;
+  height: 0.22rem;
+  background: #f2d86e;
+  content: "";
+}
+
+.teacher-dashboard__class-ledger {
+  display: grid;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  border: 1px solid #173e52;
+  border-radius: 0.9rem 1.6rem 0.9rem 0.9rem;
+  background: #fffdf7;
+  box-shadow: 0.45rem 0.52rem 0 rgba(23, 62, 82, 0.1);
+}
+
+.teacher-dashboard__class-anchor {
+  position: relative;
+  overflow: hidden;
+  padding: 1.35rem 1.45rem;
+  background-color: #1a4a5e;
+  background-image: radial-gradient(circle at 20% 28%, rgba(199, 225, 235, 0.24) 0 0.1rem, transparent 0.13rem), linear-gradient(138deg, #123646, #245e73);
+  background-size: 0.7rem 0.7rem, auto;
+  color: white;
+}
+
+.teacher-dashboard__class-anchor::after {
+  position: absolute;
+  top: -3.2rem;
+  right: -2.9rem;
+  width: 8rem;
+  height: 8rem;
+  border: 0.6rem solid rgba(242, 226, 145, 0.7);
+  border-radius: 48% 52% 45% 55%;
+  content: "";
+  transform: rotate(20deg);
+}
+
+.teacher-dashboard__class-anchor p,
+.teacher-dashboard__class-anchor span { color: #c7e1eb; }
+.teacher-dashboard__class-anchor strong { position: relative; z-index: 1; display: block; margin-top: 0.2rem; font-size: clamp(1.55rem, 3vw, 2.35rem); line-height: 1.05; }
+.teacher-dashboard__class-anchor span { position: relative; z-index: 1; display: block; margin-top: 0.45rem; font-size: 0.8rem; }
+
+.teacher-dashboard__class-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.teacher-dashboard__class-facts > div {
+  min-height: 6.4rem;
+  padding: 1.1rem 1.25rem;
+  border-top: 1px solid #d7e5e3;
+}
+
+.teacher-dashboard__class-facts > div + div { border-left: 1px solid #d7e5e3; }
+.teacher-dashboard__class-facts dt { color: #61757c; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.teacher-dashboard__class-facts dd { margin: 0.42rem 0 0; color: #173e52; font-size: 1.1rem; font-weight: 800; line-height: 1.15; }
+.teacher-dashboard__class-facts dd + span { display: block; margin-top: 0.27rem; color: #61757c; font-size: 0.75rem; }
+
+.teacher-dashboard__roster {
+  overflow: hidden;
+  border: 1px solid #aac9ca;
+  border-radius: 0.9rem 0.9rem 1.8rem 0.9rem;
+  background: #fffdf7;
+  box-shadow: var(--shadow);
+}
+
+.teacher-dashboard__roster-header {
+  position: relative;
+  padding: 1.25rem;
+  border-bottom: 1px solid #d7e5e3;
+  background: linear-gradient(90deg, rgba(199, 225, 235, 0.48), rgba(255, 253, 247, 0.84) 56%);
+}
+
+.teacher-dashboard__roster-header::before {
+  display: inline-block;
+  width: 1.5rem;
+  height: 0.3rem;
+  margin-right: 0.5rem;
+  border-radius: 99px;
+  background: #f2d86e;
+  content: "";
+  vertical-align: middle;
+}
+
+.teacher-dashboard__roster-table thead { background: #e8f4f2; color: #49646b; }
+.teacher-dashboard__roster-table thead th { font-weight: 800; }
+.teacher-roster-row { background: rgba(255, 253, 247, 0.75); transition: background-color 160ms ease; }
+.teacher-roster-row:hover { background: #f0f8f6; }
+.teacher-roster-row__portrait { border-radius: 0.7rem 0.42rem 0.85rem 0.45rem; box-shadow: 0.15rem 0.16rem 0 rgba(242, 216, 110, 0.68); }
+.teacher-roster-row__action { border-radius: 0.55rem 0.38rem 0.7rem 0.4rem; background: #fffdf7; }
+
+.student-case-file { max-width: 90rem; }
+.student-case-file__grid { align-items: start; }
+
+.student-dossier {
+  position: relative;
+  border-color: #173e52;
+  border-radius: 0.9rem 1.65rem 0.9rem 0.9rem;
+  background-color: #1a4a5e;
+  background-image: radial-gradient(circle at 22% 24%, rgba(199, 225, 235, 0.24) 0 0.11rem, transparent 0.14rem), linear-gradient(138deg, #123646, #245e73);
+  background-size: 0.72rem 0.72rem, auto;
+  color: white;
+  box-shadow: 0.45rem 0.52rem 0 rgba(23, 62, 82, 0.12);
+}
+
+.student-dossier::after {
+  position: absolute;
+  right: -2.4rem;
+  bottom: -4rem;
+  width: 10.5rem;
+  height: 10.5rem;
+  border: 1px solid rgba(242, 226, 145, 0.78);
+  border-radius: 46% 54% 45% 55%;
+  background: rgba(107, 191, 188, 0.12);
+  content: "";
+}
+
+.student-dossier__image { position: relative; z-index: 1; border: 2px solid #fffdf7; border-radius: 1.1rem 0.52rem 1.1rem 0.52rem; box-shadow: 0.25rem 0.3rem 0 #f2d86e; }
+.student-dossier__eyebrow { color: #c7e1eb; }
+.student-dossier__title { color: white; }
+.student-dossier__meta { color: rgba(255, 255, 255, 0.78); }
+
+.student-current-state {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid #b7d6d2;
+  border-radius: 0.75rem 0.75rem 1.25rem 0.75rem;
+  background: #e7f4f1;
+}
+
+.student-current-state > div { padding: 0.85rem 1rem; }
+.student-current-state > div + div { border-left: 1px solid #b7d6d2; }
+.student-current-state span { display: block; color: #52716f; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.student-current-state strong { display: block; margin-top: 0.3rem; color: #173e52; font-size: 0.95rem; }
+
+.observation-sheet {
+  border-color: #eadcae;
+  border-radius: 0.75rem 0.75rem 1.5rem 0.75rem;
+  background-color: #fff9e9;
+  background-image: repeating-linear-gradient(180deg, transparent 0, transparent 2.08rem, rgba(75, 132, 146, 0.14) 2.12rem, transparent 2.16rem);
+  box-shadow: 0.36rem 0.42rem 0 rgba(234, 220, 174, 0.54);
+}
+
+.observation-sheet textarea,
+.observation-sheet input { background: rgba(255, 255, 255, 0.82); }
+.observation-sheet--history li { border-color: #e6dcae; background: rgba(255, 253, 247, 0.76); }
+
+.record-ledger { border-radius: 0.75rem 0.75rem 1.5rem 0.75rem; overflow: hidden; }
+.record-ledger--attendance { border-color: #b7d6d2; background: #f4fbf9; }
+.record-ledger--score { border-color: #d4c6ee; background: #faf8ff; }
+.record-ledger__entry { border-radius: 0.55rem 0.45rem 0.8rem 0.42rem; background: rgba(255, 255, 255, 0.76); }
+.record-ledger--attendance .record-ledger__entry { border-color: #c8e1dc; }
+.record-ledger--score .record-ledger__entry { border-color: #ddd2f2; }
+
+@media (min-width: 760px) {
+  .teacher-dashboard__class-ledger { grid-template-columns: minmax(16rem, 1.04fr) minmax(0, 1.36fr); }
+  .teacher-dashboard__class-facts > div { border-top: 0; }
+}
+
+@media (max-width: 639px) {
+  .teacher-dashboard__roster-header { padding: 1.05rem; }
+  .teacher-dashboard__class-anchor { padding: 1.15rem; }
+  .teacher-dashboard__class-facts > div { min-height: 5.8rem; padding: 0.95rem; }
+  .student-dossier__image { width: 4rem; height: 4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teacher-roster-row { transition: none; }
+}

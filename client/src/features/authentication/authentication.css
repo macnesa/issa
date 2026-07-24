@@ -132,12 +132,6 @@
   animation: login-form-in 460ms 70ms both;
 }
 
-.issa-login__role {
-  border-color: #bfd8e2;
-  border-radius: 0.72rem 0.4rem 0.72rem 0.4rem;
-  background: #f6fbfc;
-}
-
 @keyframes login-frame-in {
   from { opacity: 0; transform: translateY(0.75rem); }
   to { opacity: 1; transform: translateY(0); }
@@ -151,17 +145,6 @@
 @media (min-width: 768px) {
   .issa-login__frame { grid-template-columns: minmax(0, 0.83fr) minmax(25rem, 1.17fr); min-height: 33rem; }
   .issa-login__record { padding: 2.8rem; }
-  .issa-login__role-check {
-    width: 1rem;
-    height: 1rem;
-    margin: 0;
-    appearance: none;
-    border: 1px solid #71808a;
-    border-radius: 999px;
-    background: #fff;
-  }
-  .issa-login__role-check:checked { border-color: #245b70; box-shadow: inset 0 0 0 0.23rem #245b70; }
-  .issa-login__role-check:focus-visible { outline: 3px solid rgba(107, 191, 188, 0.42); outline-offset: 2px; }
 }
 
 @media (max-width: 767px) {
@@ -177,8 +160,6 @@
   .issa-login__record h2 { max-width: none; margin: 0.16rem 0 0 0.2rem; font-size: clamp(1.9rem, 8.2vw, 2.1rem); letter-spacing: -0.06em; line-height: 0.96; }
   .issa-login__record > p:last-child { display: block; max-width: none; margin: 0.28rem 0 0 0.2rem; font-size: clamp(0.58rem, 2.4vw, 0.62rem); line-height: 1.22; white-space: nowrap; }
   .issa-login__form { padding: 0.9rem 1.2rem 0.9rem; border-top: 1px solid #c8dce7; border-left: 0; }
-  .issa-login__role-check { flex: 0 0 auto; width: 1.08rem; height: 1.08rem; border-radius: 0.28rem; accent-color: #245b70; }
-  .issa-login__role-check:focus-visible { outline: 3px solid rgba(107, 191, 188, 0.42); outline-offset: 2px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -26,8 +26,8 @@ export function MetricCard({ label, value, detail }) {
 export function StatusBadge({ status }) {
   const styles = {
     Hadir: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-    Sakit: "bg-amber-50 text-amber-700 ring-amber-200",
-    Izin: "bg-sky-50 text-sky-700 ring-sky-200",
+    Sakit: "bg-sky-50 text-sky-700 ring-sky-200",
+    Izin: "bg-amber-50 text-amber-700 ring-amber-200",
     Alfa: "bg-rose-50 text-rose-700 ring-rose-200",
     Lulus: "bg-emerald-50 text-emerald-700 ring-emerald-200",
     "Belum lulus": "bg-amber-50 text-amber-700 ring-amber-200",

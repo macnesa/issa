@@ -1,0 +1,58 @@
+[
+  {
+    "lessonCode": "MAT-1",
+    "name": "Matematika",
+    "KKM": 75,
+    "desc": "Pemahaman bilangan, operasi hitung, dan pemecahan masalah.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "BIN-1",
+    "name": "Bahasa Indonesia",
+    "KKM": 73,
+    "desc": "Membaca, menulis, menyimak, dan berbicara.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "BIG-1",
+    "name": "Bahasa Inggris",
+    "KKM": 72,
+    "desc": "Kosakata dan komunikasi dasar.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "IPA-1",
+    "name": "Ilmu Pengetahuan Alam",
+    "KKM": 80,
+    "desc": "Pengamatan dan eksperimen sederhana.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "IPS-1",
+    "name": "Ilmu Pengetahuan Sosial",
+    "KKM": 74,
+    "desc": "Lingkungan sosial dan kehidupan bermasyarakat.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "AGM-1",
+    "name": "Pendidikan Agama",
+    "KKM": 76,
+    "desc": "Pemahaman nilai dan praktik keseharian.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "SEN-1",
+    "name": "Seni dan Kreativitas",
+    "KKM": 70,
+    "desc": "Ekspresi visual, musik, dan karya kreatif.",
+    "imgUrl": null
+  },
+  {
+    "lessonCode": "PJO-1",
+    "name": "Pendidikan Jasmani",
+    "KKM": 75,
+    "desc": "Gerak dasar, kebugaran, dan kerja sama.",
+    "imgUrl": null
+  }
+]

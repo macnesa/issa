@@ -5,6 +5,50 @@ export function localDateValue(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
+export function parseLocalDateValue(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+  if (!match) return undefined;
+
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return localDateValue(date) === value ? date : undefined;
+}
+
+export function formatDateDisplay(value) {
+  const date = parseLocalDateValue(value);
+  if (!date) return "";
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
+export function parseLocalDateTimeValue(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value || "");
+  if (!match) return undefined;
+
+  const [, year, month, day, hour, minute] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+  if (
+    localDateValue(date) !== `${year}-${month}-${day}`
+    || String(date.getHours()).padStart(2, "0") !== hour
+    || String(date.getMinutes()).padStart(2, "0") !== minute
+  ) return undefined;
+
+  return { date, hour, minute };
+}
+
+export function localDateTimeValue(date, hour, minute) {
+  return `${localDateValue(date)}T${hour}:${minute}`;
+}
+
+export function formatDateTimeDisplay(value) {
+  const parsedValue = parseLocalDateTimeValue(value);
+  if (!parsedValue) return "";
+  return `${formatDateDisplay(localDateValue(parsedValue.date))} · ${parsedValue.hour}:${parsedValue.minute}`;
+}
+
 export function formatRecordedDate(value, unavailable = "Tanggal pencatatan belum tersedia") {
   if (!value) return unavailable;
 

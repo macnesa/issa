@@ -1,12 +1,20 @@
 [
   {
+    "classCode": "1A",
     "name": "1A",
-    "TeacherId": 1,
-    "SPP": 200000
+    "teacherNip": "2026001001",
+    "SPP": 450000
   },
   {
-    "name": "2B",
-    "TeacherId": 2,
-    "SPP": 250000
+    "classCode": "1B",
+    "name": "1B",
+    "teacherNip": "2026001002",
+    "SPP": 450000
+  },
+  {
+    "classCode": "2A",
+    "name": "2A",
+    "teacherNip": "2026001003",
+    "SPP": 500000
   }
 ]

@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
-// const socket = io("https://issa.rhazzid.site/");
-const socket = io('http://localhost:3000');
+import baseUrl from './api';
+
+const socket = io(baseUrl);
 
 export default socket;

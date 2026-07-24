@@ -5,6 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import ScheduleList from "../features/schedule/components/ScheduleList";
 import { fetchClassSchedule } from "../store/action/ActionCreator";
 import { EmptyState, ErrorState, LoadingState, PageContainer, PageHeader } from "../shared/ui/ui";
+import "../features/schedule/schedule-workspace.css";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
@@ -29,8 +30,8 @@ export default function Schedule() {
   if (error) return <PageContainer><ErrorState message={error} onRetry={fetchClassScheduleForTeacher} /></PageContainer>;
 
   return (
-    <PageContainer>
-      <PageHeader eyebrow="Kelas saya" title="Jadwal kelas" description="Daftar mata pelajaran per hari untuk kelas yang Anda ampu." />
+    <PageContainer className="schedule-workspace">
+      <div className="schedule-workspace__header"><PageHeader eyebrow="Weekly schedule" title="Jadwal kelas" description="Daftar mata pelajaran per hari untuk kelas yang Anda ampu." /></div>
       {isEmpty(schedules) ? <EmptyState title="Jadwal belum tersedia" description="Belum ada mata pelajaran yang dijadwalkan untuk kelas ini." /> : <ScheduleList days={days} schedulesByDay={schedulesByDay} />}
     </PageContainer>
   );

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios, { all } from 'axios';
 import socket from '../config/socket';
-
-// const baseUrl = "https://issa.rhazzid.site";
-const baseUrl = 'http://localhost:3000';
+import baseUrl from '../config/api';
 
 // let teacher = { id: 1, NIP: '1800011221', name: 'Sumiyati' };
 

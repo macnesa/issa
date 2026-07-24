@@ -1,0 +1,646 @@
+[
+  {
+    "studentNim": "2026071001",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-01",
+    "value": 92,
+    "recordedAt": "2026-06-29T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071001",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-04",
+    "value": 80,
+    "recordedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071001",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-07",
+    "value": 78,
+    "recordedAt": "2026-07-03T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071001",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-10",
+    "value": 88,
+    "recordedAt": "2026-07-07T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071001",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-13",
+    "value": 82,
+    "recordedAt": "2026-07-09T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071001",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-16",
+    "value": 90,
+    "recordedAt": "2026-07-13T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-02",
+    "value": 75,
+    "recordedAt": "2026-06-30T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-05",
+    "value": 73,
+    "recordedAt": "2026-07-02T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-08",
+    "value": 74,
+    "recordedAt": "2026-07-06T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-11",
+    "value": 80,
+    "recordedAt": "2026-07-08T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-14",
+    "value": 76,
+    "recordedAt": "2026-07-10T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-17",
+    "value": 79,
+    "recordedAt": "2026-07-14T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-03",
+    "value": 68,
+    "recordedAt": "2026-07-01T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-06",
+    "value": 71,
+    "recordedAt": "2026-07-03T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-09",
+    "value": 75,
+    "recordedAt": "2026-07-07T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-12",
+    "value": 77,
+    "recordedAt": "2026-07-09T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-15",
+    "value": 70,
+    "recordedAt": "2026-07-13T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-18",
+    "value": 74,
+    "recordedAt": "2026-07-15T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-01",
+    "value": 86,
+    "recordedAt": "2026-07-02T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-04",
+    "value": 84,
+    "recordedAt": "2026-07-06T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-07",
+    "value": 81,
+    "recordedAt": "2026-07-08T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-10",
+    "value": 83,
+    "recordedAt": "2026-07-10T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-13",
+    "value": 78,
+    "recordedAt": "2026-07-14T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-16",
+    "value": 85,
+    "recordedAt": "2026-07-16T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-02",
+    "value": 72,
+    "recordedAt": "2026-07-03T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-05",
+    "value": 76,
+    "recordedAt": "2026-07-07T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-08",
+    "value": 70,
+    "recordedAt": "2026-07-09T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-11",
+    "value": 79,
+    "recordedAt": "2026-07-13T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-14",
+    "value": 74,
+    "recordedAt": "2026-07-15T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-17",
+    "value": 76,
+    "recordedAt": "2026-07-17T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-03",
+    "value": 88,
+    "recordedAt": "2026-07-06T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-06",
+    "value": 78,
+    "recordedAt": "2026-07-08T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-09",
+    "value": 77,
+    "recordedAt": "2026-07-10T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-12",
+    "value": 85,
+    "recordedAt": "2026-07-14T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-15",
+    "value": 79,
+    "recordedAt": "2026-07-16T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-18",
+    "value": 84,
+    "recordedAt": "2026-07-20T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-01",
+    "value": 92,
+    "recordedAt": "2026-07-07T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-04",
+    "value": 80,
+    "recordedAt": "2026-07-09T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-07",
+    "value": 78,
+    "recordedAt": "2026-07-13T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-10",
+    "value": 88,
+    "recordedAt": "2026-07-15T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-13",
+    "value": 82,
+    "recordedAt": "2026-07-17T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-16",
+    "value": 90,
+    "recordedAt": "2026-06-29T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-02",
+    "value": 75,
+    "recordedAt": "2026-07-08T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-05",
+    "value": 73,
+    "recordedAt": "2026-07-10T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-08",
+    "value": 74,
+    "recordedAt": "2026-07-14T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-11",
+    "value": 80,
+    "recordedAt": "2026-07-16T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-14",
+    "value": 76,
+    "recordedAt": "2026-07-20T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-17",
+    "value": 79,
+    "recordedAt": "2026-06-30T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-03",
+    "value": 68,
+    "recordedAt": "2026-07-09T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-06",
+    "value": 71,
+    "recordedAt": "2026-07-13T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-09",
+    "value": 75,
+    "recordedAt": "2026-07-15T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-12",
+    "value": 77,
+    "recordedAt": "2026-07-17T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-15",
+    "value": 70,
+    "recordedAt": "2026-06-29T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-18",
+    "value": 74,
+    "recordedAt": "2026-07-01T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-01",
+    "value": 86,
+    "recordedAt": "2026-07-10T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-04",
+    "value": 84,
+    "recordedAt": "2026-07-14T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-07",
+    "value": 81,
+    "recordedAt": "2026-07-16T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-10",
+    "value": 83,
+    "recordedAt": "2026-07-20T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-13",
+    "value": 78,
+    "recordedAt": "2026-06-30T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-16",
+    "value": 85,
+    "recordedAt": "2026-07-02T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-02",
+    "value": 72,
+    "recordedAt": "2026-07-13T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-05",
+    "value": 76,
+    "recordedAt": "2026-07-15T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-08",
+    "value": 70,
+    "recordedAt": "2026-07-17T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-11",
+    "value": 79,
+    "recordedAt": "2026-06-29T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-14",
+    "value": 74,
+    "recordedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-17",
+    "value": 76,
+    "recordedAt": "2026-07-03T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-03",
+    "value": 88,
+    "recordedAt": "2026-07-14T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-06",
+    "value": 78,
+    "recordedAt": "2026-07-16T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-09",
+    "value": 77,
+    "recordedAt": "2026-07-20T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-12",
+    "value": 85,
+    "recordedAt": "2026-06-30T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "lessonCode": "IPS-1",
+    "assignmentCode": "ASM-15",
+    "value": 79,
+    "recordedAt": "2026-07-02T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "lessonCode": "AGM-1",
+    "assignmentCode": "ASM-18",
+    "value": 84,
+    "recordedAt": "2026-07-06T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071201",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-01",
+    "value": 92,
+    "recordedAt": "2026-07-15T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071201",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-04",
+    "value": 80,
+    "recordedAt": "2026-07-17T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071201",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-07",
+    "value": 78,
+    "recordedAt": "2026-06-29T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071201",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-10",
+    "value": 88,
+    "recordedAt": "2026-07-01T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071202",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-02",
+    "value": 75,
+    "recordedAt": "2026-07-16T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071202",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-05",
+    "value": 73,
+    "recordedAt": "2026-07-20T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071202",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-08",
+    "value": 74,
+    "recordedAt": "2026-06-30T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071202",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-11",
+    "value": 80,
+    "recordedAt": "2026-07-02T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071203",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-03",
+    "value": 68,
+    "recordedAt": "2026-07-17T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071203",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-06",
+    "value": 71,
+    "recordedAt": "2026-06-29T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071203",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-09",
+    "value": 75,
+    "recordedAt": "2026-07-01T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071203",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-12",
+    "value": 77,
+    "recordedAt": "2026-07-03T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071204",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-01",
+    "value": 86,
+    "recordedAt": "2026-07-20T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071204",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-04",
+    "value": 84,
+    "recordedAt": "2026-06-30T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071204",
+    "lessonCode": "BIG-1",
+    "assignmentCode": "ASM-07",
+    "value": 81,
+    "recordedAt": "2026-07-02T09:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071204",
+    "lessonCode": "IPA-1",
+    "assignmentCode": "ASM-10",
+    "value": 83,
+    "recordedAt": "2026-07-06T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071205",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-02",
+    "value": 72,
+    "recordedAt": "2026-06-29T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071205",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-05",
+    "value": 76,
+    "recordedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071206",
+    "lessonCode": "MAT-1",
+    "assignmentCode": "ASM-03",
+    "value": 88,
+    "recordedAt": "2026-06-30T07:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071206",
+    "lessonCode": "BIN-1",
+    "assignmentCode": "ASM-06",
+    "value": 78,
+    "recordedAt": "2026-07-02T08:00:00.000Z"
+  }
+]

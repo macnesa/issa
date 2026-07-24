@@ -1,6 +1,9 @@
 const { hashSync, compareSync, genSaltSync } = require('bcryptjs');
 const { sign, verify } = require('jsonwebtoken');
-require('dotenv').config();
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const jwtSecret = process.env.JWT_SECRET;
 

@@ -1,0 +1,218 @@
+[
+  {
+    "studentNim": "2026071001",
+    "teacherNip": "2026001001",
+    "content": "Ari mulai lebih percaya diri menjelaskan langkah penyelesaian soal di depan kelas.",
+    "observedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071001",
+    "teacherNip": "2026001001",
+    "content": "Ari menjaga konsistensi tugas dengan baik dan semakin berani memberi pendapat saat diskusi.",
+    "observedAt": "2026-07-15T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "teacherNip": "2026001001",
+    "content": "Nadia menunjukkan peningkatan dalam membaca, tetapi masih perlu dibantu menjaga konsentrasi saat tugas individual.",
+    "observedAt": "2026-07-02T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071002",
+    "teacherNip": "2026001001",
+    "content": "Nadia dapat kembali mengejar materi setelah tidak hadir dan mulai lebih aktif bertanya ketika belum memahami bacaan.",
+    "observedAt": "2026-07-16T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "teacherNip": "2026001001",
+    "content": "Raka aktif bekerja sama dalam kegiatan kelompok dan mulai lebih konsisten menyelesaikan tugas tepat waktu.",
+    "observedAt": "2026-07-03T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071003",
+    "teacherNip": "2026001001",
+    "content": "Raka perlu meluangkan waktu latihan tambahan pada pecahan agar ketelitian perhitungannya meningkat.",
+    "observedAt": "2026-07-17T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "teacherNip": "2026001001",
+    "content": "Salsa teliti saat membuat karya visual dan mampu menyampaikan ide dengan runtut.",
+    "observedAt": "2026-07-06T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071004",
+    "teacherNip": "2026001001",
+    "content": "Salsa menunjukkan kemajuan pada presentasi cerita; volume suara dan kontak matanya semakin baik.",
+    "observedAt": "2026-07-20T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "teacherNip": "2026001001",
+    "content": "Fikri memiliki rasa ingin tahu tinggi saat eksperimen dan aktif mengamati perubahan.",
+    "observedAt": "2026-07-07T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071005",
+    "teacherNip": "2026001001",
+    "content": "Fikri perlu diingatkan untuk membaca instruksi sampai selesai sebelum mulai mengerjakan.",
+    "observedAt": "2026-07-21T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "teacherNip": "2026001001",
+    "content": "Keysha konsisten hadir dan menunjukkan sikap mandiri dalam menyiapkan perlengkapan belajar.",
+    "observedAt": "2026-07-08T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071006",
+    "teacherNip": "2026001001",
+    "content": "Keysha dapat mencoba menyampaikan pertanyaan lebih awal ketika menemui kesulitan pada latihan baru.",
+    "observedAt": "2026-07-22T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "teacherNip": "2026001002",
+    "content": "Bagas cepat memahami pola bilangan dan membantu teman saat kerja pasangan.",
+    "observedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071101",
+    "teacherNip": "2026001002",
+    "content": "Bagas perlu menjaga fokus ketika kegiatan berlangsung cukup lama agar hasil tulisannya tetap rapi.",
+    "observedAt": "2026-07-15T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "teacherNip": "2026001002",
+    "content": "Citra membaca dengan intonasi yang semakin jelas dan berani tampil di depan kelas.",
+    "observedAt": "2026-07-02T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071102",
+    "teacherNip": "2026001002",
+    "content": "Citra masih perlu mengembangkan kosakata Bahasa Inggris melalui latihan singkat yang rutin.",
+    "observedAt": "2026-07-16T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "teacherNip": "2026001002",
+    "content": "Dimas aktif dalam permainan kelompok dan dapat mengikuti aturan dengan baik.",
+    "observedAt": "2026-07-03T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071103",
+    "teacherNip": "2026001002",
+    "content": "Dimas pernah sakit beberapa hari dan sudah menunjukkan usaha baik untuk melengkapi catatan yang tertinggal.",
+    "observedAt": "2026-07-17T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "teacherNip": "2026001002",
+    "content": "Farah menunjukkan kemandirian saat menyelesaikan proyek poster lingkungan.",
+    "observedAt": "2026-07-06T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071104",
+    "teacherNip": "2026001002",
+    "content": "Farah dapat meningkatkan ketepatan waktu saat mengumpulkan latihan mandiri.",
+    "observedAt": "2026-07-20T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "teacherNip": "2026001002",
+    "content": "Gilang memiliki energi positif saat kegiatan olahraga dan mampu mengajak teman bekerja sama.",
+    "observedAt": "2026-07-07T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071105",
+    "teacherNip": "2026001002",
+    "content": "Gilang perlu berlatih memeriksa kembali jawaban matematika sebelum dikumpulkan.",
+    "observedAt": "2026-07-21T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "teacherNip": "2026001002",
+    "content": "Hana tenang saat bekerja mandiri dan menunjukkan ketelitian dalam laporan pengamatan.",
+    "observedAt": "2026-07-08T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071106",
+    "teacherNip": "2026001002",
+    "content": "Hana mulai lebih nyaman menyampaikan hasil kerja kelompok di depan kelas.",
+    "observedAt": "2026-07-22T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071201",
+    "teacherNip": "2026001003",
+    "content": "Ilham menunjukkan pemahaman kuat pada konsep sains dan mampu menghubungkan hasil eksperimen dengan materi.",
+    "observedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071201",
+    "teacherNip": "2026001003",
+    "content": "Ilham perlu memberi kesempatan teman menyampaikan ide sebelum menanggapi saat diskusi.",
+    "observedAt": "2026-07-15T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071202",
+    "teacherNip": "2026001003",
+    "content": "Jihan konsisten menyelesaikan tugas dan memiliki catatan yang sangat teratur.",
+    "observedAt": "2026-07-02T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071202",
+    "teacherNip": "2026001003",
+    "content": "Jihan dapat meningkatkan keberanian mencoba jawaban meskipun belum sepenuhnya yakin.",
+    "observedAt": "2026-07-16T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071203",
+    "teacherNip": "2026001003",
+    "content": "Khalid kreatif saat membuat kolase dan aktif memberi ide pada proyek kelompok.",
+    "observedAt": "2026-07-03T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071203",
+    "teacherNip": "2026001003",
+    "content": "Khalid memerlukan latihan bertahap untuk meningkatkan ketelitian pada soal cerita.",
+    "observedAt": "2026-07-17T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071204",
+    "teacherNip": "2026001003",
+    "content": "Laila menunjukkan sikap empati kepada teman dan dapat bekerja sama dengan baik.",
+    "observedAt": "2026-07-06T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071204",
+    "teacherNip": "2026001003",
+    "content": "Laila perlu mempertahankan fokus ketika berpindah dari kegiatan praktik ke tugas tertulis.",
+    "observedAt": "2026-07-20T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071205",
+    "teacherNip": "2026001003",
+    "content": "Miko memiliki perkembangan baik dalam membaca pemahaman dan mulai menyampaikan alasan jawabannya.",
+    "observedAt": "2026-07-07T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071205",
+    "teacherNip": "2026001003",
+    "content": "Miko masih memiliki record akademik yang bertahap; latihan rutin akan membantu membangun kepercayaan diri.",
+    "observedAt": "2026-07-21T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071206",
+    "teacherNip": "2026001003",
+    "content": "Nayla aktif dalam kegiatan seni dan dapat menyelesaikan tugas dengan arahan minimal.",
+    "observedAt": "2026-07-08T08:00:00.000Z"
+  },
+  {
+    "studentNim": "2026071206",
+    "teacherNip": "2026001003",
+    "content": "Nayla perlu menambah latihan kosakata agar lebih nyaman saat dialog Bahasa Inggris.",
+    "observedAt": "2026-07-22T08:00:00.000Z"
+  }
+]

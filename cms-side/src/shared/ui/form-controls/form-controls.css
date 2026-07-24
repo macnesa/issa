@@ -1,0 +1,553 @@
+.issa-control-field {
+  min-width: 0;
+}
+
+.issa-control-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.issa-control-label__optional {
+  margin-left: 0.45rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.issa-control-helper,
+.issa-control-error {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.issa-control-helper { color: var(--muted); }
+.issa-control-error { color: var(--danger); }
+
+.issa-native-control,
+.issa-select-trigger,
+.issa-date-trigger,
+.issa-combobox-shell {
+  width: 100%;
+  min-height: 2.625rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.62rem 0.38rem 0.72rem 0.38rem;
+  background: #fff;
+  color: var(--text);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+}
+
+.issa-native-control {
+  padding: 0.6rem 0.75rem;
+}
+
+.issa-native-control::placeholder,
+.issa-combobox-input::placeholder,
+.issa-select-trigger__value.is-placeholder,
+.issa-date-trigger .is-placeholder {
+  color: #71858b;
+  opacity: 1;
+}
+
+.issa-native-control:hover:not(:disabled):not([aria-invalid="true"]),
+.issa-select-trigger:hover:not(:disabled),
+.issa-date-trigger:hover:not(:disabled),
+.issa-combobox-shell:hover {
+  border-color: #739fa4;
+}
+
+.issa-native-control:focus-visible,
+.issa-select-trigger[data-focus],
+.issa-date-trigger[data-focus],
+.issa-combobox-shell:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus), inset 0.22rem 0 0 #6bbfbc;
+}
+
+.issa-native-control[aria-invalid="true"],
+.issa-select-trigger[data-invalid],
+.issa-date-trigger[aria-invalid="true"],
+.issa-combobox-field:has(.issa-combobox-input[aria-invalid="true"]) .issa-combobox-shell {
+  border-color: var(--danger);
+  background: #fff7f7;
+}
+
+.issa-native-control:disabled,
+.issa-select-trigger:disabled,
+.issa-date-trigger:disabled,
+.issa-combobox-field:has(.issa-combobox-input:disabled) .issa-combobox-shell {
+  cursor: not-allowed;
+  background: #edf2f1;
+  color: #78898d;
+  opacity: 0.68;
+}
+
+.issa-native-control:not(:placeholder-shown) {
+  background: #fffdf7;
+}
+
+.issa-native-control:-webkit-autofill,
+.issa-native-control:-webkit-autofill:hover,
+.issa-native-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  box-shadow: 0 0 0 1000px #fffdf7 inset, 0 0 0 3px var(--focus);
+  caret-color: var(--text);
+  transition: background-color 9999s ease-out;
+}
+
+.issa-native-control--textarea {
+  min-height: 8rem;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.issa-select-trigger,
+.issa-date-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem 0.55rem 0.78rem;
+  text-align: left;
+}
+
+.issa-select-trigger__value {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.issa-select-trigger__chevron {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: #54747a;
+  transition: transform 140ms ease;
+}
+
+.issa-select-trigger[data-open] .issa-select-trigger__chevron,
+.issa-combobox-button[data-open] .issa-select-trigger__chevron {
+  transform: rotate(180deg);
+}
+
+.issa-options-panel {
+  z-index: 160;
+  width: var(--button-width, var(--input-width));
+  max-width: calc(100vw - 1rem);
+  max-height: min(19rem, var(--anchor-max-height));
+  overflow-y: auto;
+  border: 1px solid #8db3b5;
+  border-radius: 0.58rem 0.38rem 0.82rem 0.38rem;
+  background: #fffdf7;
+  padding: 0.3rem;
+  box-shadow: 0.35rem 0.4rem 0 rgba(107, 191, 188, 0.16), 0 0.9rem 2rem rgba(23, 62, 82, 0.15);
+  color: var(--text);
+  outline: none;
+}
+
+.issa-options-panel:empty { display: none; }
+
+.issa-option {
+  display: flex;
+  min-height: 2.45rem;
+  cursor: default;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  border-left: 0.2rem solid transparent;
+  border-radius: 0.38rem 0.24rem 0.5rem 0.24rem;
+  padding: 0.52rem 0.62rem;
+  color: var(--text);
+  font-size: 0.84rem;
+  outline: none;
+}
+
+.issa-option[data-focus] {
+  border-left-color: #6bbfbc;
+  background: #e8f5f3;
+}
+
+.issa-option[data-selected] {
+  border-left-color: var(--accent);
+  background: #deefed;
+  color: #173e52;
+  font-weight: 700;
+}
+
+.issa-option[data-disabled] {
+  cursor: not-allowed;
+  color: #92a0a3;
+  opacity: 0.65;
+}
+
+.issa-option.is-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.issa-option__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.issa-option__check {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--accent);
+  opacity: 0;
+}
+
+.issa-option[data-selected] .issa-option__check { opacity: 1; }
+.issa-option[data-tone="success"][data-selected] { background: #e6f7ef; color: #17664e; }
+.issa-option[data-tone="warning"][data-selected] { background: #fff4df; color: #925c0d; }
+.issa-option[data-tone="danger"][data-selected] { background: #fff0f1; color: #a93c47; }
+
+.issa-combobox-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.issa-combobox-input {
+  width: 100%;
+  min-height: 2.55rem;
+  border: 0;
+  background: transparent;
+  padding: 0.55rem 2.45rem 0.55rem 2.25rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.issa-combobox-shell__search {
+  position: absolute;
+  left: 0.72rem;
+  width: 1rem;
+  height: 1rem;
+  color: #628086;
+  pointer-events: none;
+}
+
+.issa-combobox-button {
+  position: absolute;
+  right: 0;
+  display: grid;
+  width: 2.25rem;
+  height: 100%;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #54747a;
+  outline: none;
+}
+
+.issa-combobox-button[data-focus] {
+  box-shadow: inset 0 0 0 2px var(--focus);
+}
+
+.issa-control-tone--attendance .issa-select-trigger,
+.issa-control-tone--attendance .issa-date-trigger {
+  border-color: #8fc1bd;
+  background: #f7fffd;
+}
+
+.issa-control-tone--score .issa-select-trigger,
+.issa-control-tone--score .issa-date-trigger,
+.issa-control-tone--score .issa-combobox-shell,
+.issa-control-tone--score .issa-native-control {
+  border-color: #bca6dc;
+  background: #fdfaff;
+}
+
+.issa-control-tone--feedback .issa-date-trigger,
+.issa-control-tone--feedback .issa-native-control {
+  border-color: #d7c795;
+  background: #fffdf5;
+}
+
+.issa-date-trigger {
+  justify-content: flex-start;
+}
+
+.issa-date-trigger__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.issa-calendar-panel {
+  z-index: 130;
+  width: min(21rem, calc(100vw - 1rem));
+  max-height: var(--anchor-max-height);
+  overflow: auto;
+  border: 1px solid #8db3b5;
+  border-radius: 0.7rem 0.45rem 1rem 0.45rem;
+  background: #fffdf7;
+  padding: 0.85rem;
+  box-shadow: 0.4rem 0.45rem 0 rgba(107, 191, 188, 0.16), 0 1rem 2.2rem rgba(23, 62, 82, 0.16);
+  outline: none;
+}
+
+.issa-calendar {
+  --calendar-cell: 2.35rem;
+  position: relative;
+  color: var(--text);
+}
+
+.issa-calendar__months,
+.issa-calendar__month {
+  width: 100%;
+}
+
+.issa-calendar__caption {
+  position: relative;
+  display: flex;
+  min-height: 2.4rem;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+.issa-calendar__caption-label {
+  color: #315f62;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.issa-calendar__nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.issa-calendar__nav-button {
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.48rem 0.3rem 0.58rem 0.3rem;
+  background: #f3faf8;
+  color: var(--accent);
+  pointer-events: auto;
+}
+
+.issa-calendar__nav-button:hover:not(:disabled) { background: #e2f3ef; }
+.issa-calendar__nav-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+.issa-calendar__nav-button:disabled { opacity: 0.4; }
+.issa-calendar__chevron { width: 1rem; height: 1rem; }
+
+.issa-calendar__grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.issa-calendar__weekday {
+  height: 2rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.issa-calendar__day {
+  width: var(--calendar-cell);
+  height: var(--calendar-cell);
+  padding: 0.12rem;
+  text-align: center;
+}
+
+.issa-calendar__day-button {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 0.48rem 0.28rem 0.56rem 0.28rem;
+  background: transparent;
+  color: inherit;
+  font-size: 0.79rem;
+  outline: none;
+}
+
+.issa-calendar__day:not(.is-disabled) .issa-calendar__day-button:hover {
+  border-color: #a8cdca;
+  background: #edf8f6;
+}
+
+.issa-calendar__day.is-today .issa-calendar__day-button {
+  border-color: #a987d8;
+  color: #67488e;
+  font-weight: 800;
+}
+
+.issa-calendar__day.is-selected .issa-calendar__day-button {
+  border-color: #173e52;
+  background: #245e73;
+  box-shadow: 0.13rem 0.14rem 0 #9fd7d2;
+  color: #fff;
+  font-weight: 800;
+}
+
+.issa-calendar__day.is-focused .issa-calendar__day-button,
+.issa-calendar__day-button:focus-visible {
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.issa-calendar__day.is-outside { color: #9ca9ab; }
+.issa-calendar__day.is-disabled { color: #b7c0c1; text-decoration: line-through; }
+.issa-calendar__day.is-disabled .issa-calendar__day-button { cursor: not-allowed; }
+.issa-calendar__day.is-hidden { visibility: hidden; }
+
+.issa-date-time-panel {
+  width: min(22rem, calc(100vw - 1rem));
+}
+
+.issa-time-field {
+  margin-top: 0.75rem;
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding: 0.75rem 0 0;
+}
+
+.issa-time-field:disabled {
+  opacity: 0.55;
+}
+
+.issa-time-field__legend {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  color: #49686e;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.issa-time-field__icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.issa-time-field__controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.issa-time-field__select .issa-select-trigger {
+  min-height: 2.4rem;
+}
+
+.issa-time-field__separator {
+  padding-bottom: 0.52rem;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.issa-date-time-panel__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.issa-calendar-action {
+  min-height: 2.25rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.5rem 0.3rem 0.62rem 0.3rem;
+  background: var(--accent);
+  padding: 0.42rem 0.8rem;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.issa-calendar-action--clear {
+  border-color: var(--border-strong);
+  background: #fff;
+  color: var(--text);
+}
+
+.issa-calendar-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.issa-number-control {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.issa-number-control::-webkit-inner-spin-button,
+.issa-number-control::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.issa-dialog-backdrop {
+  position: fixed;
+  z-index: 140;
+  inset: 0;
+  background: rgba(14, 42, 58, 0.46);
+  backdrop-filter: blur(2px);
+}
+
+.issa-dialog-container {
+  position: fixed;
+  z-index: 150;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.issa-dialog-panel {
+  width: min(32rem, 100%);
+  overflow: hidden;
+  border: 1px solid #8db3b5;
+  border-radius: 0.8rem 0.55rem 1.2rem 0.55rem;
+  background: #fffdf7;
+  box-shadow: 0.45rem 0.5rem 0 rgba(107, 191, 188, 0.18), 0 1.2rem 3rem rgba(14, 42, 58, 0.2);
+}
+
+@media (max-width: 420px) {
+  .issa-calendar-panel { padding: 0.68rem; }
+  .issa-calendar { --calendar-cell: min(2.25rem, calc((100vw - 3.4rem) / 7)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .issa-native-control,
+  .issa-select-trigger,
+  .issa-date-trigger,
+  .issa-combobox-shell,
+  .issa-select-trigger__chevron {
+    transition: none;
+  }
+}

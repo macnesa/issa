@@ -1,8 +1,7 @@
-import { Surface } from "../../../shared/ui/ui";
-
 export default function ScheduleList({ days, schedulesByDay }) {
-  return <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{days.map((day) => {
+  const dayLabels = { Monday: "Senin", Tuesday: "Selasa", Wednesday: "Rabu", Thursday: "Kamis", Friday: "Jumat" };
+  return <section className="weekly-timetable" aria-label="Jadwal mingguan kelas"><div className="weekly-timetable__intro"><span className="weekly-timetable__intro-mark" aria-hidden="true" /><p>Weekly timetable · lima hari sekolah</p></div><div className="weekly-timetable__days">{days.map((day) => {
     const entries = schedulesByDay[day] || [];
-    return <Surface key={day} className="p-5"><h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">{day}</h2>{entries.length ? <ul className="mt-4 divide-y divide-[var(--border)]">{entries.map((schedule) => <li key={schedule.id} className="py-3 first:pt-0 last:pb-0"><p className="font-medium text-[var(--text)]">{schedule.Lesson?.name || "Mata pelajaran belum tersedia"}</p><p className="mt-1 text-sm text-[var(--muted)]">{schedule.Lesson?.KKM != null ? `KKM ${schedule.Lesson.KKM}` : "Detail KKM belum tersedia"}</p></li>)}</ul> : <p className="mt-4 text-sm text-[var(--muted)]">Belum ada mata pelajaran.</p>}</Surface>;
-  })}</div>;
+    return <section key={day} className="weekly-timetable__day"><div className="weekly-timetable__day-header"><h2 className="weekly-timetable__day-name">{dayLabels[day] || day}</h2></div>{entries.length ? <ul className="weekly-timetable__lessons">{entries.map((schedule) => <li key={schedule.id} className="weekly-timetable__lesson"><p className="weekly-timetable__lesson-name">{schedule.Lesson?.name || "Mata pelajaran belum tersedia"}</p><span className="weekly-timetable__lesson-kkm">{schedule.Lesson?.KKM != null ? `KKM ${schedule.Lesson.KKM}` : "KKM —"}</span></li>)}</ul> : <p className="weekly-timetable__empty">Belum ada mata pelajaran.</p>}</section>;
+  })}</div></section>;
 }

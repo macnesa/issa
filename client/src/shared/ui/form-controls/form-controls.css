@@ -1,0 +1,171 @@
+.issa-text-field__label {
+  display: block;
+  color: #315f62;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.issa-text-field__input {
+  width: 100%;
+  min-height: 2.8rem;
+  margin-top: 0.375rem;
+  border: 1px solid #c8dce7;
+  border-radius: 0.72rem 0.4rem 0.72rem 0.4rem;
+  background: #fff;
+  padding: 0.7rem 0.78rem;
+  color: var(--issa-text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.issa-text-field__input::placeholder {
+  color: #7d919a;
+  opacity: 1;
+}
+
+.issa-text-field__input:hover:not(:disabled):not([aria-invalid="true"]) {
+  border-color: #8bb9c4;
+}
+
+.issa-text-field__input:focus-visible {
+  border-color: #356d8d;
+  box-shadow: 0 0 0 3px rgba(107, 191, 188, 0.25);
+}
+
+.issa-text-field__input:not(:placeholder-shown) {
+  background: #fffdf8;
+}
+
+.issa-text-field__input:disabled {
+  cursor: not-allowed;
+  background: #edf2f2;
+  color: #74848a;
+}
+
+.issa-text-field__input[aria-invalid="true"] {
+  border-color: var(--issa-danger);
+  background: var(--issa-danger-soft);
+}
+
+.issa-text-field__input:-webkit-autofill,
+.issa-text-field__input:-webkit-autofill:hover,
+.issa-text-field__input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--issa-text-primary);
+  box-shadow: 0 0 0 1000px #fffdf8 inset, 0 0 0 3px rgba(107, 191, 188, 0.18);
+  caret-color: var(--issa-text-primary);
+  transition: background-color 9999s ease-out;
+}
+
+.issa-text-field__helper,
+.issa-text-field__error {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.issa-text-field__helper { color: var(--issa-text-muted); }
+.issa-text-field__error { color: var(--issa-danger); }
+
+.issa-checkbox-field {
+  border: 1px solid #bfd8e2;
+  border-radius: 0.72rem 0.4rem 0.72rem 0.4rem;
+  background: #f6fbfc;
+  padding: 0.72rem;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.issa-checkbox-field:has(.issa-checkbox-field__control[data-checked]) {
+  border-color: #6bbfbc;
+  background: #eef9f7;
+}
+
+.issa-checkbox-field.is-invalid {
+  border-color: var(--issa-danger);
+  background: var(--issa-danger-soft);
+}
+
+.issa-checkbox-field__row {
+  display: flex;
+  min-height: 1.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.issa-checkbox-field__control {
+  display: inline-grid;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #71808a;
+  border-radius: 0.34rem;
+  background: #fff;
+  color: #fff;
+  outline: none;
+  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.issa-checkbox-field__control:hover:not(:disabled) {
+  border-color: #245b70;
+}
+
+.issa-checkbox-field__control[data-checked] {
+  border-color: #245b70;
+  background: #245b70;
+  box-shadow: 0.12rem 0.12rem 0 rgba(107, 191, 188, 0.32);
+}
+
+.issa-checkbox-field__control[data-focus] {
+  box-shadow: 0 0 0 3px rgba(107, 191, 188, 0.38);
+}
+
+.issa-checkbox-field__control:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.issa-checkbox-field__control:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.issa-checkbox-field__icon {
+  width: 0.82rem;
+  height: 0.82rem;
+  opacity: 0;
+  transform: scale(0.72);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.issa-checkbox-field__control[data-checked] .issa-checkbox-field__icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.issa-checkbox-field__label {
+  cursor: pointer;
+  color: var(--issa-text-secondary);
+  font-size: 0.875rem;
+}
+
+.issa-checkbox-field__error {
+  margin: 0.42rem 0 0 1.9rem;
+  color: var(--issa-danger);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 767px) {
+  .issa-text-field__label { font-size: 0.84rem; }
+  .issa-text-field__input { min-height: 3.5rem; padding: 0.66rem 0.78rem; }
+  .issa-checkbox-field { padding: 0.56rem 0.72rem; }
+  .issa-checkbox-field__label { font-size: 0.85rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .issa-text-field__input,
+  .issa-checkbox-field,
+  .issa-checkbox-field__control,
+  .issa-checkbox-field__icon {
+    transition: none;
+  }
+}
