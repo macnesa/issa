@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchClassSchedule, fetchSchoolActivities } from '../store/actions/actionCreator';
 import AcademicSummary from '../features/student-overview/components/AcademicSummary';
+import RecentStudentChanges from '../features/student-insights/components/RecentStudentChanges';
 import ActivityPreview from '../features/student-overview/components/ActivityPreview';
 import AttendanceSummary from '../features/student-overview/components/AttendanceSummary';
 import SchedulePreview from '../features/student-overview/components/SchedulePreview';
@@ -40,6 +41,7 @@ export default function Home() {
       <TodayAttendance attendance={todayAttendance} />
       <AttendanceSummary counts={attendanceSummary} />
       <AcademicSummary summary={academicSummary} />
+      <RecentStudentChanges studentId={studentOverview.profile.id} />
       <TeacherFeedback profile={studentOverview.profile} />
       <SchedulePreview
         resource={classSchedule}

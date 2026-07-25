@@ -9,8 +9,10 @@ const publicStudentRouter = require('../modules/public-student/public-student.ro
 const scheduleRouter = require('../modules/schedule/schedule.route');
 const scoreRouter = require('../modules/score/score.route');
 const studentRouter = require('../modules/student/student.route');
+const studentInsightRouter = require('../modules/student-insight/student-insight.route');
 const teacherRouter = require('../modules/teacher/teacher.route');
 
+router.use('/', studentInsightRouter);
 router.use('/public', publicStudentRouter);
 router.use('/users', parentRouter);
 router.use('/teachers', teacherRouter);

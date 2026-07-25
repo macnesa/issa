@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Pagination from "../features/students/components/Pagination";
 import TableStudent from "../features/students/components/TableStudents";
+import TeacherAttentionQueue from "../features/student-insights/components/TeacherAttentionQueue";
 import { fetchStudentList } from "../store/action/ActionCreator";
 import { EmptyState, ErrorState, LoadingState, PageContainer, PageHeader, PrimaryButton } from "../shared/ui/ui";
 import "../features/students/student-record.css";
@@ -35,6 +36,7 @@ export default function Dashboard() {
         <div><dt>Alur hari ini</dt><dd>Catat &amp; tinjau</dd><span>Feedback, attendance, score</span></div>
       </dl>
     </section>
+    <TeacherAttentionQueue />
     <section className="teacher-dashboard__roster">
       <div className="teacher-dashboard__roster-header flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div><h2 className="text-lg font-semibold text-[var(--text)]">Daftar siswa</h2><p className="mt-1 text-sm text-[var(--muted)]">Buka detail untuk melanjutkan pencatatan perkembangan siswa.</p></div>

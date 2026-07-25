@@ -46,13 +46,13 @@
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
   - `cms-side/src/pages/Login.jsx:17`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:27`
+  - `cms-side/src/pages/AddStudent.jsx:28`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:52`
+  - `cms-side/src/pages/AddStudent.jsx:53`
 - `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
   - `cms-side/src/store/action/ActionCreator.js:625`
 - `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
-  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:37`
+  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:47`
 - `ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE`
   - `cms-side/src/store/action/ActionCreator.js:549`
 - `ISSA:CMS.STUDENT.FETCH_DETAIL`
@@ -83,7 +83,7 @@
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER_REQUEST`
   - `server/middlewares/authentication.js:5`
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
-  - `server/helpers/index.js:13`
+  - `server/helpers/index.js:16`
 - `ISSA:SERVER.FEEDBACK.GET_HISTORY`
   - `server/modules/feedback/feedback.service.js:8`
 - `ISSA:SERVER.FEEDBACK.UPDATE_HISTORY`
@@ -102,6 +102,16 @@
   - `server/modules/score/score.service.js:110`
 - `ISSA:SERVER.SCORE.VALIDATE_VALUE`
   - `server/modules/score/score.validator.js:2`
+- `ISSA:SERVER.STUDENT_INSIGHT.BUILD_RECENT_CHANGES`
+  - `server/modules/student-insight/student-insight.service.js:271`
+- `ISSA:SERVER.STUDENT_INSIGHT.CALCULATE_ACADEMICS`
+  - `server/modules/student-insight/student-insight.service.js:166`
+- `ISSA:SERVER.STUDENT_INSIGHT.CALCULATE_ATTENDANCE`
+  - `server/modules/student-insight/student-insight.service.js:79`
+- `ISSA:SERVER.STUDENT_INSIGHT.COMPOSE_STUDENT`
+  - `server/modules/student-insight/student-insight.service.js:335`
+- `ISSA:SERVER.STUDENT_INSIGHT.COMPOSE_TEACHER_ATTENTION`
+  - `server/modules/student-insight/student-insight.service.js:392`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
   - `server/modules/student/student.service.js:32`
 - `ISSA:SERVER.STUDENT.GET_LIST`
