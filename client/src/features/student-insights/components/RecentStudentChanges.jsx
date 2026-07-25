@@ -164,11 +164,11 @@ function RecentChangeItem({ change, index }) {
   );
 }
 
-export default function RecentStudentChanges({ studentId }) {
+export default function RecentStudentChanges({ studentId, refreshKey = 0 }) {
   const [status, setStatus] = useState(studentId ? 'loading' : 'success');
   const [insights, setInsights] = useState(null);
   const [error, setError] = useState(null);
-  const requestedStudentId = useRef(null);
+  const requestedResourceKey = useRef(null);
 
   const loadStudentInsights = useCallback(async () => {
     if (!studentId) {
@@ -195,10 +195,11 @@ export default function RecentStudentChanges({ studentId }) {
   }, [studentId]);
 
   useEffect(() => {
-    if (!studentId || requestedStudentId.current === studentId) return;
-    requestedStudentId.current = studentId;
+    const resourceKey = `${studentId || 'none'}:${refreshKey}`;
+    if (!studentId || requestedResourceKey.current === resourceKey) return;
+    requestedResourceKey.current = resourceKey;
     loadStudentInsights();
-  }, [loadStudentInsights, studentId]);
+  }, [loadStudentInsights, refreshKey, studentId]);
 
   const recentChanges = Array.isArray(insights?.recentChanges)
     ? insights.recentChanges.slice(0, 6)

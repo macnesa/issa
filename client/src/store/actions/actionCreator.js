@@ -124,10 +124,12 @@ export const fetchStudentOverview = () => {
     try {
       const { data: studentResponse } = await apiClient.get('/public/detail');
       dispatch({ type: STUDENT_DETAIL_SUCCESS, payload: mapStudentResponseToOverview(studentResponse) });
+      return true;
     } catch (apiError) {
       if (apiError?.response?.status !== 401) {
         dispatch({ type: STUDENT_DETAIL_FAILURE, payload: normalizeApiError(apiError) });
       }
+      return false;
     }
   };
 };

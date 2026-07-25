@@ -1,5 +1,6 @@
 const isNil = require('lodash/isNil');
 const scoreRepository = require('./score.repository');
+const { emitStudentRecordUpdated } = require('../../realtime/student-record-events');
 const {
   getCreateRecordedAt,
   validateScoreRecordedAt,
@@ -91,6 +92,12 @@ async function createStudentScore({ classId, scorePayload }) {
     createdBy: teacherClass.Teacher.name,
   });
 
+  emitStudentRecordUpdated({
+    studentId,
+    recordType: 'score',
+    occurredAt: scoreRecord.recordedAt || scoreRecordPayload.recordedAt,
+  });
+
   return { data: scoreRecord, history };
 }
 
@@ -130,6 +137,16 @@ async function updateStudentScore({ classId, scorePayload }) {
     scoreUpdatePayload.recordedAt = validateScoreRecordedAt(scorePayload.recordedAt);
   }
 
+  const storedRecordedAt = scoreRecord.recordedAt
+    ? new Date(scoreRecord.recordedAt).getTime()
+    : null;
+  const updatedRecordedAt = scoreUpdatePayload.recordedAt
+    ? scoreUpdatePayload.recordedAt.getTime()
+    : storedRecordedAt;
+  const hasScoreChanged =
+    Number(scoreRecord.value) !== scoreValue ||
+    storedRecordedAt !== updatedRecordedAt;
+
   const updatedScore = await scoreRepository.updateStudentScore(
     scoreRecord,
     scoreUpdatePayload
@@ -139,6 +156,15 @@ async function updateStudentScore({ classId, scorePayload }) {
     description: `Score ${student.name} lesson ${lesson.name} has been edited`,
     createdBy: teacherClass.Teacher.name,
   });
+
+  if (hasScoreChanged) {
+    emitStudentRecordUpdated({
+      studentId: scoreRecord.StudentId,
+      recordType: 'score',
+      occurredAt: updatedScore.recordedAt || scoreUpdatePayload.recordedAt ||
+        scoreRecord.recordedAt,
+    });
+  }
 
   return { data: updatedScore, history };
 }

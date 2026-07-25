@@ -1,6 +1,7 @@
 const isEmpty = require('lodash/isEmpty');
 const isNil = require('lodash/isNil');
 const attendanceRepository = require('./attendance.repository');
+const { emitStudentRecordUpdated } = require('../../realtime/student-record-events');
 const {
   getRequestedAttendanceDate,
   validateAttendanceStatus,
@@ -53,6 +54,12 @@ async function createAttendanceRecord({ classId, attendancePayload }) {
     createdBy: teacherClass.Teacher.name,
   });
 
+  emitStudentRecordUpdated({
+    studentId,
+    recordType: 'attendance',
+    occurredAt: attendanceDate,
+  });
+
   return attendanceRecord;
 }
 
@@ -69,7 +76,19 @@ async function updateAttendanceRecord({ classId, attendancePayload }) {
     .findAttendanceByStudentAndDate(studentId, attendanceDate);
   if (isNil(attendanceRecord)) throw { name: 'notFound' };
 
-  return attendanceRepository.updateAttendanceRecord(attendanceRecord, { status });
+  const hasAttendanceChanged = attendanceRecord.status !== status;
+  const updatedAttendanceRecord = await attendanceRepository
+    .updateAttendanceRecord(attendanceRecord, { status });
+
+  if (hasAttendanceChanged) {
+    emitStudentRecordUpdated({
+      studentId,
+      recordType: 'attendance',
+      occurredAt: attendanceDate,
+    });
+  }
+
+  return updatedAttendanceRecord;
 }
 
 module.exports = {

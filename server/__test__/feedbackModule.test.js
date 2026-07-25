@@ -12,10 +12,16 @@ jest.mock('../models', () => ({
     transaction: jest.fn(async (transactionWork) => transactionWork({ id: 'feedback-transaction' })),
   },
 }));
+jest.mock('../realtime/student-record-events', () => ({
+  emitStudentRecordUpdated: jest.fn(),
+}));
 
 const { sequelize } = require('../models');
 const feedbackRepository = require('../modules/feedback/feedback.repository');
 const feedbackService = require('../modules/feedback/feedback.service');
+const {
+  emitStudentRecordUpdated,
+} = require('../realtime/student-record-events');
 const {
   validateObservedAt,
 } = require('../modules/feedback/feedback.validator');
@@ -75,6 +81,12 @@ describe('feedback module service', () => {
       },
       databaseTransaction
     );
+    expect(emitStudentRecordUpdated).toHaveBeenCalledTimes(1);
+    expect(emitStudentRecordUpdated).toHaveBeenCalledWith({
+      studentId: 7,
+      recordType: 'feedback',
+      occurredAt: new Date('2026-07-23'),
+    });
     expect(studentUpdatePayload.feedback).toBe('  Meaningful feedback  ');
   });
 
@@ -99,6 +111,7 @@ describe('feedback module service', () => {
     );
     expect(feedbackRepository.createFeedbackHistory).not.toHaveBeenCalled();
     expect(feedbackRepository.createStudentUpdateHistory).toHaveBeenCalledTimes(1);
+    expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
   });
 
   test('rejects the operation when a transactional write fails', async () => {
@@ -112,6 +125,8 @@ describe('feedback module service', () => {
       teacherId: 5,
       studentUpdatePayload: { feedback: 'Changed feedback' },
     })).rejects.toThrow('history write failed');
+
+    expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
   });
 
   test('reads history only after finding the student in the teacher class', async () => {

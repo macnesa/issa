@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useOutletContext } from 'react-router-dom';
 import { fetchClassSchedule, fetchSchoolActivities } from '../store/actions/actionCreator';
 import AcademicSummary from '../features/student-overview/components/AcademicSummary';
 import RecentStudentChanges from '../features/student-insights/components/RecentStudentChanges';
@@ -14,6 +15,7 @@ import '../features/student-overview/student-overview.css';
 
 export default function Home() {
   const dispatch = useDispatch();
+  const { studentInsightsRefreshKey = 0 } = useOutletContext() || {};
   const { studentDetail, classSchedule, activity } = useSelector((state) => state.student);
   const { data: studentOverview } = studentDetail;
 
@@ -41,7 +43,10 @@ export default function Home() {
       <TodayAttendance attendance={todayAttendance} />
       <AttendanceSummary counts={attendanceSummary} />
       <AcademicSummary summary={academicSummary} />
-      <RecentStudentChanges studentId={studentOverview.profile.id} />
+      <RecentStudentChanges
+        studentId={studentOverview.profile.id}
+        refreshKey={studentInsightsRefreshKey}
+      />
       <TeacherFeedback profile={studentOverview.profile} />
       <SchedulePreview
         resource={classSchedule}

@@ -9,9 +9,15 @@ jest.mock('../modules/score/score.repository', () => ({
   findTeacherClass: jest.fn(),
   updateStudentScore: jest.fn(),
 }));
+jest.mock('../realtime/student-record-events', () => ({
+  emitStudentRecordUpdated: jest.fn(),
+}));
 
 const scoreRepository = require('../modules/score/score.repository');
 const scoreService = require('../modules/score/score.service');
+const {
+  emitStudentRecordUpdated,
+} = require('../realtime/student-record-events');
 const {
   validateScoreRecordedAt,
   validateScoreValue,
@@ -79,6 +85,12 @@ describe('score module service', () => {
       status: true,
       recordedAt: new Date('2026-07-23T08:00:00Z'),
     });
+    expect(emitStudentRecordUpdated).toHaveBeenCalledTimes(1);
+    expect(emitStudentRecordUpdated).toHaveBeenCalledWith({
+      studentId: 7,
+      recordType: 'score',
+      occurredAt: new Date('2026-07-23T08:00:00Z'),
+    });
     expect(scorePayload.value).toBe(80);
   });
 
@@ -88,6 +100,7 @@ describe('score module service', () => {
       StudentId: 7,
       LessonId: 11,
       AssignmentId: 13,
+      value: 80,
     };
     scoreRepository.findScoreById.mockResolvedValue(scoreRecord);
     scoreRepository.updateStudentScore.mockResolvedValue({
@@ -119,6 +132,31 @@ describe('score module service', () => {
         status: false,
       }
     );
+    expect(emitStudentRecordUpdated).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not emit when a score update keeps the same value and date', async () => {
+    const scoreRecord = {
+      id: 31,
+      StudentId: 7,
+      LessonId: 11,
+      AssignmentId: 13,
+      value: 80,
+      recordedAt: new Date('2026-07-23T08:00:00Z'),
+    };
+    scoreRepository.findScoreById.mockResolvedValue(scoreRecord);
+    scoreRepository.updateStudentScore.mockResolvedValue(scoreRecord);
+
+    await scoreService.updateStudentScore({
+      classId: 3,
+      scorePayload: {
+        ScoreId: 31,
+        value: 80,
+        recordedAt: '2026-07-23T08:00:00Z',
+      },
+    });
+
+    expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
   });
 
   test('returns the existing failing status below Lesson KKM', () => {

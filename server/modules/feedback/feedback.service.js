@@ -2,6 +2,7 @@ const isEqual = require('lodash/isEqual');
 const isNil = require('lodash/isNil');
 const { sequelize } = require('../../models');
 const feedbackRepository = require('./feedback.repository');
+const { emitStudentRecordUpdated } = require('../../realtime/student-record-events');
 const { validateFeedbackUpdate } = require('./feedback.validator');
 
 async function getStudentFeedbackHistory({ studentId, classId }) {
@@ -42,7 +43,7 @@ async function updateStudentFeedback({
     studentFieldsToUpdate.feedback = feedbackUpdate.feedback;
   }
 
-  return sequelize.transaction(async (databaseTransaction) => {
+  const feedbackResult = await sequelize.transaction(async (databaseTransaction) => {
     const updatedStudent = await feedbackRepository.updateStudent(
       existingStudent,
       studentFieldsToUpdate,
@@ -65,6 +66,16 @@ async function updateStudentFeedback({
 
     return { data: updatedStudent, history: updateHistory };
   });
+
+  if (hasFeedbackChanged) {
+    emitStudentRecordUpdated({
+      studentId: existingStudent.id,
+      recordType: 'feedback',
+      occurredAt: feedbackUpdate.observedAt,
+    });
+  }
+
+  return feedbackResult;
 }
 
 module.exports = {

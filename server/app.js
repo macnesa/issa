@@ -32,9 +32,11 @@ assertProductionEnvironment();
 
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
 const { sequelize } = require('./models');
 const router = require('./routes');
 const { errorHandler } = require('./middlewares/errorHandler');
+const { initializeRealtimeServer } = require('./realtime/realtime-server');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -74,7 +76,10 @@ app.use('/', router);
 app.use(errorHandler);
 
 function startServer() {
-  return app.listen(port, '0.0.0.0', () => {
+  const httpServer = http.createServer(app);
+  initializeRealtimeServer(httpServer, { allowedOrigins });
+
+  return httpServer.listen(port, '0.0.0.0', () => {
     console.log(`ISSA demo server listening on port ${port}`);
   });
 }
