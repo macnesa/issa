@@ -209,6 +209,20 @@ blockquote.parent-journal-entry__content::after {
   font-size: 0.67rem;
 }
 
+.parent-journal-entry__evidence--retracted {
+  display: block;
+  border-style: dashed;
+  background: #f4f0e6;
+}
+
+.parent-journal-entry__evidence--retracted span {
+  color: #665e4e;
+  font-size: 0.7rem;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-transform: none;
+}
+
 @media (max-width: 559px) {
   .parent-journal-entry {
     grid-template-columns: 1.5rem 0.72rem minmax(0, 1fr);

@@ -257,4 +257,106 @@ describe('StudentLearningJournalSection Parent', () => {
     await new Promise((resolve) => window.setTimeout(resolve, 0));
     expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(2);
   });
+
+  it('memperbarui linked evidence dan viewer tanpa menutupnya saat metadata berubah', async () => {
+    const refreshedRequest = deferredPromise();
+    const correctedEntry = {
+      ...observationEntry,
+      evidence: {
+        ...evidence,
+        title: 'Hasil latihan terkoreksi',
+        category: 'assessment',
+        observedAt: '2026-07-24',
+        availability: 'available',
+      },
+    };
+    fetchStudentLearningJournal
+      .mockResolvedValueOnce([observationEntry])
+      .mockReturnValueOnce(refreshedRequest.promise);
+    const { rerender } = render(
+      <StudentLearningJournalSection studentId="1" refreshKey={0} />
+    );
+
+    fireEvent.click(await screen.findByRole('button', {
+      name: 'Buka evidence Hasil latihan Matematika',
+    }));
+    const viewer = await screen.findByRole('dialog');
+
+    rerender(
+      <StudentLearningJournalSection studentId="1" refreshKey={1} />
+    );
+    await waitFor(() => {
+      expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(2);
+    });
+    await act(async () => {
+      refreshedRequest.resolve([correctedEntry]);
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Hasil latihan terkoreksi')).toHaveLength(2);
+      expect(within(viewer).getByRole('heading', {
+        name: 'Hasil latihan terkoreksi',
+      })).toBeInTheDocument();
+    });
+    expect(screen.getByText(/Penilaian · 24 Juli 2026/)).toBeInTheDocument();
+    expect(within(viewer).getByRole('img', {
+      name: 'Hasil latihan terkoreksi',
+    })).toHaveAttribute('src', evidence.file.url);
+    expect(within(viewer).getByText('Penilaian')).toBeInTheDocument();
+    expect(within(viewer).getByText('24 Juli 2026')).toBeInTheDocument();
+  });
+
+  it('mempertahankan journal sebagai tombstone aman dan menutup viewer setelah retraction', async () => {
+    const retractedRequest = deferredPromise();
+    const retractedEntry = {
+      ...observationEntry,
+      evidence: {
+        ...evidence,
+        availability: 'retracted',
+        file: null,
+        retractionReason: 'Alasan internal tidak boleh terlihat.',
+        deletedAt: '2026-07-26T10:00:00.000Z',
+      },
+    };
+    fetchStudentLearningJournal
+      .mockResolvedValueOnce([observationEntry])
+      .mockReturnValueOnce(retractedRequest.promise);
+    const { rerender } = render(
+      <StudentLearningJournalSection studentId="1" refreshKey={0} />
+    );
+
+    fireEvent.click(await screen.findByRole('button', {
+      name: 'Buka evidence Hasil latihan Matematika',
+    }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+    rerender(
+      <StudentLearningJournalSection studentId="1" refreshKey={1} />
+    );
+    await waitFor(() => {
+      expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(2);
+    });
+    await act(async () => {
+      retractedRequest.resolve([retractedEntry]);
+    });
+
+    const entry = await screen.findByRole('listitem');
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(within(entry).getByText(
+        'Evidence terkait telah dicabut dan tidak lagi tersedia.'
+      )).toBeInTheDocument();
+      expect(screen.getByRole('heading', {
+        name: 'Perjalanan belajar terbaru',
+      })).toHaveFocus();
+    });
+    expect(within(entry).getByText(observationEntry.content)).toBeInTheDocument();
+    expect(within(entry).getByText('Hasil latihan Matematika')).toBeInTheDocument();
+    expect(within(entry).getByText(/Tugas · 25 Juli 2026/)).toBeInTheDocument();
+    expect(within(entry).queryByRole('img')).not.toBeInTheDocument();
+    expect(within(entry).queryByRole('link')).not.toBeInTheDocument();
+    expect(within(entry).queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.queryByText('Alasan internal tidak boleh terlihat.')).not.toBeInTheDocument();
+    expect(document.body).not.toHaveTextContent('2026-07-26T10:00:00.000Z');
+  });
 });

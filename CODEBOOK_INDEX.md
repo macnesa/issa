@@ -46,9 +46,9 @@
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
   - `cms-side/src/pages/Login.jsx:17`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:29`
+  - `cms-side/src/pages/AddStudent.jsx:30`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:54`
+  - `cms-side/src/pages/AddStudent.jsx:55`
 - `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
   - `cms-side/src/store/action/ActionCreator.js:625`
 - `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
@@ -102,10 +102,14 @@
   - `server/modules/score/score.service.js:117`
 - `ISSA:SERVER.SCORE.VALIDATE_VALUE`
   - `server/modules/score/score.validator.js:2`
+- `ISSA:SERVER.STUDENT_EVIDENCE.CORRECT`
+  - `server/modules/student-evidence/student-evidence.service.js:169`
 - `ISSA:SERVER.STUDENT_EVIDENCE.CREATE`
-  - `server/modules/student-evidence/student-evidence.service.js:84`
+  - `server/modules/student-evidence/student-evidence.service.js:86`
 - `ISSA:SERVER.STUDENT_EVIDENCE.LIST`
-  - `server/modules/student-evidence/student-evidence.service.js:135`
+  - `server/modules/student-evidence/student-evidence.service.js:240`
+- `ISSA:SERVER.STUDENT_EVIDENCE.RETRACT`
+  - `server/modules/student-evidence/student-evidence.service.js:205`
 - `ISSA:SERVER.STUDENT_EVIDENCE.UPLOAD_IMAGE`
   - `server/integrations/cloudinary.js:18`
 - `ISSA:SERVER.STUDENT_INSIGHT.BUILD_RECENT_CHANGES`
@@ -119,13 +123,15 @@
 - `ISSA:SERVER.STUDENT_INSIGHT.COMPOSE_TEACHER_ATTENTION`
   - `server/modules/student-insight/student-insight.service.js:392`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.CREATE`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:134`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:146`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.LIST`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:163`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:175`
+- `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.MAP_EVIDENCE_TOMBSTONE`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:23`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.RETRACT`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:223`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:235`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.UPDATE`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:180`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:192`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
   - `server/modules/student/student.service.js:32`
 - `ISSA:SERVER.STUDENT.GET_LIST`

@@ -52,3 +52,40 @@ export async function createStudentEvidence(studentId, evidenceFormData) {
 
   return parseResponse(response, "Bukti perkembangan gagal disimpan.");
 }
+
+function metadataRequestHeaders() {
+  return {
+    "Content-Type": "application/json",
+    access_token: localStorage.access_token,
+  };
+}
+
+export async function updateStudentEvidenceMetadata(
+  studentId,
+  evidenceId,
+  metadata
+) {
+  const response = await fetch(
+    `${baseUrl}/students/${studentId}/evidences/${evidenceId}`,
+    {
+      method: "PATCH",
+      headers: metadataRequestHeaders(),
+      body: JSON.stringify(metadata),
+    }
+  );
+
+  return parseResponse(response, "Koreksi evidence gagal disimpan.");
+}
+
+export async function retractStudentEvidence(studentId, evidenceId, reason) {
+  const response = await fetch(
+    `${baseUrl}/students/${studentId}/evidences/${evidenceId}`,
+    {
+      method: "DELETE",
+      headers: metadataRequestHeaders(),
+      body: JSON.stringify({ reason }),
+    }
+  );
+
+  return parseResponse(response, "Evidence gagal dicabut.");
+}

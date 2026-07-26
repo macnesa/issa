@@ -53,6 +53,13 @@ export default function StudentLearningJournalSection({
   const [selectedEvidence, setSelectedEvidence] = useState(null);
   const [retryKey, setRetryKey] = useState(0);
   const requestSequence = useRef(0);
+  const sectionHeadingRef = useRef(null);
+
+  const focusSectionHeading = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      sectionHeadingRef.current?.focus();
+    });
+  }, []);
 
   const loadJournal = useCallback(async ({ signal } = {}) => {
     if (!studentId) {
@@ -73,10 +80,27 @@ export default function StudentLearningJournalSection({
         { signal }
       );
       if (signal?.aborted || requestId !== requestSequence.current) return;
+      const visibleEntries = journalEntries.slice(0, 6);
       setResource({
         status: 'success',
-        data: journalEntries.slice(0, 6),
+        data: visibleEntries,
         error: null,
+      });
+      setSelectedEvidence((currentEvidence) => {
+        if (!currentEvidence) return null;
+
+        const refreshedEvidence = journalEntries
+          .map((entry) => entry.evidence)
+          .find((evidence) => (
+            evidence
+            && evidence.availability !== 'retracted'
+            && evidence.file?.url
+            && String(evidence.id) === String(currentEvidence.id)
+          ));
+        if (refreshedEvidence) return refreshedEvidence;
+
+        focusSectionHeading();
+        return null;
       });
     } catch (apiError) {
       if (signal?.aborted || requestId !== requestSequence.current) return;
@@ -86,7 +110,7 @@ export default function StudentLearningJournalSection({
         error: normalizeApiError(apiError),
       });
     }
-  }, [studentId]);
+  }, [focusSectionHeading, studentId]);
 
   useEffect(() => {
     const requestController = new AbortController();
@@ -110,7 +134,13 @@ export default function StudentLearningJournalSection({
       >
         <header className="parent-journal__section-header">
           <p className="overview-kicker">Jurnal belajar</p>
-          <h2 id="parent-journal-title">Perjalanan belajar terbaru</h2>
+          <h2
+            id="parent-journal-title"
+            ref={sectionHeadingRef}
+            tabIndex="-1"
+          >
+            Perjalanan belajar terbaru
+          </h2>
           <span>
             Catatan yang dibagikan guru mengenai proses, refleksi, dan
             perkembangan belajar.

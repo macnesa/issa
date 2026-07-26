@@ -1,4 +1,11 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { fetchStudentEvidences } from '../studentEvidenceApi';
 import StudentEvidenceSection from './StudentEvidenceSection';
 
@@ -103,5 +110,93 @@ describe('StudentEvidenceSection Parent', () => {
     rerender(<StudentEvidenceSection studentId="1" refreshKey={1} />);
     await new Promise((resolve) => window.setTimeout(resolve, 0));
     expect(fetchStudentEvidences).toHaveBeenCalledTimes(2);
+  });
+
+  it('mempertahankan viewer dan memakai metadata terbaru setelah refetch', async () => {
+    const correctedEvidence = {
+      ...evidence,
+      title: 'Eksperimen warna terkoreksi',
+      category: 'assessment',
+      description: 'Metadata terbaru dari guru.',
+      observedAt: '2026-07-24',
+    };
+    fetchStudentEvidences
+      .mockResolvedValueOnce([evidence])
+      .mockResolvedValueOnce([correctedEvidence]);
+    const { rerender } = render(
+      <StudentEvidenceSection studentId="1" refreshKey={0} />
+    );
+
+    fireEvent.click(await screen.findByRole('button', {
+      name: 'Buka gambar Eksperimen sains',
+    }));
+    const viewer = await screen.findByRole('dialog');
+
+    rerender(<StudentEvidenceSection studentId="1" refreshKey={1} />);
+
+    await waitFor(() => {
+      expect(fetchStudentEvidences).toHaveBeenCalledTimes(2);
+      expect(within(viewer).getByRole('heading', {
+        name: 'Eksperimen warna terkoreksi',
+      })).toBeInTheDocument();
+    });
+    expect(within(viewer).getByRole('img', {
+      name: 'Eksperimen warna terkoreksi',
+    })).toHaveAttribute('src', evidence.file.url);
+    expect(within(viewer).getByText('Penilaian')).toBeInTheDocument();
+    expect(within(viewer).getByText('24 Juli 2026')).toBeInTheDocument();
+    expect(within(viewer).getByText(
+      'Metadata terbaru dari guru.'
+    )).toBeInTheDocument();
+  });
+
+  it('menghilangkan evidence, menutup viewer, dan memindahkan fokus setelah retraction', async () => {
+    fetchStudentEvidences
+      .mockResolvedValueOnce([evidence])
+      .mockResolvedValueOnce([]);
+    const { rerender } = render(
+      <StudentEvidenceSection studentId="1" refreshKey={0} />
+    );
+
+    fireEvent.click(await screen.findByRole('button', {
+      name: 'Buka gambar Eksperimen sains',
+    }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+    rerender(<StudentEvidenceSection studentId="1" refreshKey={1} />);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(screen.queryByText('Eksperimen sains')).not.toBeInTheDocument();
+      expect(screen.getByRole('heading', {
+        name: 'Dokumentasi belajar terbaru',
+      })).toHaveFocus();
+    });
+    expect(screen.getByText(
+      'Belum ada dokumentasi perkembangan yang dibagikan.'
+    )).toBeInTheDocument();
+  });
+
+  it('menutup viewer ketika active student berubah', async () => {
+    fetchStudentEvidences.mockImplementation((studentId) => Promise.resolve(
+      studentId === '1'
+        ? [evidence]
+        : [{ ...evidence, id: 2, title: 'Evidence siswa kedua' }]
+    ));
+    const { rerender } = render(
+      <StudentEvidenceSection studentId="1" />
+    );
+
+    fireEvent.click(await screen.findByRole('button', {
+      name: 'Buka gambar Eksperimen sains',
+    }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+
+    rerender(<StudentEvidenceSection studentId="2" />);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    expect(await screen.findByText('Evidence siswa kedua')).toBeInTheDocument();
   });
 });

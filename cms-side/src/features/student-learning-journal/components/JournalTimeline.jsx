@@ -59,6 +59,8 @@ export default function JournalTimeline({ entries, onEdit, onRetract }) {
           const type = journalEntryTypes[entry.type];
           const capture = journalVoiceCaptureTypes[entry.voiceCaptureType];
           const isReflection = entry.type === "student_reflection";
+          const evidenceRetracted =
+            entry.evidence?.availability === "retracted";
 
           return (
             <li
@@ -95,15 +97,25 @@ export default function JournalTimeline({ entries, onEdit, onRetract }) {
                 </p>
 
                 {entry.evidence && (
-                  <div className="journal-timeline__evidence">
-                    {entry.evidence.file?.url && (
+                  <div
+                    className={`journal-timeline__evidence ${
+                      evidenceRetracted
+                        ? "journal-timeline__evidence--retracted"
+                        : ""
+                    }`}
+                  >
+                    {!evidenceRetracted && entry.evidence.file?.url && (
                       <img
                         src={entry.evidence.file.url}
                         alt={`Evidence terkait: ${entry.evidence.title}`}
                       />
                     )}
                     <div>
-                      <span>Evidence terkait</span>
+                      <span>
+                        {evidenceRetracted
+                          ? "Evidence terkait telah dicabut."
+                          : "Evidence terkait"}
+                      </span>
                       <strong>{entry.evidence.title}</strong>
                       <small>
                         {evidenceCategoryLabels[entry.evidence.category]

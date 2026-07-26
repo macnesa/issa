@@ -16,7 +16,10 @@ import JournalEntryForm from "./JournalEntryForm";
 import JournalTimeline from "./JournalTimeline";
 import "./StudentLearningJournalSection.css";
 
-export default function StudentLearningJournalSection({ studentId }) {
+export default function StudentLearningJournalSection({
+  studentId,
+  refreshKey = 0,
+}) {
   const [resource, setResource] = useState({
     status: "loading",
     data: [],
@@ -78,7 +81,7 @@ export default function StudentLearningJournalSection({ studentId }) {
       journalController.abort();
       evidenceController.abort();
     };
-  }, [loadEvidences, loadJournal]);
+  }, [loadEvidences, loadJournal, refreshKey]);
 
   async function refetchAfterAuthorizationError(operation) {
     try {

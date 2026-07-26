@@ -14,6 +14,7 @@ jest.mock('cloudinary', () => ({
 const { v2: cloudinary } = require('cloudinary');
 const {
   deleteStudentEvidenceImage,
+  destroyStudentEvidenceAsset,
   uploadStudentEvidenceImage,
 } = require('../integrations/cloudinary');
 
@@ -111,5 +112,40 @@ describe('Cloudinary Student Evidence integration', () => {
         invalidate: true,
       }
     );
+  });
+
+  test.each(['ok', 'deleted', 'not found', 'not_found'])(
+    'strict destroy accepts provider result %s',
+    async (result) => {
+      cloudinary.uploader.destroy.mockResolvedValue({ result });
+
+      await expect(destroyStudentEvidenceAsset(
+        'issa/student-evidence/7/evidence-1'
+      )).resolves.toBe(true);
+
+      expect(cloudinary.uploader.destroy).toHaveBeenCalledWith(
+        'issa/student-evidence/7/evidence-1',
+        {
+          resource_type: 'image',
+          invalidate: true,
+        }
+      );
+    }
+  );
+
+  test('strict destroy normalizes provider failure', async () => {
+    cloudinary.uploader.destroy.mockRejectedValue(new Error('provider failure'));
+
+    await expect(destroyStudentEvidenceAsset(
+      'issa/student-evidence/7/evidence-1'
+    )).rejects.toEqual({ name: 'evidenceAssetDeleteFailed' });
+  });
+
+  test('strict destroy rejects an unexpected provider result', async () => {
+    cloudinary.uploader.destroy.mockResolvedValue({ result: 'pending' });
+
+    await expect(destroyStudentEvidenceAsset(
+      'issa/student-evidence/7/evidence-1'
+    )).rejects.toEqual({ name: 'evidenceAssetDeleteFailed' });
   });
 });

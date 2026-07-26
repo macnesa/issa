@@ -70,6 +70,19 @@ export default function JournalEntryForm({
     setStatusMessage("");
   }, [editingEntry]);
 
+  useEffect(() => {
+    if (evidenceStatus !== "success") return;
+    setForm((current) => {
+      if (
+        !current.evidenceId ||
+        evidences.some((evidence) => String(evidence.id) === current.evidenceId)
+      ) {
+        return current;
+      }
+      return { ...current, evidenceId: "" };
+    });
+  }, [evidences, evidenceStatus]);
+
   const evidenceOptions = [
     { value: "", label: "Tidak dihubungkan ke evidence" },
     ...evidences.map((evidence) => ({

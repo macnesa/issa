@@ -33,8 +33,10 @@ const journalIncludes = [
       'fileUrl',
       'format',
       'fileSize',
+      'deletedAt',
     ],
     required: false,
+    paranoid: false,
   },
 ];
 

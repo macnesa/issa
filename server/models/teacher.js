@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
       Teacher.hasOne(models.Class);
       Teacher.hasMany(models.StudentFeedback);
       Teacher.hasMany(models.StudentEvidence);
+      Teacher.hasMany(models.StudentEvidence, {
+        as: 'RetractedStudentEvidences',
+        foreignKey: 'RetractedByTeacherId',
+      });
       Teacher.hasMany(models.StudentLearningJournal);
     }
   }

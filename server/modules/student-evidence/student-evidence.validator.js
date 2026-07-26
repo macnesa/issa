@@ -22,6 +22,12 @@ const formatsByMimeType = {
   'image/webp': new Set(['webp']),
 };
 const maximumEvidenceFileSize = 5 * 1024 * 1024;
+const allowedEvidencePatchFields = new Set([
+  'title',
+  'category',
+  'description',
+  'observedAt',
+]);
 
 function validateStudentId(studentId) {
   if (typeof studentId !== 'string' || !/^[1-9]\d*$/.test(studentId)) {
@@ -91,6 +97,72 @@ function validateEvidenceMetadata(metadata) {
   };
 }
 
+function datesMatch(leftDate, rightDate) {
+  return new Date(leftDate).getTime() === new Date(rightDate).getTime();
+}
+
+function validateEvidencePatchPayload(evidenceRecord, patchPayload) {
+  const payload = patchPayload &&
+    typeof patchPayload === 'object' &&
+    !Array.isArray(patchPayload)
+    ? patchPayload
+    : {};
+  const fields = Object.keys(payload);
+  if (fields.length === 0) throw { name: 'invalidEvidencePatch' };
+  if (fields.some((fieldName) => !allowedEvidencePatchFields.has(fieldName))) {
+    throw { name: 'invalidEvidencePatchField' };
+  }
+
+  const updates = {};
+  if (Object.prototype.hasOwnProperty.call(payload, 'title')) {
+    const title = typeof payload.title === 'string' ? payload.title.trim() : '';
+    if (!title || title.length > 120) throw { name: 'invalidEvidenceTitle' };
+    if (title !== evidenceRecord.title) updates.title = title;
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'category')) {
+    if (!evidenceCategories.has(payload.category)) {
+      throw { name: 'invalidEvidenceCategory' };
+    }
+    if (payload.category !== evidenceRecord.category) {
+      updates.category = payload.category;
+    }
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'description')) {
+    let description = null;
+    if (payload.description !== null) {
+      if (typeof payload.description !== 'string') {
+        throw { name: 'invalidEvidenceDescription' };
+      }
+      description = payload.description.trim() || null;
+      if (description && description.length > 500) {
+        throw { name: 'invalidEvidenceDescription' };
+      }
+    }
+    if (description !== evidenceRecord.description) {
+      updates.description = description;
+    }
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'observedAt')) {
+    const observedAt = validateObservedAt(payload.observedAt);
+    if (!datesMatch(observedAt, evidenceRecord.observedAt)) {
+      updates.observedAt = observedAt;
+    }
+  }
+
+  return updates;
+}
+
+function validateEvidenceRetractionReason(reason) {
+  if (typeof reason !== 'string') {
+    throw { name: 'invalidEvidenceRetractionReason' };
+  }
+  const trimmedReason = reason.trim();
+  if (trimmedReason.length < 3 || trimmedReason.length > 300) {
+    throw { name: 'invalidEvidenceRetractionReason' };
+  }
+  return trimmedReason;
+}
+
 function validateEvidenceFile(file) {
   if (!file || !Buffer.isBuffer(file.buffer)) {
     throw { name: 'evidenceFileRequired' };
@@ -149,6 +221,8 @@ module.exports = {
   validateCloudinaryImage,
   validateEvidenceFile,
   validateEvidenceMetadata,
+  validateEvidencePatchPayload,
+  validateEvidenceRetractionReason,
   validateObservedAt,
   validateStudentId,
 };

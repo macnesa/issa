@@ -4,6 +4,10 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/react';
+import {
+  evidenceCategoryLabels,
+  formatEvidenceObservedDate,
+} from '../studentEvidence.constants';
 import './EvidenceViewer.css';
 
 export default function EvidenceViewer({ evidence, onClose }) {
@@ -26,11 +30,24 @@ export default function EvidenceViewer({ evidence, onClose }) {
             </button>
           </header>
           {evidence && (
-            <img
-              className="evidence-viewer__image"
-              src={evidence.file?.url}
-              alt={evidence.title}
-            />
+            <>
+              <img
+                className="evidence-viewer__image"
+                src={evidence.file?.url}
+                alt={evidence.title}
+              />
+              <div className="evidence-viewer__metadata">
+                <span>
+                  {evidenceCategoryLabels[evidence.category]
+                    || evidence.category
+                    || 'Kategori tidak tersedia'}
+                </span>
+                <time dateTime={evidence.observedAt}>
+                  {formatEvidenceObservedDate(evidence.observedAt)}
+                </time>
+                {evidence.description && <p>{evidence.description}</p>}
+              </div>
+            </>
           )}
         </DialogPanel>
       </div>

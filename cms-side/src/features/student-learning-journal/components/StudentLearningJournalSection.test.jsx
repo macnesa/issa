@@ -32,11 +32,22 @@ const evidence = {
   title: "Hasil latihan Matematika",
   category: "assignment",
   observedAt: "2026-07-26",
+  availability: "available",
   file: {
     url: "https://example.test/evidence.jpg",
     format: "jpg",
     size: 2048,
   },
+};
+
+const retractedEvidence = {
+  id: 7,
+  title: "Hasil latihan Matematika",
+  category: "assignment",
+  observedAt: "2026-07-26",
+  availability: "retracted",
+  file: null,
+  retractionReason: "Tidak boleh ditampilkan",
 };
 
 const observationEntry = {
@@ -135,6 +146,73 @@ describe("StudentLearningJournalSection Teacher", () => {
       await screen.findByText(
         "Belum ada catatan perjalanan belajar untuk siswa ini."
       )
+    ).toBeInTheDocument();
+  });
+
+  it("menampilkan tombstone evidence tanpa image, link, atau reason", async () => {
+    fetchStudentLearningJournal.mockResolvedValue([
+      {
+        ...observationEntry,
+        evidence: retractedEvidence,
+      },
+    ]);
+
+    render(<StudentLearningJournalSection studentId="1" />);
+    const entry = await screen.findByRole("listitem");
+
+    expect(
+      within(entry).getByText("Evidence terkait telah dicabut.")
+    ).toBeInTheDocument();
+    expect(within(entry).getByText("Hasil latihan Matematika"))
+      .toBeInTheDocument();
+    expect(within(entry).getByText(/Tugas/)).toBeInTheDocument();
+    expect(within(entry).queryByRole("img")).not.toBeInTheDocument();
+    expect(within(entry).queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText("Tidak boleh ditampilkan")).not.toBeInTheDocument();
+  });
+
+  it("refresh key memuat ulang Journal dan pilihan Evidence", async () => {
+    fetchStudentLearningJournal.mockResolvedValue([observationEntry]);
+    const { rerender } = render(
+      <StudentLearningJournalSection studentId="1" refreshKey={0} />
+    );
+    await screen.findByText(observationEntry.content);
+    expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(1);
+    expect(fetchStudentEvidences).toHaveBeenCalledTimes(1);
+
+    rerender(<StudentLearningJournalSection studentId="1" refreshKey={1} />);
+
+    await waitFor(() => {
+      expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(2);
+      expect(fetchStudentEvidences).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it("membersihkan selection form ketika evidence aktif sudah dicabut", async () => {
+    fetchStudentLearningJournal
+      .mockResolvedValueOnce([observationEntry])
+      .mockResolvedValueOnce([
+        { ...observationEntry, evidence: retractedEvidence },
+      ]);
+    fetchStudentEvidences
+      .mockResolvedValueOnce([evidence])
+      .mockResolvedValueOnce([]);
+    const { rerender } = render(
+      <StudentLearningJournalSection studentId="1" refreshKey={0} />
+    );
+    await screen.findByText(observationEntry.content);
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    expect(screen.getByRole("button", { name: "Evidence terkait" }))
+      .toHaveTextContent("Hasil latihan Matematika");
+
+    rerender(<StudentLearningJournalSection studentId="1" refreshKey={1} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Evidence terkait" }))
+        .toHaveTextContent("Tidak dihubungkan ke evidence");
+    });
+    expect(
+      await screen.findByText("Evidence terkait telah dicabut.")
     ).toBeInTheDocument();
   });
 

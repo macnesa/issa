@@ -177,6 +177,17 @@ blockquote.journal-timeline__content {
   font-size: 0.66rem;
 }
 
+.journal-timeline__evidence--retracted {
+  grid-template-columns: minmax(0, 1fr);
+  border-style: dashed;
+  border-color: #c8b9af;
+  background: #f8f3ef;
+}
+
+.journal-timeline__evidence--retracted span {
+  color: #7c554b;
+}
+
 .journal-timeline__actions {
   display: flex;
   flex-wrap: wrap;

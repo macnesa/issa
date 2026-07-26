@@ -28,7 +28,41 @@ async function listStudentEvidences(req, res, next) {
   }
 }
 
+async function correctStudentEvidence(req, res, next) {
+  try {
+    const correctedEvidence = await studentEvidenceService
+      .correctStudentEvidence({
+        studentId: req.params.studentId,
+        evidenceId: req.params.evidenceId,
+        requester: req.user,
+        patchPayload: req.body,
+      });
+
+    res.status(200).json(correctedEvidence);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function retractStudentEvidence(req, res, next) {
+  try {
+    const retractionResult = await studentEvidenceService
+      .retractStudentEvidence({
+        studentId: req.params.studentId,
+        evidenceId: req.params.evidenceId,
+        requester: req.user,
+        reason: req.body?.reason,
+      });
+
+    res.status(200).json(retractionResult);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
+  correctStudentEvidence,
   createStudentEvidence,
   listStudentEvidences,
+  retractStudentEvidence,
 };

@@ -1,0 +1,110 @@
+.evidence-retraction-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(27, 29, 29, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.evidence-retraction-dialog__container {
+  position: fixed;
+  inset: 0;
+  z-index: 71;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.evidence-retraction-dialog__panel {
+  width: min(100%, 34rem);
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
+  border: 1px solid #c1aaa3;
+  border-radius: 0.75rem 0.75rem 1.45rem 0.75rem;
+  background: #fffdf8;
+  padding: 1.35rem;
+  box-shadow: 0 1.5rem 4rem rgba(30, 24, 22, 0.28);
+}
+
+.evidence-retraction-dialog__title {
+  color: #4f342f;
+  font-size: 1.12rem;
+  font-weight: 830;
+}
+
+.evidence-retraction-dialog__warning {
+  margin: 0.62rem 0 0;
+  color: #665a55;
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.evidence-retraction-dialog__reference {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  border: 1px solid #d7c4bd;
+  border-radius: 0.58rem;
+  padding: 0.55rem;
+  background: #fbf5f1;
+}
+
+.evidence-retraction-dialog__reference img {
+  width: 5rem;
+  height: 3.7rem;
+  border-radius: 0.38rem;
+  object-fit: cover;
+}
+
+.evidence-retraction-dialog__reference strong {
+  color: #563d37;
+  font-size: 0.8rem;
+}
+
+.evidence-retraction-dialog__reason {
+  margin-top: 1.05rem;
+}
+
+.evidence-retraction-dialog__status {
+  min-height: 1.25rem;
+  margin: 0.8rem 0 0;
+  color: #97483f;
+  font-size: 0.76rem;
+}
+
+.evidence-retraction-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.4rem;
+}
+
+.evidence-retraction-dialog__confirm {
+  background: #934a43;
+}
+
+.evidence-retraction-dialog__confirm:hover {
+  background: #783b36;
+}
+
+@media (max-width: 479px) {
+  .evidence-retraction-dialog__reference {
+    grid-template-columns: 4rem minmax(0, 1fr);
+  }
+
+  .evidence-retraction-dialog__reference img {
+    width: 4rem;
+    height: 3.2rem;
+  }
+
+  .evidence-retraction-dialog__actions {
+    flex-direction: column-reverse;
+  }
+
+  .evidence-retraction-dialog__actions button {
+    width: 100%;
+  }
+}

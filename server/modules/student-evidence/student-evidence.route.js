@@ -21,4 +21,16 @@ router.get(
   studentEvidenceController.listStudentEvidences
 );
 
+router.patch(
+  '/:studentId/evidences/:evidenceId',
+  authenticateTeacherRequest,
+  studentEvidenceController.correctStudentEvidence
+);
+
+router.delete(
+  '/:studentId/evidences/:evidenceId',
+  authenticateTeacherRequest,
+  studentEvidenceController.retractStudentEvidence
+);
+
 module.exports = router;

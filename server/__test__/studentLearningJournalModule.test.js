@@ -59,6 +59,7 @@ function buildEvidence(overrides = {}) {
     cloudinaryPublicId: 'must-not-leak',
     format: 'webp',
     fileSize: 2048,
+    deletedAt: null,
     ...overrides,
   };
 }
@@ -275,6 +276,7 @@ describe('Shared Learning Journal create and validation', () => {
       title: 'Eksperimen warna',
       category: 'activity',
       observedAt: new Date('2026-07-24T08:00:00Z'),
+      availability: 'available',
       file: {
         url: 'https://res.cloudinary.com/demo/image/upload/evidence.webp',
         format: 'webp',
@@ -418,6 +420,69 @@ describe('Shared Learning Journal read contract', () => {
       format: 'webp',
       size: 2048,
     });
+    expect(result.evidence.availability).toBe('available');
+  });
+
+  test('retracted evidence remains as a safe tombstone', async () => {
+    studentLearningJournalRepository.findJournalEntries.mockResolvedValue([
+      buildJournalEntry({
+        EvidenceId: 31,
+        StudentEvidence: buildEvidence({
+          title: 'Evidence yang sudah dicabut',
+          deletedAt: new Date('2026-07-26T10:00:00Z'),
+          retractedAt: new Date('2026-07-26T10:00:00Z'),
+          retractionReason: 'Must not leak',
+          RetractedByTeacherId: 5,
+        }),
+      }),
+    ]);
+
+    const [result] = await listJournalEntries({
+      studentId: '7',
+      requester: parentRequester,
+    });
+
+    expect(result.id).toBe(41);
+    expect(result.evidence).toEqual({
+      id: 31,
+      title: 'Evidence yang sudah dicabut',
+      category: 'activity',
+      observedAt: new Date('2026-07-24T08:00:00Z'),
+      availability: 'retracted',
+      file: null,
+    });
+    expect(JSON.stringify(result)).not.toContain('must-not-leak');
+    expect(JSON.stringify(result)).not.toContain('Must not leak');
+    expect(JSON.stringify(result)).not.toContain(
+      'https://res.cloudinary.com/demo/image/upload/evidence.webp'
+    );
+    expect(result.evidence).not.toHaveProperty('deletedAt');
+    expect(result.evidence).not.toHaveProperty('retractedAt');
+    expect(result.evidence).not.toHaveProperty('retractionReason');
+    expect(result.evidence).not.toHaveProperty('RetractedByTeacherId');
+  });
+
+  test('corrected evidence metadata is visible through the linked journal', async () => {
+    studentLearningJournalRepository.findJournalEntries.mockResolvedValue([
+      buildJournalEntry({
+        EvidenceId: 31,
+        StudentEvidence: buildEvidence({
+          title: 'Judul evidence terkoreksi',
+          category: 'assessment',
+        }),
+      }),
+    ]);
+
+    const [result] = await listJournalEntries({
+      studentId: '7',
+      requester: parentRequester,
+    });
+
+    expect(result.evidence).toEqual(expect.objectContaining({
+      title: 'Judul evidence terkoreksi',
+      category: 'assessment',
+      availability: 'available',
+    }));
   });
 });
 

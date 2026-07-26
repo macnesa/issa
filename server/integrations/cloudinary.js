@@ -47,21 +47,48 @@ function uploadStudentEvidenceImage({ studentId, fileBuffer }) {
 }
 
 async function deleteStudentEvidenceImage(cloudinaryPublicId) {
-  const configuration = getCloudinaryConfiguration();
-  cloudinary.config(configuration);
-
   try {
-    await cloudinary.uploader.destroy(cloudinaryPublicId, {
-      resource_type: 'image',
-      invalidate: true,
-    });
-    return true;
+    return await destroyStudentEvidenceAsset(cloudinaryPublicId);
   } catch (error) {
     return false;
   }
 }
 
+function isSuccessfulDestroyResult(destroyResult) {
+  const result = String(destroyResult?.result || '')
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, ' ');
+  return [
+    'ok',
+    'deleted',
+    'not found',
+    'already absent',
+    'already deleted',
+  ].includes(result);
+}
+
+async function destroyStudentEvidenceAsset(cloudinaryPublicId) {
+  const configuration = getCloudinaryConfiguration();
+  cloudinary.config(configuration);
+
+  try {
+    const destroyResult = await cloudinary.uploader.destroy(cloudinaryPublicId, {
+      resource_type: 'image',
+      invalidate: true,
+    });
+    if (!isSuccessfulDestroyResult(destroyResult)) {
+      throw { name: 'evidenceAssetDeleteFailed' };
+    }
+    return true;
+  } catch (error) {
+    if (error?.name === 'evidenceAssetDeleteFailed') throw error;
+    throw { name: 'evidenceAssetDeleteFailed' };
+  }
+}
+
 module.exports = {
   deleteStudentEvidenceImage,
+  destroyStudentEvidenceAsset,
   uploadStudentEvidenceImage,
 };

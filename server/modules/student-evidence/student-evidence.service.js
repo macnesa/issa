@@ -8,6 +8,8 @@ const {
   validateCloudinaryImage,
   validateEvidenceFile,
   validateEvidenceMetadata,
+  validateEvidencePatchPayload,
+  validateEvidenceRetractionReason,
   validateStudentId,
 } = require('./student-evidence.validator');
 
@@ -131,6 +133,109 @@ async function createStudentEvidence({
   return mapStudentEvidence(createdEvidence, teacher);
 }
 
+function requireTeacher(requester) {
+  if (!requester || requester.role !== 'teacher') {
+    throw { name: 'unauthorized' };
+  }
+}
+
+async function requireStudentInTeacherClass(studentId, requester) {
+  const student = await studentEvidenceRepository.findStudentInClass(
+    studentId,
+    requester.classId
+  );
+  if (isNil(student)) throw { name: 'unauthorized' };
+  return student;
+}
+
+async function requireOwnedActiveEvidence(evidenceId, studentId, teacherId) {
+  const evidence = await studentEvidenceRepository.findActiveStudentEvidence(
+    evidenceId,
+    studentId
+  );
+  if (isNil(evidence)) throw { name: 'notFound' };
+  if (Number(evidence.TeacherId) !== Number(teacherId)) {
+    throw { name: 'unauthorized' };
+  }
+  return evidence;
+}
+
+async function correctStudentEvidence({
+  studentId,
+  evidenceId,
+  requester,
+  patchPayload,
+}) {
+  void 'ISSA:SERVER.STUDENT_EVIDENCE.CORRECT';
+  requireTeacher(requester);
+  const validStudentId = validateStudentId(studentId);
+  const validEvidenceId = validateStudentId(evidenceId);
+  await requireStudentInTeacherClass(validStudentId, requester);
+  const evidence = await requireOwnedActiveEvidence(
+    validEvidenceId,
+    validStudentId,
+    requester.teacherId
+  );
+  const updates = validateEvidencePatchPayload(
+    toPlainRecord(evidence),
+    patchPayload
+  );
+
+  if (Object.keys(updates).length === 0) {
+    return mapStudentEvidence(evidence);
+  }
+
+  const updatedEvidence = await studentEvidenceRepository
+    .updateStudentEvidence(evidence, updates);
+  emitStudentRecordUpdated({
+    studentId: validStudentId,
+    recordType: 'evidence',
+    occurredAt: updatedEvidence.observedAt,
+  });
+
+  return mapStudentEvidence(updatedEvidence);
+}
+
+async function retractStudentEvidence({
+  studentId,
+  evidenceId,
+  requester,
+  reason,
+}) {
+  void 'ISSA:SERVER.STUDENT_EVIDENCE.RETRACT';
+  requireTeacher(requester);
+  const validStudentId = validateStudentId(studentId);
+  const validEvidenceId = validateStudentId(evidenceId);
+  const validReason = validateEvidenceRetractionReason(reason);
+  await requireStudentInTeacherClass(validStudentId, requester);
+  const evidence = await requireOwnedActiveEvidence(
+    validEvidenceId,
+    validStudentId,
+    requester.teacherId
+  );
+
+  await cloudinaryIntegration.destroyStudentEvidenceAsset(
+    evidence.cloudinaryPublicId
+  );
+  await studentEvidenceRepository.retractStudentEvidence(evidence, {
+    retractedAt: new Date(),
+    retractionReason: validReason,
+    RetractedByTeacherId: requester.teacherId,
+  });
+
+  emitStudentRecordUpdated({
+    studentId: validStudentId,
+    recordType: 'evidence',
+    occurredAt: evidence.observedAt,
+  });
+
+  return {
+    id: validEvidenceId,
+    studentId: validStudentId,
+    retracted: true,
+  };
+}
+
 async function listStudentEvidences({ studentId, requester }) {
   void 'ISSA:SERVER.STUDENT_EVIDENCE.LIST';
   const validStudentId = validateStudentId(studentId);
@@ -160,7 +265,9 @@ async function listStudentEvidences({ studentId, requester }) {
 }
 
 module.exports = {
+  correctStudentEvidence,
   createStudentEvidence,
   listStudentEvidences,
   mapStudentEvidence,
+  retractStudentEvidence,
 };

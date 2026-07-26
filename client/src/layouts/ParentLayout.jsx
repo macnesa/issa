@@ -44,6 +44,7 @@ export default function ParentLayout() {
 
     if (isEvidenceRecordEventForActiveStudent(studentRecordEvent, studentId)) {
       pendingRecordTypes.current.add('evidence');
+      pendingRecordTypes.current.add('journal');
     }
     if (isJournalRecordEventForActiveStudent(studentRecordEvent, studentId)) {
       pendingRecordTypes.current.add('journal');

@@ -25,6 +25,7 @@ export default function StudentDetail() {
   const [detailLoading, setDetailLoading] = useState(true);
   const [detailError, setDetailError] = useState("");
   const [feedbackHistory, setFeedbackHistory] = useState({ loading: true, error: "", data: [] });
+  const [journalRefreshKey, setJournalRefreshKey] = useState(0);
 
   const fetchStudentFeedbackHistory = useCallback(() => {
     void 'ISSA:CMS.FEEDBACK.FETCH_HISTORY';
@@ -79,8 +80,16 @@ export default function StudentDetail() {
         <Surface className="observation-sheet p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Feedback terbaru</h2><p className="mt-3 whitespace-pre-wrap leading-6 text-[var(--text)]">{student?.feedback || "Belum ada feedback."}</p></Surface>
         <FeedbackForm feedback={feedback} observedAt={observedAt} message={message} submitting={submitting} onFeedbackChange={(event) => setFeedback(event.target.value)} onObservedAtChange={setObservedAt} onSubmit={handleStudentFeedbackSubmit} />
         <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
-        <StudentEvidenceSection studentId={studentId} />
-        <StudentLearningJournalSection studentId={studentId} />
+        <StudentEvidenceSection
+          studentId={studentId}
+          onEvidenceChanged={() => {
+            setJournalRefreshKey((current) => current + 1);
+          }}
+        />
+        <StudentLearningJournalSection
+          studentId={studentId}
+          refreshKey={journalRefreshKey}
+        />
       </div>
       <div className="space-y-6">
         <Surface className="record-ledger record-ledger--attendance p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-semibold text-[var(--text)]">Attendance record</h2><p className="mt-1 text-sm text-[var(--muted)]">Tanggal kejadian dan status siswa.</p></div><Link to="/attendance"><SecondaryButton type="button">Kelola</SecondaryButton></Link></div><div className="mt-4 space-y-3">{isEmpty(attendances) && <EmptyState title="Belum ada attendance" />}{attendances.map((attendance) => <div key={attendance.id} className="record-ledger__entry flex items-center justify-between gap-3 rounded-xl border p-3"><span className="text-sm font-medium text-[var(--text)]">{attendance.attendanceDate || "Tanggal attendance belum tersedia"}</span><StatusBadge status={attendance.status} /></div>)}</div></Surface>

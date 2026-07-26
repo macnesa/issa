@@ -148,6 +148,22 @@ function errorHandler(err, req, res, next) {
             statusCode = 502;
             msg = "Evidence storage returned an invalid image";
             break;
+        case "invalidEvidencePatch":
+            statusCode = 400;
+            msg = "Evidence update requires at least one metadata field";
+            break;
+        case "invalidEvidencePatchField":
+            statusCode = 400;
+            msg = "Evidence update contains a forbidden field";
+            break;
+        case "invalidEvidenceRetractionReason":
+            statusCode = 400;
+            msg = "Retraction reason must contain 3 to 300 characters";
+            break;
+        case "evidenceAssetDeleteFailed":
+            statusCode = 502;
+            msg = "Evidence image could not be removed";
+            break;
         case "invalidJournalType":
             statusCode = 400;
             msg = "Invalid journal entry type";

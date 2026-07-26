@@ -20,13 +20,25 @@ function toPlainRecord(record) {
 }
 
 function mapEvidence(evidenceRecord) {
+  void 'ISSA:SERVER.STUDENT_LEARNING_JOURNAL.MAP_EVIDENCE_TOMBSTONE';
   if (!evidenceRecord) return null;
   const evidence = toPlainRecord(evidenceRecord);
+  if (evidence.deletedAt) {
+    return {
+      id: evidence.id,
+      title: evidence.title,
+      category: evidence.category,
+      observedAt: evidence.observedAt,
+      availability: 'retracted',
+      file: null,
+    };
+  }
   return {
     id: evidence.id,
     title: evidence.title,
     category: evidence.category,
     observedAt: evidence.observedAt,
+    availability: 'available',
     file: {
       url: evidence.fileUrl,
       format: evidence.format,

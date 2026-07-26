@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       StudentEvidence.belongsTo(models.Student);
       StudentEvidence.belongsTo(models.Teacher);
+      StudentEvidence.belongsTo(models.Teacher, {
+        as: 'RetractedByTeacher',
+        foreignKey: 'RetractedByTeacherId',
+      });
       StudentEvidence.hasMany(models.StudentLearningJournal, {
         foreignKey: 'EvidenceId',
       });
@@ -63,9 +67,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    retractedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    retractionReason: {
+      type: DataTypes.STRING(300),
+      allowNull: true,
+    },
+    RetractedByTeacherId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   }, {
     sequelize,
     modelName: 'StudentEvidence',
+    paranoid: true,
   });
 
   return StudentEvidence;

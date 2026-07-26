@@ -51,6 +51,13 @@ export default function StudentEvidenceSection({
   const [selectedEvidence, setSelectedEvidence] = useState(null);
   const [retryKey, setRetryKey] = useState(0);
   const requestSequence = useRef(0);
+  const sectionHeadingRef = useRef(null);
+
+  const focusSectionHeading = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      sectionHeadingRef.current?.focus();
+    });
+  }, []);
 
   const loadEvidences = useCallback(async ({ signal } = {}) => {
     if (!studentId) {
@@ -68,10 +75,22 @@ export default function StudentEvidenceSection({
     try {
       const evidenceList = await fetchStudentEvidences(studentId, { signal });
       if (signal?.aborted || requestId !== requestSequence.current) return;
+      const visibleEvidences = evidenceList.slice(0, 6);
       setResource({
         status: 'success',
-        data: evidenceList.slice(0, 6),
+        data: visibleEvidences,
         error: null,
+      });
+      setSelectedEvidence((currentEvidence) => {
+        if (!currentEvidence) return null;
+
+        const refreshedEvidence = evidenceList.find(
+          (evidence) => String(evidence.id) === String(currentEvidence.id)
+        );
+        if (refreshedEvidence) return refreshedEvidence;
+
+        focusSectionHeading();
+        return null;
       });
     } catch (apiError) {
       if (signal?.aborted || requestId !== requestSequence.current) return;
@@ -81,7 +100,7 @@ export default function StudentEvidenceSection({
         error: normalizeApiError(apiError),
       });
     }
-  }, [studentId]);
+  }, [focusSectionHeading, studentId]);
 
   useEffect(() => {
     const requestController = new AbortController();
@@ -92,6 +111,10 @@ export default function StudentEvidenceSection({
     };
   }, [loadEvidences, refreshKey, retryKey]);
 
+  useEffect(() => {
+    setSelectedEvidence(null);
+  }, [studentId]);
+
   return (
     <>
       <section
@@ -101,7 +124,13 @@ export default function StudentEvidenceSection({
       >
         <header className="parent-evidence__header">
           <p className="overview-kicker">Bukti perkembangan</p>
-          <h2 id="parent-evidence-title">Dokumentasi belajar terbaru</h2>
+          <h2
+            id="parent-evidence-title"
+            ref={sectionHeadingRef}
+            tabIndex="-1"
+          >
+            Dokumentasi belajar terbaru
+          </h2>
           <span>Foto record pembelajaran yang dibagikan oleh guru.</span>
         </header>
 

@@ -18,6 +18,14 @@ export const supportedEvidenceMimeTypes = new Set([
 
 export const maximumEvidenceFileSize = 5 * 1024 * 1024;
 
+export function evidenceDateValue(value) {
+  if (typeof value === "string") {
+    const datePrefix = value.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
+    if (datePrefix) return datePrefix;
+  }
+  return "";
+}
+
 export function formatEvidenceFileSize(fileSize) {
   const numericSize = Number(fileSize);
   if (!Number.isFinite(numericSize) || numericSize < 0) return "Ukuran tidak tersedia";

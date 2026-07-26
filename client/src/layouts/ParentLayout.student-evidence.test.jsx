@@ -1,4 +1,4 @@
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import ParentLayout from './ParentLayout';
 
 const testState = vi.hoisted(() => ({
@@ -78,7 +78,7 @@ describe('ParentLayout evidence realtime invalidation', () => {
     });
   }
 
-  it('menaikkan evidence refresh key satu kali untuk event evidence siswa aktif', async () => {
+  it('menaikkan Evidence dan Journal refresh key satu kali untuk event evidence siswa aktif', async () => {
     render(<ParentLayout />);
 
     act(() => {
@@ -92,7 +92,24 @@ describe('ParentLayout evidence realtime invalidation', () => {
 
     await waitFor(() => {
       expect(testState.outletContext.studentEvidenceRefreshKey).toBe(1);
+      expect(testState.outletContext.studentJournalRefreshKey).toBe(1);
     });
+    expect(testState.dispatch).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Catatan siswa diperbarui')).toBeInTheDocument();
+  });
+
+  it('mendedupe burst evidence menjadi satu dual-refresh cycle', async () => {
+    render(<ParentLayout />);
+
+    act(() => {
+      testState.recordHandler({ studentId: 1, recordType: 'evidence' });
+      testState.recordHandler({ studentId: 1, recordType: 'evidence' });
+      testState.recordHandler({ studentId: 1, recordType: 'evidence' });
+    });
+    await flushRealtimeDebounce();
+
+    expect(testState.outletContext.studentEvidenceRefreshKey).toBe(1);
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(1);
     expect(testState.dispatch).toHaveBeenCalledTimes(1);
   });
 
@@ -105,6 +122,7 @@ describe('ParentLayout evidence realtime invalidation', () => {
     await flushRealtimeDebounce();
 
     expect(testState.outletContext.studentEvidenceRefreshKey).toBe(0);
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(0);
     expect(testState.dispatch).not.toHaveBeenCalled();
   });
 
@@ -117,6 +135,7 @@ describe('ParentLayout evidence realtime invalidation', () => {
     await flushRealtimeDebounce();
 
     expect(testState.outletContext.studentEvidenceRefreshKey).toBe(0);
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(0);
     expect(testState.dispatch).toHaveBeenCalledTimes(1);
   });
 });

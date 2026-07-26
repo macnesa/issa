@@ -18,6 +18,12 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
     ? journalVoiceCaptureTypes[entry.voiceCaptureType]
     : null;
   const isDirectQuote = captureType?.presentation === 'quote';
+  const isEvidenceRetracted = entry.evidence?.availability === 'retracted';
+  const isEvidenceAvailable = Boolean(
+    entry.evidence
+    && !isEvidenceRetracted
+    && entry.evidence.file?.url
+  );
 
   return (
     <li
@@ -54,7 +60,7 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
           Dicatat oleh {entry.teacher?.name || 'Guru'}
         </p>
 
-        {entry.evidence && (
+        {isEvidenceAvailable && (
           <div className="parent-journal-entry__evidence">
             <button
               type="button"
@@ -68,6 +74,23 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
             </button>
             <div>
               <span>Evidence terkait</span>
+              <strong>{entry.evidence.title}</strong>
+              <small>
+                {evidenceCategoryLabels[entry.evidence.category]
+                  || entry.evidence.category
+                  || 'Kategori tidak tersedia'}
+                {' · '}
+                {formatEvidenceObservedDate(entry.evidence.observedAt)}
+              </small>
+            </div>
+          </div>
+        )}
+        {isEvidenceRetracted && (
+          <div
+            className="parent-journal-entry__evidence parent-journal-entry__evidence--retracted"
+          >
+            <div>
+              <span>Evidence terkait telah dicabut dan tidak lagi tersedia.</span>
               <strong>{entry.evidence.title}</strong>
               <small>
                 {evidenceCategoryLabels[entry.evidence.category]

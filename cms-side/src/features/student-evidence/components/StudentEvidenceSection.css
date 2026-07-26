@@ -33,6 +33,7 @@
 
 .student-evidence-history__heading > p { color: #846d32; }
 .student-evidence-history__heading h3 { margin: 0.28rem 0 0; color: #423b2d; font-size: 1rem; font-weight: 780; }
+.student-evidence-history__status { min-height: 1.2rem; margin: 0.4rem 0 0; color: #52666c; font-size: 0.72rem; }
 
 .student-evidence-history__list {
   display: grid;
@@ -60,12 +61,27 @@
   letter-spacing: 0.08em;
 }
 
-.student-evidence-history__list img {
+.student-evidence-history__thumbnail {
+  overflow: hidden;
   width: 7rem;
   height: 5.25rem;
   border: 1px solid #c9c1ad;
   border-radius: 0.52rem 0.35rem 0.72rem 0.36rem;
+  background: #e9eeee;
+  padding: 0;
+  cursor: zoom-in;
+}
+
+.student-evidence-history__thumbnail img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  transition: transform 180ms ease;
+}
+
+.student-evidence-history__thumbnail:hover img {
+  transform: scale(1.04);
 }
 
 .student-evidence-history__copy { min-width: 0; }
@@ -76,12 +92,48 @@
 .student-evidence-history__copy p { margin: 0.38rem 0 0; color: #52666c; font-size: 0.78rem; line-height: 1.55; white-space: pre-wrap; }
 .student-evidence-history__copy small { display: block; margin-top: 0.52rem; color: #718086; font-size: 0.68rem; }
 
+.student-evidence-history__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.68rem;
+}
+
+.student-evidence-history__actions button {
+  border: 0;
+  background: transparent;
+  padding: 0.18rem 0;
+  color: #356a66;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: #9eb8b4;
+  text-underline-offset: 0.22rem;
+}
+
+.student-evidence-history__actions .student-evidence-history__retract {
+  color: #8e4d46;
+  text-decoration-color: #d7aaa4;
+}
+
+.student-evidence-history__actions button:focus-visible,
+.student-evidence-history__thumbnail:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
 @media (min-width: 700px) {
   .student-evidence-history { padding: 1.35rem 1.5rem 1.5rem; }
 }
 
 @media (max-width: 559px) {
   .student-evidence-history__list li { grid-template-columns: 1.5rem minmax(0, 1fr); }
-  .student-evidence-history__list img { grid-column: 2; width: 100%; height: 11rem; }
+  .student-evidence-history__thumbnail { grid-column: 2; width: 100%; height: 11rem; }
   .student-evidence-history__copy { grid-column: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-evidence-history__thumbnail img {
+    transition: none;
+  }
 }
