@@ -1,0 +1,57 @@
+.student-learning-journal {
+  overflow: hidden;
+  border-color: #9fb9b7;
+  border-radius: 0.72rem 0.72rem 1.55rem 0.72rem;
+  background: #f7faf8;
+  box-shadow: 0.38rem 0.42rem 0 rgba(56, 86, 82, 0.09);
+}
+
+.student-learning-journal__header {
+  padding: 1.3rem 1.35rem 1.25rem;
+  border-bottom: 1px solid #aebfbc;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(116deg, #1b3b42, #315f5c);
+  background-size: 2.75rem 100%, 100% 100%;
+}
+
+.student-learning-journal__header > p {
+  margin: 0;
+  color: #cfe3dd;
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.student-learning-journal__header h2 {
+  margin: 0.28rem 0 0;
+  color: #fff;
+  font-size: 1.24rem;
+  font-weight: 820;
+}
+
+.student-learning-journal__header span {
+  display: block;
+  max-width: 38rem;
+  margin-top: 0.42rem;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.student-learning-journal__state {
+  padding: 1.25rem;
+  border-top: 1px solid #d8d6c9;
+  background: #fffdf8;
+}
+
+@media (min-width: 700px) {
+  .student-learning-journal__header {
+    padding: 1.35rem 1.5rem;
+  }
+
+  .student-learning-journal__state {
+    padding: 1.45rem 1.5rem 1.6rem;
+  }
+}

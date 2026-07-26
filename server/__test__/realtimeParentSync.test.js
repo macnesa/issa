@@ -171,4 +171,23 @@ describe('student record invalidation event', () => {
       occurredAt: '2026-07-25T12:00:00.000Z',
     });
   });
+
+  test('supports journal through the existing student record event', () => {
+    const emit = jest.fn();
+    const to = jest.fn(() => ({ emit }));
+    setRealtimeServer({ to });
+
+    expect(emitStudentRecordUpdated({
+      studentId: 7,
+      recordType: 'journal',
+      occurredAt: '2026-07-26T08:00:00.000Z',
+    })).toBe(true);
+
+    expect(to).toHaveBeenCalledWith(getStudentRoom(7));
+    expect(emit).toHaveBeenCalledWith(studentRecordEventName, {
+      studentId: 7,
+      recordType: 'journal',
+      occurredAt: '2026-07-26T08:00:00.000Z',
+    });
+  });
 });

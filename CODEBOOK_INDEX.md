@@ -46,9 +46,9 @@
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
   - `cms-side/src/pages/Login.jsx:17`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:28`
+  - `cms-side/src/pages/AddStudent.jsx:29`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:53`
+  - `cms-side/src/pages/AddStudent.jsx:54`
 - `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
   - `cms-side/src/store/action/ActionCreator.js:625`
 - `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
@@ -118,6 +118,14 @@
   - `server/modules/student-insight/student-insight.service.js:335`
 - `ISSA:SERVER.STUDENT_INSIGHT.COMPOSE_TEACHER_ATTENTION`
   - `server/modules/student-insight/student-insight.service.js:392`
+- `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.CREATE`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:134`
+- `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.LIST`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:163`
+- `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.RETRACT`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:223`
+- `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.UPDATE`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:180`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
   - `server/modules/student/student.service.js:32`
 - `ISSA:SERVER.STUDENT.GET_LIST`

@@ -5,6 +5,7 @@ import { fetchClassSchedule, fetchSchoolActivities } from '../store/actions/acti
 import AcademicSummary from '../features/student-overview/components/AcademicSummary';
 import RecentStudentChanges from '../features/student-insights/components/RecentStudentChanges';
 import StudentEvidenceSection from '../features/student-evidence/components/StudentEvidenceSection';
+import StudentLearningJournalSection from '../features/student-learning-journal/components/StudentLearningJournalSection';
 import ActivityPreview from '../features/student-overview/components/ActivityPreview';
 import AttendanceSummary from '../features/student-overview/components/AttendanceSummary';
 import SchedulePreview from '../features/student-overview/components/SchedulePreview';
@@ -19,6 +20,7 @@ export default function Home() {
   const {
     studentEvidenceRefreshKey = 0,
     studentInsightsRefreshKey = 0,
+    studentJournalRefreshKey = 0,
   } = useOutletContext() || {};
   const { studentDetail, classSchedule, activity } = useSelector((state) => state.student);
   const { data: studentOverview } = studentDetail;
@@ -50,6 +52,10 @@ export default function Home() {
       <RecentStudentChanges
         studentId={studentOverview.profile.id}
         refreshKey={studentInsightsRefreshKey}
+      />
+      <StudentLearningJournalSection
+        studentId={studentOverview.profile.id}
+        refreshKey={studentJournalRefreshKey}
       />
       <StudentEvidenceSection
         studentId={studentOverview.profile.id}

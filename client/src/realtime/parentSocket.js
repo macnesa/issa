@@ -15,6 +15,11 @@ export function isEvidenceRecordEventForActiveStudent(studentRecordEvent, studen
     && studentRecordEvent?.recordType === 'evidence';
 }
 
+export function isJournalRecordEventForActiveStudent(studentRecordEvent, studentId) {
+  return isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)
+    && studentRecordEvent?.recordType === 'journal';
+}
+
 function warnInDevelopment(message, error) {
   if (import.meta.env.DEV) {
     console.warn(message, error);

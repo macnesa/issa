@@ -201,6 +201,17 @@
   font-weight: 750;
 }
 
+.recent-student-changes__context-note {
+  display: block;
+  max-width: 42rem;
+  margin-top: 0.42rem;
+  padding-left: 0.55rem;
+  border-left: 2px solid #c8bfa8;
+  color: #756c57;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
 .recent-student-changes__copy blockquote {
   display: -webkit-box;
   overflow: hidden;

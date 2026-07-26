@@ -4,6 +4,7 @@ const supportedRecordTypes = new Set([
   'score',
   'feedback',
   'evidence',
+  'journal',
 ]);
 
 let realtimeServer = null;

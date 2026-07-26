@@ -148,6 +148,26 @@ function errorHandler(err, req, res, next) {
             statusCode = 502;
             msg = "Evidence storage returned an invalid image";
             break;
+        case "invalidJournalType":
+            statusCode = 400;
+            msg = "Invalid journal entry type";
+            break;
+        case "invalidJournalContent":
+            statusCode = 400;
+            msg = "Journal content must contain 3 to 1500 characters";
+            break;
+        case "invalidJournalObservedAt":
+            statusCode = 400;
+            msg = "observedAt must be a valid date no more than 24 hours in the future";
+            break;
+        case "invalidJournalVoiceCaptureType":
+            statusCode = 400;
+            msg = "Invalid voice capture type for this journal entry";
+            break;
+        case "invalidJournalEvidenceId":
+            statusCode = 400;
+            msg = "evidenceId must be a positive integer";
+            break;
     }
     console.log(err);
     return res.status(statusCode).json({ msg });

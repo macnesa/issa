@@ -1,4 +1,5 @@
-import { act, render, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { connectParentSocket } from '../realtime/parentSocket';
 import ParentLayout from './ParentLayout';
 
 const testState = vi.hoisted(() => ({
@@ -56,7 +57,7 @@ vi.mock('../realtime/parentSocket', () => ({
   ),
 }));
 
-describe('ParentLayout evidence realtime invalidation', () => {
+describe('ParentLayout journal realtime invalidation', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     localStorage.setItem('access_token', 'parent-test-token');
@@ -64,6 +65,7 @@ describe('ParentLayout evidence realtime invalidation', () => {
     testState.dispatch.mockResolvedValue(true);
     testState.outletContext = null;
     testState.recordHandler = null;
+    connectParentSocket.mockClear();
   });
 
   afterEach(() => {
@@ -78,37 +80,38 @@ describe('ParentLayout evidence realtime invalidation', () => {
     });
   }
 
-  it('menaikkan evidence refresh key satu kali untuk event evidence siswa aktif', async () => {
+  it('menaikkan journal refresh key satu kali dan mempertahankan notice', async () => {
     render(<ParentLayout />);
 
     act(() => {
       testState.recordHandler({
         studentId: 1,
-        recordType: 'evidence',
+        recordType: 'journal',
         occurredAt: '2026-07-26T08:00:00.000Z',
       });
     });
     await flushRealtimeDebounce();
 
     await waitFor(() => {
-      expect(testState.outletContext.studentEvidenceRefreshKey).toBe(1);
+      expect(testState.outletContext.studentJournalRefreshKey).toBe(1);
     });
     expect(testState.dispatch).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Catatan siswa diperbarui')).toBeInTheDocument();
   });
 
-  it('mengabaikan event evidence siswa lain', async () => {
+  it('mengabaikan journal event siswa lain', async () => {
     render(<ParentLayout />);
 
     act(() => {
-      testState.recordHandler({ studentId: 2, recordType: 'evidence' });
+      testState.recordHandler({ studentId: 2, recordType: 'journal' });
     });
     await flushRealtimeDebounce();
 
-    expect(testState.outletContext.studentEvidenceRefreshKey).toBe(0);
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(0);
     expect(testState.dispatch).not.toHaveBeenCalled();
   });
 
-  it('tidak menaikkan evidence refresh key untuk record type lain', async () => {
+  it('tidak memicu journal refetch untuk record type lain', async () => {
     render(<ParentLayout />);
 
     act(() => {
@@ -116,7 +119,37 @@ describe('ParentLayout evidence realtime invalidation', () => {
     });
     await flushRealtimeDebounce();
 
-    expect(testState.outletContext.studentEvidenceRefreshKey).toBe(0);
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(0);
     expect(testState.dispatch).toHaveBeenCalledTimes(1);
+  });
+
+  it('mendedupe burst event journal menjadi satu invalidation', async () => {
+    render(<ParentLayout />);
+
+    act(() => {
+      testState.recordHandler({ studentId: 1, recordType: 'journal' });
+      testState.recordHandler({ studentId: 1, recordType: 'journal' });
+      testState.recordHandler({ studentId: 1, recordType: 'journal' });
+    });
+    await flushRealtimeDebounce();
+
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(1);
+    expect(testState.dispatch).toHaveBeenCalledTimes(1);
+  });
+
+  it('tidak memasang koneksi atau listener baru setelah rerender', async () => {
+    const { rerender } = render(<ParentLayout />);
+    expect(connectParentSocket).toHaveBeenCalledTimes(1);
+
+    rerender(<ParentLayout />);
+    expect(connectParentSocket).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      testState.recordHandler({ studentId: 1, recordType: 'journal' });
+    });
+    await flushRealtimeDebounce();
+
+    expect(connectParentSocket).toHaveBeenCalledTimes(1);
+    expect(testState.outletContext.studentJournalRefreshKey).toBe(1);
   });
 });

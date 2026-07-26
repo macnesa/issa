@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       StudentEvidence.belongsTo(models.Student);
       StudentEvidence.belongsTo(models.Teacher);
+      StudentEvidence.hasMany(models.StudentLearningJournal, {
+        foreignKey: 'EvidenceId',
+      });
     }
   }
 

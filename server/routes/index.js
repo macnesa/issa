@@ -11,6 +11,9 @@ const scoreRouter = require('../modules/score/score.route');
 const studentRouter = require('../modules/student/student.route');
 const studentEvidenceRouter = require('../modules/student-evidence/student-evidence.route');
 const studentInsightRouter = require('../modules/student-insight/student-insight.route');
+const studentLearningJournalRouter = require(
+  '../modules/student-learning-journal/student-learning-journal.route'
+);
 const teacherRouter = require('../modules/teacher/teacher.route');
 
 router.use('/', studentInsightRouter);
@@ -20,6 +23,7 @@ router.use('/teachers', teacherRouter);
 
 router.use('/students', feedbackRouter);
 router.use('/students', studentEvidenceRouter);
+router.use('/students', studentLearningJournalRouter);
 router.use('/students', studentRouter);
 router.use('/assignments', assignmentRouter);
 router.use('/lessons', lessonRouter);

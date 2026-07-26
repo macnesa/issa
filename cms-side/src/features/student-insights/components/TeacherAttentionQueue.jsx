@@ -3,33 +3,92 @@ import { Link } from "react-router-dom";
 import baseUrl from "../../../config/api";
 import "./TeacherAttentionQueue.css";
 
-const priorityLabels = {
-  high: "Prioritas tinggi",
-  medium: "Perlu diperhatikan",
-  low: "Perlu diperbarui",
+const urgencyLabels = {
+  high: "Tinjau segera",
+  medium: "Tinjau minggu ini",
+  low: "Pantau",
 };
 
 const numberFormatter = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 1,
 });
 
-function getFlagCopy(flag) {
+function formatMetric(value) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue)
+    ? numberFormatter.format(numericValue)
+    : "—";
+}
+
+function getKkmFact(latestScore, kkm) {
+  const numericScore = Number(latestScore);
+  const numericKkm = Number(kkm);
+  if (!Number.isFinite(numericScore) || !Number.isFinite(numericKkm)) {
+    return `KKM saat ini adalah ${formatMetric(kkm)}.`;
+  }
+  if (numericScore > numericKkm) {
+    return `Nilai masih berada di atas KKM ${formatMetric(kkm)}.`;
+  }
+  if (numericScore === numericKkm) {
+    return `Nilai terbaru memenuhi KKM ${formatMetric(kkm)}.`;
+  }
+  return `KKM saat ini adalah ${formatMetric(kkm)}.`;
+}
+
+function getFlagPresentation(flag) {
   if (flag.type === "academic_attention") {
-    return `Dua nilai terbaru ${flag.lessonName || "pelajaran ini"} berada di bawah KKM ${flag.kkm}.`;
+    const lessonName = flag.lessonName || "pelajaran ini";
+    const latestScores = Array.isArray(flag.latestScores)
+      ? flag.latestScores
+      : [];
+    const latestScore = formatMetric(latestScores[0]);
+    const previousScore = formatMetric(latestScores[1]);
+
+    return {
+      boundary: "Pengukuran akademik",
+      review: `Pengukuran akademik ${lessonName}.`,
+      fact: `Nilai terbaru ${lessonName} adalah ${latestScore}, setelah sebelumnya ${previousScore}. ${getKkmFact(latestScores[0], flag.kkm)}`,
+      context: "Satu perubahan nilai belum cukup untuk menjelaskan perkembangan siswa.",
+      nextStep: "Tinjau jenis assessment dan observasi proses belajar siswa.",
+    };
   }
 
   if (flag.type === "attendance_attention") {
-    return `Kehadiran 30 hari berada pada ${numberFormatter.format(flag.rate)}% dari ${flag.recordedDays} catatan.`;
+    return {
+      boundary: "Data faktual",
+      review: "Perubahan kehadiran dalam 30 hari terakhir.",
+      fact: `Kehadiran tercatat ${formatMetric(flag.rate)}% pada ${formatMetric(flag.recordedDays)} hari yang memiliki catatan.`,
+      context: "Belum ada catatan mengenai penyebab perubahan kehadiran.",
+      nextStep: "Tanyakan kondisi siswa dan keluarga sebelum menentukan dukungan.",
+    };
   }
 
   if (flag.type === "feedback_stale") {
     if (flag.latestObservedAt === null || flag.daysSinceLatest === null) {
-      return "Belum memiliki catatan feedback guru.";
+      return {
+        boundary: "Observasi guru",
+        review: "Kelengkapan observasi guru terbaru.",
+        fact: "Belum ada catatan perkembangan baru dalam periode yang ditinjau.",
+        context: "Konteks perkembangan terbaru belum tersedia dari observasi guru.",
+        nextStep: "Tambahkan observasi terbaru ketika terdapat konteks yang cukup.",
+      };
     }
-    return `Feedback terakhir belum diperbarui selama ${flag.daysSinceLatest} hari.`;
+    return {
+      boundary: "Observasi guru",
+      review: "Kelengkapan observasi guru terbaru.",
+      fact: `Observasi guru terakhir tercatat ${formatMetric(flag.daysSinceLatest)} hari lalu.`,
+      context: "Konteks perkembangan setelah observasi tersebut belum tersedia.",
+      nextStep: "Tambahkan observasi terbaru ketika terdapat konteks yang cukup.",
+    };
   }
 
-  return null;
+  return {
+    boundary: "Interpretasi sistem",
+    review: "Catatan perkembangan memerlukan pemeriksaan guru.",
+    fact: "Sistem menandai record ini untuk ditinjau.",
+    context: "Konteks tambahan belum tersedia dari data ini.",
+    nextStep: "Periksa record detail sebelum menentukan tindak lanjut.",
+  };
 }
 
 function AttentionQueueSkeleton() {
@@ -66,15 +125,17 @@ function AttentionQueueMessage({ tone, title, description, onRetry }) {
 }
 
 function AttentionQueueRow({ item, index }) {
-  const facts = (Array.isArray(item.flags) ? item.flags : [])
-    .map(getFlagCopy)
-    .filter(Boolean);
-  const visibleFacts = facts.slice(0, 2);
-  const additionalFactCount = Math.max(0, facts.length - visibleFacts.length);
-  const priority = priorityLabels[item.priority] ? item.priority : "low";
+  const presentations = (Array.isArray(item.flags) ? item.flags : [])
+    .map(getFlagPresentation);
+  const reviews = [...new Set(presentations.map(({ review }) => review))];
+  const contexts = [...new Set(presentations.map(({ context }) => context))];
+  const nextSteps = [...new Set(
+    presentations.map(({ nextStep }) => nextStep)
+  )];
+  const urgency = urgencyLabels[item.priority] ? item.priority : "low";
 
   return (
-    <li className="teacher-attention-queue__row" data-priority={priority}>
+    <li className="teacher-attention-queue__row" data-urgency={urgency}>
       <span className="teacher-attention-queue__index" aria-hidden="true">
         {String(index + 1).padStart(2, "0")}
       </span>
@@ -87,25 +148,54 @@ function AttentionQueueRow({ item, index }) {
         <strong>{item.student.name}</strong>
         <span>NIM {item.student.nim}</span>
       </div>
-      <div className="teacher-attention-queue__priority">
-        <span>{priorityLabels[priority]}</span>
-      </div>
-      <div className="teacher-attention-queue__facts">
-        <ul>
-          {visibleFacts.map((fact) => <li key={fact}>{fact}</li>)}
-        </ul>
-        {additionalFactCount > 0 && (
-          <span className="teacher-attention-queue__additional">
-            +{additionalFactCount} catatan lainnya
+      <div className="teacher-attention-queue__follow-up">
+        <section className="teacher-attention-queue__review">
+          <span className="teacher-attention-queue__section-label">
+            Perlu ditinjau · Interpretasi sistem
           </span>
-        )}
+          <div>
+            <ul>
+              {reviews.map((review) => <li key={review}>{review}</li>)}
+            </ul>
+            <span className="teacher-attention-queue__urgency">
+              {urgencyLabels[urgency]}
+            </span>
+          </div>
+        </section>
+        <section className="teacher-attention-queue__facts">
+          <span className="teacher-attention-queue__section-label">
+            Data yang terlihat
+          </span>
+          <ul>
+            {presentations.map((presentation, flagIndex) => (
+              <li key={`${presentation.boundary}-${flagIndex}`}>
+                <span>{presentation.boundary}</span>
+                <p>{presentation.fact}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section className="teacher-attention-queue__context">
+          <span className="teacher-attention-queue__section-label">Konteks</span>
+          <ul>
+            {contexts.map((context) => <li key={context}>{context}</li>)}
+          </ul>
+        </section>
+        <section className="teacher-attention-queue__next-step">
+          <span className="teacher-attention-queue__section-label">
+            Langkah berikut
+          </span>
+          <ul>
+            {nextSteps.map((nextStep) => <li key={nextStep}>{nextStep}</li>)}
+          </ul>
+        </section>
       </div>
       <Link
         className="teacher-attention-queue__action"
         to={`/students/${item.student.id}`}
-        aria-label={`Tinjau siswa ${item.student.name}`}
+        aria-label={`Buka Student Detail ${item.student.name}`}
       >
-        Tinjau siswa
+        Buka detail
       </Link>
     </li>
   );
@@ -156,15 +246,16 @@ export default function TeacherAttentionQueue() {
     >
       <header className="teacher-attention-queue__header">
         <div>
-          <p className="teacher-attention-queue__taxonomy">Student insights</p>
+          <p className="teacher-attention-queue__taxonomy">Tindak lanjut</p>
           <h2 id="teacher-attention-queue-title">Perlu ditinjau</h2>
           <p>
-            Siswa dengan catatan akademik, kehadiran, atau feedback yang perlu diperhatikan.
+            Daftar tindak lanjut berdasarkan data kehadiran, pengukuran akademik,
+            dan observasi guru.
           </p>
         </div>
         {status === "success" && attentionQueue.length > 0 && (
           <span className="teacher-attention-queue__count">
-            {attentionQueue.length} siswa
+            {attentionQueue.length} tindak lanjut
           </span>
         )}
       </header>
@@ -181,8 +272,8 @@ export default function TeacherAttentionQueue() {
       {status === "success" && attentionQueue.length === 0 && (
         <AttentionQueueMessage
           tone="empty"
-          title="Tidak ada siswa yang perlu ditinjau saat ini."
-          description="Record kelas berada dalam kondisi baik atau catatan yang diperlukan telah diperbarui."
+          title="Tidak ada tindak lanjut yang ditandai saat ini."
+          description="Belum ada perubahan data yang memenuhi rule tinjauan."
         />
       )}
       {status === "success" && attentionQueue.length > 0 && (

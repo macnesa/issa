@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Student.hasMany(models.Score);
       Student.hasMany(models.StudentFeedback);
       Student.hasMany(models.StudentEvidence);
+      Student.hasMany(models.StudentLearningJournal);
       Student.hasOne(models.User);
       Student.hasMany(models.Transaction);
     }

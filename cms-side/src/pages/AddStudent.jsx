@@ -7,6 +7,7 @@ import baseUrl from "../config/api";
 import FeedbackForm from "../features/feedback/components/FeedbackForm";
 import FeedbackHistory from "../features/feedback/components/FeedbackHistory";
 import StudentEvidenceSection from "../features/student-evidence/components/StudentEvidenceSection";
+import StudentLearningJournalSection from "../features/student-learning-journal/components/StudentLearningJournalSection";
 import { fetchStudentDetail, updateStudentRecord } from "../store/action/ActionCreator";
 import { formatRecordedDate, toIsoDateTime } from "../utils/recordDates";
 import { EmptyState, ErrorState, LoadingState, PageContainer, PageHeader, PrimaryButton, SecondaryButton, StatusBadge, Surface } from "../shared/ui/ui";
@@ -79,6 +80,7 @@ export default function StudentDetail() {
         <FeedbackForm feedback={feedback} observedAt={observedAt} message={message} submitting={submitting} onFeedbackChange={(event) => setFeedback(event.target.value)} onObservedAtChange={setObservedAt} onSubmit={handleStudentFeedbackSubmit} />
         <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
         <StudentEvidenceSection studentId={studentId} />
+        <StudentLearningJournalSection studentId={studentId} />
       </div>
       <div className="space-y-6">
         <Surface className="record-ledger record-ledger--attendance p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-semibold text-[var(--text)]">Attendance record</h2><p className="mt-1 text-sm text-[var(--muted)]">Tanggal kejadian dan status siswa.</p></div><Link to="/attendance"><SecondaryButton type="button">Kelola</SecondaryButton></Link></div><div className="mt-4 space-y-3">{isEmpty(attendances) && <EmptyState title="Belum ada attendance" />}{attendances.map((attendance) => <div key={attendance.id} className="record-ledger__entry flex items-center justify-between gap-3 rounded-xl border p-3"><span className="text-sm font-medium text-[var(--text)]">{attendance.attendanceDate || "Tanggal attendance belum tersedia"}</span><StatusBadge status={attendance.status} /></div>)}</div></Surface>

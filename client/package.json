@@ -22,7 +22,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test:student-insights": "vitest run src/features/student-insights",
     "test:student-evidence": "vitest run src/features/student-evidence src/realtime/parentSocket.test.js src/layouts/ParentLayout.student-evidence.test.jsx",
+    "test:student-learning-journal": "vitest run src/features/student-learning-journal src/realtime/parentSocket.test.js src/layouts/ParentLayout.student-learning-journal.test.jsx",
     "codebook:check": "node ../scripts/check-codebook.js",
     "codebook:index": "node ../scripts/check-codebook.js --write-index"
   },

@@ -10,6 +10,7 @@ import { ErrorState, EmptyState, LoadingState } from '../shared/ui/ResourceState
 import {
   connectParentSocket,
   isEvidenceRecordEventForActiveStudent,
+  isJournalRecordEventForActiveStudent,
   isStudentRecordEventForActiveStudent,
 } from '../realtime/parentSocket'
 import './ParentLayout.css'
@@ -18,6 +19,7 @@ export default function ParentLayout() {
   const dispatch = useDispatch()
   const [studentInsightsRefreshKey, setStudentInsightsRefreshKey] = useState(0)
   const [studentEvidenceRefreshKey, setStudentEvidenceRefreshKey] = useState(0)
+  const [studentJournalRefreshKey, setStudentJournalRefreshKey] = useState(0)
   const [showRealtimeNotice, setShowRealtimeNotice] = useState(false)
   const refetchTimer = useRef(null)
   const noticeTimer = useRef(null)
@@ -43,6 +45,9 @@ export default function ParentLayout() {
     if (isEvidenceRecordEventForActiveStudent(studentRecordEvent, studentId)) {
       pendingRecordTypes.current.add('evidence');
     }
+    if (isJournalRecordEventForActiveStudent(studentRecordEvent, studentId)) {
+      pendingRecordTypes.current.add('journal');
+    }
     window.clearTimeout(refetchTimer.current);
     refetchTimer.current = window.setTimeout(async () => {
       const recordTypes = new Set(pendingRecordTypes.current);
@@ -50,6 +55,9 @@ export default function ParentLayout() {
 
       if (recordTypes.has('evidence')) {
         setStudentEvidenceRefreshKey((refreshKey) => refreshKey + 1);
+      }
+      if (recordTypes.has('journal')) {
+        setStudentJournalRefreshKey((refreshKey) => refreshKey + 1);
       }
 
       const overviewRefreshed = await dispatch(fetchStudentOverview());
@@ -90,6 +98,7 @@ export default function ParentLayout() {
         : <Outlet context={{
           studentEvidenceRefreshKey,
           studentInsightsRefreshKey,
+          studentJournalRefreshKey,
         }} />;
   
   return (

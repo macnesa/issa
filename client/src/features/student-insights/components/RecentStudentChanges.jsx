@@ -4,16 +4,16 @@ import normalizeApiError from '../../../utils/normalizeApiError';
 import './RecentStudentChanges.css';
 
 const academicTrendLabels = {
-  improving: 'Meningkat',
-  declining: 'Menurun',
-  stable: 'Stabil',
+  improving: 'Pola nilai meningkat',
+  declining: 'Pola nilai menurun',
+  stable: 'Pola nilai stabil',
   insufficient_data: 'Belum cukup data',
 };
 
 const domainLabels = {
-  score: 'Nilai',
-  attendance: 'Kehadiran',
-  feedback: 'Feedback guru',
+  score: 'Pengukuran akademik',
+  attendance: 'Data faktual',
+  feedback: 'Observasi guru',
 };
 
 const numberFormatter = new Intl.NumberFormat('id-ID', {
@@ -49,6 +49,7 @@ function formatRecordDate(occurredAt) {
 }
 
 function formatScoreValue(value) {
+  if (value === null || value === undefined || value === '') return '—';
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numberFormatter.format(numericValue) : '—';
 }
@@ -56,49 +57,57 @@ function formatScoreValue(value) {
 function getScoreChangeCopy(change) {
   const lessonName = change.lessonName || 'pelajaran';
   const currentValue = formatScoreValue(change.value);
-  const previousValue = formatScoreValue(change.previousValue);
+  const hasPreviousValue = change.previousValue !== null
+    && change.previousValue !== undefined
+    && change.previousValue !== '';
+  return hasPreviousValue
+    ? `Nilai terbaru ${lessonName} adalah ${currentValue}, setelah sebelumnya ${formatScoreValue(change.previousValue)}.`
+    : `Nilai terbaru ${lessonName} adalah ${currentValue}.`;
+}
 
-  if (change.direction === 'improved') {
-    return `Nilai ${lessonName} meningkat dari ${previousValue} menjadi ${currentValue}.`;
-  }
-  if (change.direction === 'declined') {
-    return `Nilai ${lessonName} turun dari ${previousValue} menjadi ${currentValue}.`;
-  }
-  if (change.direction === 'unchanged') {
-    return `Nilai ${lessonName} tetap di ${currentValue}.`;
-  }
-  if (change.direction === 'first_record') {
-    return `Nilai pertama ${lessonName} tercatat ${currentValue}.`;
-  }
+function getKkmContext(change) {
+  const currentValue = Number(change.value);
+  const kkm = Number(change.kkm);
+  if (!Number.isFinite(currentValue) || !Number.isFinite(kkm)) return null;
 
-  return `Nilai ${lessonName} tercatat ${currentValue}.`;
+  if (currentValue > kkm) {
+    return `Nilai masih berada di atas KKM ${formatScoreValue(kkm)}.`;
+  }
+  if (currentValue === kkm) {
+    return `Nilai terbaru memenuhi KKM ${formatScoreValue(kkm)}.`;
+  }
+  return `KKM saat ini adalah ${formatScoreValue(kkm)}. Guru dapat menambahkan konteks mengenai assessment dan dukungan berikutnya.`;
 }
 
 function getChangeContent(change) {
   if (change.type === 'score') {
     return {
       title: getScoreChangeCopy(change),
-      detail: `KKM ${formatScoreValue(change.kkm)}`,
+      detail: getKkmContext(change),
+      context: 'Angka ini adalah pengukuran pada assessment yang tercatat, bukan kesimpulan tentang kemampuan siswa.',
     };
   }
 
   if (change.type === 'attendance') {
     return {
-      title: `Kehadiran tercatat sebagai ${change.status}.`,
+      title: `Status kehadiran pada ${formatRecordDate(change.occurredAt)} tercatat sebagai ${change.status}.`,
       detail: null,
+      context: 'Catatan ini menunjukkan status yang dilaporkan tanpa menyimpulkan penyebabnya.',
     };
   }
 
   if (change.type === 'feedback') {
     return {
-      title: 'Guru menambahkan catatan perkembangan baru.',
+      title: 'Observasi guru baru ditambahkan.',
       detail: change.content || null,
+      context: 'Catatan ini merupakan observasi guru pada waktu pencatatan.',
     };
   }
 
   return {
     title: 'Catatan perkembangan baru tersedia.',
     detail: null,
+    context: 'Konteks tambahan belum tersedia.',
   };
 }
 
@@ -155,6 +164,11 @@ function RecentChangeItem({ change, index }) {
           change.type === 'feedback'
             ? <blockquote>{content.detail}</blockquote>
             : <span className="recent-student-changes__notation">{content.detail}</span>
+        )}
+        {content.context && (
+          <span className="recent-student-changes__context-note">
+            {content.context}
+          </span>
         )}
       </div>
       <time dateTime={change.occurredAt || undefined}>
@@ -221,7 +235,9 @@ export default function RecentStudentChanges({ studentId, refreshKey = 0 }) {
       <header className="recent-student-changes__header">
         <p className="overview-kicker">Student insights</p>
         <h2 id="recent-student-changes-title">Perubahan terbaru</h2>
-        <p>Ringkasan perubahan dari catatan kehadiran, nilai, dan feedback guru.</p>
+        <p>
+          Ringkasan data faktual, pengukuran akademik, dan observasi guru.
+        </p>
       </header>
 
       {status === 'loading' && <RecentChangesSkeleton />}
@@ -241,7 +257,7 @@ export default function RecentStudentChanges({ studentId, refreshKey = 0 }) {
               <dd>{attendanceRateLabel}</dd>
             </div>
             <div>
-              <dt>Tren akademik</dt>
+              <dt>Interpretasi sistem · tren nilai</dt>
               <dd>{academicTrendLabel}</dd>
             </div>
           </dl>
@@ -250,7 +266,7 @@ export default function RecentStudentChanges({ studentId, refreshKey = 0 }) {
             <RecentChangesMessage
               tone="empty"
               title="Belum ada perubahan terbaru untuk ditampilkan."
-              description="Catatan kehadiran, nilai, dan feedback baru akan muncul di sini."
+              description="Catatan kehadiran, pengukuran akademik, dan observasi guru baru akan muncul di sini."
             />
           ) : (
             <ol className="recent-student-changes__timeline">

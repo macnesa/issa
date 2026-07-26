@@ -1,0 +1,108 @@
+.journal-entry-form {
+  padding: 1.25rem;
+  background:
+    linear-gradient(rgba(36, 82, 78, 0.035) 1px, transparent 1px),
+    #f7faf8;
+  background-size: 100% 2.6rem;
+}
+
+.journal-entry-form.is-editing {
+  background:
+    linear-gradient(rgba(119, 93, 39, 0.045) 1px, transparent 1px),
+    #fdfaf1;
+  background-size: 100% 2.6rem;
+}
+
+.journal-entry-form__heading > p {
+  margin: 0;
+  color: #51706d;
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.journal-entry-form.is-editing .journal-entry-form__heading > p {
+  color: #806b37;
+}
+
+.journal-entry-form__heading h3 {
+  margin: 0.28rem 0 0;
+  color: #1b3b42;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.journal-entry-form__heading > span {
+  display: block;
+  margin-top: 0.34rem;
+  color: #716b5a;
+  font-size: 0.74rem;
+}
+
+.journal-entry-form form {
+  margin-top: 1rem;
+}
+
+.journal-entry-form__fields {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.journal-entry-form__content {
+  grid-column: 1 / -1;
+}
+
+.journal-entry-form__content-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.journal-entry-form__content-label > span {
+  color: #70807d;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.journal-entry-form__content textarea {
+  min-height: 8.5rem;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+.journal-entry-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.05rem;
+  padding-top: 1rem;
+  border-top: 1px solid #cad5d1;
+}
+
+.journal-entry-form__status {
+  flex: 1 1 14rem;
+  min-height: 1.25rem;
+  margin: 0;
+  color: #496a66;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+@media (min-width: 700px) {
+  .journal-entry-form {
+    padding: 1.4rem 1.5rem 1.5rem;
+  }
+
+  .journal-entry-form__fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 479px) {
+  .journal-entry-form__actions > button {
+    width: 100%;
+  }
+}
