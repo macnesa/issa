@@ -4,30 +4,6 @@
   background: linear-gradient(105deg, rgba(255, 255, 255, 0.98), rgba(234, 246, 248, 0.92));
 }
 
-.issa-header::after {
-  position: absolute;
-  top: -1.7rem;
-  right: 5rem;
-  width: 4.8rem;
-  height: 4.8rem;
-  border: 0.85rem solid rgba(107, 191, 188, 0.2);
-  border-radius: 52% 48% 44% 56%;
-  content: "";
-  transform: rotate(22deg);
-}
-
-.issa-header__brand::before {
-  position: absolute;
-  top: -0.25rem;
-  left: -0.32rem;
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: 50% 45% 55% 48%;
-  background: rgba(242, 226, 145, 0.5);
-  content: "";
-  transform: rotate(-18deg);
-}
-
 .issa-header__link::after {
   content: none;
 }
@@ -57,17 +33,6 @@
   box-shadow: 0 0.8rem 1.8rem rgba(14, 42, 58, 0.25);
 }
 
-.issa-bottom-nav::before {
-  position: absolute;
-  top: -1.65rem;
-  right: 1.8rem;
-  width: 4.3rem;
-  height: 4.3rem;
-  border: 0.6rem solid rgba(199, 225, 235, 0.2);
-  border-radius: 999px;
-  content: "";
-}
-
 .issa-bottom-nav__link.is-active {
   margin: 0.35rem 0.2rem;
   background: #f2e291;
@@ -75,38 +40,13 @@
   transform: translateY(-0.2rem);
 }
 
-.issa-header__brand-mark {
-  display: none;
-}
-
 @media (min-width: 768px) {
   .issa-header {
     border-width: 2px 1px 1px 2px;
     border-color: #173e52;
     border-radius: 0.72rem 0.72rem 2.25rem 0.42rem;
-    background-color: #f8ffff;
-    background-image:
-      repeating-linear-gradient(180deg, transparent 0, transparent 2.15rem, rgba(107, 191, 188, 0.1) 2.19rem, transparent 2.24rem),
-      linear-gradient(105deg, rgba(255, 255, 255, 0.98), rgba(234, 246, 248, 0.94));
+    background: linear-gradient(105deg, rgba(255, 255, 255, 0.98), rgba(234, 246, 248, 0.94));
     box-shadow: 0.48rem 0.52rem 0 rgba(23, 62, 82, 0.11);
-  }
-
-  .issa-header::before {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 10.1rem;
-    width: 1px;
-    background: rgba(107, 191, 188, 0.42);
-    content: "";
-  }
-
-  .issa-header::after {
-    top: -2.15rem;
-    right: 4.8rem;
-    width: 5.65rem;
-    height: 5.65rem;
-    border-width: 0.72rem;
   }
 
   .issa-header__brand {
@@ -117,25 +57,6 @@
     border: 1px solid rgba(23, 62, 82, 0.2);
     border-radius: 0.58rem 0.58rem 1.15rem 0.3rem;
     background: rgba(255, 255, 255, 0.72);
-  }
-
-  .issa-header__brand::before {
-    top: -0.46rem;
-    left: -0.5rem;
-    width: 3.25rem;
-    height: 3.25rem;
-    background: rgba(242, 226, 145, 0.68);
-  }
-
-  .issa-header__brand::after {
-    position: absolute;
-    right: 0.55rem;
-    bottom: 0.48rem;
-    width: 1.45rem;
-    height: 0.22rem;
-    border-radius: 999px;
-    background: #6bbfbc;
-    content: "";
   }
 
   .issa-header__brand img {
@@ -183,32 +104,12 @@
     box-shadow: 0.22rem 0.24rem 0 #f2e291;
   }
 
-  .issa-header__profile::after {
-    position: absolute;
-    right: -0.18rem;
-    bottom: -0.18rem;
-    width: 0.52rem;
-    height: 0.52rem;
-    border: 2px solid #f8ffff;
-    border-radius: 999px;
-    background: #6bbfbc;
-    content: "";
-  }
 }
 
 @media (min-width: 900px) {
   .issa-header {
     border-radius: 0.68rem 0.68rem 1.65rem 0.38rem;
     box-shadow: 0.22rem 0.25rem 0 rgba(23, 62, 82, 0.08);
-  }
-
-  .issa-header::before {
-    left: 6.25rem;
-    background: linear-gradient(180deg, transparent 18%, rgba(107, 191, 188, 0.68) 18%, rgba(107, 191, 188, 0.68) 82%, transparent 82%);
-  }
-
-  .issa-header::after {
-    content: none;
   }
 
   .issa-header__brand {
@@ -220,36 +121,9 @@
     background: transparent;
   }
 
-  .issa-header__brand::before {
-    top: -0.18rem;
-    left: -0.22rem;
-    width: 2.4rem;
-    height: 2.4rem;
-    background: rgba(242, 226, 145, 0.72);
-  }
-
-  .issa-header__brand::after,
-  .issa-header__profile::after {
-    content: none;
-  }
-
   .issa-header__brand img {
-    display: none;
-  }
-
-  .issa-header__brand-mark {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    width: 4.25rem;
-    height: 2.12rem;
-    place-items: center;
-    border-radius: 0.48rem 0.48rem 0.8rem 0.26rem;
-    background: #173e52;
-    color: white;
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
+    width: 4.4rem;
+    max-height: 1.55rem;
   }
 
   .issa-header__profile {

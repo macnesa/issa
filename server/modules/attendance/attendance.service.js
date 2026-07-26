@@ -77,16 +77,22 @@ async function updateAttendanceRecord({ classId, attendancePayload }) {
   if (isNil(attendanceRecord)) throw { name: 'notFound' };
 
   const hasAttendanceChanged = attendanceRecord.status !== status;
-  const updatedAttendanceRecord = await attendanceRepository
-    .updateAttendanceRecord(attendanceRecord, { status });
+  if (!hasAttendanceChanged) return attendanceRecord;
 
-  if (hasAttendanceChanged) {
-    emitStudentRecordUpdated({
-      studentId,
-      recordType: 'attendance',
-      occurredAt: attendanceDate,
+  const currentVersion = Number.isInteger(attendanceRecord.version)
+    ? attendanceRecord.version
+    : 1;
+  const updatedAttendanceRecord = await attendanceRepository
+    .updateAttendanceRecord(attendanceRecord, {
+      status,
+      version: currentVersion + 1,
     });
-  }
+
+  emitStudentRecordUpdated({
+    studentId,
+    recordType: 'attendance',
+    occurredAt: attendanceDate,
+  });
 
   return updatedAttendanceRecord;
 }

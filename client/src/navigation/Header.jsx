@@ -24,7 +24,6 @@ export default function Header() {
             className="relative z-10 h-7 sm:h-9"
             alt="ISSA"
           />
-          <span className="issa-header__brand-mark" aria-hidden="true">ISSA</span>
         </NavLink>
 
         <ul className="hidden items-center gap-1 md:order-1 md:flex md:px-[0.65rem] min-[900px]:px-[0.2rem]">

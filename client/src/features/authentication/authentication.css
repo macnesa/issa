@@ -1,30 +1,5 @@
 .issa-login {
-  background:
-    repeating-linear-gradient(180deg, transparent 0, transparent 3.15rem, rgba(107, 191, 188, 0.08) 3.19rem, transparent 3.24rem),
-    linear-gradient(125deg, #eef7f8 0%, #f8fbfc 52%, #f5f0ff 100%);
-}
-
-.issa-login::before {
-  position: absolute;
-  bottom: -10rem;
-  left: -8rem;
-  width: 25rem;
-  height: 25rem;
-  border-radius: 50% 45% 55% 48%;
-  background: rgba(199, 225, 235, 0.68);
-  content: "";
-  transform: rotate(-22deg);
-}
-
-.issa-login::after {
-  position: absolute;
-  top: 4rem;
-  right: -6rem;
-  width: 15rem;
-  height: 15rem;
-  border: 1.05rem solid rgba(242, 226, 145, 0.58);
-  border-radius: 50%;
-  content: "";
+  background: linear-gradient(125deg, #eef7f8 0%, #f8fbfc 52%, #f5f0ff 100%);
 }
 
 .issa-login__frame {
@@ -35,68 +10,27 @@
   animation: login-frame-in 440ms both;
 }
 
-.issa-login__frame::after {
-  position: absolute;
-  z-index: 2;
-  top: clamp(8.7rem, 26%, 11rem);
-  left: calc(42% - 0.35rem);
-  width: 0.7rem;
-  height: 0.7rem;
-  border: 0.18rem solid #fffaf2;
-  border-radius: 999px;
-  background: #6bbfbc;
-  content: "";
-}
-
 .issa-login__record {
   padding: 2.4rem;
   background-color: #1c4d63;
-  background-image:
-    radial-gradient(circle at 22% 22%, rgba(199, 225, 235, 0.22) 0 0.12rem, transparent 0.15rem),
-    linear-gradient(135deg, #0e2a3a, #265367);
-  background-size: 0.72rem 0.72rem, auto;
+  background-image: linear-gradient(135deg, #0e2a3a, #265367);
   color: white;
-}
-
-.issa-login__record::before {
-  position: absolute;
-  top: 1.45rem;
-  bottom: 1.45rem;
-  left: 1.35rem;
-  width: 1px;
-  background: linear-gradient(180deg, transparent, #f2e291 17%, #f2e291 82%, transparent);
-  content: "";
-}
-
-.issa-login__record::after {
-  position: absolute;
-  right: -3.6rem;
-  bottom: -4rem;
-  width: 13.5rem;
-  height: 13.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.29);
-  border-radius: 48% 52% 38% 62%;
-  background: rgba(107, 191, 188, 0.14);
-  content: "";
-  transform: rotate(18deg);
 }
 
 .issa-login__seal {
-  width: 5.15rem;
-  height: 2.55rem;
+  width: 4.4rem;
+  height: 4.1rem;
   margin-left: 0.7rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 0.58rem 0.58rem 1rem 0.3rem;
-  background: rgba(14, 42, 58, 0.46);
-  box-shadow: 0.28rem 0.3rem 0 rgba(242, 226, 145, 0.72);
-  color: white;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
+}
+
+.issa-login__seal img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .issa-login__record .issa-login__kicker {
-  margin: 3.4rem 0 0 0.7rem;
+  margin: 1.4rem 0 0 0.7rem;
   color: #c7e1eb;
   font-size: 0.74rem;
   font-weight: 850;
@@ -148,14 +82,9 @@
 }
 
 @media (max-width: 767px) {
-  .issa-login::before { bottom: -9.5rem; left: -11rem; width: 20rem; height: 20rem; }
-  .issa-login::after { top: auto; right: -6rem; bottom: -4rem; width: 10rem; height: 10rem; }
   .issa-login__frame { grid-template-columns: minmax(0, 1fr); width: min(100%, 31rem); border-radius: 1rem 1rem 2.5rem 1rem; box-shadow: 0.55rem 0.62rem 0 rgba(23, 62, 82, 0.12); }
-  .issa-login__frame::after { top: 6.65rem; left: auto; right: 1.15rem; width: 0.5rem; height: 0.5rem; }
   .issa-login__record { min-height: 0; padding: 0.58rem 1.18rem 0.54rem; }
-  .issa-login__record::before { top: 0.62rem; bottom: 0.62rem; left: 0.64rem; }
-  .issa-login__record::after { right: -4.8rem; bottom: -7.3rem; width: 9.5rem; height: 9.5rem; }
-  .issa-login__seal { width: 3.45rem; height: 1.55rem; margin-left: 0.2rem; font-size: 0.55rem; }
+  .issa-login__seal { width: 2.65rem; height: 2.45rem; margin-left: 0.2rem; }
   .issa-login__record .issa-login__kicker { margin: 0.36rem 0 0 0.2rem; font-size: 0.53rem; letter-spacing: 0.13em; }
   .issa-login__record h2 { max-width: none; margin: 0.16rem 0 0 0.2rem; font-size: clamp(1.9rem, 8.2vw, 2.1rem); letter-spacing: -0.06em; line-height: 0.96; }
   .issa-login__record > p:last-child { display: block; max-width: none; margin: 0.28rem 0 0 0.2rem; font-size: clamp(0.58rem, 2.4vw, 0.62rem); line-height: 1.22; white-space: nowrap; }

@@ -38,29 +38,53 @@
 ## CMS
 
 - `ISSA:CMS.ATTENDANCE.CREATE_RECORD`
-  - `cms-side/src/store/action/ActionCreator.js:575`
+  - `cms-side/src/store/action/ActionCreator.js:586`
 - `ISSA:CMS.ATTENDANCE.UPDATE_RECORD`
-  - `cms-side/src/store/action/ActionCreator.js:599`
+  - `cms-side/src/store/action/ActionCreator.js:610`
 - `ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION`
   - `cms-side/src/router/index.jsx:11`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
-  - `cms-side/src/pages/Login.jsx:17`
+  - `cms-side/src/pages/Login.jsx:20`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:30`
+  - `cms-side/src/pages/AddStudent.jsx:65`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:55`
+  - `cms-side/src/pages/AddStudent.jsx:121`
+- `ISSA:CMS.OFFLINE_ATTENDANCE.APPLY_LOCAL_OVERLAY`
+  - `cms-side/src/offline-workspace/attendanceOffline.js:50`
+- `ISSA:CMS.OFFLINE_ATTENDANCE.COMPACT_MUTATION`
+  - `cms-side/src/offline-workspace/mutationQueue.js:169`
+- `ISSA:CMS.OFFLINE_ATTENDANCE.PROTECT_LOGOUT_WITH_PENDING`
+  - `cms-side/src/navigation/Sidebar.jsx:53`
+- `ISSA:CMS.OFFLINE_ATTENDANCE.RECONCILE_SERVER_RECORD`
+  - `cms-side/src/offline-workspace/workspaceSnapshots.js:179`
+- `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_LOCAL`
+  - `cms-side/src/offline-workspace/mutationQueue.js:500`
+- `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_SERVER`
+  - `cms-side/src/offline-workspace/attendanceOffline.js:152`
+- `ISSA:CMS.OFFLINE_WORKSPACE.ENQUEUE_MUTATION`
+  - `cms-side/src/offline-workspace/mutationQueue.js:213`
+- `ISSA:CMS.OFFLINE_WORKSPACE.INITIALIZE_DATABASE`
+  - `cms-side/src/offline-workspace/offlineDatabase.js:22`
+- `ISSA:CMS.OFFLINE_WORKSPACE.PROCESS_PENDING_SYNC_BATCH`
+  - `cms-side/src/offline-workspace/syncEngine.js:204`
+- `ISSA:CMS.OFFLINE_WORKSPACE.RECONCILE_SYNC_RESULT`
+  - `cms-side/src/offline-workspace/syncEngine.js:76`
+- `ISSA:CMS.OFFLINE_WORKSPACE.RECOVER_INTERRUPTED_MUTATION`
+  - `cms-side/src/offline-workspace/mutationQueue.js:453`
+- `ISSA:CMS.OFFLINE_WORKSPACE.SAVE_WORKSPACE_SNAPSHOT`
+  - `cms-side/src/offline-workspace/workspaceSnapshots.js:133`
 - `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
-  - `cms-side/src/store/action/ActionCreator.js:625`
+  - `cms-side/src/store/action/ActionCreator.js:636`
 - `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
   - `cms-side/src/features/scores/components/CreateScoreForm.jsx:47`
 - `ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE`
-  - `cms-side/src/store/action/ActionCreator.js:549`
+  - `cms-side/src/store/action/ActionCreator.js:560`
 - `ISSA:CMS.STUDENT.FETCH_DETAIL`
   - `cms-side/src/store/action/ActionCreator.js:43`
 - `ISSA:CMS.STUDENT.FETCH_LIST`
   - `cms-side/src/store/action/ActionCreator.js:9`
 - `ISSA:CMS.STUDENT.UPDATE_RECORD`
-  - `cms-side/src/store/action/ActionCreator.js:115`
+  - `cms-side/src/store/action/ActionCreator.js:126`
 
 ## Server
 
@@ -123,16 +147,26 @@
 - `ISSA:SERVER.STUDENT_INSIGHT.COMPOSE_TEACHER_ATTENTION`
   - `server/modules/student-insight/student-insight.service.js:392`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.CREATE`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:146`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:167`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.LIST`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:175`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:212`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.MAP_EVIDENCE_TOMBSTONE`
   - `server/modules/student-learning-journal/student-learning-journal.service.js:23`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.RETRACT`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:235`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:272`
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.UPDATE`
-  - `server/modules/student-learning-journal/student-learning-journal.service.js:192`
+  - `server/modules/student-learning-journal/student-learning-journal.service.js:229`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
   - `server/modules/student/student.service.js:32`
 - `ISSA:SERVER.STUDENT.GET_LIST`
   - `server/modules/student/student.service.js:16`
+- `ISSA:SERVER.TEACHER_SYNC.APPLY_ATTENDANCE`
+  - `server/modules/teacher-sync/mutation-handlers/attendance-update.handler.js:70`
+- `ISSA:SERVER.TEACHER_SYNC.APPLY_JOURNAL`
+  - `server/modules/teacher-sync/mutation-handlers/journal-create.handler.js:37`
+- `ISSA:SERVER.TEACHER_SYNC.DETECT_ATTENDANCE_CONFLICT`
+  - `server/modules/teacher-sync/mutation-handlers/attendance-update.handler.js:104`
+- `ISSA:SERVER.TEACHER_SYNC.PROCESS_BATCH`
+  - `server/modules/teacher-sync/teacher-sync.service.js:203`
+- `ISSA:SERVER.TEACHER_SYNC.RESOLVE_DUPLICATE`
+  - `server/modules/teacher-sync/teacher-sync.service.js:62`

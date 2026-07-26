@@ -14,11 +14,19 @@ import {
 } from "../studentLearningJournalApi";
 import JournalEntryForm from "./JournalEntryForm";
 import JournalTimeline from "./JournalTimeline";
+import { isNetworkFailure } from "../../../offline-workspace/networkErrors";
 import "./StudentLearningJournalSection.css";
+
+const emptyCachedEntries = Object.freeze([]);
+const ignoreJournalLoaded = () => {};
 
 export default function StudentLearningJournalSection({
   studentId,
   refreshKey = 0,
+  cachedEntries = emptyCachedEntries,
+  hasCachedSnapshot = false,
+  offlineReadOnly = false,
+  onJournalLoaded = ignoreJournalLoaded,
 }) {
   const [resource, setResource] = useState({
     status: "loading",
@@ -33,6 +41,13 @@ export default function StudentLearningJournalSection({
   const [editingEntry, setEditingEntry] = useState(null);
   const journalRequestSequence = useRef(0);
   const evidenceRequestSequence = useRef(0);
+  const cachedEntriesRef = useRef(cachedEntries);
+  const hasCachedSnapshotRef = useRef(hasCachedSnapshot);
+
+  useEffect(() => {
+    cachedEntriesRef.current = cachedEntries;
+    hasCachedSnapshotRef.current = hasCachedSnapshot;
+  }, [cachedEntries, hasCachedSnapshot]);
 
   const loadJournal = useCallback(async ({ signal } = {}) => {
     const requestId = ++journalRequestSequence.current;
@@ -41,15 +56,24 @@ export default function StudentLearningJournalSection({
       const entries = await fetchStudentLearningJournal(studentId, { signal });
       if (signal?.aborted || requestId !== journalRequestSequence.current) return;
       setResource({ status: "success", data: entries, error: "" });
+      await Promise.resolve(onJournalLoaded(entries));
     } catch (error) {
       if (signal?.aborted || requestId !== journalRequestSequence.current) return;
+      if (isNetworkFailure(error) && hasCachedSnapshotRef.current) {
+        setResource({
+          status: "success",
+          data: cachedEntriesRef.current,
+          error: "",
+        });
+        return;
+      }
       setResource({
         status: "error",
         data: [],
         error: error?.message || "Jurnal belajar belum dapat dimuat.",
       });
     }
-  }, [studentId]);
+  }, [onJournalLoaded, studentId]);
 
   const loadEvidences = useCallback(async ({ signal } = {}) => {
     const requestId = ++evidenceRequestSequence.current;
@@ -143,6 +167,7 @@ export default function StudentLearningJournalSection({
         evidenceError={evidenceResource.error}
         onSubmit={handleSubmit}
         onCancelEdit={() => setEditingEntry(null)}
+        readOnly={offlineReadOnly}
       />
 
       <div aria-live="polite" aria-busy={resource.status === "loading"}>
@@ -169,6 +194,7 @@ export default function StudentLearningJournalSection({
             entries={resource.data}
             onEdit={handleEdit}
             onRetract={handleRetract}
+            readOnly={offlineReadOnly}
           />
         )}
       </div>

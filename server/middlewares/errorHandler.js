@@ -73,6 +73,10 @@ function errorHandler(err, req, res, next) {
             statusCode = 409;
             msg = "Attendance already exists for the selected date";
             break;
+        case "invalidSyncBatch":
+            statusCode = 400;
+            msg = "Sync batch must contain 1 to 50 valid mutations";
+            break;
         case "invalidScoreValue":
             statusCode = 400;
             msg = "Score value must be an integer from 0 to 100";

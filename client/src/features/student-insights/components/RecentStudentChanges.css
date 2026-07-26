@@ -9,22 +9,8 @@
   overflow: hidden;
   border: 1px solid #d7cba9;
   border-radius: 0.9rem 2.3rem 0.9rem 0.9rem;
-  background:
-    repeating-linear-gradient(180deg, transparent 0, transparent 2.45rem, rgba(99, 116, 122, 0.08) 2.49rem, transparent 2.54rem),
-    #fffdf5;
+  background: #fffdf5;
   box-shadow: 0.46rem 0.5rem 0 rgba(125, 101, 47, 0.09);
-}
-
-.recent-student-changes::after {
-  position: absolute;
-  top: -2.8rem;
-  right: -2.3rem;
-  width: 7.8rem;
-  height: 7.8rem;
-  border: 1rem solid rgba(242, 226, 145, 0.34);
-  border-radius: 48% 52% 44% 56%;
-  content: "";
-  transform: rotate(16deg);
 }
 
 .recent-student-changes__header {

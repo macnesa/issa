@@ -234,6 +234,33 @@ describe("StudentLearningJournalSection Teacher", () => {
     expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(2);
   });
 
+  it("memakai Journal cached saat network gagal dan menjaga form read-only", async () => {
+    fetchStudentLearningJournal.mockRejectedValue(
+      new TypeError("Failed to fetch")
+    );
+
+    render(
+      <StudentLearningJournalSection
+        studentId="1"
+        cachedEntries={[observationEntry]}
+        hasCachedSnapshot
+        offlineReadOnly
+      />
+    );
+
+    expect(await screen.findByText(observationEntry.content))
+      .toBeInTheDocument();
+    expect(screen.getByText("Mode offline · catatan hanya dapat dibaca."))
+      .toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Simpan catatan" }))
+      .toBeDisabled();
+    expect(screen.queryByRole("button", { name: "Edit" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cabut catatan" }))
+      .not.toBeInTheDocument();
+    expect(createStudentLearningJournalEntry).not.toHaveBeenCalled();
+  });
+
   it("mengubah helper sesuai jenis dan menghapus field capture setelah reflection diganti", async () => {
     fetchStudentLearningJournal.mockResolvedValue([]);
     render(<StudentLearningJournalSection studentId="1" />);

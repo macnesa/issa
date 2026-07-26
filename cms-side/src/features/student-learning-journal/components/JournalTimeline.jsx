@@ -21,7 +21,12 @@ function retractErrorMessage(error) {
   return error?.message || "Catatan perjalanan belajar gagal dicabut.";
 }
 
-export default function JournalTimeline({ entries, onEdit, onRetract }) {
+export default function JournalTimeline({
+  entries,
+  onEdit,
+  onRetract,
+  readOnly = false,
+}) {
   const [entryToRetract, setEntryToRetract] = useState(null);
   const [retracting, setRetracting] = useState(false);
   const [retractError, setRetractError] = useState("");
@@ -128,7 +133,7 @@ export default function JournalTimeline({ entries, onEdit, onRetract }) {
                   </div>
                 )}
 
-                <div className="journal-timeline__actions">
+                {!readOnly && <div className="journal-timeline__actions">
                   <button type="button" onClick={() => onEdit(entry)}>
                     Edit
                   </button>
@@ -142,7 +147,7 @@ export default function JournalTimeline({ entries, onEdit, onRetract }) {
                   >
                     Cabut catatan
                   </button>
-                </div>
+                </div>}
               </article>
             </li>
           );

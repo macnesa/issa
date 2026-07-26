@@ -93,7 +93,7 @@ function sortJournalEntries(journalRecords) {
   });
 }
 
-async function requireStudentAccess(studentId, requester) {
+async function requireStudentAccess(studentId, requester, transaction = null) {
   if (!requester || !['teacher', 'parent'].includes(requester.role)) {
     throw { name: 'unauthorized' };
   }
@@ -104,13 +104,20 @@ async function requireStudentAccess(studentId, requester) {
     throw { name: 'unauthorized' };
   }
 
-  const student = await studentLearningJournalRepository
-    .findStudentForRequester({
-      studentId,
-      requesterRole: requester.role,
-      requesterClassId: requester.classId,
-      requesterStudentId: requester.studentId,
-    });
+  const requesterScope = {
+    studentId,
+    requesterRole: requester.role,
+    requesterClassId: requester.classId,
+    requesterStudentId: requester.studentId,
+  };
+  const student = transaction
+    ? await studentLearningJournalRepository.findStudentForRequester(
+      requesterScope,
+      { transaction }
+    )
+    : await studentLearningJournalRepository.findStudentForRequester(
+      requesterScope
+    );
   if (isNil(student)) throw { name: 'unauthorized' };
   return student;
 }
@@ -121,10 +128,22 @@ function requireTeacher(requester) {
   }
 }
 
-async function requireEvidenceForStudent(evidenceId, studentId) {
+async function requireEvidenceForStudent(
+  evidenceId,
+  studentId,
+  transaction = null
+) {
   if (evidenceId === null) return;
-  const evidence = await studentLearningJournalRepository
-    .findEvidenceForStudent(evidenceId, studentId);
+  const evidence = transaction
+    ? await studentLearningJournalRepository.findEvidenceForStudent(
+      evidenceId,
+      studentId,
+      { transaction }
+    )
+    : await studentLearningJournalRepository.findEvidenceForStudent(
+      evidenceId,
+      studentId
+    );
   if (isNil(evidence)) throw { name: 'unauthorized' };
 }
 
@@ -142,31 +161,49 @@ async function createJournalEntry({
   studentId,
   requester,
   journalPayload,
+  transaction = null,
+  emitRealtime = true,
 }) {
   void 'ISSA:SERVER.STUDENT_LEARNING_JOURNAL.CREATE';
   requireTeacher(requester);
   const validStudentId = validateResourceId(studentId);
   const validJournalPayload = validateJournalCreatePayload(journalPayload);
-  await requireStudentAccess(validStudentId, requester);
+  await requireStudentAccess(validStudentId, requester, transaction);
   await requireEvidenceForStudent(
     validJournalPayload.EvidenceId,
-    validStudentId
+    validStudentId,
+    transaction
   );
 
-  const createdEntry = await studentLearningJournalRepository
-    .createJournalEntry({
-      StudentId: validStudentId,
-      TeacherId: requester.teacherId,
-      ...validJournalPayload,
-    });
-  const hydratedEntry = await studentLearningJournalRepository
-    .findJournalEntry(createdEntry.id, validStudentId);
+  const createPayload = {
+    StudentId: validStudentId,
+    TeacherId: requester.teacherId,
+    ...validJournalPayload,
+  };
+  const createdEntry = transaction
+    ? await studentLearningJournalRepository.createJournalEntry(
+      createPayload,
+      { transaction }
+    )
+    : await studentLearningJournalRepository.createJournalEntry(createPayload);
+  const hydratedEntry = transaction
+    ? await studentLearningJournalRepository.findJournalEntry(
+      createdEntry.id,
+      validStudentId,
+      { transaction }
+    )
+    : await studentLearningJournalRepository.findJournalEntry(
+      createdEntry.id,
+      validStudentId
+    );
 
-  emitStudentRecordUpdated({
-    studentId: validStudentId,
-    recordType: 'journal',
-    occurredAt: validJournalPayload.observedAt,
-  });
+  if (emitRealtime) {
+    emitStudentRecordUpdated({
+      studentId: validStudentId,
+      recordType: 'journal',
+      occurredAt: validJournalPayload.observedAt,
+    });
+  }
 
   return mapJournalEntry(hydratedEntry);
 }

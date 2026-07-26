@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'RetractedByTeacherId',
       });
       Teacher.hasMany(models.StudentLearningJournal);
+      Teacher.hasMany(models.SyncMutationReceipt);
     }
   }
   Teacher.init(

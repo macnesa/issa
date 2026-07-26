@@ -31,7 +31,7 @@ export default function Schedule() {
 
   return (
     <PageContainer className="schedule-workspace">
-      <div className="schedule-workspace__header"><PageHeader eyebrow="Weekly schedule" title="Jadwal kelas" description="Daftar mata pelajaran per hari untuk kelas yang Anda ampu." /></div>
+      <div><PageHeader eyebrow="Weekly schedule" title="Jadwal kelas" description="Daftar mata pelajaran per hari untuk kelas yang Anda ampu." /></div>
       {isEmpty(schedules) ? <EmptyState title="Jadwal belum tersedia" description="Belum ada mata pelajaran yang dijadwalkan untuk kelas ini." /> : <ScheduleList days={days} schedulesByDay={schedulesByDay} />}
     </PageContainer>
   );

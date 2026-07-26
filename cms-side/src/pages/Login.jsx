@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import baseUrl from "../config/api";
 import { PrimaryButton } from "../shared/ui/ui";
 import TextField from "../shared/ui/form-controls/TextField";
+import issaLogo from "../../assets/img/logo.png";
 import "../features/authentication/teacher-login.css";
+import {
+  saveLastKnownTeacherIdentity,
+} from "../offline-workspace/authIdentity";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,6 +21,12 @@ export default function Login() {
     void 'ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN';
     event.preventDefault();
     setMessage("");
+    if (!navigator.onLine) {
+      setMessage(
+        "Login baru tidak tersedia saat offline. Hubungkan perangkat lalu coba lagi."
+      );
+      return;
+    }
     setSubmitting(true);
     fetch(`${baseUrl}/teachers/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(loginCredentials) })
       .then(async (response) => {
@@ -24,8 +34,17 @@ export default function Login() {
         if (!response.ok) throw new Error(loginResponse.msg || "Login gagal.");
         return loginResponse;
       })
-      .then((loginResponse) => { localStorage.setItem("access_token", loginResponse.access_token); navigate("/"); })
-      .catch((error) => setMessage(error.message || "Login gagal."))
+      .then((loginResponse) => {
+        localStorage.setItem("access_token", loginResponse.access_token);
+        saveLastKnownTeacherIdentity({ id: loginResponse.id });
+        window.dispatchEvent(new Event("issa:teacher-identity-changed"));
+        navigate("/");
+      })
+      .catch((error) => setMessage(
+        !navigator.onLine
+          ? "Login baru tidak tersedia saat offline. Hubungkan perangkat lalu coba lagi."
+          : error.message || "Login gagal."
+      ))
       .finally(() => setSubmitting(false));
   };
 
@@ -33,7 +52,9 @@ export default function Login() {
     <main className="teacher-login relative grid min-h-[100svh] place-items-center overflow-hidden px-4 py-6 sm:px-6">
       <section className="teacher-access-record relative z-10 grid w-full max-w-[67rem] overflow-hidden">
         <div className="teacher-access-record__identity min-w-0" aria-labelledby="teacher-login-title">
-          <div className="teacher-access-record__seal relative z-10 grid place-items-center" aria-hidden="true">ISSA</div>
+          <div className="teacher-access-record__seal relative z-10">
+            <img src={issaLogo} alt="ISSA" />
+          </div>
           <p className="teacher-access-record__index relative z-10 uppercase">Teacher workspace · record 01</p>
           <h1 id="teacher-login-title" className="relative z-10">Ruang kerja record siswa</h1>
           <p className="relative z-10">Akses untuk mencatat dan meninjau perkembangan siswa di kelas Anda.</p>

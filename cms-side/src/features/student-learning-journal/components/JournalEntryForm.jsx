@@ -56,6 +56,7 @@ export default function JournalEntryForm({
   evidenceError,
   onSubmit,
   onCancelEdit,
+  readOnly = false,
 }) {
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
@@ -106,6 +107,12 @@ export default function JournalEntryForm({
   async function handleSubmit(event) {
     event.preventDefault();
     if (submittingRef.current) return;
+    if (readOnly) {
+      setStatusMessage(
+        "Mode offline hanya menampilkan catatan yang telah tersimpan."
+      );
+      return;
+    }
 
     const content = form.content.trim();
     const nextErrors = {};
@@ -191,7 +198,7 @@ export default function JournalEntryForm({
             helperText={selectedType?.helper}
             error={errors.type}
             required
-            disabled={submitting}
+            disabled={submitting || readOnly}
             tone="feedback"
           />
 
@@ -202,7 +209,7 @@ export default function JournalEntryForm({
             onChange={(value) => updateField("observedAt", value)}
             error={errors.observedAt}
             required
-            disabled={submitting}
+            disabled={submitting || readOnly}
             tone="feedback"
           />
 
@@ -217,7 +224,7 @@ export default function JournalEntryForm({
               helperText={selectedCaptureType?.helper}
               error={errors.voiceCaptureType}
               required
-              disabled={submitting}
+              disabled={submitting || readOnly}
               tone="feedback"
             />
           )}
@@ -234,7 +241,7 @@ export default function JournalEntryForm({
                 ? evidenceError || "Evidence siswa belum dapat dimuat."
                 : "Opsional · pilih satu evidence milik siswa ini."
             }
-            disabled={submitting || evidenceStatus === "loading"}
+            disabled={readOnly || submitting || evidenceStatus === "loading"}
             tone="feedback"
           />
 
@@ -256,7 +263,7 @@ export default function JournalEntryForm({
               maxLength={maximumJournalContentLength}
               rows="6"
               required
-              disabled={submitting}
+              disabled={submitting || readOnly}
               aria-invalid={Boolean(errors.content)}
               aria-describedby={
                 errors.content
@@ -276,7 +283,7 @@ export default function JournalEntryForm({
         </div>
 
         <div className="journal-entry-form__actions">
-          <PrimaryButton type="submit" disabled={submitting}>
+          <PrimaryButton type="submit" disabled={submitting || readOnly}>
             {submitting
               ? "Menyimpan..."
               : editing
@@ -293,7 +300,9 @@ export default function JournalEntryForm({
             role="status"
             aria-live="polite"
           >
-            {statusMessage}
+            {readOnly
+              ? "Mode offline · catatan hanya dapat dibaca."
+              : statusMessage}
           </p>
         </div>
       </form>

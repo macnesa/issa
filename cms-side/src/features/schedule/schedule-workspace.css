@@ -1,12 +1,8 @@
-.schedule-workspace__header { position: relative; }
-.schedule-workspace__header::after { position: absolute; bottom: -1px; left: 0; width: 6.25rem; height: 0.22rem; background: #6bbfbc; content: ""; }
-
 .weekly-timetable {
   overflow: hidden;
   border: 1px solid #aac9ca;
   border-radius: 0.9rem 1.6rem 0.9rem 0.9rem;
-  background-color: #f7fcfb;
-  background-image: repeating-linear-gradient(180deg, transparent 0, transparent 2.56rem, rgba(75, 132, 146, 0.12) 2.6rem, transparent 2.64rem);
+  background: #f7fcfb;
   box-shadow: 0.4rem 0.46rem 0 rgba(107, 191, 188, 0.12);
 }
 
@@ -19,7 +15,6 @@
   background: linear-gradient(90deg, #dff1ef, rgba(247, 252, 251, 0.86));
 }
 
-.weekly-timetable__intro-mark { width: 1.45rem; height: 0.33rem; border-radius: 99px; background: #f2d86e; }
 .weekly-timetable__intro p { color: #356d70; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 
 .weekly-timetable__days { display: grid; }

@@ -35,7 +35,7 @@ export default function Scores() {
 
   return (
     <PageContainer className="score-workspace">
-      <div className="score-workspace__header"><PageHeader eyebrow="Academic record" title="Nilai siswa" description={student?.name ? `Kelola record akademik ${student.name}.` : "Kelola record akademik siswa."} actions={<Link to={`/students/${studentId}`} className="inline-flex min-h-10 items-center rounded-lg border border-[var(--border-strong)] bg-white px-4 py-2 text-sm font-semibold text-[var(--text)] hover:bg-slate-50">Kembali ke detail</Link>} /></div>
+      <div><PageHeader eyebrow="Academic record" title="Nilai siswa" description={student?.name ? `Kelola record akademik ${student.name}.` : "Kelola record akademik siswa."} actions={<Link to={`/students/${studentId}`} className="inline-flex min-h-10 items-center rounded-lg border border-[var(--border-strong)] bg-white px-4 py-2 text-sm font-semibold text-[var(--text)] hover:bg-slate-50">Kembali ke detail</Link>} /></div>
       {!student?.id ? <EmptyState title="Siswa tidak ditemukan" description="Siswa ini tidak tersedia pada kelas Anda." /> : <div className="space-y-5"><CreateScoreForm studentId={student.id} onCreated={fetchStudentScores} /><ScoreHistory scores={student.Scores} student={student} /></div>}
     </PageContainer>
   );

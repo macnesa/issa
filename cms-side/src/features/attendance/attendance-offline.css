@@ -1,0 +1,50 @@
+.attendance-offline-record {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.attendance-offline-record__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.attendance-offline-record__sync-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #52716f;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.attendance-offline-record__sync-label .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+.attendance-offline-record__sync-label[data-state="pending"],
+.attendance-offline-record__sync-label[data-state="syncing"] {
+  color: #765b18;
+}
+
+.attendance-offline-record__sync-label[data-state="conflict"],
+.attendance-offline-record__sync-label[data-state="failed"],
+.attendance-offline-record__error {
+  color: #8a3d32;
+}
+
+.attendance-offline-record[data-sync-state="pending"],
+.attendance-offline-record[data-sync-state="syncing"] {
+  border-left: 0.22rem solid #d4a63a;
+}
+
+.attendance-offline-record[data-sync-state="conflict"],
+.attendance-offline-record[data-sync-state="failed"] {
+  border-left: 0.22rem solid #a85f45;
+}
+
+.attendance-offline-record__error {
+  font-size: 0.72rem;
+  line-height: 1.45;
+}

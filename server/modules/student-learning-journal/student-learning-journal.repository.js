@@ -45,7 +45,7 @@ function findStudentForRequester({
   requesterRole,
   requesterClassId,
   requesterStudentId,
-}) {
+}, options = {}) {
   if (requesterRole === 'parent' && studentId !== requesterStudentId) {
     return null;
   }
@@ -55,24 +55,26 @@ function findStudentForRequester({
   return Student.findOne({
     where,
     attributes: ['id', 'ClassId'],
+    ...options,
   });
 }
 
-function findEvidenceForStudent(evidenceId, studentId) {
+function findEvidenceForStudent(evidenceId, studentId, options = {}) {
   return StudentEvidence.findOne({
     where: {
       id: evidenceId,
       StudentId: studentId,
     },
     attributes: ['id', 'StudentId'],
+    ...options,
   });
 }
 
-function createJournalEntry(journalPayload) {
-  return StudentLearningJournal.create(journalPayload);
+function createJournalEntry(journalPayload, options = {}) {
+  return StudentLearningJournal.create(journalPayload, options);
 }
 
-function findJournalEntry(entryId, studentId) {
+function findJournalEntry(entryId, studentId, options = {}) {
   return StudentLearningJournal.findOne({
     where: {
       id: entryId,
@@ -80,6 +82,7 @@ function findJournalEntry(entryId, studentId) {
     },
     attributes: journalAttributes,
     include: journalIncludes,
+    ...options,
   });
 }
 

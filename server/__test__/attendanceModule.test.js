@@ -101,11 +101,12 @@ describe('attendance module service', () => {
   });
 
   test('updates an existing attendance record', async () => {
-    const attendanceRecord = { id: 31, status: 'Hadir' };
+    const attendanceRecord = { id: 31, status: 'Hadir', version: 1 };
     attendanceRepository.findAttendanceByStudentAndDate.mockResolvedValue(attendanceRecord);
     attendanceRepository.updateAttendanceRecord.mockResolvedValue({
       id: 31,
       status: 'Izin',
+      version: 2,
     });
 
     await expect(attendanceService.updateAttendanceRecord({
@@ -115,15 +116,18 @@ describe('attendance module service', () => {
         status: 'Izin',
         attendanceDate: '2026-07-23',
       },
-    })).resolves.toEqual({ id: 31, status: 'Izin' });
+    })).resolves.toEqual({ id: 31, status: 'Izin', version: 2 });
 
     expect(attendanceRepository.updateAttendanceRecord)
-      .toHaveBeenCalledWith(attendanceRecord, { status: 'Izin' });
+      .toHaveBeenCalledWith(attendanceRecord, {
+        status: 'Izin',
+        version: 2,
+      });
     expect(emitStudentRecordUpdated).toHaveBeenCalledTimes(1);
   });
 
   test('does not emit when an attendance update keeps the same status', async () => {
-    const attendanceRecord = { id: 31, status: 'Hadir' };
+    const attendanceRecord = { id: 31, status: 'Hadir', version: 1 };
     attendanceRepository.findAttendanceByStudentAndDate.mockResolvedValue(attendanceRecord);
     attendanceRepository.updateAttendanceRecord.mockResolvedValue(attendanceRecord);
 
@@ -136,6 +140,7 @@ describe('attendance module service', () => {
       },
     });
 
+    expect(attendanceRepository.updateAttendanceRecord).not.toHaveBeenCalled();
     expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
   });
 });

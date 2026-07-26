@@ -28,7 +28,7 @@ export default function Dashboard() {
   const className = studentRows[0]?.Class?.name || "Kelas Anda";
 
   return <PageContainer className="teacher-dashboard">
-    <div className="teacher-dashboard__heading"><PageHeader eyebrow="Teacher workspace" title="Dashboard siswa" description="Mulai dari daftar siswa kelas Anda untuk melihat rekam perkembangan, mencatat feedback, attendance, dan score." /></div>
+    <div><PageHeader eyebrow="Teacher workspace" title="Dashboard siswa" description="Mulai dari daftar siswa kelas Anda untuk melihat rekam perkembangan, mencatat feedback, attendance, dan score." /></div>
     <section className="teacher-dashboard__class-ledger" aria-label="Ringkasan kelas aktif">
       <div className="teacher-dashboard__class-anchor"><p className="text-xs font-semibold uppercase tracking-[0.15em]">Kelas aktif</p><strong>{className}</strong><span>Scope akses teacher</span></div>
       <dl className="teacher-dashboard__class-facts">

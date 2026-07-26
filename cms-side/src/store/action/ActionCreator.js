@@ -49,8 +49,19 @@ export const fetchStudentDetail = (studentId) => {
       },
     })
       .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.msg || 'Student tidak dapat dimuat.');
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (error) {
+          data = null;
+        }
+        if (!response.ok) {
+          const requestError = new Error(
+            data?.msg || 'Student tidak dapat dimuat.'
+          );
+          requestError.status = response.status;
+          throw requestError;
+        }
         return data;
       })
       .then((studentDetailResponse) => {
