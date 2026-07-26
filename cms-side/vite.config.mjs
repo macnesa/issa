@@ -21,6 +21,11 @@ export default defineConfig({
     port: 3001,
     strictPort: true,
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/setupTests.js',
+  },
   optimizeDeps: {
     esbuildOptions: {
       loader: {

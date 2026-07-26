@@ -1,7 +1,10 @@
 function errorHandler(err, req, res, next) {
     let statusCode = 500,
         msg = "Internal Server Error"
-    switch (err.name) {
+    const errorName = String(err.code || '').startsWith('LIMIT_')
+        ? err.code
+        : err.name;
+    switch (errorName) {
         case "SequelizeValidationError":
             statusCode = 400;
             msg = err.errors[0].message
@@ -101,6 +104,49 @@ function errorHandler(err, req, res, next) {
         case "duplicateSchedule":
             statusCode = 409;
             msg = "Schedule already exists for this class, lesson, and day";
+            break;
+        case "invalidEvidenceTitle":
+            statusCode = 400;
+            msg = "Evidence title is required and must not exceed 120 characters";
+            break;
+        case "invalidEvidenceDescription":
+            statusCode = 400;
+            msg = "Evidence description must not exceed 500 characters";
+            break;
+        case "invalidEvidenceCategory":
+            statusCode = 400;
+            msg = "Invalid evidence category";
+            break;
+        case "invalidEvidenceObservedAt":
+            statusCode = 400;
+            msg = "observedAt must be a valid ISO-8601 date";
+            break;
+        case "evidenceFileRequired":
+            statusCode = 400;
+            msg = "Evidence image file is required";
+            break;
+        case "invalidEvidenceFileType":
+        case "LIMIT_UNEXPECTED_FILE":
+        case "LIMIT_FILE_COUNT":
+            statusCode = 400;
+            msg = "Evidence file must be one JPEG, PNG, or WEBP image";
+            break;
+        case "invalidEvidenceFileSize":
+        case "LIMIT_FILE_SIZE":
+            statusCode = 413;
+            msg = "Evidence file must not exceed 5 MB";
+            break;
+        case "cloudinaryConfigurationError":
+            statusCode = 503;
+            msg = "Evidence storage is not configured";
+            break;
+        case "evidenceUploadFailed":
+            statusCode = 502;
+            msg = "Evidence image upload failed";
+            break;
+        case "invalidEvidenceUploadResult":
+            statusCode = 502;
+            msg = "Evidence storage returned an invalid image";
             break;
     }
     console.log(err);

@@ -3,7 +3,7 @@
 ## Client
 
 - `ISSA:CLIENT.ACTIVITY.FETCH_SCHOOL_ACTIVITIES`
-  - `client/src/store/actions/actionCreator.js:153`
+  - `client/src/store/actions/actionCreator.js:155`
 - `ISSA:CLIENT.ATTENDANCE.CALCULATE_SUMMARY`
   - `client/src/features/student-overview/helpers.js:39`
 - `ISSA:CLIENT.ATTENDANCE.GROUP_HISTORY_BY_MONTH`
@@ -17,7 +17,7 @@
 - `ISSA:CLIENT.PROGRESS.BUILD_OVERVIEW`
   - `client/src/features/progress/helpers.js:41`
 - `ISSA:CLIENT.SCHEDULE.FETCH_CLASS_SCHEDULE`
-  - `client/src/store/actions/actionCreator.js:137`
+  - `client/src/store/actions/actionCreator.js:139`
 - `ISSA:CLIENT.SCHEDULE.MAP_RESPONSE_TO_ENTRIES`
   - `client/src/mappers/schedule.js:6`
 - `ISSA:CLIENT.SESSION.CHECK_EXPIRATION`
@@ -65,11 +65,11 @@
 ## Server
 
 - `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
-  - `server/modules/attendance/attendance.service.js:25`
+  - `server/modules/attendance/attendance.service.js:26`
 - `ISSA:SERVER.ATTENDANCE.GET_RECORDS`
-  - `server/modules/attendance/attendance.service.js:15`
+  - `server/modules/attendance/attendance.service.js:16`
 - `ISSA:SERVER.ATTENDANCE.UPDATE_RECORD`
-  - `server/modules/attendance/attendance.service.js:60`
+  - `server/modules/attendance/attendance.service.js:67`
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_DATE`
   - `server/modules/attendance/attendance.validator.js:24`
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_STATUS`
@@ -77,17 +77,17 @@
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT`
   - `server/modules/authentication/authentication.service.js:11`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT_REQUEST`
-  - `server/middlewares/authentication.js:33`
+  - `server/middlewares/authentication.js:84`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER`
   - `server/modules/authentication/authentication.service.js:39`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER_REQUEST`
-  - `server/middlewares/authentication.js:5`
+  - `server/middlewares/authentication.js:73`
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
   - `server/helpers/index.js:16`
 - `ISSA:SERVER.FEEDBACK.GET_HISTORY`
-  - `server/modules/feedback/feedback.service.js:8`
+  - `server/modules/feedback/feedback.service.js:9`
 - `ISSA:SERVER.FEEDBACK.UPDATE_HISTORY`
-  - `server/modules/feedback/feedback.service.js:31`
+  - `server/modules/feedback/feedback.service.js:32`
 - `ISSA:SERVER.FEEDBACK.VALIDATE_OBSERVED_AT`
   - `server/modules/feedback/feedback.validator.js:2`
 - `ISSA:SERVER.PUBLIC.GET_STUDENT_DETAIL`
@@ -95,13 +95,19 @@
 - `ISSA:SERVER.SCHEDULE.GET_CLASS_SCHEDULE`
   - `server/modules/schedule/schedule.service.js:4`
 - `ISSA:SERVER.SCORE.CALCULATE_STATUS`
-  - `server/modules/score/score.service.js:18`
+  - `server/modules/score/score.service.js:19`
 - `ISSA:SERVER.SCORE.CREATE_STUDENT_SCORE`
-  - `server/modules/score/score.service.js:45`
+  - `server/modules/score/score.service.js:46`
 - `ISSA:SERVER.SCORE.UPDATE_STUDENT_SCORE`
-  - `server/modules/score/score.service.js:110`
+  - `server/modules/score/score.service.js:117`
 - `ISSA:SERVER.SCORE.VALIDATE_VALUE`
   - `server/modules/score/score.validator.js:2`
+- `ISSA:SERVER.STUDENT_EVIDENCE.CREATE`
+  - `server/modules/student-evidence/student-evidence.service.js:84`
+- `ISSA:SERVER.STUDENT_EVIDENCE.LIST`
+  - `server/modules/student-evidence/student-evidence.service.js:135`
+- `ISSA:SERVER.STUDENT_EVIDENCE.UPLOAD_IMAGE`
+  - `server/integrations/cloudinary.js:18`
 - `ISSA:SERVER.STUDENT_INSIGHT.BUILD_RECENT_CHANGES`
   - `server/modules/student-insight/student-insight.service.js:271`
 - `ISSA:SERVER.STUDENT_INSIGHT.CALCULATE_ACADEMICS`

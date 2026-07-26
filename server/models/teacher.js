@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Teacher.hasOne(models.Class);
       Teacher.hasMany(models.StudentFeedback);
+      Teacher.hasMany(models.StudentEvidence);
     }
   }
   Teacher.init(

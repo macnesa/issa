@@ -4,6 +4,7 @@ import { useOutletContext } from 'react-router-dom';
 import { fetchClassSchedule, fetchSchoolActivities } from '../store/actions/actionCreator';
 import AcademicSummary from '../features/student-overview/components/AcademicSummary';
 import RecentStudentChanges from '../features/student-insights/components/RecentStudentChanges';
+import StudentEvidenceSection from '../features/student-evidence/components/StudentEvidenceSection';
 import ActivityPreview from '../features/student-overview/components/ActivityPreview';
 import AttendanceSummary from '../features/student-overview/components/AttendanceSummary';
 import SchedulePreview from '../features/student-overview/components/SchedulePreview';
@@ -15,7 +16,10 @@ import '../features/student-overview/student-overview.css';
 
 export default function Home() {
   const dispatch = useDispatch();
-  const { studentInsightsRefreshKey = 0 } = useOutletContext() || {};
+  const {
+    studentEvidenceRefreshKey = 0,
+    studentInsightsRefreshKey = 0,
+  } = useOutletContext() || {};
   const { studentDetail, classSchedule, activity } = useSelector((state) => state.student);
   const { data: studentOverview } = studentDetail;
 
@@ -46,6 +50,10 @@ export default function Home() {
       <RecentStudentChanges
         studentId={studentOverview.profile.id}
         refreshKey={studentInsightsRefreshKey}
+      />
+      <StudentEvidenceSection
+        studentId={studentOverview.profile.id}
+        refreshKey={studentEvidenceRefreshKey}
       />
       <TeacherFeedback profile={studentOverview.profile} />
       <SchedulePreview

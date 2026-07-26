@@ -7,15 +7,21 @@ import { useDispatch, useSelector } from "react-redux"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { hasParentSession } from '../utils/session'
 import { ErrorState, EmptyState, LoadingState } from '../shared/ui/ResourceStates'
-import { connectParentSocket } from '../realtime/parentSocket'
+import {
+  connectParentSocket,
+  isEvidenceRecordEventForActiveStudent,
+  isStudentRecordEventForActiveStudent,
+} from '../realtime/parentSocket'
 import './ParentLayout.css'
 
 export default function ParentLayout() { 
   const dispatch = useDispatch()
   const [studentInsightsRefreshKey, setStudentInsightsRefreshKey] = useState(0)
+  const [studentEvidenceRefreshKey, setStudentEvidenceRefreshKey] = useState(0)
   const [showRealtimeNotice, setShowRealtimeNotice] = useState(false)
   const refetchTimer = useRef(null)
   const noticeTimer = useRef(null)
+  const pendingRecordTypes = useRef(new Set())
   
   const {
     student: { studentDetail: studentDetailResource },
@@ -31,9 +37,21 @@ export default function ParentLayout() {
   const { data: studentDetail, loading, loaded, error } = studentDetailResource;
   const studentId = studentDetail.profile.id;
 
-  const handleStudentRecordUpdated = useCallback(() => {
+  const handleStudentRecordUpdated = useCallback((studentRecordEvent) => {
+    if (!isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)) return;
+
+    if (isEvidenceRecordEventForActiveStudent(studentRecordEvent, studentId)) {
+      pendingRecordTypes.current.add('evidence');
+    }
     window.clearTimeout(refetchTimer.current);
     refetchTimer.current = window.setTimeout(async () => {
+      const recordTypes = new Set(pendingRecordTypes.current);
+      pendingRecordTypes.current.clear();
+
+      if (recordTypes.has('evidence')) {
+        setStudentEvidenceRefreshKey((refreshKey) => refreshKey + 1);
+      }
+
       const overviewRefreshed = await dispatch(fetchStudentOverview());
       if (!overviewRefreshed) return;
 
@@ -44,7 +62,7 @@ export default function ParentLayout() {
         setShowRealtimeNotice(false);
       }, 4000);
     }, 150);
-  }, [dispatch]);
+  }, [dispatch, studentId]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -60,6 +78,7 @@ export default function ParentLayout() {
   useEffect(() => () => {
     window.clearTimeout(refetchTimer.current);
     window.clearTimeout(noticeTimer.current);
+    pendingRecordTypes.current.clear();
   }, []);
 
   const content = loading && !studentDetail.profile.id
@@ -68,7 +87,10 @@ export default function ParentLayout() {
       ? <ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} />
       : loaded && studentDetail.profile.id === null
         ? <EmptyState message="Student profile is not available." />
-        : <Outlet context={{ studentInsightsRefreshKey }} />;
+        : <Outlet context={{
+          studentEvidenceRefreshKey,
+          studentInsightsRefreshKey,
+        }} />;
   
   return (
     <div className="min-h-screen bg-[var(--issa-page)] pt-4">

@@ -5,6 +5,16 @@ export const studentRecordEventName = 'student.record.updated';
 
 let activeParentSocket = null;
 
+export function isStudentRecordEventForActiveStudent(studentRecordEvent, studentId) {
+  return Boolean(studentId)
+    && String(studentRecordEvent?.studentId) === String(studentId);
+}
+
+export function isEvidenceRecordEventForActiveStudent(studentRecordEvent, studentId) {
+  return isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)
+    && studentRecordEvent?.recordType === 'evidence';
+}
+
 function warnInDevelopment(message, error) {
   if (import.meta.env.DEV) {
     console.warn(message, error);
@@ -39,7 +49,7 @@ export function connectParentSocket({
   activeParentSocket = socket;
 
   socket.on(studentRecordEventName, (studentRecordEvent) => {
-    if (String(studentRecordEvent?.studentId) !== String(studentId)) return;
+    if (!isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)) return;
     onStudentRecordUpdated(studentRecordEvent);
   });
   socket.on('connect_error', (error) => {

@@ -1,5 +1,10 @@
 const studentRecordEventName = 'student.record.updated';
-const supportedRecordTypes = new Set(['attendance', 'score', 'feedback']);
+const supportedRecordTypes = new Set([
+  'attendance',
+  'score',
+  'feedback',
+  'evidence',
+]);
 
 let realtimeServer = null;
 
