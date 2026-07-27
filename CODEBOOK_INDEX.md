@@ -46,9 +46,9 @@
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
   - `cms-side/src/pages/Login.jsx:21`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:65`
+  - `cms-side/src/pages/AddStudent.jsx:68`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:121`
+  - `cms-side/src/pages/AddStudent.jsx:124`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.APPLY_LOCAL_OVERLAY`
   - `cms-side/src/offline-workspace/attendanceOffline.js:50`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.COMPACT_MUTATION`
@@ -91,9 +91,9 @@
 - `ISSA:SERVER.AI_NARRATIVE.AUTHORIZED_SOURCE_PACKET`
   - `server/modules/ai-learning-narrative/narrative-source-builder.js:164`
 - `ISSA:SERVER.AI_NARRATIVE.GROUNDING_VALIDATION`
-  - `server/modules/ai-learning-narrative/narrative-output-validator.js:179`
+  - `server/modules/ai-learning-narrative/narrative-output-validator.js:193`
 - `ISSA:SERVER.AI_NARRATIVE.PROVIDER_BOUNDARY`
-  - `server/modules/ai-learning-narrative/narrative-provider.js:74`
+  - `server/modules/ai-learning-narrative/narrative-provider.js:167`
 - `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
   - `server/modules/attendance/attendance.service.js:26`
 - `ISSA:SERVER.ATTENDANCE.GET_RECORDS`
@@ -166,6 +166,10 @@
   - `server/modules/student/student.service.js:32`
 - `ISSA:SERVER.STUDENT.GET_LIST`
   - `server/modules/student/student.service.js:16`
+- `ISSA:SERVER.TEACHER_SEARCH.AUTHORIZED`
+  - `server/modules/teacher-search/teacher-search.service.js:229`
+- `ISSA:SERVER.TEACHER_SEARCH.SHAPE_RESULTS`
+  - `server/modules/teacher-search/teacher-search.service.js:198`
 - `ISSA:SERVER.TEACHER_SYNC.APPLY_ATTENDANCE`
   - `server/modules/teacher-sync/mutation-handlers/attendance-update.handler.js:70`
 - `ISSA:SERVER.TEACHER_SYNC.APPLY_JOURNAL`

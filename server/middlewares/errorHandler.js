@@ -1,4 +1,24 @@
 function errorHandler(err, req, res, next) {
+    const teacherSearchErrors = {
+        invalid_search_query: {
+            statusCode: 400,
+            message: "Masukkan minimal 2 karakter untuk mencari.",
+        },
+        teacher_search_unavailable: {
+            statusCode: 503,
+            message: "Pencarian belum dapat digunakan.",
+        },
+    };
+    const safeTeacherSearchError = teacherSearchErrors[err?.name];
+    if (safeTeacherSearchError) {
+        return res.status(safeTeacherSearchError.statusCode).json({
+            error: {
+                code: err.name,
+                message: safeTeacherSearchError.message,
+            },
+        });
+    }
+
     const aiNarrativeErrors = {
         invalid_ai_narrative_request: {
             statusCode: 400,

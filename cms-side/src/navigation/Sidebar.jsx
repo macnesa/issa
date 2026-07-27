@@ -23,7 +23,7 @@ const navigation = [
   { to: "/schedule", label: "Schedule", icon: "calendar_month" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onSearchOpen }) {
   const navigate = useNavigate();
   const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
@@ -81,6 +81,23 @@ export default function Sidebar() {
           </div>
           <p className="text-xs text-[#c7e1eb]">Ruang kerja guru</p>
         </div>
+        <button
+          type="button"
+          onClick={onSearchOpen}
+          className="ml-auto inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white hover:bg-white/15 md:ml-0 md:mt-5 md:w-full md:justify-start"
+          aria-label="Buka pencarian universal"
+        >
+          <span
+            className="material-symbols-outlined text-[19px]"
+            aria-hidden="true"
+          >
+            search
+          </span>
+          <span className="hidden md:inline">Cari data ISSA</span>
+          <kbd className="ml-auto hidden rounded border border-white/20 bg-black/10 px-1.5 py-0.5 text-[0.62rem] text-[#c7e1eb] md:inline">
+            ⌘K / Ctrl K
+          </kbd>
+        </button>
         <button type="button" onClick={handleTeacherLogout} className="rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white md:hidden">Keluar</button>
       </div>
 

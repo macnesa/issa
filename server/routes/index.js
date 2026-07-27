@@ -18,12 +18,14 @@ const studentLearningJournalRouter = require(
   '../modules/student-learning-journal/student-learning-journal.route'
 );
 const teacherRouter = require('../modules/teacher/teacher.route');
+const teacherSearchRouter = require('../modules/teacher-search/teacher-search.route');
 const teacherSyncRouter = require('../modules/teacher-sync/teacher-sync.route');
 
 router.use('/', studentInsightRouter);
 router.use('/public', publicStudentRouter);
 router.use('/users', parentRouter);
 router.use('/teachers', teacherRouter);
+router.use('/teachers', teacherSearchRouter);
 router.use('/teachers', teacherSyncRouter);
 
 router.use('/students', aiLearningNarrativeRouter);
