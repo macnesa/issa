@@ -34,6 +34,7 @@ function validateFeedbackUpdate(studentUpdatePayload) {
     ? studentUpdatePayload.feedback.trim()
     : '';
   if (!feedback) throw { name: 'invalidFeedback' };
+  if (feedback.length > 5000) throw { name: 'feedbackTooLong' };
 
   const observedAt = Object.prototype.hasOwnProperty.call(studentUpdatePayload, 'observedAt')
     ? validateObservedAt(studentUpdatePayload.observedAt)

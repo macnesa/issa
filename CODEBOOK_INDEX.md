@@ -44,7 +44,7 @@
 - `ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION`
   - `cms-side/src/router/index.jsx:11`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
-  - `cms-side/src/pages/Login.jsx:20`
+  - `cms-side/src/pages/Login.jsx:21`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
   - `cms-side/src/pages/AddStudent.jsx:65`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
@@ -54,13 +54,13 @@
 - `ISSA:CMS.OFFLINE_ATTENDANCE.COMPACT_MUTATION`
   - `cms-side/src/offline-workspace/mutationQueue.js:169`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.PROTECT_LOGOUT_WITH_PENDING`
-  - `cms-side/src/navigation/Sidebar.jsx:53`
+  - `cms-side/src/navigation/Sidebar.jsx:54`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RECONCILE_SERVER_RECORD`
   - `cms-side/src/offline-workspace/workspaceSnapshots.js:179`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_LOCAL`
   - `cms-side/src/offline-workspace/mutationQueue.js:500`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_SERVER`
-  - `cms-side/src/offline-workspace/attendanceOffline.js:152`
+  - `cms-side/src/offline-workspace/attendanceOffline.js:154`
 - `ISSA:CMS.OFFLINE_WORKSPACE.ENQUEUE_MUTATION`
   - `cms-side/src/offline-workspace/mutationQueue.js:213`
 - `ISSA:CMS.OFFLINE_WORKSPACE.INITIALIZE_DATABASE`
@@ -88,6 +88,12 @@
 
 ## Server
 
+- `ISSA:SERVER.AI_NARRATIVE.AUTHORIZED_SOURCE_PACKET`
+  - `server/modules/ai-learning-narrative/narrative-source-builder.js:164`
+- `ISSA:SERVER.AI_NARRATIVE.GROUNDING_VALIDATION`
+  - `server/modules/ai-learning-narrative/narrative-output-validator.js:179`
+- `ISSA:SERVER.AI_NARRATIVE.PROVIDER_BOUNDARY`
+  - `server/modules/ai-learning-narrative/narrative-provider.js:74`
 - `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
   - `server/modules/attendance/attendance.service.js:26`
 - `ISSA:SERVER.ATTENDANCE.GET_RECORDS`

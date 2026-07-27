@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import isEmpty from "lodash/isEmpty";
@@ -24,6 +24,7 @@ import {
   useAttendanceOfflineRecords,
 } from "../offline-workspace/attendanceOffline";
 import AttendanceRecordEditor from "../features/attendance/components/AttendanceRecordEditor";
+import AiNarrativeWorkspace from "../features/ai-learning-narrative/AiNarrativeWorkspace";
 import "../features/students/student-record.css";
 
 function formatCachedAt(timestamp) {
@@ -50,6 +51,8 @@ export default function StudentDetail() {
   const [journalRefreshKey, setJournalRefreshKey] = useState(0);
   const [cachedSnapshot, setCachedSnapshot] = useState(null);
   const [usingCachedSnapshot, setUsingCachedSnapshot] = useState(false);
+  const [aiWorkspaceOpen, setAiWorkspaceOpen] = useState(false);
+  const feedbackInputRef = useRef(null);
   const serverAttendances = useMemo(() => orderBy(
     student?.Attendances || [],
     [(item) => String(item.attendanceDate || "")],
@@ -141,6 +144,15 @@ export default function StudentDetail() {
       .catch(() => {});
   }, [studentId, teacherIdentity?.id]);
 
+  const handleAiDraftHandoff = useCallback((draftText) => {
+    setFeedback(draftText);
+    setMessage("Draf telah dipindahkan ke Feedback. Periksa kembali lalu simpan untuk membagikannya kepada orang tua.");
+    window.requestAnimationFrame(() => {
+      feedbackInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      feedbackInputRef.current?.focus();
+    });
+  }, []);
+
   if (detailLoading) return <PageContainer><LoadingState label="Memuat detail siswa..." /></PageContainer>;
   if (detailError) return <PageContainer><Surface className="p-5"><ErrorState message={detailError} /><SecondaryButton className="mt-4" type="button" onClick={() => navigate("/")}>Kembali ke dashboard</SecondaryButton></Surface></PageContainer>;
 
@@ -163,7 +175,7 @@ export default function StudentDetail() {
       <div className="space-y-6">
         <Surface className="student-dossier overflow-hidden"><div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">{student?.imgUrl ? <img className="student-dossier__image h-16 w-16 object-cover" src={student.imgUrl} alt={student?.name || "Siswa"} /> : <div className="student-dossier__image student-dossier__initials grid h-16 w-16 place-items-center" aria-hidden="true">{(student?.name || "S").slice(0, 1).toUpperCase()}</div>}<div className="relative z-10"><p className="student-dossier__eyebrow text-xs font-semibold uppercase tracking-[0.14em]">Identitas siswa</p><h2 className="student-dossier__title mt-1 text-xl font-semibold">{student?.name || "Memuat siswa..."}</h2><p className="student-dossier__meta mt-1 text-sm">NIM {student?.NIM || "-"} · {student?.Class?.name || "Kelas Anda"}</p></div></div></Surface>
         <section className="student-current-state" aria-label="Status record siswa"><div><span>Attendance record</span><strong>{attendances.length ? `${attendances.length} tercatat` : "Belum ada"}</strong></div><div><span>Score record</span><strong>{scores.length ? `${scores.length} tercatat` : "Belum ada"}</strong></div></section>
-        {usingCachedSnapshot ? <Surface className="p-5"><EmptyState title="Feedback memerlukan koneksi" description="Feedback tidak disimpan dalam workspace offline minimum." /></Surface> : <><Surface className="observation-sheet p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Feedback terbaru</h2><p className="mt-3 whitespace-pre-wrap leading-6 text-[var(--text)]">{student?.feedback || "Belum ada feedback."}</p></Surface><FeedbackForm feedback={feedback} observedAt={observedAt} message={message} submitting={submitting} onFeedbackChange={(event) => setFeedback(event.target.value)} onObservedAtChange={setObservedAt} onSubmit={handleStudentFeedbackSubmit} /><FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} /><StudentEvidenceSection studentId={studentId} onEvidenceChanged={() => { setJournalRefreshKey((current) => current + 1); }} /></>}
+        {usingCachedSnapshot ? <Surface className="p-5"><EmptyState title="Feedback memerlukan koneksi" description="Feedback tidak disimpan dalam workspace offline minimum." /></Surface> : <><Surface className="observation-sheet p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Feedback terbaru</h2><p className="mt-3 whitespace-pre-wrap leading-6 text-[var(--text)]">{student?.feedback || "Belum ada feedback."}</p></Surface><FeedbackForm feedback={feedback} feedbackInputRef={feedbackInputRef} observedAt={observedAt} message={message} submitting={submitting} onAiDraftRequested={() => setAiWorkspaceOpen(true)} onFeedbackChange={(event) => setFeedback(event.target.value)} onObservedAtChange={setObservedAt} onSubmit={handleStudentFeedbackSubmit} /><FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} /><StudentEvidenceSection studentId={studentId} onEvidenceChanged={() => { setJournalRefreshKey((current) => current + 1); }} /></>}
         <StudentLearningJournalSection
           studentId={studentId}
           refreshKey={journalRefreshKey}
@@ -202,5 +214,12 @@ export default function StudentDetail() {
         {usingCachedSnapshot ? <Surface className="record-ledger record-ledger--score p-5"><EmptyState title="Score memerlukan koneksi" description="Score tidak disimpan dalam workspace offline minimum." /></Surface> : <Surface className="record-ledger record-ledger--score p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-semibold text-[var(--text)]">Score record</h2><p className="mt-1 text-sm text-[var(--muted)]">Nilai dan KKM per assessment.</p></div><Link to={`/scores/${studentId}`}><SecondaryButton type="button">Kelola</SecondaryButton></Link></div><div className="mt-4 space-y-3">{isEmpty(scores) && <EmptyState title="Belum ada score" />}{scores.map((score) => <div key={score.id} className="record-ledger__entry rounded-xl border p-3"><div className="flex items-start justify-between gap-3"><div><p className="font-medium text-[var(--text)]">{score.Lesson?.name || "Lesson"}</p><p className="mt-1 text-xs text-[var(--muted)]">{score.Assignment?.name || "Assessment"} · KKM {score.Lesson?.KKM ?? "-"}</p></div><div className="text-right"><p className="text-lg font-semibold text-[var(--text)]">{score.value}</p><StatusBadge status={scoreStatus(score.status)} /></div></div><p className="mt-3 text-xs text-[var(--muted)]">{formatRecordedDate(score.recordedAt)}</p></div>)}</div></Surface>}
       </div>
     </div>
+    <AiNarrativeWorkspace
+      open={aiWorkspaceOpen}
+      studentId={studentId}
+      existingFeedback={feedback}
+      onClose={() => setAiWorkspaceOpen(false)}
+      onUseFeedback={handleAiDraftHandoff}
+    />
   </PageContainer>;
 }

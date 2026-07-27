@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const aiLearningNarrativeRouter = require(
+  '../modules/ai-learning-narrative/ai-learning-narrative.route'
+);
 const attendanceRouter = require('../modules/attendance/attendance.route');
 const assignmentRouter = require('../modules/assignment/assignment.route');
 const feedbackRouter = require('../modules/feedback/feedback.route');
@@ -23,6 +26,7 @@ router.use('/users', parentRouter);
 router.use('/teachers', teacherRouter);
 router.use('/teachers', teacherSyncRouter);
 
+router.use('/students', aiLearningNarrativeRouter);
 router.use('/students', feedbackRouter);
 router.use('/students', studentEvidenceRouter);
 router.use('/students', studentLearningJournalRouter);

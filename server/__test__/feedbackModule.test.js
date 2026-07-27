@@ -23,6 +23,7 @@ const {
   emitStudentRecordUpdated,
 } = require('../realtime/student-record-events');
 const {
+  validateFeedbackUpdate,
   validateObservedAt,
 } = require('../modules/feedback/feedback.validator');
 
@@ -144,6 +145,22 @@ describe('feedback module service', () => {
 });
 
 describe('feedback validator', () => {
+  test('accepts feedback longer than 255 characters up to 5,000', () => {
+    const feedback = 'Perkembangan siswa teramati dengan baik. '.repeat(10);
+
+    expect(validateFeedbackUpdate({ feedback })).toEqual(expect.objectContaining({
+      hasFeedback: true,
+      feedback,
+    }));
+    expect(feedback.length).toBeGreaterThan(255);
+  });
+
+  test('rejects feedback longer than 5,000 characters without truncating', () => {
+    expect(() => validateFeedbackUpdate({
+      feedback: 'A'.repeat(5001),
+    })).toThrow(expect.objectContaining({ name: 'feedbackTooLong' }));
+  });
+
   test('accepts a real ISO date', () => {
     expect(validateObservedAt('2026-07-23')).toEqual(new Date('2026-07-23'));
   });

@@ -1,4 +1,44 @@
 function errorHandler(err, req, res, next) {
+    const aiNarrativeErrors = {
+        invalid_ai_narrative_request: {
+            statusCode: 400,
+            message: "Permintaan draf AI tidak valid.",
+        },
+        student_access_denied: {
+            statusCode: 403,
+            message: "Teacher tidak memiliki akses ke siswa tersebut.",
+        },
+        student_not_found: {
+            statusCode: 404,
+            message: "Siswa tidak ditemukan.",
+        },
+        insufficient_narrative_sources: {
+            statusCode: 422,
+            message: "Belum tersedia cukup catatan untuk menyusun draf perkembangan.",
+        },
+        ai_generation_invalid_output: {
+            statusCode: 502,
+            message: "Draf AI tidak dapat digunakan karena tidak sesuai dengan sumber yang tersedia.",
+        },
+        ai_narrative_unavailable: {
+            statusCode: 503,
+            message: "AI assistant belum tersedia pada server.",
+        },
+        ai_provider_unavailable: {
+            statusCode: 503,
+            message: "Draf belum dapat disusun. Coba kembali beberapa saat lagi.",
+        },
+    };
+    const safeAiNarrativeError = aiNarrativeErrors[err?.name];
+    if (safeAiNarrativeError) {
+        return res.status(safeAiNarrativeError.statusCode).json({
+            error: {
+                code: err.name,
+                message: safeAiNarrativeError.message,
+            },
+        });
+    }
+
     let statusCode = 500,
         msg = "Internal Server Error"
     const errorName = String(err.code || '').startsWith('LIMIT_')
@@ -92,6 +132,10 @@ function errorHandler(err, req, res, next) {
         case "invalidFeedback":
             statusCode = 400;
             msg = "Feedback must not be empty";
+            break;
+        case "feedbackTooLong":
+            statusCode = 400;
+            msg = "Feedback tidak boleh melebihi 5.000 karakter.";
             break;
         case "invalidObservedAt":
             statusCode = 400;
