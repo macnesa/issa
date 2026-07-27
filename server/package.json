@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "demo:reset": "ISSA_DEMO_RESET_CONFIRM=issa-local-demo-reset-v1 node scripts/reset-demo-data.js",
     "db:bootstrap-demo": "node scripts/bootstrap-demo.js",
     "db:reset-demo": "node scripts/reset-demo.js",
     "db:seed-demo": "node scripts/seed-demo.js",
