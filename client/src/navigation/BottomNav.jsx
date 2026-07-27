@@ -5,7 +5,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navigasi utama"
-      className="issa-bottom-nav fixed bottom-4 left-1/2 z-50 h-16 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden border md:hidden"
+      className="fixed bottom-4 left-1/2 z-50 h-16 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-[1.25rem_1.25rem_1.7rem_1.25rem] border border-[#173e52] bg-[linear-gradient(120deg,#133b4f,#245b70)] shadow-[0_0.8rem_1.8rem_rgba(14,42,58,0.25)] md:hidden"
     >
       <div className="mx-auto grid h-full grid-cols-5">
         {parentNavigation.map((navigationItem) => (
@@ -13,7 +13,7 @@ export default function BottomNav() {
             key={navigationItem.path}
             to={navigationItem.path}
             end={navigationItem.end}
-            className={({ isActive }) => `issa-bottom-nav__link relative z-[1] inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 rounded-[0.85rem_0.85rem_0.55rem_0.55rem] px-1 text-[10px] font-semibold text-[rgba(255,255,255,0.67)] transition-[color,background,transform] duration-[180ms] ${isActive ? 'is-active' : ''}`}
+            className={({ isActive }) => `relative z-[1] inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 rounded-[0.85rem_0.85rem_0.55rem_0.55rem] px-1 text-[10px] font-semibold text-[rgba(255,255,255,0.67)] transition-[color,background,transform] duration-[180ms] motion-reduce:transition-none motion-reduce:animate-none ${isActive ? 'mx-[0.2rem] my-[0.35rem] -translate-y-[0.2rem] bg-[#f2e291] text-[#173e52]' : ''}`}
           >
             <NavigationIcon path={navigationItem.path} />
             <span>{navigationItem.label}</span>
