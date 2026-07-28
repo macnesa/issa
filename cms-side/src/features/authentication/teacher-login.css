@@ -1,90 +1,198 @@
 .teacher-login {
-  background: linear-gradient(130deg, #edf6f6, #f8faf8 58%, #f4f0fb);
+  display: grid;
+  min-width: 0;
+  min-height: 100svh;
+  place-items: center;
+  background: #e8f4f2;
+  padding: 2rem;
 }
 
 .teacher-access-record {
-  border: 1.5px solid #173e52;
-  border-radius: 1rem 1rem 2.8rem 0.85rem;
+  display: grid;
+  width: min(100%, 67rem);
+  min-width: 0;
+  overflow: hidden;
+  border: 2px solid var(--accent-strong);
+  border-radius: 0.875rem 0.875rem 2.5rem 0.75rem;
   background: #fffaf2;
-  box-shadow: 0.72rem 0.8rem 0 rgba(23, 62, 82, 0.13), 0 1.2rem 3rem rgba(29, 70, 91, 0.1);
+  box-shadow: 0.7rem 0.78rem 0 rgba(23, 62, 82, 0.14);
 }
 
 .teacher-access-record__identity {
-  position: relative;
-  overflow: hidden;
-  padding: 2.2rem;
-  background-color: #1c4d63;
-  background-image: linear-gradient(135deg, #0e2a3a, #265367);
+  min-width: 0;
+  padding: 2.5rem;
+  border-bottom: 2px solid var(--accent-strong);
+  background: #1c4d63;
   color: white;
 }
 
 .teacher-access-record__seal {
   width: 4.25rem;
   height: 4rem;
-  margin-left: 0.55rem;
 }
 
 .teacher-access-record__seal img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
 .teacher-access-record__index {
-  margin: 1.35rem 0 0 0.55rem;
+  margin-top: 1.5rem;
   color: #c7e1eb;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 850;
   letter-spacing: 0.15em;
+  line-height: 1.4;
+  text-transform: uppercase;
 }
 
 .teacher-access-record__identity h1 {
   max-width: 19rem;
-  margin: 0.45rem 0 0 0.55rem;
+  margin-top: 0.5rem;
   color: white;
   font-size: clamp(2rem, 3.1vw, 2.75rem);
   font-weight: 850;
   letter-spacing: -0.045em;
   line-height: 1.02;
+  overflow-wrap: anywhere;
 }
 
 .teacher-access-record__identity > p:last-child {
-  max-width: 18rem;
-  margin: 0.9rem 0 0 0.55rem;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  max-width: 34ch;
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9375rem;
+  line-height: 1.6;
 }
 
 .teacher-access-record__form {
-  padding: 2.65rem clamp(2rem, 5vw, 4rem);
-  border-left: 1px solid #c8dce7;
+  display: grid;
+  min-width: 0;
+  align-content: center;
+  padding: 3rem clamp(2rem, 5vw, 4rem);
   background: #fffaf2;
 }
 
 .teacher-access-record__form-header {
-  border-left: 0.28rem solid #6bbfbc;
+  border-left: 0.3rem solid #6bbfbc;
+  padding-left: 1rem;
 }
 
-.teacher-access-record__form input {
-  border-radius: 0.7rem 0.4rem 0.7rem 0.4rem;
-  background: white;
+.teacher-access-record__form-kicker {
+  color: #356d8d;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.teacher-access-record__form-header h2 {
+  margin-top: 0.25rem;
+  color: var(--text);
+  font-size: clamp(1.875rem, 3vw, 2.125rem);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.teacher-access-record__form-header > p:last-child {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.teacher-access-record__fields {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.teacher-access-record__submit {
+  width: 100%;
+}
+
+.teacher-access-record__error {
+  border: 1px solid #d79c96;
+  border-left: 0.25rem solid var(--danger);
+  border-radius: var(--control-radius);
+  background: #fff4f2;
+  padding: 0.625rem 0.75rem;
+  color: #8a3d32;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 768px) {
-  .teacher-access-record { grid-template-columns: minmax(0, 0.82fr) minmax(25rem, 1.18fr); min-height: 31rem; }
+  .teacher-access-record {
+    min-height: 31rem;
+    grid-template-columns: minmax(0, 0.82fr) minmax(25rem, 1.18fr);
+  }
+
+  .teacher-access-record__identity {
+    border-right: 2px solid var(--accent-strong);
+    border-bottom: 0;
+  }
 }
 
 @media (max-width: 767px) {
-  .teacher-access-record { border-radius: 0.9rem 0.9rem 2.3rem 0.9rem; box-shadow: 0.5rem 0.56rem 0 rgba(23, 62, 82, 0.12); }
-  .teacher-access-record__identity { padding: 0.8rem 1.15rem 0.75rem; }
-  .teacher-access-record__seal { width: 2.65rem; height: 2.5rem; margin-left: 0.2rem; }
-  .teacher-access-record__index { margin: 0.44rem 0 0 0.2rem; font-size: 0.54rem; }
-  .teacher-access-record__identity h1 { max-width: none; margin: 0.16rem 0 0 0.2rem; font-size: clamp(1.55rem, 7.1vw, 1.9rem); line-height: 1; }
-  .teacher-access-record__identity > p:last-child { margin: 0.3rem 0 0 0.2rem; font-size: 0.66rem; line-height: 1.35; }
-  .teacher-access-record__form { padding: 1.15rem 1.2rem; border-top: 1px solid #c8dce7; border-left: 0; }
+  .teacher-login {
+    place-items: start center;
+    padding: 1rem;
+  }
+
+  .teacher-access-record {
+    max-width: 32rem;
+    border-radius: 0.75rem 0.75rem 1.75rem 0.625rem;
+    box-shadow: 0.45rem 0.5rem 0 rgba(23, 62, 82, 0.13);
+  }
+
+  .teacher-access-record__identity {
+    padding: 1.5rem;
+  }
+
+  .teacher-access-record__seal {
+    width: 3.25rem;
+    height: 3rem;
+  }
+
+  .teacher-access-record__index {
+    margin-top: 0.75rem;
+  }
+
+  .teacher-access-record__identity h1 {
+    max-width: 22rem;
+    font-size: clamp(1.875rem, 8vw, 2.25rem);
+  }
+
+  .teacher-access-record__identity > p:last-child {
+    max-width: 42ch;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .teacher-access-record__form {
+    padding: 1.5rem;
+  }
+
+  .teacher-access-record__fields {
+    margin-top: 1.5rem;
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .teacher-access-record { transition: none; }
+@media (max-width: 359px) {
+  .teacher-login {
+    padding: 0.875rem;
+  }
+
+  .teacher-access-record__identity,
+  .teacher-access-record__form {
+    padding: 1.25rem;
+  }
 }

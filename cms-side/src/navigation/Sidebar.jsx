@@ -14,6 +14,10 @@ import { clearTeacherOfflineData } from "../offline-workspace/mutationQueue";
 import {
   hasUnsyncedAttendanceChanges,
 } from "../offline-workspace/attendanceOffline";
+import {
+  DestructiveButton,
+  SecondaryButton,
+} from "../shared/ui/ui";
 import issaLogo from "../../assets/img/logo.png";
 import "./teacher-navigation.css";
 
@@ -23,7 +27,7 @@ const navigation = [
   { to: "/schedule", label: "Schedule", icon: "calendar_month" },
 ];
 
-export default function Sidebar({ onSearchOpen }) {
+export default function Sidebar() {
   const navigate = useNavigate();
   const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
@@ -73,50 +77,63 @@ export default function Sidebar({ onSearchOpen }) {
   };
 
   return (
-    <aside className="teacher-sidebar sticky top-0 z-20 w-full text-slate-100 md:flex md:min-h-screen md:w-72 md:flex-col">
-      <div className="teacher-sidebar__brand mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:block md:w-full md:px-5 md:py-6">
-        <div className="flex items-center gap-3">
-          <div className="teacher-sidebar__seal h-12 w-12">
+    <aside className="teacher-sidebar">
+      <div className="teacher-sidebar__brand">
+        <div className="teacher-sidebar__identity">
+          <div className="teacher-sidebar__seal">
             <img src={issaLogo} alt="ISSA" />
           </div>
-          <p className="text-xs text-[#c7e1eb]">Ruang kerja guru</p>
+          <p>Ruang kerja guru</p>
         </div>
         <button
           type="button"
-          onClick={onSearchOpen}
-          className="ml-auto inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white hover:bg-white/15 md:ml-0 md:mt-5 md:w-full md:justify-start"
-          aria-label="Buka pencarian universal"
+          onClick={handleTeacherLogout}
+          className="teacher-sidebar__mobile-logout"
         >
-          <span
-            className="material-symbols-outlined text-[19px]"
-            aria-hidden="true"
-          >
-            search
-          </span>
-          <span className="hidden md:inline">Cari data ISSA</span>
-          <kbd className="ml-auto hidden rounded border border-white/20 bg-black/10 px-1.5 py-0.5 text-[0.62rem] text-[#c7e1eb] md:inline">
-            ⌘K / Ctrl K
-          </kbd>
+          Keluar
         </button>
-        <button type="button" onClick={handleTeacherLogout} className="rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white md:hidden">Keluar</button>
       </div>
 
-      <nav className="overflow-x-auto px-3 py-2 md:px-4 md:py-8" aria-label="Navigasi utama">
-        <ul className="flex min-w-max gap-1 md:block md:space-y-1">
+      <nav className="teacher-sidebar__navigation" aria-label="Navigasi utama">
+        <ul>
           {navigation.map((navigationItem) => (
             <li key={navigationItem.to}>
-              <NavLink end={navigationItem.end} to={navigationItem.to} className={({ isActive }) => `teacher-sidebar__nav-link flex min-h-11 items-center gap-3 px-3 py-2 text-sm font-semibold transition ${isActive ? "is-active" : "text-slate-200 hover:bg-white/10 hover:text-white"}`}>
-                <span className="material-symbols-outlined text-[20px]">{navigationItem.icon}</span>{navigationItem.label}
+              <NavLink
+                end={navigationItem.end}
+                to={navigationItem.to}
+                className={({ isActive }) => `teacher-sidebar__nav-link ${isActive ? "is-active" : ""}`}
+              >
+                <span
+                  className="material-symbols-outlined teacher-sidebar__nav-icon"
+                  aria-hidden="true"
+                >
+                  {navigationItem.icon}
+                </span>
+                <span className="teacher-sidebar__nav-label">
+                  {navigationItem.label}
+                </span>
               </NavLink>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="teacher-sidebar__context mt-auto hidden px-5 py-5 md:block">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#f2e291]">Session index</p>
-        <p className="mt-2 text-sm leading-5 text-slate-100">Catat perkembangan siswa, attendance, dan nilai kelas Anda.</p>
-        <button type="button" onClick={handleTeacherLogout} className="teacher-sidebar__logout mt-5 inline-flex min-h-10 items-center gap-2 px-1 py-2 text-sm font-semibold text-[#c7e1eb] hover:text-white"><span className="material-symbols-outlined text-[18px]">logout</span>Keluar</button>
+      <div className="teacher-sidebar__context">
+        <p className="teacher-sidebar__context-index">Session index</p>
+        <p className="teacher-sidebar__context-copy">Catat perkembangan siswa, attendance, dan nilai kelas Anda.</p>
+        <button
+          type="button"
+          onClick={handleTeacherLogout}
+          className="teacher-sidebar__logout"
+        >
+          <span
+            className="material-symbols-outlined"
+            aria-hidden="true"
+          >
+            logout
+          </span>
+          Keluar
+        </button>
       </div>
       <Dialog
         open={logoutConfirmationOpen}
@@ -139,20 +156,20 @@ export default function Sidebar({ onSearchOpen }) {
               )}
             </div>
             <div className="teacher-logout-dialog__actions">
-              <button
+              <SecondaryButton
                 type="button"
                 disabled={logoutPending}
                 onClick={() => setLogoutConfirmationOpen(false)}
               >
                 Tetap masuk
-              </button>
-              <button
+              </SecondaryButton>
+              <DestructiveButton
                 type="button"
                 disabled={logoutPending}
                 onClick={completeTeacherLogout}
               >
                 Hapus perubahan lokal dan keluar
-              </button>
+              </DestructiveButton>
             </div>
           </DialogPanel>
         </div>

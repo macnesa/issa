@@ -1,14 +1,11 @@
 .offline-status {
-  position: sticky;
-  z-index: 15;
-  top: 0;
+  position: relative;
+  z-index: 1;
   display: flex;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 0 auto;
   justify-content: flex-end;
-  min-height: 2.8rem;
-  padding: 0.45rem 1rem;
-  border-bottom: 1px solid rgba(170, 201, 202, 0.78);
-  background: rgba(246, 250, 249, 0.94);
-  backdrop-filter: blur(0.7rem);
 }
 
 .offline-status details {
@@ -17,18 +14,21 @@
 
 .offline-status summary {
   display: inline-flex;
-  min-height: 2rem;
+  min-height: 2.5rem;
   cursor: pointer;
   list-style: none;
   align-items: center;
-  gap: 0.45rem;
-  border: 1px solid #aac9ca;
-  border-radius: 0.6rem 0.6rem 0.9rem 0.45rem;
-  background: #fffdf7;
-  padding: 0.35rem 0.65rem;
-  color: #173e52;
-  font-size: 0.76rem;
+  gap: 0.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--control-radius);
+  background: var(--surface);
+  padding: 0.4rem 0.625rem;
+  color: var(--text);
+  font-size: 0.75rem;
   font-weight: 800;
+  transition:
+    border-color var(--motion-default) ease,
+    background-color var(--motion-default) ease;
 }
 
 .offline-status summary::-webkit-details-marker {
@@ -37,7 +37,7 @@
 
 .offline-status summary .material-symbols-outlined {
   font-size: 1rem;
-  transition: transform 160ms ease;
+  transition: transform var(--motion-default) ease;
 }
 
 .offline-status details[open] summary .material-symbols-outlined {
@@ -47,14 +47,24 @@
 .offline-status__signal {
   width: 0.52rem;
   height: 0.52rem;
+  flex: 0 0 auto;
+  border: 2px solid rgba(23, 62, 82, 0.18);
   border-radius: 999px;
   background: #3d907f;
-  box-shadow: 0 0 0 0.18rem rgba(61, 144, 127, 0.14);
 }
 
 .offline-status[data-online="false"] .offline-status__signal {
   background: #a85f45;
-  box-shadow: 0 0 0 0.18rem rgba(168, 95, 69, 0.13);
+}
+
+.offline-status summary:hover {
+  border-color: var(--accent);
+  background: #e8f4f2;
+}
+
+.offline-status summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .offline-status__panel {
@@ -62,11 +72,12 @@
   top: calc(100% + 0.45rem);
   right: 0;
   width: min(21rem, calc(100vw - 2rem));
-  border: 1px solid #aac9ca;
-  border-radius: 0.75rem 0.75rem 1.2rem 0.75rem;
-  background: #fffdf7;
+  max-width: calc(100vw - 1.75rem);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--dialog-radius);
+  background: var(--surface);
   padding: 1rem;
-  box-shadow: 0.4rem 0.45rem 0 rgba(23, 62, 82, 0.1);
+  box-shadow: var(--shadow-floating);
 }
 
 .offline-status__panel dl {
@@ -262,15 +273,8 @@
   opacity: 0.55;
 }
 
-@media (max-width: 767px) {
-  .offline-status {
-    position: relative;
-    min-height: auto;
-    padding: 0.4rem 0.75rem;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .offline-status summary,
   .offline-status summary .material-symbols-outlined {
     transition: none;
   }

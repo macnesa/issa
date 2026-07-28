@@ -49,24 +49,29 @@ export default function Login() {
   };
 
   return (
-    <main className="teacher-login relative grid min-h-[100svh] place-items-center overflow-hidden px-4 py-6 sm:px-6">
-      <section className="teacher-access-record relative z-10 grid w-full max-w-[67rem] overflow-hidden">
-        <div className="teacher-access-record__identity min-w-0" aria-labelledby="teacher-login-title">
-          <div className="teacher-access-record__seal relative z-10">
+    <main className="teacher-login">
+      <section className="teacher-access-record">
+        <div className="teacher-access-record__identity" aria-labelledby="teacher-login-title">
+          <div className="teacher-access-record__seal">
             <img src={issaLogo} alt="ISSA" />
           </div>
-          <p className="teacher-access-record__index relative z-10 uppercase">Teacher workspace · record 01</p>
-          <h1 id="teacher-login-title" className="relative z-10">Ruang kerja record siswa</h1>
-          <p className="relative z-10">Akses untuk mencatat dan meninjau perkembangan siswa di kelas Anda.</p>
+          <p className="teacher-access-record__index">Teacher workspace · record 01</p>
+          <h1 id="teacher-login-title">Ruang kerja record siswa</h1>
+          <p>Akses untuk mencatat dan meninjau perkembangan siswa di kelas Anda.</p>
         </div>
-        <div className="teacher-access-record__form min-w-0">
-        <div className="teacher-access-record__form-header pl-4"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#356d8d]">Staff access</p><h2 className="mt-1 text-3xl font-semibold tracking-tight text-[var(--text)]">Masuk ke workspace</h2><p className="mt-2 text-sm leading-6 text-[var(--muted)]">Gunakan NIP dan password yang terdaftar.</p></div>
-        <form onSubmit={handleTeacherLoginSubmit} className="mt-7 space-y-4">
-          <TextField id="teacher-nip" label="NIP" required autoComplete="username" type="text" name="NIP" value={loginCredentials.NIP} onChange={handleTeacherLoginInputChange} placeholder="Masukkan NIP" />
-          <TextField id="teacher-password" label="Password" required autoComplete="current-password" type="password" name="password" value={loginCredentials.password} onChange={handleTeacherLoginInputChange} placeholder="Masukkan password" />
-          <PrimaryButton className="w-full" type="submit" disabled={submitting}>{submitting ? "Memeriksa akun..." : "Masuk"}</PrimaryButton>
-          {message && <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{message}</p>}
-        </form></div>
+        <div className="teacher-access-record__form">
+          <div className="teacher-access-record__form-header">
+            <p className="teacher-access-record__form-kicker">Staff access</p>
+            <h2>Masuk ke workspace</h2>
+            <p>Gunakan NIP dan password yang terdaftar.</p>
+          </div>
+          <form onSubmit={handleTeacherLoginSubmit} className="teacher-access-record__fields">
+            <TextField id="teacher-nip" label="NIP" required autoComplete="username" type="text" name="NIP" value={loginCredentials.NIP} onChange={handleTeacherLoginInputChange} placeholder="Masukkan NIP" />
+            <TextField id="teacher-password" label="Password" required autoComplete="current-password" type="password" name="password" value={loginCredentials.password} onChange={handleTeacherLoginInputChange} placeholder="Masukkan password" />
+            <PrimaryButton className="teacher-access-record__submit" type="submit" disabled={submitting}>{submitting ? "Memeriksa akun..." : "Masuk"}</PrimaryButton>
+            {message && <p role="alert" className="teacher-access-record__error">{message}</p>}
+          </form>
+        </div>
       </section>
     </main>
   );
