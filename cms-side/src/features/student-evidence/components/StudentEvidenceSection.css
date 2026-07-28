@@ -1,15 +1,15 @@
 .student-evidence-record {
+  min-width: 0;
   overflow: hidden;
-  border-color: #a9c9cd;
-  border-radius: 0.8rem 0.8rem 1.8rem 0.8rem;
-  background: #f6fbfb;
-  box-shadow: 0.4rem 0.46rem 0 rgba(66, 111, 120, 0.1);
+  border: 2px solid #7598a0;
+  border-radius: 0.25rem var(--surface-radius) 0.25rem 0.25rem;
+  background: #fffdf7;
 }
 
 .student-evidence-record__header {
   padding: 1.25rem 1.35rem;
-  border-bottom: 1px solid #b8d0d3;
-  background: linear-gradient(112deg, #173e52, #285f6d);
+  border-bottom: 2px solid #7598a0;
+  background: #173e52;
 }
 
 .student-evidence-record__header > p,
@@ -62,11 +62,13 @@
 }
 
 .student-evidence-history__thumbnail {
+  display: grid;
   overflow: hidden;
   width: 7rem;
   height: 5.25rem;
+  place-items: center;
   border: 1px solid #c9c1ad;
-  border-radius: 0.52rem 0.35rem 0.72rem 0.36rem;
+  border-radius: 0.2rem var(--control-radius) 0.2rem 0.2rem;
   background: #e9eeee;
   padding: 0;
   cursor: zoom-in;
@@ -77,11 +79,15 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 180ms ease;
 }
 
-.student-evidence-history__thumbnail:hover img {
-  transform: scale(1.04);
+.student-evidence-history__thumbnail-placeholder {
+  padding: 0.5rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .student-evidence-history__copy { min-width: 0; }
@@ -89,8 +95,8 @@
 .student-evidence-history__copy > div span { color: #725d27; font-size: 0.65rem; font-weight: 820; letter-spacing: 0.05em; text-transform: uppercase; }
 .student-evidence-history__copy time { color: #807866; font-size: 0.7rem; }
 .student-evidence-history__copy h4 { margin: 0.32rem 0 0; color: #263f48; font-size: 0.9rem; font-weight: 800; }
-.student-evidence-history__copy p { margin: 0.38rem 0 0; color: #52666c; font-size: 0.78rem; line-height: 1.55; white-space: pre-wrap; }
-.student-evidence-history__copy small { display: block; margin-top: 0.52rem; color: #718086; font-size: 0.68rem; }
+.student-evidence-history__copy p { margin: 0.38rem 0 0; color: #52666c; font-size: 0.78rem; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
+.student-evidence-history__copy small { display: block; margin-top: 0.52rem; color: #718086; font-size: 0.68rem; overflow-wrap: anywhere; }
 
 .student-evidence-history__actions {
   display: flex;
@@ -130,10 +136,4 @@
   .student-evidence-history__list li { grid-template-columns: 1.5rem minmax(0, 1fr); }
   .student-evidence-history__thumbnail { grid-column: 2; width: 100%; height: 11rem; }
   .student-evidence-history__copy { grid-column: 2; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .student-evidence-history__thumbnail img {
-    transition: none;
-  }
 }

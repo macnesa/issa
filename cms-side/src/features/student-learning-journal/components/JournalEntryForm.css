@@ -1,16 +1,11 @@
 .journal-entry-form {
   padding: 1.25rem;
-  background:
-    linear-gradient(rgba(36, 82, 78, 0.035) 1px, transparent 1px),
-    #f7faf8;
-  background-size: 100% 2.6rem;
+  background: #f2f8f6;
 }
 
 .journal-entry-form.is-editing {
-  background:
-    linear-gradient(rgba(119, 93, 39, 0.045) 1px, transparent 1px),
-    #fdfaf1;
-  background-size: 100% 2.6rem;
+  border-left: 0.35rem solid #9c7b2c;
+  background: #fdf8e9;
 }
 
 .journal-entry-form__heading > p {
@@ -68,8 +63,10 @@
 
 .journal-entry-form__content textarea {
   min-height: 8.5rem;
+  max-width: 100%;
   resize: vertical;
   line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .journal-entry-form__actions {

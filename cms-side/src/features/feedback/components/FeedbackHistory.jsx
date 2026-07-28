@@ -1,9 +1,56 @@
 import isEmpty from "lodash/isEmpty";
 import { formatRecordedDate } from "../../../utils/recordDates";
 import { EmptyState, ErrorState, LoadingState, Surface } from "../../../shared/ui/ui";
+import "./Feedback.css";
 
 export default function FeedbackHistory({ resource, onRetry }) {
   return (
-    <Surface className="observation-sheet observation-sheet--history p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Histori feedback</h2><p className="mt-1 text-sm text-[var(--muted)]">Catatan terbaru ditampilkan lebih dahulu.</p><div className="mt-4">{resource.loading && <LoadingState label="Memuat histori feedback..." />}{resource.error && <ErrorState message={resource.error} onRetry={onRetry} />}{!resource.loading && !resource.error && isEmpty(resource.data) && <EmptyState title="Belum ada histori feedback." />}{!resource.loading && !resource.error && !isEmpty(resource.data) && <ol className="space-y-3">{resource.data.map((item) => <li key={item.id} className="rounded-xl border border-[var(--border)] p-4"><p className="whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">{item.content}</p><div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--muted)]"><span>Guru: {item.Teacher?.name || "-"}</span><span>Observasi: {formatRecordedDate(item.observedAt, "Belum tersedia")}</span><span>Dibuat: {formatRecordedDate(item.createdAt)}</span></div></li>)}</ol>}</div></Surface>
+    <Surface className="observation-sheet observation-sheet--history">
+      <header className="observation-sheet__header">
+        <div>
+          <p className="observation-sheet__kicker">Feedback register</p>
+          <h3>Histori Feedback</h3>
+          <span>Catatan terbaru ditampilkan lebih dahulu sebagai record yang tidak tertukar dengan draf.</span>
+        </div>
+      </header>
+      <div className="observation-sheet__history-body">
+        {resource.loading && <LoadingState label="Memuat histori feedback..." />}
+        {resource.error && <ErrorState message={resource.error} onRetry={onRetry} />}
+        {!resource.loading && !resource.error && isEmpty(resource.data) && (
+          <EmptyState
+            title="Belum ada histori Feedback."
+            description="Feedback pertama akan tercatat setelah guru menyimpannya."
+          />
+        )}
+        {!resource.loading && !resource.error && !isEmpty(resource.data) && (
+          <ol className="observation-sheet__history-list">
+            {resource.data.map((item, index) => (
+              <li key={item.id}>
+                <span className="observation-sheet__history-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <p>{item.content}</p>
+                  <dl>
+                    <div>
+                      <dt>Guru</dt>
+                      <dd>{item.Teacher?.name || "-"}</dd>
+                    </div>
+                    <div>
+                      <dt>Observasi</dt>
+                      <dd>{formatRecordedDate(item.observedAt, "Belum tersedia")}</dd>
+                    </div>
+                    <div>
+                      <dt>Disimpan</dt>
+                      <dd>{formatRecordedDate(item.createdAt)}</dd>
+                    </div>
+                  </dl>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </Surface>
   );
 }

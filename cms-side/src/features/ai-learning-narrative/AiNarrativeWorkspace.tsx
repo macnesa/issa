@@ -10,7 +10,11 @@ import {
   useMutation,
 } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { PrimaryButton, SecondaryButton } from "../../shared/ui/ui";
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from "../../shared/ui/ui";
 import { generateAiNarrative } from "./aiNarrativeApi";
 import {
   buildFeedbackText,
@@ -169,6 +173,22 @@ function Workspace({
   const selectedSource = selectedSourceRef
     ? sourceByRef.get(selectedSourceRef)
     : undefined;
+  const generationStatus = validationMessage
+    || (mutation.isPending
+      ? "Menyusun draf berdasarkan catatan siswa…"
+      : mutation.isError
+        ? mutation.error.message
+        : "");
+  const generationStatusType = validationMessage
+    ? "validation"
+    : mutation.isPending
+      ? "loading"
+      : mutation.isError
+        && mutation.error.message.includes("cukup catatan")
+        ? "limited"
+        : mutation.isError
+          ? "error"
+          : "idle";
 
   return (
     <Dialog open={open} onClose={closeWorkspace} initialFocus={panelRef}>
@@ -177,10 +197,14 @@ function Workspace({
         <DialogPanel ref={panelRef} tabIndex={-1} className="ai-narrative__panel">
           <header className="ai-narrative__header">
             <div>
-              <p className="ai-narrative__eyebrow">Learning Narrative Copilot</p>
+              <p className="ai-narrative__eyebrow">AI-assisted drafting instrument</p>
               <DialogTitle className="ai-narrative__title">
                 Susun draf perkembangan
               </DialogTitle>
+              <p className="ai-narrative__responsibility">
+                Record sekolah menjadi dasar draf. Guru meninjau, mengedit, dan
+                memutuskan apakah isi dipindahkan ke Feedback.
+              </p>
             </div>
             <button
               type="button"
@@ -261,10 +285,13 @@ function Workspace({
                 </div>
               </section>
 
-              <div className="ai-narrative__status" aria-live="polite">
-                {validationMessage}
-                {mutation.isPending && "Menyusun draf berdasarkan catatan siswa…"}
-                {mutation.isError && mutation.error.message}
+              <div
+                className="ai-narrative__status"
+                data-state={generationStatusType}
+                aria-live="polite"
+                aria-busy={mutation.isPending}
+              >
+                {generationStatus}
               </div>
 
               <div className="ai-narrative__actions">
@@ -293,8 +320,11 @@ function Workspace({
           {draft && (
             <div className="ai-narrative__body">
               <div className="ai-narrative__notice" role="status">
-                Draf disusun dengan bantuan AI. Guru tetap perlu meninjau setiap
-                pernyataan sebelum menggunakannya.
+                <strong>AI-assisted draft · belum menjadi Feedback</strong>
+                <span>
+                  Guru tetap perlu meninjau setiap pernyataan dan sumber sebelum
+                  menggunakannya.
+                </span>
               </div>
 
               <div className="ai-narrative__meta">
@@ -327,10 +357,15 @@ function Workspace({
               </label>
 
               <div className="ai-narrative__sections">
-                {sections.map((section) => (
+                {sections.map((section, sectionIndex) => (
                   <section className="ai-narrative__section" key={section.localId}>
                     <div className="ai-narrative__section-heading">
-                      <h3>{SECTION_LABELS[section.sectionType] || section.sectionType}</h3>
+                      <div>
+                        <span aria-hidden="true">
+                          {String(sectionIndex + 1).padStart(2, "0")}
+                        </span>
+                        <h3>{SECTION_LABELS[section.sectionType] || section.sectionType}</h3>
+                      </div>
                       <button
                         type="button"
                         onClick={() => {
@@ -363,14 +398,14 @@ function Workspace({
                     {section.directQuote && (
                       <blockquote className="ai-narrative__quote">
                         <span>Kutipan siswa yang tercatat</span>
-                        <p>“{section.directQuote.text}”</p>
+                      <p>“{section.directQuote.text}”</p>
                         <button
                           type="button"
                           onClick={() => setSelectedSourceRef(
                             section.directQuote?.sourceRef || null,
                           )}
                         >
-                          {section.directQuote.sourceRef}
+                          Sumber {section.directQuote.sourceRef}
                         </button>
                       </blockquote>
                     )}
@@ -384,7 +419,7 @@ function Workspace({
                             selectedSourceRef === sourceRef ? null : sourceRef,
                           )}
                         >
-                          {sourceRef}
+                          [{sourceRef}]
                         </button>
                       ))}
                     </div>
@@ -398,6 +433,7 @@ function Workspace({
                   aria-label={`Detail sumber ${selectedSource.sourceRef}`}
                   tabIndex={0}
                 >
+                  <small>Source record · {selectedSource.sourceRef}</small>
                   <strong>{selectedSource.label}</strong>
                   <span>
                     {SOURCE_LABELS[selectedSource.sourceType]} ·{" "}
@@ -433,7 +469,10 @@ function Workspace({
 
               {confirmHandoff && (
                 <div className="ai-narrative__confirmation" role="alert">
-                  <p>Feedback saat ini akan diganti dengan draf yang telah ditinjau.</p>
+                  <p>
+                    Feedback saat ini akan diganti di editor dengan draf ini.
+                    Perubahan belum tersimpan sampai guru menekan Simpan Feedback.
+                  </p>
                   <div>
                     <SecondaryButton
                       type="button"
@@ -442,7 +481,7 @@ function Workspace({
                       Batalkan
                     </SecondaryButton>
                     <PrimaryButton type="button" onClick={completeHandoff}>
-                      Ganti Feedback
+                      Gunakan draf di editor
                     </PrimaryButton>
                   </div>
                 </div>
@@ -460,7 +499,7 @@ function Workspace({
                 >
                   Susun ulang
                 </SecondaryButton>
-                <SecondaryButton
+                <DestructiveButton
                   type="button"
                   onClick={() => {
                     if (!edited || window.confirm("Buang draf yang sudah diedit?")) {
@@ -469,13 +508,13 @@ function Workspace({
                   }}
                 >
                   Buang draf
-                </SecondaryButton>
+                </DestructiveButton>
                 <PrimaryButton
                   type="button"
                   disabled={!buildFeedbackText(title, sections)}
                   onClick={requestHandoff}
                 >
-                  Gunakan pada Feedback
+                  Tinjau lalu pindahkan ke Feedback
                 </PrimaryButton>
               </div>
             </div>

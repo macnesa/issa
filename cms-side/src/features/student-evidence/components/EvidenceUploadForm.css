@@ -1,5 +1,6 @@
 .evidence-upload {
-  border-top: 1px solid #c7d9dd;
+  min-width: 0;
+  border-top: 2px solid #7598a0;
   padding: 1.25rem;
   background: #f8fbfb;
 }
@@ -31,8 +32,8 @@
   gap: 0.42rem;
   padding: 0.9rem;
   border: 1px dashed #9ebfc5;
-  border-radius: 0.68rem 0.46rem 0.95rem 0.5rem;
-  background: rgba(255, 255, 255, 0.84);
+  border-radius: 0.2rem var(--control-radius) 0.2rem 0.2rem;
+  background: #fff;
 }
 
 .evidence-upload__file-field > label {
@@ -78,14 +79,14 @@
   gap: 0.9rem;
   padding: 0.8rem;
   border: 1px solid #bfd3d6;
-  border-radius: 0.58rem 0.45rem 0.9rem 0.45rem;
+  border-radius: 0.2rem var(--control-radius) 0.2rem 0.2rem;
   background: #fff;
 }
 
 .evidence-upload__preview img {
   width: 6.5rem;
   height: 5rem;
-  border-radius: 0.46rem 0.32rem 0.66rem 0.34rem;
+  border-radius: 0.2rem;
   object-fit: cover;
 }
 

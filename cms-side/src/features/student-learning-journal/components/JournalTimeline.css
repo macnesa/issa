@@ -1,5 +1,6 @@
 .journal-timeline {
-  border-top: 1px solid #d4d1c3;
+  min-width: 0;
+  border-top: 2px solid #76938f;
   padding: 1.25rem;
   background: #fffdf8;
 }
@@ -41,7 +42,6 @@
 }
 
 .journal-timeline__rail {
-  position: relative;
   border-right: 1px solid #d9d1bd;
   padding: 1rem 0.55rem 0 0;
   color: #8c826c;
@@ -49,19 +49,6 @@
   font-weight: 850;
   letter-spacing: 0.08em;
   text-align: right;
-}
-
-.journal-timeline__rail::after {
-  position: absolute;
-  top: 1.34rem;
-  right: -0.25rem;
-  width: 0.42rem;
-  height: 0.42rem;
-  border: 2px solid #fffdf8;
-  border-radius: 50%;
-  background: #617f78;
-  box-shadow: 0 0 0 1px #77928d;
-  content: "";
 }
 
 .journal-timeline__entry > article {
@@ -138,7 +125,7 @@ blockquote.journal-timeline__content {
   align-items: center;
   margin-top: 0.78rem;
   border: 1px solid #d5cdb8;
-  border-radius: 0.52rem;
+  border-radius: 0.2rem var(--control-radius) 0.2rem 0.2rem;
   padding: 0.55rem;
   background: #fbf8ef;
 }
@@ -147,7 +134,7 @@ blockquote.journal-timeline__content {
   width: 4.7rem;
   height: 3.6rem;
   border: 1px solid #c8c0aa;
-  border-radius: 0.34rem;
+  border-radius: 0.2rem;
   object-fit: cover;
 }
 
@@ -222,7 +209,6 @@ blockquote.journal-timeline__content {
   inset: 0;
   z-index: 60;
   background: rgba(19, 35, 39, 0.58);
-  backdrop-filter: blur(2px);
 }
 
 .journal-retract-dialog__container {
@@ -237,11 +223,11 @@ blockquote.journal-timeline__content {
 
 .journal-retract-dialog__panel {
   width: min(100%, 29rem);
-  border: 1px solid #b9ada0;
-  border-radius: 0.72rem 0.72rem 1.2rem 0.72rem;
+  border: 2px solid #8a7668;
+  border-radius: var(--dialog-radius);
   background: #fffdf8;
   padding: 1.35rem;
-  box-shadow: 0 1.5rem 4rem rgba(13, 31, 35, 0.24);
+  box-shadow: var(--shadow-floating);
 }
 
 .journal-retract-dialog__title {

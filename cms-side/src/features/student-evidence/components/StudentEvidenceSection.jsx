@@ -190,7 +190,13 @@ export default function StudentEvidenceSection({
                     }}
                     aria-label={`Buka viewer ${evidence.title}`}
                   >
-                    <img src={evidence.file?.url} alt="" />
+                    {evidence.file?.url ? (
+                      <img src={evidence.file.url} alt="" />
+                    ) : (
+                      <span className="student-evidence-history__thumbnail-placeholder">
+                        Preview tidak tersedia
+                      </span>
+                    )}
                   </button>
                   <div className="student-evidence-history__copy">
                     <div>
