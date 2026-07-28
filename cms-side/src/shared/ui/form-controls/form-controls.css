@@ -11,9 +11,9 @@
 }
 
 .issa-control-label__optional {
-  margin-left: 0.45rem;
+  margin-left: 0.5rem;
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -21,13 +21,13 @@
 
 .issa-control-helper,
 .issa-control-error {
-  margin: 0.35rem 0 0;
+  margin: 0.25rem 0 0;
   font-size: 0.75rem;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .issa-control-helper { color: var(--muted); }
-.issa-control-error { color: var(--danger); }
+.issa-control-error { color: var(--danger); font-weight: 650; }
 
 .issa-native-control,
 .issa-select-trigger,
@@ -36,12 +36,14 @@
   width: 100%;
   min-height: 2.625rem;
   border: 1px solid var(--border-strong);
-  border-radius: 0.62rem 0.38rem 0.72rem 0.38rem;
+  border-radius: var(--control-radius);
   background: #fff;
   color: var(--text);
   font-size: 0.875rem;
-  outline: none;
-  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+  transition:
+    border-color var(--motion-fast) ease,
+    background-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease;
 }
 
 .issa-native-control {
@@ -68,7 +70,9 @@
 .issa-date-trigger[data-focus],
 .issa-combobox-shell:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--focus), inset 0.22rem 0 0 #6bbfbc;
+  box-shadow: inset 0.2rem 0 0 #6bbfbc;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .issa-native-control[aria-invalid="true"],
@@ -97,13 +101,13 @@
 .issa-native-control:-webkit-autofill:hover,
 .issa-native-control:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--text);
-  box-shadow: 0 0 0 1000px #fffdf7 inset, 0 0 0 3px var(--focus);
+  box-shadow: 0 0 0 1000px #fffdf7 inset;
   caret-color: var(--text);
   transition: background-color 9999s ease-out;
 }
 
 .issa-native-control--textarea {
-  min-height: 8rem;
+  min-height: 7rem;
   resize: vertical;
   line-height: 1.55;
 }
@@ -146,10 +150,10 @@
   max-height: min(19rem, var(--anchor-max-height));
   overflow-y: auto;
   border: 1px solid #8db3b5;
-  border-radius: 0.58rem 0.38rem 0.82rem 0.38rem;
+  border-radius: var(--control-radius);
   background: #fffdf7;
-  padding: 0.3rem;
-  box-shadow: 0.35rem 0.4rem 0 rgba(107, 191, 188, 0.16), 0 0.9rem 2rem rgba(23, 62, 82, 0.15);
+  padding: 0.25rem;
+  box-shadow: var(--shadow-floating);
   color: var(--text);
   outline: none;
 }
@@ -158,13 +162,13 @@
 
 .issa-option {
   display: flex;
-  min-height: 2.45rem;
+  min-height: 2.5rem;
   cursor: default;
   align-items: center;
   justify-content: space-between;
   gap: 0.65rem;
   border-left: 0.2rem solid transparent;
-  border-radius: 0.38rem 0.24rem 0.5rem 0.24rem;
+  border-radius: var(--control-radius);
   padding: 0.52rem 0.62rem;
   color: var(--text);
   font-size: 0.84rem;
@@ -221,7 +225,7 @@
 
 .issa-combobox-input {
   width: 100%;
-  min-height: 2.55rem;
+  min-height: 2.625rem;
   border: 0;
   background: transparent;
   padding: 0.55rem 2.45rem 0.55rem 2.25rem;
@@ -253,7 +257,8 @@
 }
 
 .issa-combobox-button[data-focus] {
-  box-shadow: inset 0 0 0 2px var(--focus);
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
 }
 
 .issa-control-tone--attendance .issa-select-trigger,
@@ -293,10 +298,10 @@
   max-height: var(--anchor-max-height);
   overflow: auto;
   border: 1px solid #8db3b5;
-  border-radius: 0.7rem 0.45rem 1rem 0.45rem;
+  border-radius: var(--dialog-radius);
   background: #fffdf7;
-  padding: 0.85rem;
-  box-shadow: 0.4rem 0.45rem 0 rgba(107, 191, 188, 0.16), 0 1rem 2.2rem rgba(23, 62, 82, 0.16);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-floating);
   outline: none;
 }
 
@@ -341,18 +346,18 @@
 
 .issa-calendar__nav-button {
   display: grid;
-  width: 2.15rem;
-  height: 2.15rem;
+  width: 2.25rem;
+  height: 2.25rem;
   place-items: center;
   border: 1px solid var(--border-strong);
-  border-radius: 0.48rem 0.3rem 0.58rem 0.3rem;
+  border-radius: var(--control-radius);
   background: #f3faf8;
   color: var(--accent);
   pointer-events: auto;
 }
 
 .issa-calendar__nav-button:hover:not(:disabled) { background: #e2f3ef; }
-.issa-calendar__nav-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+.issa-calendar__nav-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .issa-calendar__nav-button:disabled { opacity: 0.4; }
 .issa-calendar__chevron { width: 1rem; height: 1rem; }
 
@@ -383,7 +388,7 @@
   height: 100%;
   place-items: center;
   border: 1px solid transparent;
-  border-radius: 0.48rem 0.28rem 0.56rem 0.28rem;
+  border-radius: var(--control-radius);
   background: transparent;
   color: inherit;
   font-size: 0.79rem;
@@ -411,7 +416,8 @@
 
 .issa-calendar__day.is-focused .issa-calendar__day-button,
 .issa-calendar__day-button:focus-visible {
-  box-shadow: 0 0 0 3px var(--focus);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .issa-calendar__day.is-outside { color: #9ca9ab; }
@@ -480,7 +486,7 @@
 .issa-calendar-action {
   min-height: 2.25rem;
   border: 1px solid var(--accent);
-  border-radius: 0.5rem 0.3rem 0.62rem 0.3rem;
+  border-radius: var(--control-radius);
   background: var(--accent);
   padding: 0.42rem 0.8rem;
   color: #fff;
@@ -532,9 +538,9 @@
   width: min(32rem, 100%);
   overflow: hidden;
   border: 1px solid #8db3b5;
-  border-radius: 0.8rem 0.55rem 1.2rem 0.55rem;
+  border-radius: var(--dialog-radius);
   background: #fffdf7;
-  box-shadow: 0.45rem 0.5rem 0 rgba(107, 191, 188, 0.18), 0 1.2rem 3rem rgba(14, 42, 58, 0.2);
+  box-shadow: var(--shadow-floating);
 }
 
 @media (max-width: 420px) {

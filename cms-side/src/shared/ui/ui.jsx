@@ -7,8 +7,8 @@ export function PageHeader({ eyebrow, title, description, actions }) {
     <header className="mb-6 flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {eyebrow && <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">{eyebrow}</p>}
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[var(--text)] sm:text-3xl">{title}</h1>
-        {description && <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">{description}</p>}
+        <h1 className="issa-page-header__title">{title}</h1>
+        {description && <p className="issa-page-header__description">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </header>
@@ -16,7 +16,7 @@ export function PageHeader({ eyebrow, title, description, actions }) {
 }
 
 export function Surface({ children, className = "" }) {
-  return <section className={`rounded-[var(--radius)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow)] ${className}`}>{children}</section>;
+  return <section className={`issa-surface ${className}`}>{children}</section>;
 }
 
 export function MetricCard({ label, value, detail }) {
@@ -35,16 +35,28 @@ export function StatusBadge({ status }) {
   return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${styles[status] || "bg-slate-100 text-slate-700 ring-slate-200"}`}>{status || "Belum ada"}</span>;
 }
 
-export function FormField({ label, children, hint, className = "" }) {
-  return <label className={`block ${className}`}><span className="mb-1.5 block text-sm font-medium text-[var(--text)]">{label}</span>{children}{hint && <span className="mt-1 block text-xs text-[var(--muted)]">{hint}</span>}</label>;
+export function FormField({ label, children, hint, error, className = "" }) {
+  return <label className={`block ${className}`}><span className="issa-form-field__label">{label}</span>{children}{error ? <span className="issa-form-field__error">{error}</span> : hint && <span className="issa-form-field__helper">{hint}</span>}</label>;
 }
 
-export function PrimaryButton({ children, className = "", ...props }) {
-  return <button className={`inline-flex min-h-10 items-center justify-center rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent-strong)] focus:outline-none focus:ring-4 focus:ring-[var(--focus)] disabled:cursor-not-allowed disabled:opacity-60 ${className}`} {...props}>{children}</button>;
+function Button({ children, className = "", tone = "primary", compact = false, ...props }) {
+  return <button className={`issa-button issa-button--${tone}${compact ? " issa-button--compact" : ""} ${className}`} {...props}>{children}</button>;
 }
 
-export function SecondaryButton({ children, className = "", ...props }) {
-  return <button className={`inline-flex min-h-10 items-center justify-center rounded-lg border border-[var(--border-strong)] bg-white px-4 py-2 text-sm font-semibold text-[var(--text)] transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-[var(--focus)] disabled:cursor-not-allowed disabled:opacity-60 ${className}`} {...props}>{children}</button>;
+export function PrimaryButton(props) {
+  return <Button tone="primary" {...props} />;
+}
+
+export function SecondaryButton(props) {
+  return <Button tone="secondary" {...props} />;
+}
+
+export function TertiaryButton(props) {
+  return <Button tone="tertiary" {...props} />;
+}
+
+export function DestructiveButton(props) {
+  return <Button tone="destructive" {...props} />;
 }
 
 export function LoadingState({ label = "Memuat data..." }) {

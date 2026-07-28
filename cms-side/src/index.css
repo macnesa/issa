@@ -16,10 +16,18 @@
   --danger: #b91c1c;
   --info: #0369a1;
   --focus: #b9e3e0;
-  --radius: 15px 10px 22px 12px;
-  --shadow: 0 1px 2px rgba(23, 62, 82, 0.04), 0 12px 28px rgba(23, 62, 82, 0.07);
+  --control-radius: 0.625rem 0.375rem 0.75rem 0.375rem;
+  --surface-radius: 0.75rem 0.75rem 1.25rem 0.75rem;
+  --dialog-radius: 0.875rem 0.625rem 1.375rem 0.625rem;
+  --radius: var(--surface-radius);
+  --shadow: 0.32rem 0.36rem 0 rgba(23, 62, 82, 0.1);
+  --shadow-control: 0.16rem 0.18rem 0 var(--accent-strong);
+  --shadow-floating: 0.38rem 0.42rem 0 rgba(107, 191, 188, 0.18), 0 1rem 2.25rem rgba(14, 42, 58, 0.18);
   --container: 80rem;
   --space: 1.5rem;
+  --motion-fast: 120ms;
+  --motion-default: 160ms;
+  --motion-slow: 220ms;
 }
 
 body {
@@ -28,13 +36,18 @@ body {
   background: var(--page);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 * { box-sizing: border-box; }
 button, input, select, textarea { font: inherit; }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;

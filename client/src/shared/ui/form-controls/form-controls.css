@@ -1,6 +1,6 @@
 .issa-text-field__label {
   display: block;
-  color: #315f62;
+  color: var(--issa-text-secondary);
   font-size: 0.875rem;
   font-weight: 700;
 }
@@ -9,14 +9,17 @@
   width: 100%;
   min-height: 2.8rem;
   margin-top: 0.375rem;
-  border: 1px solid #c8dce7;
-  border-radius: 0.72rem 0.4rem 0.72rem 0.4rem;
-  background: #fff;
-  padding: 0.7rem 0.78rem;
-  color: var(--issa-text-primary);
+  border: 1px solid var(--issa-border-strong);
+  border-radius: var(--issa-control-radius);
+  background: var(--issa-surface);
+  padding: 0.625rem 0.75rem;
+  color: var(--issa-text);
   font-size: 0.95rem;
-  outline: none;
-  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+  line-height: 1.5;
+  transition:
+    border-color var(--issa-motion-fast) ease,
+    background-color var(--issa-motion-fast) ease,
+    box-shadow var(--issa-motion-fast) ease;
 }
 
 .issa-text-field__input::placeholder {
@@ -25,12 +28,14 @@
 }
 
 .issa-text-field__input:hover:not(:disabled):not([aria-invalid="true"]) {
-  border-color: #8bb9c4;
+  border-color: var(--issa-primary);
 }
 
 .issa-text-field__input:focus-visible {
-  border-color: #356d8d;
-  box-shadow: 0 0 0 3px rgba(107, 191, 188, 0.25);
+  border-color: var(--issa-primary);
+  box-shadow: inset 0.2rem 0 0 #6bbfbc;
+  outline: 2px solid var(--issa-focus);
+  outline-offset: 2px;
 }
 
 .issa-text-field__input:not(:placeholder-shown) {
@@ -51,28 +56,30 @@
 .issa-text-field__input:-webkit-autofill,
 .issa-text-field__input:-webkit-autofill:hover,
 .issa-text-field__input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--issa-text-primary);
-  box-shadow: 0 0 0 1000px #fffdf8 inset, 0 0 0 3px rgba(107, 191, 188, 0.18);
-  caret-color: var(--issa-text-primary);
+  -webkit-text-fill-color: var(--issa-text);
+  box-shadow: 0 0 0 1000px #fffdf8 inset;
+  caret-color: var(--issa-text);
   transition: background-color 9999s ease-out;
 }
 
 .issa-text-field__helper,
 .issa-text-field__error {
-  margin: 0.35rem 0 0;
+  margin: 0.25rem 0 0;
   font-size: 0.75rem;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .issa-text-field__helper { color: var(--issa-text-muted); }
-.issa-text-field__error { color: var(--issa-danger); }
+.issa-text-field__error { color: var(--issa-danger); font-weight: 700; }
 
 .issa-checkbox-field {
-  border: 1px solid #bfd8e2;
-  border-radius: 0.72rem 0.4rem 0.72rem 0.4rem;
+  border: 1px solid var(--issa-border-strong);
+  border-radius: var(--issa-control-radius);
   background: #f6fbfc;
-  padding: 0.72rem;
-  transition: border-color 150ms ease, background-color 150ms ease;
+  padding: 0.75rem;
+  transition:
+    border-color var(--issa-motion-fast) ease,
+    background-color var(--issa-motion-fast) ease;
 }
 
 .issa-checkbox-field:has(.issa-checkbox-field__control[data-checked]) {
@@ -99,11 +106,14 @@
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid #71808a;
-  border-radius: 0.34rem;
+  border-radius: 0.25rem;
   background: #fff;
   color: #fff;
-  outline: none;
-  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+  transition:
+    border-color var(--issa-motion-fast) ease,
+    background-color var(--issa-motion-fast) ease,
+    box-shadow var(--issa-motion-fast) ease,
+    transform var(--issa-motion-fast) ease;
 }
 
 .issa-checkbox-field__control:hover:not(:disabled) {
@@ -117,7 +127,8 @@
 }
 
 .issa-checkbox-field__control[data-focus] {
-  box-shadow: 0 0 0 3px rgba(107, 191, 188, 0.38);
+  outline: 2px solid var(--issa-focus);
+  outline-offset: 2px;
 }
 
 .issa-checkbox-field__control:active:not(:disabled) {
@@ -149,16 +160,15 @@
 }
 
 .issa-checkbox-field__error {
-  margin: 0.42rem 0 0 1.9rem;
+  margin: 0.25rem 0 0 1.9rem;
   color: var(--issa-danger);
   font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 @media (max-width: 767px) {
-  .issa-text-field__label { font-size: 0.84rem; }
-  .issa-text-field__input { min-height: 3.5rem; padding: 0.66rem 0.78rem; }
-  .issa-checkbox-field { padding: 0.56rem 0.72rem; }
-  .issa-checkbox-field__label { font-size: 0.85rem; }
+  .issa-text-field__input { min-height: 2.8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
