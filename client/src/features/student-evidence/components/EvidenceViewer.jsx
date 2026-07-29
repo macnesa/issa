@@ -16,9 +16,9 @@ export default function EvidenceViewer({ evidence, onClose }) {
       onClose={onClose}
       className="relative z-[60]"
     >
-      <DialogBackdrop className="fixed inset-0 bg-[rgba(10,27,37,0.78)] backdrop-blur-[0.22rem]" />
-      <div className="fixed inset-0 grid place-items-center overflow-y-auto p-4">
-        <DialogPanel className="w-[min(100%,64rem)] overflow-hidden rounded-[0.8rem_1.8rem_0.8rem_0.8rem] border border-white/25 bg-[#102f3e] shadow-[0_1.5rem_4rem_rgba(0,0,0,0.36)]">
+      <DialogBackdrop className="dialog-backdrop" />
+      <div className="dialog-frame">
+        <DialogPanel className="dialog-panel">
           <header className="flex items-center justify-between gap-4 px-[1.1rem] py-4">
             <div>
               <p className="m-0 text-[0.66rem] font-extrabold uppercase tracking-[0.12em] text-[#a9d6df]">
@@ -32,7 +32,7 @@ export default function EvidenceViewer({ evidence, onClose }) {
               type="button"
               onClick={onClose}
               aria-label="Tutup gambar"
-              className="min-h-10 flex-none rounded-[0.58rem] border border-white/40 bg-white/[0.09] px-3 py-[0.45rem] text-[0.78rem] font-bold text-white"
+              className="secondary-button evidence-dialog__close"
             >
               Tutup
             </button>

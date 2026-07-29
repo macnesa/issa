@@ -59,7 +59,7 @@ export default function History(params) {
               <div className="w-[70%] mask mask-squircle mx-auto">
                 <img src="https://res.cloudinary.com/dslzpyibe/image/upload/v1678294641/assets%20finalproject/undraw_Photo_session_re_c0cp_j7b54x.png" />
               </div>
-              <p className="dark:text-white font-Comfortaa font-semibold text-[1.3rem] text-center mt-6">HISTORY</p>
+              <p className="dark:text-white font-sans font-semibold text-[1.3rem] text-center mt-6">HISTORY</p>
             </div>
           </div>
           <div className="flex items-center justify-end pb-4 bg-white dark:bg-gray-900 ml-6 mr-[18rem] mb-14">

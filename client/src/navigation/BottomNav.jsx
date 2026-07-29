@@ -3,24 +3,19 @@ import { parentNavigation } from '../config/parentNavigation';
 
 export default function BottomNav() {
   return (
-    <nav
-      aria-label="Navigasi utama"
-      className="fixed bottom-4 left-1/2 z-50 h-16 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-[1.25rem_1.25rem_1.7rem_1.25rem] border border-[#173e52] md:hidden"
-      style={{
-        backgroundImage: 'linear-gradient(120deg, #133b4f, #245b70)',
-        boxShadow: '0 0.8rem 1.8rem rgba(14, 42, 58, 0.25)',
-      }}
-    >
-      <div className="mx-auto grid h-full grid-cols-5">
+    <nav aria-label="Navigasi utama" className="parent-bottom-nav">
+      <div className="parent-bottom-nav__grid">
         {parentNavigation.map((navigationItem) => (
           <NavLink
             key={navigationItem.path}
             to={navigationItem.path}
             end={navigationItem.end}
-            className={({ isActive }) => `relative z-[1] inline-flex min-h-[44px] flex-col items-center justify-center gap-0.5 rounded-[0.85rem_0.85rem_0.55rem_0.55rem] px-1 text-[10px] font-semibold text-[rgba(255,255,255,0.67)] transition-[color,background,transform] duration-[180ms] motion-reduce:transition-none motion-reduce:animate-none ${isActive ? 'mx-[0.2rem] my-[0.35rem] -translate-y-[0.2rem] bg-[#f2e291] text-[#173e52]' : ''}`}
+            className={({ isActive }) => (
+              `parent-bottom-nav__link${isActive ? ' parent-bottom-nav__link--active' : ''}`
+            )}
           >
             <NavigationIcon path={navigationItem.path} />
-            <span>{navigationItem.label}</span>
+            <span>{navigationItem.shortLabel || navigationItem.label}</span>
           </NavLink>
         ))}
       </div>
@@ -38,7 +33,7 @@ function NavigationIcon({ path }) {
   };
 
   return (
-    <svg className="w-5 h-5 mb-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+    <svg className="parent-bottom-nav__icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
       <path d={paths[path]} />
     </svg>
   );

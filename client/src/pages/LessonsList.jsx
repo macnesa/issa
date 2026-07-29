@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchClassSchedule } from '../store/actions/actionCreator';
 import { EmptyState, ErrorState, LoadingState } from '../shared/ui/ResourceStates';
+import { PageContainer, PageHeader } from '../shared/ui/ui';
 import ScheduleList from '../features/schedule/components/ScheduleList';
 
 const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -37,30 +38,28 @@ export default function LessonsList() {
       const rightIndex = dayOrder.indexOf(rightDay);
       const leftOrder = leftIndex === -1 ? dayOrder.length : leftIndex;
       const rightOrder = rightIndex === -1 ? dayOrder.length : rightIndex;
-
       return leftOrder - rightOrder || leftDay.localeCompare(rightDay, 'id');
-    }),
-  [scheduleByDay]);
+    }), [scheduleByDay]);
 
-  if (loading) return <main className="page-container"><LoadingState label="Memuat jadwal..." /></main>;
-  if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchClassSchedule())} /></main>;
+  if (loading) return <PageContainer><LoadingState label="Memuat jadwal..." /></PageContainer>;
+  if (error) return <PageContainer><ErrorState error={error} onRetry={() => dispatch(fetchClassSchedule())} /></PageContainer>;
 
   return (
-    <main className="page-container grid items-start gap-5 sm:gap-6">
-      <section className="relative pt-2 pb-[0.55rem]">
-        <h1 className="page-title text-[clamp(1.7rem,5vw,2.25rem)]">Jadwal</h1>
-        <p className="page-supporting-text mt-1">Jadwal mingguan untuk kelas siswa.</p>
-      </section>
-
+    <PageContainer className="page-grid">
+      <PageHeader title="Jadwal" description="Jadwal mingguan untuk kelas siswa." />
       {!scheduleDays.length ? (
         <EmptyState message="Belum ada jadwal yang tersedia." />
       ) : (
-        <section className="grid gap-[0.8rem] min-[900px]:grid-cols-2">
+        <section className="schedule-grid">
           {scheduleDays.map(([scheduleDay, lessonNames]) => (
-            <ScheduleList key={scheduleDay} day={dayLabels[scheduleDay] || scheduleDay} lessons={lessonNames} />
+            <ScheduleList
+              key={scheduleDay}
+              day={dayLabels[scheduleDay] || scheduleDay}
+              lessons={lessonNames}
+            />
           ))}
         </section>
       )}
-    </main>
+    </PageContainer>
   );
 }

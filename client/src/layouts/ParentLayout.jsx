@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { hasParentSession } from '../utils/session'
 import { ErrorState, EmptyState, LoadingState } from '../shared/ui/ResourceStates'
+import { Notice } from '../shared/ui/ui'
 import {
   connectParentSocket,
   isEvidenceRecordEventForActiveStudent,
@@ -103,21 +104,20 @@ export default function ParentLayout() {
         }} />;
   
   return (
-    <div className="min-h-screen bg-[var(--issa-page)] pt-4">
+    <div className="parent-app">
       <Header />
       {showRealtimeNotice && (
-        <div
-          className="pointer-events-none fixed left-1/2 top-4 z-[60] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-full border border-[rgba(28,77,99,0.18)] bg-[#f6fbfc] px-4 py-[0.7rem] text-[0.86rem] font-bold leading-[1.3] text-[#1c4d63] [animation:parent-realtime-notice-in_180ms_ease-out] motion-reduce:animate-none"
-          style={{ boxShadow: '0 0.5rem 1.5rem rgba(14, 42, 58, 0.14)' }}
+        <Notice
+          floating
           role="status"
           aria-live="polite"
           aria-atomic="true"
         >
           Catatan siswa diperbarui
-        </div>
+        </Notice>
       )}
       {content}
-      <BottomNav/>
+      <BottomNav />
     </div>
   )
 }

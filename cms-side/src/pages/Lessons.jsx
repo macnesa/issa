@@ -37,7 +37,7 @@ export default function Lessons(props) {
               <div className="w-[70%] mask mask-squircle mx-auto">
                 <img src="https://res.cloudinary.com/dslzpyibe/image/upload/v1678369517/assets%20finalproject/undraw_Books_re_8gea_igp8f8.png" />
               </div>
-              <p className="dark:text-white font-Comfortaa font-semibold text-[1.3rem] text-center mt-6">LESSONS</p>
+              <p className="dark:text-white font-sans font-semibold text-[1.3rem] text-center mt-6">LESSONS</p>
             </div>
           </div>
 

@@ -150,7 +150,7 @@ describe('feedback validator', () => {
 
     expect(validateFeedbackUpdate({ feedback })).toEqual(expect.objectContaining({
       hasFeedback: true,
-      feedback,
+      feedback: feedback.trim(),
     }));
     expect(feedback.length).toBeGreaterThan(255);
   });

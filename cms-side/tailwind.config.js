@@ -5,9 +5,8 @@ module.exports = {
   theme: {
     extend: {},
     fontFamily: {
-      raleway: ["Raleway"],
-      Playfair: ["Playfair Display"],
-      Comfortaa: ["Comfortaa"],
+      body: ['"Plus Jakarta Sans"', "sans-serif"],
+      sans: ['"Plus Jakarta Sans"', "sans-serif"],
     },
   },
   plugins: [],

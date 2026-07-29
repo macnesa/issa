@@ -82,7 +82,7 @@ export default function AddLesson(params) {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg mx-auto  mt-[3rem] w-[50%] md:w-[30%] sm:[20%] ">
       <div className="mb-6">
-        <p className="dark:text-white font-Comfortaa font-semibold text-[1.3rem] ">FORM LESSON</p>
+        <p className="dark:text-white font-sans font-semibold text-[1.3rem] ">FORM LESSON</p>
       </div>
       <form className="mr-12" onSubmit={submitForm}>
         {lesson.name !== "" ||

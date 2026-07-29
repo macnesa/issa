@@ -29,7 +29,7 @@ export default function LineChart({ data: scoreRecords }) {
         zoom: {
           enabled: false,
         },
-        fontFamily: "system-ui, sans-serif",
+        fontFamily: "Plus Jakarta Sans, sans-serif",
       },
       dataLabels: {
         enabled: false,

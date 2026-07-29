@@ -1,62 +1,95 @@
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/plus-jakarta-sans-variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/plus-jakarta-sans-variable-italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
-  --issa-page: #f6f8fb;
-  --issa-surface: #ffffff;
-  --issa-surface-soft: #f0f6f9;
-  --issa-text: #17212b;
-  --issa-text-secondary: #506174;
-  --issa-text-muted: #718096;
-  --issa-border: #dce5ed;
-  --issa-border-strong: #a9c3d0;
-  --issa-primary: #356d8d;
-  --issa-primary-hover: #285a77;
-  --issa-primary-soft: #e4f0f6;
-  --issa-success: #2f7d5b;
-  --issa-success-soft: #e7f5ed;
-  --issa-warning: #9a6514;
-  --issa-warning-soft: #fff5df;
-  --issa-danger: #a84444;
-  --issa-danger-soft: #fbeaea;
-  --issa-info: #3c6f92;
-  --issa-info-soft: #e8f1f7;
+  --issa-page: #edf7f7;
+  --issa-surface: #fffaf2;
+  --issa-surface-muted: #f4f0e5;
+  --issa-surface-aqua: #e1f3ef;
+  --issa-text: #173e52;
+  --issa-text-secondary: #526a73;
+  --issa-text-muted: #718087;
+  --issa-border: #b9d0d3;
+  --issa-border-strong: #173e52;
+  --issa-primary: #245e73;
+  --issa-primary-hover: #173e52;
+  --issa-aqua: #b9e3e0;
+  --issa-aqua-strong: #65aaa7;
+  --issa-yellow: #f2e291;
+  --issa-yellow-strong: #dbc45a;
+  --issa-purple: #eee6f6;
+  --issa-purple-strong: #9555c2;
+  --issa-peach: #ffe8d4;
+  --issa-peach-strong: #d28a54;
+  --issa-blush: #fdebed;
+  --issa-blush-strong: #d28a9a;
+  --issa-success: #047857;
+  --issa-success-soft: #e7f6ef;
+  --issa-warning: #b45309;
+  --issa-warning-soft: #fff4df;
+  --issa-danger: #b91c1c;
+  --issa-danger-soft: #fdecec;
+  --issa-info: #0369a1;
+  --issa-info-soft: #e8f3fb;
+  --issa-academic: #725a8e;
+  --issa-attendance: #3d8580;
+  --issa-observation: #a36b2c;
+  --issa-activity: #a65468;
   --issa-space-1: 0.25rem;
   --issa-space-2: 0.5rem;
   --issa-space-3: 0.75rem;
   --issa-space-4: 1rem;
-  --issa-space-5: 1.25rem;
   --issa-space-6: 1.5rem;
   --issa-space-8: 2rem;
+  --issa-space-12: 3rem;
   --issa-container: 72rem;
-  --issa-control-radius: 0.625rem 0.375rem 0.75rem 0.375rem;
-  --issa-surface-radius: 0.875rem 0.875rem 1.5rem 0.875rem;
-  --issa-dialog-radius: 0.875rem 0.625rem 1.5rem 0.625rem;
-  --issa-radius-sm: var(--issa-control-radius);
-  --issa-radius: var(--issa-surface-radius);
-  --issa-shadow: 0.3rem 0.34rem 0 rgba(29, 48, 64, 0.11);
-  --issa-shadow-control: 0.16rem 0.18rem 0 #173e52;
-  --issa-shadow-floating: 0.34rem 0.38rem 0 rgba(53, 109, 141, 0.18), 0 1rem 2.25rem rgba(29, 48, 64, 0.17);
-  --issa-focus: #356d8d;
+  --issa-control-radius: 0.625rem 0.25rem 0.625rem 0.25rem;
+  --issa-surface-radius: 1rem 0.45rem 1.5rem 0.45rem;
+  --issa-dialog-radius: 1.25rem 0.5rem 1.75rem 0.5rem;
+  --issa-pill-radius: 999px;
+  --issa-shadow-offset: 0.35rem 0.38rem 0 rgba(23, 62, 82, 0.18);
+  --issa-shadow-dialog: 0 1.5rem 4rem rgba(10, 27, 37, 0.28);
+  --issa-focus: #1f7180;
   --issa-motion-fast: 120ms;
   --issa-motion-default: 160ms;
-  --issa-motion-slow: 220ms;
 }
 
 @layer base {
   html {
+    min-height: 100%;
     background: var(--issa-page);
+    overscroll-behavior-y: none;
   }
 
   body {
     min-width: 320px;
+    min-height: 100%;
+    margin: 0;
     background: var(--issa-page);
     color: var(--issa-text);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 1rem;
     line-height: 1.6;
+    overscroll-behavior-y: none;
+    text-rendering: optimizeLegibility;
   }
 
   button,
@@ -70,149 +103,81 @@
   a:focus-visible,
   input:focus-visible,
   select:focus-visible,
-  textarea:focus-visible {
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
     outline: 2px solid var(--issa-focus);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 }
 
-/* Structural selectors that cannot be expressed through inline JSX styles. */
+.parent-app {
+  min-height: 100vh;
+  padding-top: var(--issa-space-4);
+  background: var(--issa-page);
+}
+
 .overview-page > * {
-  animation: overview-rise 440ms both;
+  animation: overview-rise 360ms both;
 }
 
-.overview-page > *:nth-child(2) { animation-delay: 45ms; }
-.overview-page > *:nth-child(3) { animation-delay: 90ms; }
-.overview-page > *:nth-child(4) { animation-delay: 135ms; }
-.overview-page > *:nth-child(5) { animation-delay: 180ms; }
-.overview-page > *:nth-child(6) { animation-delay: 225ms; }
-.overview-page > *:nth-child(7) { animation-delay: 270ms; }
-.overview-page > *:nth-child(8) { animation-delay: 315ms; }
-
-.student-identity {
-  background-image: linear-gradient(115deg, #0e2a3a, #265367);
-}
+.overview-page > *:nth-child(2) { animation-delay: 40ms; }
+.overview-page > *:nth-child(3) { animation-delay: 80ms; }
+.overview-page > *:nth-child(4) { animation-delay: 120ms; }
+.overview-page > *:nth-child(5) { animation-delay: 160ms; }
+.overview-page > *:nth-child(6) { animation-delay: 200ms; }
 
 .parent-journal-entry::before {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 2.38rem;
+  left: 2.65rem;
   width: 1px;
-  background: #d9d0b9;
+  background: var(--issa-border);
   content: "";
 }
 
-.parent-journal-entry:first-child::before {
-  top: 1.42rem;
-}
-
-.parent-journal-entry:last-child::before {
-  bottom: calc(100% - 1.42rem);
-}
+.parent-journal-entry:first-child::before { top: 1.5rem; }
+.parent-journal-entry:last-child::before { bottom: calc(100% - 1.5rem); }
 
 .recent-student-changes__timeline::before {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 4.64rem;
+  left: 4.8rem;
   width: 1px;
-  background: #d9ccb0;
+  background: var(--issa-border);
   content: "";
 }
 
 .journal-direct-quote::before,
-.recent-feedback-quote::before {
-  content: "“";
-}
-
+.recent-feedback-quote::before { content: "“"; }
 .journal-direct-quote::after,
-.recent-feedback-quote::after {
-  content: "”";
-}
-
-@media (min-width: 900px) {
-  .overview-page > :first-child,
-  .overview-page > :nth-child(2),
-  .overview-page > :nth-child(5),
-  .overview-page > :nth-child(6) {
-    grid-column: 1 / -1;
-  }
-
-  .student-identity {
-    background-image:
-      linear-gradient(90deg, transparent 0 27%, #1c4d63 35%, #1c4d63 100%),
-      linear-gradient(115deg, #0e2a3a, #265367);
-  }
-
-  .overview-attendance-highlight {
-    grid-row: 1 / -1;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-    padding: 1.15rem 1.2rem;
-    border: 1px solid rgba(47, 125, 91, 0.18);
-    border-bottom: 0.38rem solid var(--issa-success);
-    border-radius: 1.35rem 0.68rem 1.35rem 0.68rem;
-    background: linear-gradient(145deg, #f9fffb, #dcf1e5);
-    box-shadow: 0.3rem 0.35rem 0 rgba(47, 125, 91, 0.13);
-  }
-}
+.recent-feedback-quote::after { content: "”"; }
 
 @media (max-width: 639px) {
-  .recent-student-changes__timeline::before {
-    left: 3.77rem;
-  }
-}
-
-@media (max-width: 559px) {
-  .parent-journal-entry::before {
-    left: 1.82rem;
-  }
+  .parent-journal-entry::before { left: 2rem; }
+  .recent-student-changes__timeline::before { left: 3.7rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .overview-page > * {
-    animation: none;
-  }
+  .overview-page > * { animation: none; }
 }
 
 @keyframes overview-rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.7rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes parent-realtime-notice-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -0.35rem);
-  }
+  from { opacity: 0; transform: translate(-50%, -0.35rem); }
 }
 
 @keyframes login-frame-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.75rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(0.75rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes login-form-in {
-  from {
-    opacity: 0;
-    transform: translateX(0.65rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(0.65rem); }
+  to { opacity: 1; transform: translateX(0); }
 }
