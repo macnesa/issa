@@ -3,6 +3,7 @@ import {
   openOfflineDatabase,
 } from "./offlineDatabase";
 import { notifyOfflineWorkspaceChanged } from "./offlineEvents";
+import { assertTeacherMutationAllowed } from "../auth/demoAccess";
 
 export const supportedOfflineMutationTypes = new Set([
   "attendance.update",
@@ -211,6 +212,7 @@ async function putCompactedAttendanceMutation(storedMutation) {
 
 export async function enqueueMutation(mutationInput, options = {}) {
   void "ISSA:CMS.OFFLINE_WORKSPACE.ENQUEUE_MUTATION";
+  assertTeacherMutationAllowed();
   const storedMutation = buildStoredMutation(mutationInput, options);
 
   const persistedMutation = storedMutation.type === "attendance.update"
@@ -270,6 +272,7 @@ export async function listFailedMutations(teacherId) {
 }
 
 export async function markMutationSyncing(clientMutationId, updatedAt) {
+  assertTeacherMutationAllowed();
   const database = await openOfflineDatabase();
   const transaction = database.transaction(
     offlineStores.pendingMutations,
@@ -300,6 +303,7 @@ export async function markMutationPending(clientMutationId, {
   lastErrorMessage = null,
   updatedAt,
 } = {}) {
+  assertTeacherMutationAllowed();
   const database = await openOfflineDatabase();
   const transaction = database.transaction(
     offlineStores.pendingMutations,
@@ -329,6 +333,7 @@ export async function markMutationPending(clientMutationId, {
 }
 
 export async function markMutationFailed(clientMutationId, error = {}) {
+  assertTeacherMutationAllowed();
   const database = await openOfflineDatabase();
   const transaction = database.transaction(
     offlineStores.pendingMutations,
@@ -356,6 +361,7 @@ export async function markMutationFailed(clientMutationId, error = {}) {
 }
 
 export async function removeMutation(clientMutationId) {
+  assertTeacherMutationAllowed();
   const database = await openOfflineDatabase();
   const mutation = await database.get(
     offlineStores.pendingMutations,
@@ -375,6 +381,7 @@ export async function saveConflict({
   conflict,
   createdAt = new Date().toISOString(),
 }) {
+  assertTeacherMutationAllowed();
   const database = await openOfflineDatabase();
   const conflictRecord = {
     clientMutationId: mutation.clientMutationId,
@@ -393,6 +400,7 @@ export async function saveConflict({
 }
 
 export async function removeConflict(clientMutationId) {
+  assertTeacherMutationAllowed();
   const database = await openOfflineDatabase();
   const conflict = await database.get(
     offlineStores.syncConflicts,
@@ -428,6 +436,7 @@ export async function getSyncMetadata(teacherId) {
 }
 
 export async function updateSyncMetadata(teacherId, metadata) {
+  assertTeacherMutationAllowed();
   const normalizedTeacherId = normalizeTeacherId(teacherId);
   const database = await openOfflineDatabase();
   const existing = await database.get(
@@ -450,6 +459,7 @@ export async function updateSyncMetadata(teacherId, metadata) {
 }
 
 export async function resetInterruptedSyncingMutations(teacherId) {
+  assertTeacherMutationAllowed();
   void "ISSA:CMS.OFFLINE_WORKSPACE.RECOVER_INTERRUPTED_MUTATION";
   const normalizedTeacherId = normalizeTeacherId(teacherId);
   const database = await openOfflineDatabase();
@@ -497,6 +507,7 @@ export async function replaceAttendanceConflictWithMutation({
   clientMutationId,
   now = () => new Date(),
 }) {
+  assertTeacherMutationAllowed();
   void "ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_LOCAL";
   const local = conflictRecord?.conflict?.local;
   const server = conflictRecord?.conflict?.server;
@@ -528,6 +539,7 @@ export async function replaceAttendanceConflictWithMutation({
 }
 
 export async function clearTeacherOfflineData(teacherId) {
+  assertTeacherMutationAllowed();
   const normalizedTeacherId = normalizeTeacherId(teacherId);
   const database = await openOfflineDatabase();
   const storeNames = [

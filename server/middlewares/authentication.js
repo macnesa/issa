@@ -1,11 +1,39 @@
 const { verifyAuthenticationToken } = require('../helpers');
 const { Teacher, User, Student, Class } = require('../models');
+const {
+  isConfiguredDemoIdentity,
+  publicDemoAccessMode,
+} = require('../config/public-demo');
 
 function getAuthenticationTokenPayload(req) {
   const { access_token: authenticationToken } = req.headers;
   if (!authenticationToken) throw { name: 'unAuthentication' };
 
   return verifyAuthenticationToken(authenticationToken);
+}
+
+function resolveAccessMode(authenticationTokenPayload) {
+  const requestedAccessMode = authenticationTokenPayload.accessMode;
+  if (
+    requestedAccessMode &&
+    !['standard', publicDemoAccessMode].includes(requestedAccessMode)
+  ) {
+    throw { name: 'unAuthentication' };
+  }
+
+  const configuredDemoIdentity = isConfiguredDemoIdentity({
+    role: authenticationTokenPayload.role,
+    teacherId: authenticationTokenPayload.teacherId,
+    userId: authenticationTokenPayload.userId,
+  });
+  if (
+    requestedAccessMode === publicDemoAccessMode &&
+    !configuredDemoIdentity
+  ) {
+    throw { name: 'unAuthentication' };
+  }
+
+  return configuredDemoIdentity ? publicDemoAccessMode : 'standard';
 }
 
 async function authenticateTeacherPayload(authenticationTokenPayload) {
@@ -30,10 +58,13 @@ async function authenticateTeacherPayload(authenticationTokenPayload) {
   });
   if (!authenticatedTeacherClass) throw { name: 'notFound' };
 
+  const accessMode = resolveAccessMode(authenticationTokenPayload);
   return {
     teacherId: authenticatedTeacher.id,
     classId: authenticatedTeacherClass.id,
     role: 'teacher',
+    accessMode,
+    isDemo: accessMode === publicDemoAccessMode,
   };
 }
 
@@ -61,11 +92,14 @@ async function authenticateParentPayload(authenticationTokenPayload) {
   );
   if (!authenticatedStudent) throw { name: 'unAuthentication' };
 
+  const accessMode = resolveAccessMode(authenticationTokenPayload);
   return {
     userId: authenticatedParent.id,
     studentId: authenticatedStudent.id,
     classId: authenticatedStudent.ClassId,
     role: 'parent',
+    accessMode,
+    isDemo: accessMode === publicDemoAccessMode,
   };
 }
 
@@ -113,6 +147,9 @@ async function authenticateActorRequest(req, res, next) {
 
 module.exports = {
   authenticateActorRequest,
+  authenticateParentPayload,
   authenticateParentRequest,
+  authenticateTeacherPayload,
   authenticateTeacherRequest,
+  resolveAccessMode,
 };

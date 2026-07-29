@@ -1,10 +1,15 @@
 import baseUrl from "../../config/api";
+import {
+  assertTeacherMutationAllowed,
+  readApiError,
+} from "../../auth/demoAccess";
 
 export class StudentEvidenceApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, code = "") {
     super(message);
     this.name = "StudentEvidenceApiError";
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -17,9 +22,11 @@ async function parseResponse(response, fallbackMessage) {
   }
 
   if (!response.ok) {
+    const apiError = readApiError(responseBody, fallbackMessage, response.status);
     throw new StudentEvidenceApiError(
-      responseBody?.msg || fallbackMessage,
-      response.status
+      apiError.message,
+      response.status,
+      apiError.code
     );
   }
 
@@ -42,6 +49,7 @@ export async function fetchStudentEvidences(studentId, { signal } = {}) {
 }
 
 export async function createStudentEvidence(studentId, evidenceFormData) {
+  assertTeacherMutationAllowed();
   const response = await fetch(`${baseUrl}/students/${studentId}/evidences`, {
     method: "POST",
     headers: {
@@ -65,6 +73,7 @@ export async function updateStudentEvidenceMetadata(
   evidenceId,
   metadata
 ) {
+  assertTeacherMutationAllowed();
   const response = await fetch(
     `${baseUrl}/students/${studentId}/evidences/${evidenceId}`,
     {
@@ -78,6 +87,7 @@ export async function updateStudentEvidenceMetadata(
 }
 
 export async function retractStudentEvidence(studentId, evidenceId, reason) {
+  assertTeacherMutationAllowed();
   const response = await fetch(
     `${baseUrl}/students/${studentId}/evidences/${evidenceId}`,
     {

@@ -1,4 +1,36 @@
 function errorHandler(err, req, res, next) {
+    const publicDemoErrors = {
+        publicDemoUnavailable: {
+            statusCode: 404,
+            message: "Public demo access is not available.",
+        },
+        publicDemoConfigurationError: {
+            statusCode: 503,
+            message: "Public demo access is temporarily unavailable.",
+        },
+        invalidPublicDemoLoginRequest: {
+            statusCode: 400,
+            message: "Public demo login does not accept account identifiers.",
+        },
+        publicDemoReadOnly: {
+            statusCode: 403,
+            message: "Public demo accounts are read-only.",
+        },
+        publicDemoRateLimitExceeded: {
+            statusCode: 429,
+            message: "Public demo request limit reached. Please try again later.",
+        },
+    };
+    const safePublicDemoError = publicDemoErrors[err?.name];
+    if (safePublicDemoError) {
+        return res.status(safePublicDemoError.statusCode).json({
+            error: {
+                code: err.name,
+                message: safePublicDemoError.message,
+            },
+        });
+    }
+
     const teacherSearchErrors = {
         invalid_search_query: {
             statusCode: 400,

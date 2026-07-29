@@ -2,6 +2,7 @@ import {
   offlineStores,
   openOfflineDatabase,
 } from "./offlineDatabase";
+import { assertTeacherMutationAllowed } from "../auth/demoAccess";
 
 export const maximumSnapshotsPerTeacher = 10;
 
@@ -103,6 +104,7 @@ export async function pruneWorkspaceSnapshots(
   teacherId,
   maximumSnapshots = maximumSnapshotsPerTeacher
 ) {
+  assertTeacherMutationAllowed();
   const normalizedTeacherId = normalizeIdentifier(teacherId, "teacherId");
   const database = await openOfflineDatabase();
   const transaction = database.transaction(
@@ -131,6 +133,7 @@ export async function mergeWorkspaceSnapshot({
   ...snapshotSlice
 }) {
   void "ISSA:CMS.OFFLINE_WORKSPACE.SAVE_WORKSPACE_SNAPSHOT";
+  assertTeacherMutationAllowed();
   const normalizedTeacherId = normalizeIdentifier(teacherId, "teacherId");
   const normalizedStudentId = normalizeIdentifier(studentId, "studentId");
   const database = await openOfflineDatabase();

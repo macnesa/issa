@@ -5,7 +5,11 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navigasi utama"
-      className="fixed bottom-4 left-1/2 z-50 h-16 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-[1.25rem_1.25rem_1.7rem_1.25rem] border border-[#173e52] bg-[linear-gradient(120deg,#133b4f,#245b70)] shadow-[0_0.8rem_1.8rem_rgba(14,42,58,0.25)] md:hidden"
+      className="fixed bottom-4 left-1/2 z-50 h-16 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-[1.25rem_1.25rem_1.7rem_1.25rem] border border-[#173e52] md:hidden"
+      style={{
+        backgroundImage: 'linear-gradient(120deg, #133b4f, #245b70)',
+        boxShadow: '0 0.8rem 1.8rem rgba(14, 42, 58, 0.25)',
+      }}
     >
       <div className="mx-auto grid h-full grid-cols-5">
         {parentNavigation.map((navigationItem) => (

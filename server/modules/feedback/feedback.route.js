@@ -1,5 +1,8 @@
 const express = require('express');
 const { authenticateTeacherRequest } = require('../../middlewares/authentication');
+const {
+  requireWritableAccount,
+} = require('../../middlewares/public-demo-access');
 const feedbackController = require('./feedback.controller');
 
 const router = express.Router();
@@ -13,6 +16,7 @@ router.get(
 router.put(
   '/:id',
   authenticateTeacherRequest,
+  requireWritableAccount,
   feedbackController.updateStudentFeedback
 );
 

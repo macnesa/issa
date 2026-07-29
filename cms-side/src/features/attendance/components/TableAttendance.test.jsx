@@ -1,4 +1,5 @@
 import "fake-indexeddb/auto";
+import { readFileSync } from "node:fs";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import {
   deleteOfflineDatabaseForTests,
@@ -23,6 +24,11 @@ vi.mock("../../../offline-workspace/OfflineWorkspaceProvider", () => ({
 }));
 
 import TableAttendances from "./TableAttendance";
+
+const attendanceCss = readFileSync(
+  "src/features/attendance/attendance-workspace.css",
+  "utf8"
+);
 
 const student = {
   id: 7,
@@ -75,6 +81,31 @@ describe("production Attendance update path", () => {
       ]);
     });
     expect(attendanceUiMocks.dispatch).not.toHaveBeenCalled();
+  });
+
+  test("menyediakan semua label row untuk presentasi responsif", () => {
+    const { container } = render(
+      <table>
+        <tbody>
+          <TableAttendances
+            data={student}
+            attendanceDate="2026-07-21"
+          />
+        </tbody>
+      </table>
+    );
+
+    expect(container.querySelector('[data-label="Kelas"]')).toHaveTextContent("1A");
+    expect(container.querySelector('[data-label="Status kehadiran"]'))
+      .toContainElement(screen.getByRole("button", {
+        name: "Status kehadiran Ari Wibowo",
+      }));
+    expect(container.querySelector('[data-label="Record"]'))
+      .toContainElement(screen.getByRole("button", { name: "Lihat record" }));
+    expect(attendanceCss).toContain("@media (max-width: 1023px)");
+    expect(attendanceCss).toMatch(
+      /\.attendance-register__table\s*\{[^}]*min-width:\s*0;/s
+    );
   });
 
   test("Attendance create remains online-only", async () => {

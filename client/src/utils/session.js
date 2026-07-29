@@ -14,7 +14,7 @@ let sessionEndInProgress = false;
 let sessionEndHandler = null;
 const statusSubscribers = new Set();
 
-function parseSessionTokenPayload(sessionToken) {
+export function parseSessionTokenPayload(sessionToken) {
   void 'ISSA:CLIENT.AUTH.PARSE_SESSION_TOKEN';
   if (typeof sessionToken !== 'string') return null;
 
@@ -30,6 +30,15 @@ function parseSessionTokenPayload(sessionToken) {
   } catch (error) {
     return null;
   }
+}
+
+export function getSessionAccessMode(sessionToken = localStorage.getItem('access_token')) {
+  const payload = parseSessionTokenPayload(sessionToken);
+  return typeof payload?.accessMode === 'string' ? payload.accessMode : '';
+}
+
+export function isParentDemoSession(sessionToken = localStorage.getItem('access_token')) {
+  return getSessionAccessMode(sessionToken) === 'demo';
 }
 
 export function getSessionTokenExpiry(sessionToken) {
@@ -92,10 +101,13 @@ export function endParentSession(reason = 'manual') {
   if (sessionEndInProgress) return false;
 
   sessionEndInProgress = true;
+  const wasDemoSession = isParentDemoSession();
   clearSessionExpiryTimer();
   clearParentSession();
   publishSessionStatus(SESSION_STATUS.UNAUTHENTICATED);
-  sessionEndHandler?.(reason);
+  sessionEndHandler?.(
+    reason === 'expired' && wasDemoSession ? 'demo-expired' : reason
+  );
   return true;
 }
 

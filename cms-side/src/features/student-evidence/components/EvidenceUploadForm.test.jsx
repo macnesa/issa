@@ -133,4 +133,26 @@ describe('EvidenceUploadForm', () => {
     resolveUpload();
     expect(await screen.findByText('Bukti perkembangan berhasil disimpan.')).toBeInTheDocument();
   });
+
+  it('mode demo memblokir file dan submit sebelum FormData atau upload dibuat', () => {
+    const onUpload = vi.fn();
+    const { container } = render(
+      <EvidenceUploadForm demoReadOnly onUpload={onUpload} />
+    );
+
+    expect(screen.getByLabelText('Foto evidence')).toBeDisabled();
+    expect(screen.getByRole('button', {
+      name: 'Simpan evidence',
+    })).toBeDisabled();
+    expect(screen.getByText(
+      'Tidak tersedia dalam mode demo.'
+    )).toBeInTheDocument();
+
+    fireEvent.submit(container.querySelector('form'));
+
+    expect(onUpload).not.toHaveBeenCalled();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Perubahan data tidak tersedia dalam mode demo.'
+    );
+  });
 });

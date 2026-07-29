@@ -17,6 +17,9 @@ function parseFrontendOrigins(value) {
 }
 
 function assertProductionEnvironment() {
+  const { getPublicDemoConfig } = require('./config/public-demo');
+  getPublicDemoConfig();
+
   if (process.env.NODE_ENV !== 'production') return;
 
   const requiredVariables = ['DATABASE_URL', 'FRONTEND_ORIGINS', 'JWT_SECRET'];
@@ -36,6 +39,9 @@ const http = require('http');
 const { sequelize } = require('./models');
 const router = require('./routes');
 const { errorHandler } = require('./middlewares/errorHandler');
+const {
+  createPublicDemoAccessGuard,
+} = require('./middlewares/public-demo-access');
 const { initializeRealtimeServer } = require('./realtime/realtime-server');
 
 const app = express();
@@ -54,14 +60,15 @@ function configuredOrigins() {
 
 const allowedOrigins = configuredOrigins();
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 app.use(cors({
   origin(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     return callback(null, false);
   },
 }));
+app.use(createPublicDemoAccessGuard());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.get('/health', async (req, res) => {
   try {

@@ -46,16 +46,16 @@ export default function LessonsList() {
   if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchClassSchedule())} /></main>;
 
   return (
-    <main className="page-container schedule-page">
-      <section className="editorial-page-heading schedule-page__heading">
-        <h1 className="page-title">Jadwal</h1>
+    <main className="page-container grid items-start gap-5 sm:gap-6">
+      <section className="relative pt-2 pb-[0.55rem]">
+        <h1 className="page-title text-[clamp(1.7rem,5vw,2.25rem)]">Jadwal</h1>
         <p className="page-supporting-text mt-1">Jadwal mingguan untuk kelas siswa.</p>
       </section>
 
       {!scheduleDays.length ? (
         <EmptyState message="Belum ada jadwal yang tersedia." />
       ) : (
-        <section className="schedule-page__list">
+        <section className="grid gap-[0.8rem] min-[900px]:grid-cols-2">
           {scheduleDays.map(([scheduleDay, lessonNames]) => (
             <ScheduleList key={scheduleDay} day={dayLabels[scheduleDay] || scheduleDay} lessons={lessonNames} />
           ))}

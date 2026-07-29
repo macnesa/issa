@@ -13,6 +13,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   ai_narrative_unavailable: "AI assistant belum tersedia pada server.",
   ai_provider_unavailable: "Draf belum dapat disusun. Coba kembali beberapa saat lagi.",
   ai_generation_invalid_output: "Draf AI tidak dapat digunakan karena tidak sesuai dengan sumber yang tersedia.",
+  publicDemoRateLimitExceeded: "Batas penggunaan demo telah tercapai. Coba lagi nanti.",
+  publicDemoReadOnly: "Perubahan data tidak tersedia dalam mode demo.",
 };
 
 export class AiNarrativeRequestError extends Error {
@@ -59,7 +61,9 @@ export async function generateAiNarrative(
   if (!response.ok) {
     const code = safeErrorCode(payload);
     throw new AiNarrativeRequestError(
-      (code && ERROR_MESSAGES[code]) || "Draf belum dapat disusun.",
+      response.status === 429
+        ? "Batas penggunaan demo telah tercapai. Coba lagi nanti."
+        : (code && ERROR_MESSAGES[code]) || "Draf belum dapat disusun.",
     );
   }
 

@@ -1,5 +1,9 @@
 import baseUrl from "../config/api";
 import { reportApiConnection } from "./connectionStatus";
+import {
+  assertTeacherMutationAllowed,
+  readApiError,
+} from "../auth/demoAccess";
 
 export class TeacherSyncApiError extends Error {
   constructor(message, status, code = null) {
@@ -27,6 +31,7 @@ export async function submitTeacherSyncBatch(
     token = localStorage.getItem("access_token"),
   } = {}
 ) {
+  assertTeacherMutationAllowed(token);
   if (!Array.isArray(mutations) || mutations.length < 1 || mutations.length > 50) {
     throw new Error("Sync batch must contain 1 to 50 mutations.");
   }
@@ -56,10 +61,15 @@ export async function submitTeacherSyncBatch(
     responseBody = null;
   }
   if (!response.ok) {
+    const apiError = readApiError(
+      responseBody,
+      "Sinkronisasi belum dapat diproses.",
+      response.status
+    );
     throw new TeacherSyncApiError(
-      responseBody?.msg || "Sinkronisasi belum dapat diproses.",
+      apiError.message,
       response.status,
-      responseBody?.code || null
+      apiError.code || null
     );
   }
   return {

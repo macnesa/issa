@@ -15,6 +15,9 @@ import {
 import "./JournalTimeline.css";
 
 function retractErrorMessage(error) {
+  if (error?.code === "publicDemoReadOnly") {
+    return "Perubahan data tidak tersedia dalam mode demo.";
+  }
   if (error?.status === 401 || error?.status === 403) {
     return "Catatan tidak dapat dicabut. Catatan mungkin dibuat oleh guru lain.";
   }
@@ -25,6 +28,7 @@ export default function JournalTimeline({
   entries,
   onEdit,
   onRetract,
+  demoReadOnly = false,
   readOnly = false,
 }) {
   const [entryToRetract, setEntryToRetract] = useState(null);
@@ -38,6 +42,7 @@ export default function JournalTimeline({
   }
 
   async function confirmRetraction() {
+    if (demoReadOnly) return;
     if (!entryToRetract || retracting) return;
     setRetracting(true);
     setRetractError("");
@@ -133,13 +138,21 @@ export default function JournalTimeline({
                   </div>
                 )}
 
-                {!readOnly && <div className="journal-timeline__actions">
-                  <button type="button" onClick={() => onEdit(entry)}>
+                {(!readOnly || demoReadOnly) && (
+                <div className="journal-timeline__actions">
+                  <button
+                    type="button"
+                    disabled={readOnly}
+                    onClick={() => {
+                      if (!readOnly) onEdit(entry);
+                    }}
+                  >
                     Edit
                   </button>
                   <button
                     type="button"
                     className="journal-timeline__retract"
+                    disabled={readOnly}
                     onClick={() => {
                       setRetractError("");
                       setEntryToRetract(entry);
@@ -147,7 +160,13 @@ export default function JournalTimeline({
                   >
                     Cabut catatan
                   </button>
-                </div>}
+                  {demoReadOnly && (
+                    <span className="text-xs text-[var(--muted)]">
+                      Tidak tersedia dalam mode demo.
+                    </span>
+                  )}
+                </div>
+                )}
               </article>
             </li>
           );

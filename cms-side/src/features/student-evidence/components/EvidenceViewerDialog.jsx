@@ -8,6 +8,7 @@ import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
 import "./EvidenceViewerDialog.css";
 
 export default function EvidenceViewerDialog({
+  demoReadOnly = false,
   evidence,
   onClose,
   onRequestRetraction,
@@ -34,10 +35,18 @@ export default function EvidenceViewerDialog({
             <PrimaryButton
               type="button"
               className="evidence-viewer-dialog__retract"
-              onClick={() => onRequestRetraction(evidence)}
+              disabled={demoReadOnly}
+              onClick={() => {
+                if (!demoReadOnly) onRequestRetraction(evidence);
+              }}
             >
               Cabut evidence
             </PrimaryButton>
+            {demoReadOnly && (
+              <span className="text-xs text-[var(--muted)]">
+                Tidak tersedia dalam mode demo.
+              </span>
+            )}
           </div>
         </DialogPanel>
       </div>

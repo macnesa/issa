@@ -10,6 +10,7 @@ import StudentEvidenceSection from "../features/student-evidence/components/Stud
 import StudentLearningJournalSection from "../features/student-learning-journal/components/StudentLearningJournalSection";
 import {
   fetchStudentDetail,
+  fetchStudentList,
   storeStudentDetail,
   updateStudentRecord,
 } from "../store/action/ActionCreator";
@@ -25,41 +26,27 @@ import {
 } from "../offline-workspace/attendanceOffline";
 import AttendanceRecordEditor from "../features/attendance/components/AttendanceRecordEditor";
 import AiNarrativeWorkspace from "../features/ai-learning-narrative/AiNarrativeWorkspace";
+import { getAuthorizedClassName } from "../features/students/authorizedClass";
+import { DEMO_READ_ONLY_MESSAGE } from "../auth/demoAccess";
 import "../features/students/student-record.css";
-
-const sectionIndexClasses = [
-  "grid min-w-0 [place-items:start_center] border-r border-[var(--border-strong)]",
-  "pt-[1.15rem] text-[0.7rem] font-[850] tracking-[0.08em] text-[var(--muted)]",
-].join(" ");
-
-const sectionKickerClasses = [
-  "m-0 text-[0.68rem] font-[850] uppercase tracking-[0.13em]",
-  "text-[var(--accent)]",
-].join(" ");
-
-const sectionTitleClasses = [
-  "mt-[0.3rem] text-[clamp(1.2rem,2vw,1.5rem)] font-[820]",
-  "leading-[1.2] tracking-[-0.015em] text-[var(--text)]",
-].join(" ");
-
-const recordSectionClasses = "mt-8 min-w-0";
-
-const recordSectionHeadingClasses = [
-  "mb-4 grid min-w-0 grid-cols-[3rem_minmax(0,1fr)]",
-  "border-y border-b-[var(--border-strong)] border-t-2 border-t-[var(--accent-strong)]",
-  "bg-[#edf6f4] max-[639px]:grid-cols-[2.25rem_minmax(0,1fr)]",
-].join(" ");
 
 const recordSurfaceClasses = [
   "min-w-0 overflow-hidden !border-2 !border-[var(--border-strong)]",
-  "!rounded-[0.25rem_var(--surface-radius)_0.25rem_0.25rem] !bg-[#fffdf7]",
+  "!rounded-[0.25rem] !bg-[#fffdf7] !shadow-none",
 ].join(" ");
 
 const unavailableSurfaceClasses = [
   "min-w-0 !border-2 !border-[var(--border-strong)]",
-  "!rounded-[0.25rem_var(--surface-radius)_0.25rem_0.25rem]",
-  "!bg-[#fffdf7] p-5",
+  "!rounded-[0.25rem] !bg-[#fffdf7] p-5 !shadow-none",
 ].join(" ");
+
+const workspaceViews = Object.freeze([
+  { id: "summary", label: "Ringkasan" },
+  { id: "attendance", label: "Kehadiran" },
+  { id: "scores", label: "Nilai" },
+  { id: "journal-evidence", label: "Jurnal & Bukti" },
+  { id: "feedback", label: "Feedback" },
+]);
 
 function formatCachedAt(timestamp) {
   if (!timestamp) return "";
@@ -73,8 +60,9 @@ export default function StudentDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { studentId } = useParams();
-  const { teacherIdentity, onlineHint } = useOfflineWorkspace();
+  const { isDemo, teacherIdentity, onlineHint } = useOfflineWorkspace();
   const student = useSelector((state) => state.students.student);
+  const studentList = useSelector((state) => state.students.students);
   const [feedback, setFeedback] = useState("");
   const [observedAt, setObservedAt] = useState("");
   const [message, setMessage] = useState("");
@@ -86,14 +74,18 @@ export default function StudentDetail() {
   const [cachedSnapshot, setCachedSnapshot] = useState(null);
   const [usingCachedSnapshot, setUsingCachedSnapshot] = useState(false);
   const [aiWorkspaceOpen, setAiWorkspaceOpen] = useState(false);
+  const [activeWorkspace, setActiveWorkspace] = useState("summary");
+  const [showAllAttendances, setShowAllAttendances] = useState(false);
+  const [classLookupAttemptedFor, setClassLookupAttemptedFor] = useState(null);
   const feedbackInputRef = useRef(null);
+  const authorizedClassName = getAuthorizedClassName(student, studentList);
   const serverAttendances = useMemo(() => orderBy(
     student?.Attendances || [],
     [(item) => String(item.attendanceDate || "")],
     ["desc"]
   ), [student?.Attendances]);
   const attendanceWorkspace = useAttendanceOfflineRecords({
-    teacherId: teacherIdentity?.id,
+    teacherId: isDemo ? null : teacherIdentity?.id,
     studentId,
     serverRecords: serverAttendances,
   });
@@ -119,7 +111,7 @@ export default function StudentDetail() {
     setUsingCachedSnapshot(false);
 
     loadStudentDetailWorkspace({
-      teacherId: teacherIdentity?.id,
+      teacherId: isDemo ? null : teacherIdentity?.id,
       studentId,
       onlineHint,
       fetchStudent: () => dispatch(fetchStudentDetail(studentId)),
@@ -150,13 +142,41 @@ export default function StudentDetail() {
     onlineHint,
     studentId,
     teacherIdentity?.id,
+    isDemo,
   ]);
 
+  useEffect(() => {
+    setActiveWorkspace("summary");
+    setShowAllAttendances(false);
+    setClassLookupAttemptedFor(null);
+  }, [studentId]);
+
   useEffect(() => { setFeedback(student?.feedback || ""); }, [student]);
+
+  useEffect(() => {
+    if (
+      !student?.id
+      || authorizedClassName
+      || !onlineHint
+      || Number(classLookupAttemptedFor) === Number(student.id)
+    ) return;
+    setClassLookupAttemptedFor(student.id);
+    dispatch(fetchStudentList({}, 1)).catch(() => {});
+  }, [
+    authorizedClassName,
+    classLookupAttemptedFor,
+    dispatch,
+    onlineHint,
+    student?.id,
+  ]);
 
   const handleStudentFeedbackSubmit = (event) => {
     void 'ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK';
     event.preventDefault();
+    if (isDemo) {
+      setMessage(DEMO_READ_ONLY_MESSAGE);
+      return;
+    }
     const content = feedback.trim();
     if (!content) return setMessage("Feedback tidak boleh kosong.");
     const payload = { feedback: content };
@@ -168,7 +188,7 @@ export default function StudentDetail() {
   };
 
   const handleJournalLoaded = useCallback((entries) => {
-    if (!teacherIdentity?.id) return;
+    if (isDemo || !teacherIdentity?.id) return;
     return mergeWorkspaceSnapshot({
       teacherId: teacherIdentity.id,
       studentId,
@@ -176,7 +196,7 @@ export default function StudentDetail() {
     })
       .then((snapshot) => setCachedSnapshot(snapshot))
       .catch(() => {});
-  }, [studentId, teacherIdentity?.id]);
+  }, [isDemo, studentId, teacherIdentity?.id]);
 
   const handleAiDraftHandoff = useCallback((draftText) => {
     setFeedback(draftText);
@@ -195,27 +215,58 @@ export default function StudentDetail() {
     [(item) => String(item.attendanceDate || "")],
     ["desc"]
   );
-  const scores = student?.Scores || [];
+  const scores = orderBy(
+    student?.Scores || [],
+    [(item) => String(item.recordedAt || "")],
+    ["desc"]
+  );
+  const visibleAttendances = showAllAttendances
+    ? attendances
+    : attendances.slice(0, 8);
+  const attendancePresentCount = attendances.filter(
+    (attendance) => String(attendance.status || "").toLowerCase() === "hadir"
+  ).length;
+  const numericScores = scores
+    .map((score) => score.value)
+    .filter((score) => score !== null && score !== undefined && score !== "")
+    .map(Number)
+    .filter(Number.isFinite);
+  const averageScore = numericScores.length
+    ? Math.round(
+      numericScores.reduce((total, score) => total + score, 0)
+        / numericScores.length
+    )
+    : null;
+  const latestFeedbackRecord = feedbackHistory.data[0];
+  const latestTeacherInformation = latestFeedbackRecord?.content
+    || student?.feedback
+    || "";
+  const recentJournalEntries = orderBy(
+    cachedSnapshot?.journalEntries || [],
+    [(entry) => String(entry.observedAt || entry.createdAt || "")],
+    ["desc"]
+  ).slice(0, 2);
   const scoreStatus = (status) => (status === true ? "Lulus" : status === false ? "Belum lulus" : undefined);
+
   return <PageContainer className="min-w-0 w-full max-w-[90rem] [overflow-wrap:anywhere]">
     <header
       className={[
-        "flex min-w-0 items-end justify-between gap-6 overflow-hidden",
+        "flex min-w-0 items-stretch justify-between overflow-hidden",
         "border-2 border-[var(--accent-strong)]",
-        "rounded-[0.25rem_var(--surface-radius)_0.25rem_0.25rem]",
+        "rounded-[0.25rem]",
         "bg-[var(--accent-strong)] text-white",
-        "shadow-[0.42rem_0.46rem_0_rgba(23,62,82,0.14)]",
-        "max-[1080px]:items-stretch max-[820px]:grid",
+        "shadow-[0.28rem_0.3rem_0_rgba(23,62,82,0.14)]",
+        "max-[820px]:grid",
       ].join(" ")}
     >
-      <div className="flex min-w-0 items-center gap-5 p-6 max-[639px]:items-start max-[639px]:gap-[0.9rem] max-[639px]:p-[1.1rem]">
+      <div className="flex min-w-0 items-center gap-4 p-5 max-[639px]:items-start max-[639px]:gap-3 max-[639px]:p-4">
         {student?.imgUrl ? (
           <img
             className={[
-              "grid size-[5.25rem] flex-none place-items-center border-2 border-[#fffdf7]",
-              "rounded-[0.75rem_0.25rem_1rem_0.25rem] bg-[#e8f4f2]",
-              "object-cover shadow-[0.24rem_0.28rem_0_#f2d86e]",
-              "max-[639px]:size-16",
+              "grid h-16 w-16 flex-none place-items-center border-2 border-[#fffdf7]",
+              "rounded-[0.25rem] bg-[#e8f4f2] object-cover",
+              "shadow-[0.18rem_0.2rem_0_#f2d86e]",
+              "max-[639px]:h-12 max-[639px]:w-12",
             ].join(" ")}
             src={student.imgUrl}
             alt={student?.name || "Siswa"}
@@ -223,10 +274,11 @@ export default function StudentDetail() {
         ) : (
           <div
             className={[
-              "grid size-[5.25rem] flex-none place-items-center border-2 border-[#fffdf7]",
-              "rounded-[0.75rem_0.25rem_1rem_0.25rem] bg-[#e8f4f2]",
-              "text-[1.75rem] font-black text-[var(--accent-strong)]",
-              "shadow-[0.24rem_0.28rem_0_#f2d86e] max-[639px]:size-16",
+              "grid h-16 w-16 flex-none place-items-center border-2 border-[#fffdf7]",
+              "rounded-[0.25rem] bg-[#e8f4f2]",
+              "text-xl font-black text-[var(--accent-strong)]",
+              "shadow-[0.18rem_0.2rem_0_#f2d86e]",
+              "max-[639px]:h-12 max-[639px]:w-12",
             ].join(" ")}
             aria-hidden="true"
           >
@@ -235,31 +287,31 @@ export default function StudentDetail() {
         )}
         <div className="min-w-0">
           <p className="m-0 text-[0.68rem] font-[850] uppercase tracking-[0.13em] text-[#c7e1eb]">
-            Student development record
+            Record perkembangan siswa
           </p>
-          <h1 className="mt-[0.22rem] max-w-[22ch] text-[clamp(2rem,4vw,2.75rem)] font-[850] leading-[1.02] tracking-[-0.035em] text-white [overflow-wrap:anywhere] max-[639px]:text-[clamp(1.85rem,10vw,2.35rem)]">
+          <h1 className="mt-1 max-w-[28ch] text-[clamp(1.45rem,3vw,2rem)] font-[850] leading-[1.05] tracking-[-0.025em] text-white [overflow-wrap:anywhere]">
             {student?.name || "Detail siswa"}
           </h1>
-          <dl className="mt-4 flex flex-wrap max-[639px]:mt-[0.8rem] max-[639px]:grid max-[639px]:grid-cols-1">
-            <div className="min-w-36 py-[0.35rem] pr-4 max-[639px]:min-w-0 max-[639px]:border-t max-[639px]:border-white/20 max-[639px]:py-[0.45rem] max-[639px]:pr-0">
+          <dl className="mt-3 flex min-w-0 flex-wrap">
+            <div className="min-w-28 py-1 pr-4 max-[639px]:min-w-0">
               <dt className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#c7e1eb]">
                 NIM
               </dt>
-              <dd className="mt-[0.18rem] text-[0.82rem] font-[750] text-white">
-                {student?.NIM || "Belum tersedia"}
+              <dd className="mt-[0.18rem] whitespace-nowrap text-[0.82rem] font-[750] tabular-nums text-white">
+                {student?.NIM || "—"}
               </dd>
             </div>
-            <div className="min-w-36 border-l border-white/30 py-[0.35rem] px-4 max-[639px]:min-w-0 max-[639px]:border-l-0 max-[639px]:border-t max-[639px]:border-white/20 max-[639px]:px-0 max-[639px]:py-[0.45rem]">
+            <div className="min-w-28 border-l border-white/30 px-4 py-1 max-[420px]:border-l-0 max-[420px]:border-t max-[420px]:px-0 max-[420px]:pt-2">
               <dt className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#c7e1eb]">
                 Kelas
               </dt>
               <dd className="mt-[0.18rem] text-[0.82rem] font-[750] text-white">
-                {student?.Class?.name || "Kelas Anda"}
+                {authorizedClassName || "—"}
               </dd>
             </div>
-            <div className="min-w-36 border-l border-white/30 py-[0.35rem] pl-4 max-[639px]:min-w-0 max-[639px]:border-l-0 max-[639px]:border-t max-[639px]:border-white/20 max-[639px]:py-[0.45rem] max-[639px]:pl-0">
+            <div className="min-w-32 border-l border-white/30 py-1 pl-4 max-[520px]:basis-full max-[520px]:border-l-0 max-[520px]:border-t max-[520px]:pl-0 max-[520px]:pt-2">
               <dt className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#c7e1eb]">
-                Status workspace
+                Status
               </dt>
               <dd className="mt-[0.18rem] text-[0.82rem] font-[750] text-white">
                 {usingCachedSnapshot ? "Record tersimpan" : "Record aktif"}
@@ -270,12 +322,11 @@ export default function StudentDetail() {
       </div>
       <div
         className={[
-          "flex max-w-[22rem] flex-none flex-wrap justify-end gap-[0.65rem]",
-          "border-l-2 border-white/25 bg-[#204f62] p-5",
-          "max-[1080px]:max-w-[17rem] max-[1080px]:content-center",
+          "flex max-w-[20rem] flex-none flex-wrap content-center justify-end gap-2",
+          "border-l-2 border-white/25 bg-[#204f62] p-4",
           "max-[820px]:w-full max-[820px]:max-w-none max-[820px]:justify-start",
           "max-[820px]:border-l-0 max-[820px]:border-t-2",
-          "max-[639px]:p-4 max-[639px]:[&>*]:w-full",
+          "max-[520px]:[&>*]:w-full",
         ].join(" ")}
       >
         <SecondaryButton type="button" onClick={() => navigate("/")}>
@@ -308,90 +359,222 @@ export default function StudentDetail() {
       </div>
     )}
 
-    <section
-      className={[
-        "mt-6 grid min-w-0 grid-cols-[3rem_minmax(0,1fr)_minmax(14rem,0.42fr)]",
-        "border-2 border-[var(--border-strong)] border-l-[var(--accent)] bg-[#fffdf7]",
-        "max-[820px]:grid-cols-[3rem_minmax(0,1fr)]",
-        "max-[639px]:grid-cols-[2.25rem_minmax(0,1fr)]",
-      ].join(" ")}
-      aria-labelledby="student-development-summary-title"
+    <nav
+      className="mt-5 min-w-0 overflow-x-auto border-2 border-[var(--border-strong)] bg-[#fffdf7]"
+      aria-label="Workspace siswa"
     >
-      <div className={sectionIndexClasses} aria-hidden="true">01</div>
-      <div className="min-w-0 px-[1.4rem] pb-[1.4rem] pt-5 max-[639px]:px-[0.9rem]">
-        <p className={sectionKickerClasses}>Current understanding</p>
-        <h2 id="student-development-summary-title" className={sectionTitleClasses}>
-          Ringkasan perkembangan
-        </h2>
-        <p
-          className={[
-            "mt-3 max-w-[68ch] whitespace-pre-wrap text-[0.98rem]",
-            "leading-[1.75] text-[var(--text)]",
-            student?.feedback
-              ? ""
-              : "border-l-4 border-[#d4a63a] pl-[0.8rem] text-[var(--muted)]",
-          ].join(" ")}
-        >
-          {student?.feedback || "Belum ada ringkasan perkembangan tersimpan. Tambahkan observasi faktual agar record ini memiliki konteks yang dapat ditinjau."}
-        </p>
+      <div className="flex min-w-max" role="tablist" aria-label="Data siswa">
+        {workspaceViews.map((workspace) => {
+          const isActive = activeWorkspace === workspace.id;
+          return (
+            <button
+              key={workspace.id}
+              id={`student-workspace-tab-${workspace.id}`}
+              className={[
+                "min-h-12 border-0 border-r border-[var(--border-strong)] px-5",
+                "text-[0.75rem] font-[850] uppercase tracking-[0.08em]",
+                "transition-colors last:border-r-0 focus-visible:outline focus-visible:outline-2",
+                "focus-visible:outline-offset-[-0.25rem] focus-visible:outline-[#d4a63a]",
+                isActive
+                  ? "bg-[var(--accent-strong)] text-white"
+                  : "bg-[#fffdf7] text-[var(--text)] hover:bg-[#e8f4f2]",
+              ].join(" ")}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`student-workspace-${workspace.id}`}
+              onClick={() => setActiveWorkspace(workspace.id)}
+            >
+              {workspace.label}
+            </button>
+          );
+        })}
       </div>
-      <dl
-        className={[
-          "col-start-3 grid grid-cols-2 border-l border-[var(--border-strong)] bg-[#e8f4f2]",
-          "max-[820px]:col-start-2 max-[820px]:border-l-0 max-[820px]:border-t",
-          "max-[639px]:col-span-full max-[639px]:col-start-1",
-        ].join(" ")}
-        aria-label="Cakupan record"
-      >
-        <div className="min-w-0 px-4 py-5 max-[639px]:p-[0.9rem]">
-          <dt className="text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[var(--muted)]">
-            Attendance
-          </dt>
-          <dd className="mt-[0.35rem] text-[0.9rem] font-extrabold text-[var(--text)]">
-            {attendances.length ? `${attendances.length} record` : "Data terbatas"}
-          </dd>
-        </div>
-        <div className="min-w-0 border-l border-[var(--border-strong)] px-4 py-5 max-[639px]:p-[0.9rem]">
-          <dt className="text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[var(--muted)]">
-            Score
-          </dt>
-          <dd className="mt-[0.35rem] text-[0.9rem] font-extrabold text-[var(--text)]">
-            {scores.length ? `${scores.length} record` : "Data terbatas"}
-          </dd>
-        </div>
-      </dl>
-    </section>
+    </nav>
 
-    <section className={recordSectionClasses} aria-labelledby="student-context-title">
-      <header className={recordSectionHeadingClasses}>
-        <div className={sectionIndexClasses} aria-hidden="true">02</div>
-        <div className="min-w-0 px-[1.1rem] pb-4 pt-[0.9rem] max-[639px]:px-[0.9rem]">
-          <p className={sectionKickerClasses}>Supporting records</p>
-          <h2 id="student-context-title" className={sectionTitleClasses}>
-            Konteks attendance dan akademik
+    {activeWorkspace === "summary" && (
+      <section
+        id="student-workspace-summary"
+        className="mt-5 min-w-0"
+        role="tabpanel"
+        aria-labelledby="student-workspace-tab-summary"
+      >
+        <header className="mb-4 border-b-2 border-[var(--border-strong)] pb-3">
+          <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[var(--accent)]">
+            Workspace siswa
+          </p>
+          <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
+            Ringkasan terkini
           </h2>
-          <span className="mt-[0.38rem] block max-w-[72ch] text-[0.82rem] leading-6 text-[var(--muted)]">
-            Record pendukung memberi konteks tanpa menentukan kesimpulan siswa.
-          </span>
-        </div>
-      </header>
-      <div className="grid min-w-0 grid-cols-2 items-start gap-5 max-[820px]:grid-cols-1">
-        <Surface className={`${recordSurfaceClasses} !border-t-[#56867e]`}>
-          <div className="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--border-strong)] bg-[#edf6f4] px-[1.1rem] py-4 max-[639px]:flex-wrap">
-            <div className="min-w-0">
-              <p className={sectionKickerClasses}>A / Attendance</p>
-              <h3 className="mt-[0.2rem] text-base font-[820] text-[var(--text)]">
-                Attendance record
+          <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
+            Cakupan terbaru untuk peninjauan cepat tanpa membuka seluruh histori.
+          </p>
+        </header>
+
+        <div className="grid min-w-0 grid-cols-2 gap-4 max-[820px]:grid-cols-1">
+          <Surface className={recordSurfaceClasses}>
+            <div className="border-b border-[var(--border-strong)] bg-[#edf6f4] px-4 py-3">
+              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[var(--accent)]">
+                Kehadiran
+              </p>
+              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
+                Ringkasan attendance
               </h3>
-              <span className="mt-[0.3rem] block text-[0.76rem] leading-6 text-[var(--muted)]">
-                Perbarui record yang sudah ada. Attendance baru tetap memerlukan koneksi.
-              </span>
             </div>
-            <strong className="flex-none border-l-2 border-[var(--border-strong)] pl-[0.8rem] text-[0.8rem] text-[var(--text)] max-[639px]:basis-full max-[639px]:border-l-0 max-[639px]:border-t max-[639px]:pl-0 max-[639px]:pt-[0.55rem]">
-              {attendances.length ? `${attendances.length} tercatat` : "Belum ada"}
-            </strong>
+            <dl className="grid grid-cols-3 divide-x divide-[var(--border)]">
+              <div className="min-w-0 p-4">
+                <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Record</dt>
+                <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{attendances.length}</dd>
+              </div>
+              <div className="min-w-0 p-4">
+                <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Hadir</dt>
+                <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{attendancePresentCount}</dd>
+              </div>
+              <div className="min-w-0 p-4">
+                <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Terbaru</dt>
+                <dd className="mt-1 text-[0.78rem] font-[800] leading-5 text-[var(--text)]">
+                  {attendances[0]
+                    ? `${formatRecordedDate(attendances[0].attendanceDate)} · ${attendances[0].status}`
+                    : "Belum ada"}
+                </dd>
+              </div>
+            </dl>
+          </Surface>
+
+          <Surface className={recordSurfaceClasses}>
+            <div className="border-b border-[var(--border-strong)] bg-[#f2eff8] px-4 py-3">
+              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[#665982]">
+                Akademik
+              </p>
+              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
+                Ringkasan nilai
+              </h3>
+            </div>
+            {usingCachedSnapshot ? (
+              <p className="m-0 p-4 text-[0.82rem] leading-6 text-[var(--muted)]">
+                Nilai memerlukan koneksi dan tidak tersedia dalam snapshot offline minimum.
+              </p>
+            ) : (
+              <dl className="grid grid-cols-3 divide-x divide-[var(--border)]">
+                <div className="min-w-0 p-4">
+                  <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Record</dt>
+                  <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{scores.length}</dd>
+                </div>
+                <div className="min-w-0 p-4">
+                  <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Rata-rata</dt>
+                  <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{averageScore ?? "-"}</dd>
+                </div>
+                <div className="min-w-0 p-4">
+                  <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Terbaru</dt>
+                  <dd className="mt-1 text-[0.78rem] font-[800] leading-5 text-[var(--text)]">
+                    {scores[0]
+                      ? `${scores[0].Lesson?.name || "Lesson"} · ${scores[0].value}`
+                      : "Belum ada"}
+                  </dd>
+                </div>
+              </dl>
+            )}
+          </Surface>
+
+          <Surface className={recordSurfaceClasses}>
+            <div className="border-b border-[var(--border-strong)] bg-[#fff8df] px-4 py-3">
+              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[#7f611e]">
+                Informasi guru
+              </p>
+              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
+                Informasi relevan terbaru
+              </h3>
+            </div>
+            <div className="p-4">
+              <p className="m-0 whitespace-pre-wrap text-[0.86rem] leading-6 text-[var(--text)]">
+                {latestTeacherInformation || "Belum ada informasi guru yang tersimpan."}
+              </p>
+              {latestFeedbackRecord && (
+                <p className="mt-3 border-t border-[var(--border)] pt-3 text-[0.7rem] text-[var(--muted)]">
+                  {latestFeedbackRecord.Teacher?.name || "Guru"} · {formatRecordedDate(latestFeedbackRecord.observedAt || latestFeedbackRecord.createdAt)}
+                </p>
+              )}
+            </div>
+          </Surface>
+
+          <Surface className={recordSurfaceClasses}>
+            <div className="border-b border-[var(--border-strong)] bg-[#eef4f5] px-4 py-3">
+              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[var(--accent)]">
+                Jurnal & bukti
+              </p>
+              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
+                Konteks observasi terbaru
+              </h3>
+            </div>
+            {recentJournalEntries.length ? (
+              <ol className="m-0 list-none divide-y divide-[var(--border)] p-0">
+                {recentJournalEntries.map((entry) => (
+                  <li className="min-w-0 p-4" key={entry.id}>
+                    <div className="flex min-w-0 items-baseline justify-between gap-3">
+                      <strong className="min-w-0 text-[0.76rem] text-[var(--text)]">
+                        {entry.teacher?.name || "Guru"}
+                      </strong>
+                      <time className="flex-none text-[0.68rem] text-[var(--muted)]" dateTime={entry.observedAt}>
+                        {formatRecordedDate(entry.observedAt)}
+                      </time>
+                    </div>
+                    <p className="mt-2 line-clamp-2 text-[0.82rem] leading-6 text-[var(--text)]">
+                      {entry.content}
+                    </p>
+                    {entry.evidence && (
+                      <p className="mt-2 border-l-2 border-[#d4a63a] pl-2 text-[0.7rem] text-[var(--muted)]">
+                        Bukti: {entry.evidence.title || "Evidence terkait"}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="m-0 p-4 text-[0.82rem] leading-6 text-[var(--muted)]">
+                Belum ada konteks jurnal tersimpan untuk ditampilkan pada ringkasan.
+              </p>
+            )}
+          </Surface>
+        </div>
+      </section>
+    )}
+
+    {activeWorkspace === "attendance" && (
+      <section
+        id="student-workspace-attendance"
+        className="mt-5 min-w-0"
+        role="tabpanel"
+        aria-labelledby="student-workspace-tab-attendance"
+      >
+        <header className="mb-4 flex min-w-0 items-end justify-between gap-4 border-b-2 border-[var(--border-strong)] pb-3 max-[639px]:items-start max-[639px]:flex-col">
+          <div className="min-w-0">
+            <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[var(--accent)]">
+              Record operasional
+            </p>
+            <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
+              Kehadiran
+            </h2>
+            <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
+              Record terbaru ditampilkan lebih dahulu. Status pada record yang tersedia tetap dapat diperbarui.
+            </p>
           </div>
-          <div className="student-record-attendance-list grid min-w-0 px-[1.1rem] max-[639px]:px-[0.9rem]">
+          <strong className="flex-none text-[0.78rem] text-[var(--text)]">
+            {attendances.length ? `${attendances.length} record` : "Belum ada record"}
+          </strong>
+        </header>
+
+        <Surface className={`${recordSurfaceClasses} !border-t-[#56867e]`}>
+          {!isEmpty(attendances) && (
+            <div
+              className="student-record-attendance-columns hidden border-b border-[var(--border-strong)] bg-[#edf6f4] px-4 py-2 text-[0.62rem] font-[850] uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:grid"
+              aria-hidden="true"
+            >
+              <span>Record</span>
+              <span>Status</span>
+              <span>Sinkronisasi</span>
+            </div>
+          )}
+          <div className="student-record-attendance-list grid min-w-0 px-4 max-[639px]:px-3">
             {isEmpty(attendances) && (
               <div className="my-4">
                 <EmptyState
@@ -400,11 +583,12 @@ export default function StudentDetail() {
                 />
               </div>
             )}
-            {attendances.map((attendance) => (
+            {visibleAttendances.map((attendance) => (
               <AttendanceRecordEditor
                 key={attendance.id}
                 record={attendance}
                 saving={attendanceWorkspace.savingEntityKey === attendance.entityKey}
+                readOnly={isDemo}
                 onChange={(record, status) => {
                   attendanceWorkspace.updateAttendance(record, status)
                     .catch(() => {});
@@ -412,164 +596,231 @@ export default function StudentDetail() {
               />
             ))}
           </div>
+          {attendances.length > 8 && (
+            <div className="border-t border-[var(--border)] px-4 py-3">
+              <SecondaryButton
+                type="button"
+                onClick={() => setShowAllAttendances((current) => !current)}
+              >
+                {showAllAttendances
+                  ? "Tampilkan 8 record terbaru"
+                  : `Tampilkan seluruh ${attendances.length} record`}
+              </SecondaryButton>
+            </div>
+          )}
           <p
-            className="m-0 min-h-5 border-t border-[var(--border)] px-[1.1rem] py-[0.65rem] text-[0.74rem] text-[var(--muted)]"
+            className="m-0 min-h-5 border-t border-[var(--border)] px-4 py-[0.65rem] text-[0.74rem] text-[var(--muted)]"
             aria-live="polite"
           >
             {attendanceWorkspace.message}
           </p>
         </Surface>
+      </section>
+    )}
 
-        {usingCachedSnapshot ? (
-          <Surface className={`${recordSurfaceClasses} !border-t-[#72668c]`}>
-            <div className="grid min-w-0 px-[1.1rem] max-[639px]:px-[0.9rem]">
-              <div className="my-4">
-                <EmptyState
-                  title="Score memerlukan koneksi"
-                  description="Score tidak disimpan dalam workspace offline minimum."
-                />
-              </div>
-            </div>
-          </Surface>
-        ) : (
-          <Surface className={`${recordSurfaceClasses} !border-t-[#72668c]`}>
-            <div className="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--border-strong)] bg-[#f2eff8] px-[1.1rem] py-4 max-[639px]:flex-wrap">
-              <div className="min-w-0">
-                <p className={sectionKickerClasses}>B / Academic</p>
-                <h3 className="mt-[0.2rem] text-base font-[820] text-[var(--text)]">
-                  Score record
-                </h3>
-                <span className="mt-[0.3rem] block text-[0.76rem] leading-6 text-[var(--muted)]">
-                  Nilai dan KKM per assessment.
-                </span>
-              </div>
-              <Link className="issa-button issa-button--secondary" to={`/scores/${studentId}`}>
-                Kelola
-              </Link>
-            </div>
-            <div className="grid min-w-0 px-[1.1rem] max-[639px]:px-[0.9rem]">
-              {isEmpty(scores) && (
-                <div className="my-4">
-                  <EmptyState
-                    title="Belum ada score"
-                    description="Konteks akademik belum cukup untuk ditinjau."
-                  />
-                </div>
-              )}
-              {scores.map((score, scoreIndex) => (
-                <article
-                  key={score.id}
-                  className={[
-                    "flex min-w-0 items-start justify-between gap-4 bg-transparent py-4",
-                    "max-[639px]:gap-3",
-                    scoreIndex > 0 ? "border-t border-[var(--border)]" : "",
-                  ].join(" ")}
-                >
-                  <div className="min-w-0">
-                    <p className="m-0 text-[0.9rem] font-extrabold text-[var(--text)]">
-                      {score.Lesson?.name || "Lesson"}
-                    </p>
-                    <span className="mt-1 block text-[0.74rem] text-[var(--muted)]">
-                      {score.Assignment?.name || "Assessment"} · KKM {score.Lesson?.KKM ?? "-"}
-                    </span>
-                    <time
-                      className="mt-2 block text-[0.74rem] text-[var(--muted)]"
-                      dateTime={score.recordedAt}
-                    >
-                      {formatRecordedDate(score.recordedAt)}
-                    </time>
-                  </div>
-                  <div className="grid flex-none justify-items-end gap-[0.35rem]">
-                    <strong className="text-[1.35rem] leading-none text-[var(--text)] tabular-nums">
-                      {score.value}
-                    </strong>
-                    <StatusBadge status={scoreStatus(score.status)} />
-                  </div>
-                </article>
-              ))}
-            </div>
-          </Surface>
-        )}
-      </div>
-    </section>
+    {activeWorkspace === "scores" && (
+      <section
+        id="student-workspace-scores"
+        className="mt-5 min-w-0"
+        role="tabpanel"
+        aria-labelledby="student-workspace-tab-scores"
+      >
+        <header className="mb-4 flex min-w-0 items-end justify-between gap-4 border-b-2 border-[var(--border-strong)] pb-3 max-[639px]:items-start max-[639px]:flex-col">
+          <div className="min-w-0">
+            <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[#665982]">
+              Ledger akademik
+            </p>
+            <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
+              Nilai
+            </h2>
+            <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
+              Riwayat nilai, assessment, KKM, dan status dalam satu ledger.
+            </p>
+          </div>
+          {!usingCachedSnapshot && (
+            <Link className="issa-button issa-button--secondary" to={`/scores/${studentId}`}>
+              Kelola nilai
+            </Link>
+          )}
+        </header>
 
-    <section className={recordSectionClasses} aria-labelledby="student-learning-records-title">
-      <header className={recordSectionHeadingClasses}>
-        <div className={sectionIndexClasses} aria-hidden="true">03</div>
-        <div className="min-w-0 px-[1.1rem] pb-4 pt-[0.9rem] max-[639px]:px-[0.9rem]">
-          <p className={sectionKickerClasses}>Observed learning</p>
-          <h2 id="student-learning-records-title" className={sectionTitleClasses}>
-            Catatan dan bukti belajar
-          </h2>
-          <span className="mt-[0.38rem] block max-w-[72ch] text-[0.82rem] leading-6 text-[var(--muted)]">
-            Observasi kronologis dibaca bersama dokumentasi yang mendukungnya.
-          </span>
-        </div>
-      </header>
-      <div className="grid min-w-0 grid-cols-[minmax(0,1.12fr)_minmax(21rem,0.88fr)] items-start gap-5 max-[1080px]:grid-cols-1">
-        <StudentLearningJournalSection
-          studentId={studentId}
-          refreshKey={journalRefreshKey}
-          cachedEntries={cachedSnapshot?.journalEntries || []}
-          hasCachedSnapshot={Boolean(cachedSnapshot)}
-          offlineReadOnly={usingCachedSnapshot}
-          onJournalLoaded={handleJournalLoaded}
-        />
         {usingCachedSnapshot ? (
           <Surface className={unavailableSurfaceClasses}>
             <EmptyState
-              title="Evidence memerlukan koneksi"
-              description="Evidence tidak disimpan dalam workspace offline minimum."
+              title="Score memerlukan koneksi"
+              description="Score tidak disimpan dalam workspace offline minimum."
             />
           </Surface>
         ) : (
-          <StudentEvidenceSection
-            studentId={studentId}
-            onEvidenceChanged={() => {
-              setJournalRefreshKey((current) => current + 1);
-            }}
-          />
+          <Surface className={`${recordSurfaceClasses} !border-t-[#72668c]`}>
+            {isEmpty(scores) ? (
+              <div className="p-4">
+                <EmptyState
+                  title="Belum ada score"
+                  description="Konteks akademik belum cukup untuk ditinjau."
+                />
+              </div>
+            ) : (
+              <div className="min-w-0">
+                <div
+                  className="hidden grid-cols-[minmax(0,1.25fr)_minmax(0,1.2fr)_8rem_5rem_8rem] gap-4 border-b border-[var(--border-strong)] bg-[#f2eff8] px-4 py-2 text-[0.62rem] font-[850] uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:grid"
+                  aria-hidden="true"
+                >
+                  <span>Pelajaran</span>
+                  <span>Assessment</span>
+                  <span>Tanggal</span>
+                  <span>Nilai</span>
+                  <span>Status</span>
+                </div>
+                <ol className="m-0 list-none divide-y divide-[var(--border)] p-0">
+                  {scores.map((score) => (
+                    <li
+                      key={score.id}
+                      className="grid min-w-0 gap-3 px-4 py-3 min-[821px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1.2fr)_8rem_5rem_8rem] min-[821px]:items-center min-[821px]:gap-4"
+                    >
+                      <div className="min-w-0">
+                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                          Pelajaran
+                        </span>
+                        <p className="m-0 text-[0.86rem] font-[820] text-[var(--text)]">
+                          {score.Lesson?.name || "Lesson"}
+                        </p>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                          Assessment
+                        </span>
+                        <p className="m-0 text-[0.8rem] text-[var(--text)]">
+                          {score.Assignment?.name || "Assessment"}
+                        </p>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                          Tanggal
+                        </span>
+                        <time className="block text-[0.75rem] text-[var(--muted)]" dateTime={score.recordedAt}>
+                          {formatRecordedDate(score.recordedAt)}
+                        </time>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                          Nilai
+                        </span>
+                        <strong className="block text-lg text-[var(--text)] tabular-nums">
+                          {score.value}
+                        </strong>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="mb-1 block text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                          KKM {score.Lesson?.KKM ?? "-"}
+                        </span>
+                        <StatusBadge status={scoreStatus(score.status)} />
+                        <span className="mt-1 hidden text-[0.65rem] text-[var(--muted)] min-[821px]:block">
+                          KKM {score.Lesson?.KKM ?? "-"}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+          </Surface>
         )}
-      </div>
-    </section>
+      </section>
+    )}
 
-    <section className={recordSectionClasses} aria-labelledby="student-feedback-title">
-      <header className={recordSectionHeadingClasses}>
-        <div className={sectionIndexClasses} aria-hidden="true">04</div>
-        <div className="min-w-0 px-[1.1rem] pb-4 pt-[0.9rem] max-[639px]:px-[0.9rem]">
-          <p className={sectionKickerClasses}>Teacher-owned narrative</p>
-          <h2 id="student-feedback-title" className={sectionTitleClasses}>
-            Tinjau dan simpan Feedback
+    {activeWorkspace === "journal-evidence" && (
+      <section
+        id="student-workspace-journal-evidence"
+        className="mt-5 min-w-0"
+        role="tabpanel"
+        aria-labelledby="student-workspace-tab-journal-evidence"
+      >
+        <header className="mb-4 border-b-2 border-[var(--border-strong)] pb-3">
+          <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[var(--accent)]">
+            Observasi dan dokumentasi
+          </p>
+          <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
+            Jurnal & Bukti
           </h2>
-          <span className="mt-[0.38rem] block max-w-[72ch] text-[0.82rem] leading-6 text-[var(--muted)]">
-            Gunakan record di atas sebagai dasar. AI hanya membantu menyusun draf; keputusan akhir tetap pada guru.
-          </span>
-        </div>
-      </header>
-      {usingCachedSnapshot ? (
-        <Surface className={unavailableSurfaceClasses}>
-          <EmptyState
-            title="Feedback memerlukan koneksi"
-            description="Feedback tidak disimpan dalam workspace offline minimum."
+          <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
+            Form pencatatan dan histori jurnal berada di area jurnal; unggahan dan histori evidence berada di area bukti.
+          </p>
+        </header>
+        <div className="grid min-w-0 grid-cols-2 items-start gap-5 max-[1120px]:grid-cols-1">
+          <StudentLearningJournalSection
+            studentId={studentId}
+            refreshKey={journalRefreshKey}
+            cachedEntries={cachedSnapshot?.journalEntries || []}
+            hasCachedSnapshot={Boolean(cachedSnapshot)}
+            demoReadOnly={isDemo}
+            offlineReadOnly={usingCachedSnapshot}
+            onJournalLoaded={handleJournalLoaded}
           />
-        </Surface>
-      ) : (
-        <div className="grid min-w-0 grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] items-start gap-5 max-[1080px]:grid-cols-1">
-          <FeedbackForm
-            feedback={feedback}
-            feedbackInputRef={feedbackInputRef}
-            observedAt={observedAt}
-            message={message}
-            submitting={submitting}
-            onAiDraftRequested={() => setAiWorkspaceOpen(true)}
-            onFeedbackChange={(event) => setFeedback(event.target.value)}
-            onObservedAtChange={setObservedAt}
-            onSubmit={handleStudentFeedbackSubmit}
-          />
-          <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
+          {usingCachedSnapshot ? (
+            <Surface className={unavailableSurfaceClasses}>
+              <EmptyState
+                title="Evidence memerlukan koneksi"
+                description="Evidence tidak disimpan dalam workspace offline minimum."
+              />
+            </Surface>
+          ) : (
+            <StudentEvidenceSection
+              studentId={studentId}
+              demoReadOnly={isDemo}
+              onEvidenceChanged={() => {
+                setJournalRefreshKey((current) => current + 1);
+              }}
+            />
+          )}
         </div>
-      )}
-    </section>
+      </section>
+    )}
+
+    {activeWorkspace === "feedback" && (
+      <section
+        id="student-workspace-feedback"
+        className="mt-5 min-w-0"
+        role="tabpanel"
+        aria-labelledby="student-workspace-tab-feedback"
+      >
+        <header className="mb-4 border-b-2 border-[var(--border-strong)] pb-3">
+          <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[#7f611e]">
+            Narasi milik guru
+          </p>
+          <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
+            Feedback
+          </h2>
+          <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
+            Susun, tinjau, dan simpan feedback berbasis record. AI hanya membantu menyusun draf; keputusan akhir tetap pada guru.
+          </p>
+        </header>
+        {usingCachedSnapshot ? (
+          <Surface className={unavailableSurfaceClasses}>
+            <EmptyState
+              title="Feedback memerlukan koneksi"
+              description="Feedback tidak disimpan dalam workspace offline minimum."
+            />
+          </Surface>
+        ) : (
+          <div className="grid min-w-0 grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] items-start gap-5 max-[1080px]:grid-cols-1">
+            <FeedbackForm
+              feedback={feedback}
+              feedbackInputRef={feedbackInputRef}
+              isDemo={isDemo}
+              observedAt={observedAt}
+              message={message}
+              submitting={submitting}
+              onAiDraftRequested={() => setAiWorkspaceOpen(true)}
+              onFeedbackChange={(event) => setFeedback(event.target.value)}
+              onObservedAtChange={setObservedAt}
+              onSubmit={handleStudentFeedbackSubmit}
+            />
+            <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
+          </div>
+        )}
+      </section>
+    )}
 
     <AiNarrativeWorkspace
       open={aiWorkspaceOpen}

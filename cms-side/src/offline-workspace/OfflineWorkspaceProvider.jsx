@@ -7,7 +7,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { getActiveTeacherIdentity } from "./authIdentity";
+import {
+  getActiveTeacherIdentity,
+  isTeacherDemoSession,
+} from "./authIdentity";
 import {
   getOnlineHint,
   subscribeToApiConnection,
@@ -42,6 +45,7 @@ const initialStatus = {
 const OfflineWorkspaceContext = createContext({
   ...initialStatus,
   teacherIdentity: null,
+  isDemo: false,
   refreshStatus: async () => {},
   syncNow: async () => ({ status: "unavailable" }),
 });
@@ -56,9 +60,10 @@ export function OfflineWorkspaceProvider({ children }) {
   }));
   const engineRef = useRef(null);
   const teacherId = teacherIdentity?.id || null;
+  const isDemo = isTeacherDemoSession();
 
   const refreshStatus = useCallback(async () => {
-    if (!teacherId) {
+    if (!teacherId || isDemo) {
       setStatus((current) => ({
         ...initialStatus,
         initialized: true,
@@ -89,14 +94,15 @@ export function OfflineWorkspaceProvider({ children }) {
       failedMutations: failed,
       mutations,
     }));
-  }, [teacherId]);
+  }, [isDemo, teacherId]);
 
   const syncNow = useCallback(async () => {
+    if (isDemo) return { status: "demo-read-only" };
     if (!engineRef.current) return { status: "unavailable" };
     const result = await engineRef.current.syncNow();
     await refreshStatus();
     return result;
-  }, [refreshStatus]);
+  }, [isDemo, refreshStatus]);
 
   useEffect(() => {
     const refreshIdentity = () => setTeacherIdentity(
@@ -116,7 +122,7 @@ export function OfflineWorkspaceProvider({ children }) {
     engineRef.current?.dispose();
     engineRef.current = null;
 
-    if (!teacherId) {
+    if (!teacherId || isDemo) {
       refreshStatus();
       return undefined;
     }
@@ -194,15 +200,16 @@ export function OfflineWorkspaceProvider({ children }) {
       engine.dispose();
       if (engineRef.current === engine) engineRef.current = null;
     };
-  }, [refreshStatus, teacherId, teacherIdentity?.name]);
+  }, [isDemo, refreshStatus, teacherId, teacherIdentity?.name]);
 
   const contextValue = useMemo(() => ({
     ...status,
     connectionAvailable: status.onlineHint && status.apiReachable !== false,
+    isDemo,
     teacherIdentity,
     refreshStatus,
     syncNow,
-  }), [refreshStatus, status, syncNow, teacherIdentity]);
+  }), [isDemo, refreshStatus, status, syncNow, teacherIdentity]);
 
   return (
     <OfflineWorkspaceContext.Provider value={contextValue}>

@@ -56,6 +56,40 @@ export function submitParentLogin(loginCredentials) {
   };
 }
 
+export function submitParentDemoLogin() {
+  void 'ISSA:CLIENT.AUTH.SUBMIT_PARENT_DEMO_LOGIN';
+  return async () => {
+    try {
+      const { data: loginResponse } = await apiClient.post('/users/demo-login');
+
+      localStorage.setItem('access_token', loginResponse.access_token);
+      if (!isNil(loginResponse.id)) {
+        localStorage.setItem('userId', String(loginResponse.id));
+      }
+      startParentSession(loginResponse.access_token);
+      return loginResponse;
+    } catch (apiError) {
+      const normalizedError = normalizeApiError(apiError);
+      if (normalizedError.status === 429) {
+        throw {
+          ...normalizedError,
+          message: 'Batas akses demo telah tercapai. Coba lagi nanti.',
+        };
+      }
+      if ([
+        'publicDemoUnavailable',
+        'publicDemoConfigurationError',
+      ].includes(normalizedError.code)) {
+        throw {
+          ...normalizedError,
+          message: 'Demo Parent sedang tidak tersedia.',
+        };
+      }
+      throw normalizedError;
+    }
+  };
+}
+
 // ////////////////////////
 
 //! redux

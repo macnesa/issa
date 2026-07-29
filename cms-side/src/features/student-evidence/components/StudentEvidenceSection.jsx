@@ -23,6 +23,7 @@ import EvidenceViewerDialog from "./EvidenceViewerDialog";
 import "./StudentEvidenceSection.css";
 
 export default function StudentEvidenceSection({
+  demoReadOnly = false,
   studentId,
   onEvidenceChanged = () => {},
 }) {
@@ -67,6 +68,7 @@ export default function StudentEvidenceSection({
   }, [loadEvidences]);
 
   async function handleUpload(evidenceFormData) {
+    if (demoReadOnly) return;
     await createStudentEvidence(studentId, evidenceFormData);
     await Promise.all([
       loadEvidences(),
@@ -98,6 +100,7 @@ export default function StudentEvidenceSection({
   }
 
   async function handleMetadataSubmit(evidence, metadata) {
+    if (demoReadOnly) return;
     try {
       return await updateStudentEvidenceMetadata(
         studentId,
@@ -113,6 +116,7 @@ export default function StudentEvidenceSection({
   }
 
   async function handleRetractionSubmit(evidence, reason) {
+    if (demoReadOnly) return;
     try {
       return await retractStudentEvidence(studentId, evidence.id, reason);
     } catch (error) {
@@ -150,7 +154,10 @@ export default function StudentEvidenceSection({
           <span>Foto dan metadata menjadi bagian dari record perkembangan siswa.</span>
         </header>
 
-        <EvidenceUploadForm onUpload={handleUpload} />
+        <EvidenceUploadForm
+          demoReadOnly={demoReadOnly}
+          onUpload={handleUpload}
+        />
 
         <div className="student-evidence-history">
           <div className="student-evidence-history__heading">
@@ -213,7 +220,9 @@ export default function StudentEvidenceSection({
                     <div className="student-evidence-history__actions">
                       <button
                         type="button"
+                        disabled={demoReadOnly}
                         onClick={(event) => {
+                          if (demoReadOnly) return;
                           rememberTrigger(event);
                           setEditingEvidence(evidence);
                         }}
@@ -223,13 +232,20 @@ export default function StudentEvidenceSection({
                       <button
                         type="button"
                         className="student-evidence-history__retract"
+                        disabled={demoReadOnly}
                         onClick={(event) => {
+                          if (demoReadOnly) return;
                           rememberTrigger(event);
                           setRetractingEvidence(evidence);
                         }}
                       >
                         Cabut evidence
                       </button>
+                      {demoReadOnly && (
+                        <span className="text-xs text-[var(--muted)]">
+                          Tidak tersedia dalam mode demo.
+                        </span>
+                      )}
                     </div>
                   </div>
                 </li>
@@ -254,6 +270,7 @@ export default function StudentEvidenceSection({
           refreshAfterMutation("retracted", evidenceId)}
       />
       <EvidenceViewerDialog
+        demoReadOnly={demoReadOnly}
         evidence={viewingEvidence}
         onClose={closeViewer}
         onRequestRetraction={(evidence) => {

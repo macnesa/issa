@@ -1,7 +1,7 @@
 import { FormField, PrimaryButton, SecondaryButton, Surface } from "../../../shared/ui/ui";
 import DateTimeField from "../../../shared/ui/form-controls/DateTimeField";
 
-export default function FeedbackForm({ feedback, feedbackInputRef, observedAt, message, submitting, onAiDraftRequested, onFeedbackChange, onObservedAtChange, onSubmit }) {
+export default function FeedbackForm({ feedback, feedbackInputRef, isDemo = false, observedAt, message, submitting, onAiDraftRequested, onFeedbackChange, onObservedAtChange, onSubmit }) {
   const messageState = message?.toLowerCase().includes("berhasil")
     ? "success"
     : /(gagal|tidak valid|tidak boleh)/i.test(message || "")
@@ -36,7 +36,7 @@ export default function FeedbackForm({ feedback, feedbackInputRef, observedAt, m
               Opsional · AI-assisted draft
             </span>
             <SecondaryButton type="button" onClick={onAiDraftRequested}>
-              Susun draf dari record
+              Buat draft dengan AI
             </SecondaryButton>
           </div>
         )}
@@ -64,9 +64,14 @@ export default function FeedbackForm({ feedback, feedbackInputRef, observedAt, m
           tone="feedback"
         />
         <div className="flex min-w-0 flex-wrap items-center gap-[0.8rem] border-t border-[#e2d8aa] pt-4 max-[639px]:[&>button]:w-full">
-          <PrimaryButton type="submit" disabled={submitting}>
+          <PrimaryButton type="submit" disabled={submitting || isDemo}>
             {submitting ? "Menyimpan..." : "Simpan Feedback"}
           </PrimaryButton>
+          {isDemo && (
+            <p className="m-0 min-w-0 flex-[1_1_18rem] text-[0.76rem] font-semibold leading-5 text-[#6e531d]">
+              Draft AI belum disimpan. Penyimpanan dinonaktifkan dalam mode demo.
+            </p>
+          )}
           <p
             role="status"
             aria-live="polite"

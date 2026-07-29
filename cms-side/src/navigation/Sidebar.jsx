@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -9,6 +9,7 @@ import {
 import {
   clearLastKnownTeacherIdentity,
   getActiveTeacherIdentity,
+  isTeacherDemoSession,
 } from "../offline-workspace/authIdentity";
 import { clearTeacherOfflineData } from "../offline-workspace/mutationQueue";
 import {
@@ -23,22 +24,43 @@ import "./teacher-navigation.css";
 
 const navigation = [
   { to: "/", label: "Dashboard", icon: "dashboard", end: true },
-  { to: "/attendance", label: "Attendance", icon: "fact_check" },
-  { to: "/schedule", label: "Schedule", icon: "calendar_month" },
+  { to: "/attendance", label: "Kehadiran", icon: "fact_check" },
+  { to: "/schedule", label: "Jadwal", icon: "calendar_month" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ status = null }) {
   const navigate = useNavigate();
+  const [teacherIdentity, setTeacherIdentity] = useState(
+    getActiveTeacherIdentity
+  );
   const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
   const [logoutError, setLogoutError] = useState("");
+  const teacherName = teacherIdentity?.name?.trim();
+  const isDemo = isTeacherDemoSession();
+
+  useEffect(() => {
+    const refreshTeacherIdentity = () => {
+      setTeacherIdentity(getActiveTeacherIdentity());
+    };
+    window.addEventListener(
+      "issa:teacher-identity-changed",
+      refreshTeacherIdentity
+    );
+    return () => {
+      window.removeEventListener(
+        "issa:teacher-identity-changed",
+        refreshTeacherIdentity
+      );
+    };
+  }, []);
 
   const completeTeacherLogout = async () => {
     const activeTeacher = getActiveTeacherIdentity();
     setLogoutPending(true);
     setLogoutError("");
     try {
-      if (activeTeacher?.id) {
+      if (activeTeacher?.id && !isDemo) {
         await clearTeacherOfflineData(activeTeacher.id);
       }
       localStorage.removeItem("access_token");
@@ -60,7 +82,8 @@ export default function Sidebar() {
     setLogoutError("");
     try {
       if (
-        activeTeacher?.id
+        !isDemo
+        && activeTeacher?.id
         && await hasUnsyncedAttendanceChanges(activeTeacher.id)
       ) {
         setLogoutConfirmationOpen(true);
@@ -83,7 +106,10 @@ export default function Sidebar() {
           <div className="teacher-sidebar__seal">
             <img src={issaLogo} alt="ISSA" />
           </div>
-          <p>Ruang kerja guru</p>
+          <p>
+            <strong>ISSA CMS</strong>
+            <span>Ruang kerja guru</span>
+          </p>
         </div>
         <button
           type="button"
@@ -118,9 +144,36 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      <div className="teacher-sidebar__context">
-        <p className="teacher-sidebar__context-index">Session index</p>
-        <p className="teacher-sidebar__context-copy">Catat perkembangan siswa, attendance, dan nilai kelas Anda.</p>
+      <footer className="teacher-sidebar__context">
+        {status && (
+          <div className="teacher-sidebar__status">
+            {status}
+          </div>
+        )}
+        {isDemo && (
+          <div className="border-l-2 border-[#6bbfbc] px-3 py-2 text-[#edf4f4]">
+            <strong className="block text-[0.72rem] uppercase tracking-[0.08em]">
+              Mode demo
+            </strong>
+            <span className="mt-0.5 block text-[0.68rem] text-[#bcd2d6]">
+              Akses hanya-baca
+            </span>
+          </div>
+        )}
+        {teacherName && (
+          <div className="teacher-sidebar__teacher">
+            <span
+              className="material-symbols-outlined"
+              aria-hidden="true"
+            >
+              account_circle
+            </span>
+            <div>
+              <span>Guru</span>
+              <strong>{teacherName}</strong>
+            </div>
+          </div>
+        )}
         <button
           type="button"
           onClick={handleTeacherLogout}
@@ -134,7 +187,7 @@ export default function Sidebar() {
           </span>
           Keluar
         </button>
-      </div>
+      </footer>
       <Dialog
         open={logoutConfirmationOpen}
         onClose={() => {
@@ -148,7 +201,7 @@ export default function Sidebar() {
               <DialogTitle>Perubahan kehadiran belum disinkronkan</DialogTitle>
               <p>Masih ada perubahan kehadiran yang belum disinkronkan.</p>
               <p>
-                Untuk mencegah data Teacher berikutnya tercampur, perubahan
+                Untuk mencegah data guru berikutnya tercampur, perubahan
                 lokal harus dihapus sebelum keluar.
               </p>
               {logoutError && (

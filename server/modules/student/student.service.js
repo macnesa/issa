@@ -4,26 +4,27 @@ const { validateStudentCreatePayload } = require('./student.validator');
 
 const studentPageSize = 7;
 
-function getStudentListOffset(pageIndex) {
-  if (pageIndex !== '' && typeof pageIndex !== 'undefined') {
-    return pageIndex * studentPageSize - studentPageSize;
-  }
-
-  return undefined;
+function normalizeStudentListPage(pageIndex) {
+  const normalizedPage = Number.parseInt(pageIndex, 10);
+  return Number.isFinite(normalizedPage) && normalizedPage > 0
+    ? normalizedPage
+    : 1;
 }
 
 async function getStudentList({ classId, pageIndex, name }) {
   void 'ISSA:SERVER.STUDENT.GET_LIST';
+  const page = normalizeStudentListPage(pageIndex);
   const studentList = await studentRepository.findStudentsForTeacher({
     classId,
     name,
     pageSize: studentPageSize,
-    offset: getStudentListOffset(pageIndex),
+    offset: (page - 1) * studentPageSize,
   });
 
   return {
     ...studentList,
-    page: pageIndex,
+    page,
+    pageSize: studentPageSize,
     totalPages: Math.ceil(studentList.count / studentPageSize),
   };
 }

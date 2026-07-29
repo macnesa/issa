@@ -14,20 +14,6 @@ import {
   isStudentRecordEventForActiveStudent,
 } from '../realtime/parentSocket'
 
-const realtimeNoticeStyles = `
-  @media (prefers-reduced-motion: no-preference) {
-    .parent-realtime-notice {
-      animation: parent-realtime-notice-in 180ms ease-out;
-    }
-
-    @keyframes parent-realtime-notice-in {
-      from {
-        opacity: 0;
-        transform: translate(-50%, -0.35rem);
-      }
-    }
-  }
-`
 
 export default function ParentLayout() { 
   const dispatch = useDispatch()
@@ -118,11 +104,11 @@ export default function ParentLayout() {
   
   return (
     <div className="min-h-screen bg-[var(--issa-page)] pt-4">
-      <style>{realtimeNoticeStyles}</style>
       <Header />
       {showRealtimeNotice && (
         <div
-          className="parent-realtime-notice pointer-events-none fixed left-1/2 top-4 z-[60] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-full border border-[rgba(28,77,99,0.18)] bg-[#f6fbfc] px-4 py-[0.7rem] text-[0.86rem] font-bold leading-[1.3] text-[#1c4d63] shadow-[0_0.5rem_1.5rem_rgba(14,42,58,0.14)]"
+          className="pointer-events-none fixed left-1/2 top-4 z-[60] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-full border border-[rgba(28,77,99,0.18)] bg-[#f6fbfc] px-4 py-[0.7rem] text-[0.86rem] font-bold leading-[1.3] text-[#1c4d63] [animation:parent-realtime-notice-in_180ms_ease-out] motion-reduce:animate-none"
+          style={{ boxShadow: '0 0.5rem 1.5rem rgba(14, 42, 58, 0.14)' }}
           role="status"
           aria-live="polite"
           aria-atomic="true"

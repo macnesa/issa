@@ -22,8 +22,8 @@ function primaryStatus({
   if (syncRunning) return "Menyinkronkan…";
   if (conflictCount > 0) return `${conflictCount} perlu ditinjau`;
   if (failedCount > 0) return `${failedCount} gagal disinkronkan`;
-  if (pendingCount > 0) return `${pendingCount} menunggu sinkronisasi`;
-  return "Tersinkron";
+  if (pendingCount > 0) return "Menunggu sinkronisasi";
+  return "Online";
 }
 
 export default function OfflineStatusIndicator() {
@@ -62,10 +62,17 @@ export default function OfflineStatusIndicator() {
           <button
             type="button"
             onClick={() => workspace.syncNow()}
-            disabled={!workspace.onlineHint || workspace.syncRunning}
+            disabled={
+              workspace.isDemo
+              || !workspace.onlineHint
+              || workspace.syncRunning
+            }
           >
             Sinkronkan sekarang
           </button>
+          {workspace.isDemo && (
+            <small>Tidak tersedia dalam mode demo.</small>
+          )}
           <AttendanceSyncReview workspace={workspace} />
           {hasReviewItems && (
             <small>

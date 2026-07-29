@@ -27,6 +27,9 @@ function validateSelectedFile(file) {
 }
 
 function getSubmitError(error) {
+  if (error?.code === "publicDemoReadOnly") {
+    return "Perubahan data tidak tersedia dalam mode demo.";
+  }
   if (error?.status === 503) {
     return "Penyimpanan gambar belum dikonfigurasi pada server.";
   }
@@ -36,7 +39,7 @@ function getSubmitError(error) {
   return error?.message || "Bukti perkembangan gagal disimpan.";
 }
 
-export default function EvidenceUploadForm({ onUpload }) {
+export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [title, setTitle] = useState("");
@@ -76,6 +79,10 @@ export default function EvidenceUploadForm({ onUpload }) {
   }
 
   function handleFileChange(event) {
+    if (demoReadOnly) {
+      event.target.value = "";
+      return;
+    }
     const selectedFile = event.target.files?.[0] || null;
     const fileError = validateSelectedFile(selectedFile);
     setStatusMessage("");
@@ -93,6 +100,10 @@ export default function EvidenceUploadForm({ onUpload }) {
   async function handleSubmit(event) {
     event.preventDefault();
     if (submittingRef.current) return;
+    if (demoReadOnly) {
+      setStatusMessage("Perubahan data tidak tersedia dalam mode demo.");
+      return;
+    }
 
     const nextErrors = {};
     const trimmedTitle = title.trim();
@@ -147,6 +158,11 @@ export default function EvidenceUploadForm({ onUpload }) {
       </div>
 
       <form className="evidence-upload__form" onSubmit={handleSubmit} noValidate>
+        {demoReadOnly && (
+          <p className="m-0 text-sm font-semibold text-[var(--muted)]">
+            Tidak tersedia dalam mode demo.
+          </p>
+        )}
         <div className="evidence-upload__file-field">
           <label htmlFor="student-evidence-file">Foto evidence</label>
           <input
@@ -157,7 +173,7 @@ export default function EvidenceUploadForm({ onUpload }) {
             onChange={handleFileChange}
             aria-describedby="student-evidence-file-help student-evidence-file-error"
             aria-invalid={Boolean(errors.file)}
-            disabled={submitting}
+            disabled={submitting || demoReadOnly}
           />
           <p id="student-evidence-file-help">JPEG, PNG, atau WEBP · maksimal 5 MB.</p>
           {errors.file && <p id="student-evidence-file-error" className="evidence-upload__error">{errors.file}</p>}
@@ -187,7 +203,7 @@ export default function EvidenceUploadForm({ onUpload }) {
             onChange={(event) => setTitle(event.target.value)}
             maxLength={120}
             required
-            disabled={submitting}
+            disabled={submitting || demoReadOnly}
             error={errors.title}
           />
           <SelectField
@@ -198,7 +214,7 @@ export default function EvidenceUploadForm({ onUpload }) {
             placeholder="Pilih kategori"
             onChange={setCategory}
             required
-            disabled={submitting}
+            disabled={submitting || demoReadOnly}
             error={errors.category}
           />
           <DateField
@@ -207,7 +223,7 @@ export default function EvidenceUploadForm({ onUpload }) {
             value={observedAt}
             onChange={setObservedAt}
             required
-            disabled={submitting}
+            disabled={submitting || demoReadOnly}
             error={errors.observedAt}
             tone="feedback"
           />
@@ -222,7 +238,7 @@ export default function EvidenceUploadForm({ onUpload }) {
               onChange={(event) => setDescription(event.target.value)}
               maxLength={500}
               rows="4"
-              disabled={submitting}
+              disabled={submitting || demoReadOnly}
               aria-invalid={Boolean(errors.description)}
               aria-describedby={errors.description ? "student-evidence-description-error" : undefined}
             />
@@ -235,11 +251,11 @@ export default function EvidenceUploadForm({ onUpload }) {
         </div>
 
         <div className="evidence-upload__actions">
-          <PrimaryButton type="submit" disabled={submitting}>
+          <PrimaryButton type="submit" disabled={submitting || demoReadOnly}>
             {submitting ? "Mengunggah..." : "Simpan evidence"}
           </PrimaryButton>
           {(file || title || category || description) && (
-            <SecondaryButton type="button" onClick={resetForm} disabled={submitting}>
+            <SecondaryButton type="button" onClick={resetForm} disabled={submitting || demoReadOnly}>
               Reset form
             </SecondaryButton>
           )}

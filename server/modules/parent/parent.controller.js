@@ -1,4 +1,7 @@
 const authenticationService = require('../authentication/authentication.service');
+const {
+  validatePublicDemoLoginRequest,
+} = require('../authentication/authentication.validator');
 
 async function authenticateParent(req, res, next) {
   try {
@@ -13,6 +16,19 @@ async function authenticateParent(req, res, next) {
   }
 }
 
+async function authenticatePublicDemoParent(req, res, next) {
+  try {
+    validatePublicDemoLoginRequest(req.body);
+    const authenticationResponse =
+      await authenticationService.authenticatePublicDemoParent();
+    res.set('Cache-Control', 'no-store');
+    res.status(200).json(authenticationResponse);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   authenticateParent,
+  authenticatePublicDemoParent,
 };

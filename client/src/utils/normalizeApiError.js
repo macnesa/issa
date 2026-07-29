@@ -10,7 +10,12 @@ function getMessageForHttpStatus(httpStatus) {
 export default function normalizeApiError(apiError) {
   const status = apiError?.response?.status ?? null;
   const payload = apiError?.response?.data;
-  const backendMessage = typeof payload?.message === 'string'
+  const nestedError = payload?.error && typeof payload.error === 'object'
+    ? payload.error
+    : null;
+  const backendMessage = typeof nestedError?.message === 'string'
+    ? nestedError.message
+    : typeof payload?.message === 'string'
     ? payload.message
     : typeof payload?.msg === 'string'
       ? payload.msg
@@ -24,7 +29,11 @@ export default function normalizeApiError(apiError) {
 
   return {
     status,
-    code: typeof payload?.code === 'string' ? payload.code : '',
+    code: typeof nestedError?.code === 'string'
+      ? nestedError.code
+      : typeof payload?.code === 'string'
+        ? payload.code
+        : '',
     message: backendMessage || getMessageForHttpStatus(status),
   };
 }

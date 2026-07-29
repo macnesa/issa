@@ -12,10 +12,12 @@ const offlineMocks = vi.hoisted(() => ({
   openDatabase: vi.fn().mockResolvedValue({}),
   resetInterrupted: vi.fn().mockResolvedValue(0),
   updateMetadata: vi.fn().mockResolvedValue({}),
+  demo: false,
 }));
 
 vi.mock("./authIdentity", () => ({
   getActiveTeacherIdentity: vi.fn(() => ({ id: 9, name: "Guru Demo" })),
+  isTeacherDemoSession: vi.fn(() => offlineMocks.demo),
 }));
 vi.mock("./offlineDatabase", () => ({
   openOfflineDatabase: offlineMocks.openDatabase,
@@ -47,6 +49,7 @@ function setOnlineHint(value) {
 describe("offline workspace app lifecycle", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    offlineMocks.demo = false;
     setOnlineHint(false);
   });
 
@@ -81,7 +84,10 @@ describe("offline workspace app lifecycle", () => {
     });
     await waitFor(() => expect(offlineMocks.syncNow).toHaveBeenCalledTimes(1));
 
-    fireEvent.click(await screen.findByText("Tersinkron"));
+    fireEvent.click(
+      screen.getByLabelText("Status sinkronisasi workspace")
+        .querySelector("summary")
+    );
     await act(async () => {
       fireEvent.click(screen.getByRole("button", {
         name: "Sinkronkan sekarang",
@@ -109,5 +115,22 @@ describe("offline workspace app lifecycle", () => {
     });
 
     expect(screen.getAllByText("Offline")).toHaveLength(2);
+  });
+
+  test("demo session does not initialize IndexedDB or the sync engine", async () => {
+    offlineMocks.demo = true;
+    render(
+      <OfflineWorkspaceProvider>
+        <OfflineStatusIndicator />
+      </OfflineWorkspaceProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Offline")).toHaveLength(2);
+    });
+    expect(offlineMocks.openDatabase).not.toHaveBeenCalled();
+    expect(offlineMocks.resetInterrupted).not.toHaveBeenCalled();
+    expect(offlineMocks.updateMetadata).not.toHaveBeenCalled();
+    expect(offlineMocks.syncNow).not.toHaveBeenCalled();
   });
 });

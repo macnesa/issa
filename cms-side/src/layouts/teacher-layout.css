@@ -1,5 +1,5 @@
 .teacher-workspace {
-  --teacher-sidebar-width: 17rem;
+  --teacher-sidebar-width: 16rem;
   --teacher-utility-height: 4rem;
   min-width: 0;
   min-height: 100vh;
@@ -20,9 +20,8 @@
   min-width: 0;
   min-height: var(--teacher-utility-height);
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  border-bottom: 2px solid var(--accent-strong);
+  border-bottom: 1px solid var(--border-strong);
   background: var(--surface);
   padding: 0.625rem 1rem;
 }
@@ -34,7 +33,7 @@
   align-items: center;
   gap: 0.625rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--control-radius);
+  border-radius: 0.25rem;
   background: var(--surface);
   padding: 0.45rem 0.75rem;
   color: var(--text);
@@ -79,7 +78,7 @@
   font-weight: 700;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .teacher-workspace {
     display: grid;
     grid-template-columns: var(--teacher-sidebar-width) minmax(0, 1fr);
@@ -94,9 +93,13 @@
     padding-right: 2rem;
     padding-left: 2rem;
   }
+
+  .teacher-search-trigger {
+    width: min(100%, 28rem);
+  }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .teacher-workspace {
     min-height: 100svh;
   }

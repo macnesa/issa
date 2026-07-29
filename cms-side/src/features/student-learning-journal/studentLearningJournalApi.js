@@ -1,10 +1,15 @@
 import baseUrl from "../../config/api";
+import {
+  assertTeacherMutationAllowed,
+  readApiError,
+} from "../../auth/demoAccess";
 
 export class StudentLearningJournalApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, code = "") {
     super(message);
     this.name = "StudentLearningJournalApiError";
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -17,9 +22,11 @@ async function parseResponse(response, fallbackMessage) {
   }
 
   if (!response.ok) {
+    const apiError = readApiError(responseBody, fallbackMessage, response.status);
     throw new StudentLearningJournalApiError(
-      responseBody?.msg || fallbackMessage,
-      response.status
+      apiError.message,
+      response.status,
+      apiError.code
     );
   }
 
@@ -46,6 +53,7 @@ export async function fetchStudentLearningJournal(studentId, { signal } = {}) {
 }
 
 export async function createStudentLearningJournalEntry(studentId, payload) {
+  assertTeacherMutationAllowed();
   const response = await fetch(`${baseUrl}/students/${studentId}/journal`, {
     method: "POST",
     headers: requestHeaders(),
@@ -59,6 +67,7 @@ export async function updateStudentLearningJournalEntry(
   entryId,
   payload
 ) {
+  assertTeacherMutationAllowed();
   const response = await fetch(
     `${baseUrl}/students/${studentId}/journal/${entryId}`,
     {
@@ -71,6 +80,7 @@ export async function updateStudentLearningJournalEntry(
 }
 
 export async function retractStudentLearningJournalEntry(studentId, entryId) {
+  assertTeacherMutationAllowed();
   const response = await fetch(
     `${baseUrl}/students/${studentId}/journal/${entryId}`,
     {

@@ -14,17 +14,49 @@ function decodeBase64Url(value) {
 }
 
 export function readTeacherIdentityFromToken(token) {
+  const payload = readTeacherSessionPayload(token);
+  const teacherId = Number(payload?.teacherId);
+  if (payload?.role !== "teacher" || !Number.isSafeInteger(teacherId)) {
+    return null;
+  }
+  return { id: teacherId, name: "" };
+}
+
+export function readTeacherSessionPayload(token) {
   if (typeof token !== "string") return null;
   try {
     const payload = JSON.parse(decodeBase64Url(token.split(".")[1] || ""));
-    const teacherId = Number(payload.teacherId);
-    if (payload.role !== "teacher" || !Number.isSafeInteger(teacherId)) {
-      return null;
-    }
-    return { id: teacherId, name: "" };
+    return payload && typeof payload === "object" ? payload : null;
   } catch (error) {
     return null;
   }
+}
+
+export function getTeacherAccessMode(
+  token = localStorage.getItem("access_token")
+) {
+  const payload = readTeacherSessionPayload(token);
+  return typeof payload?.accessMode === "string" ? payload.accessMode : "";
+}
+
+export function isTeacherDemoSession(
+  token = localStorage.getItem("access_token")
+) {
+  return getTeacherAccessMode(token) === "demo";
+}
+
+export function getTeacherTokenExpiry(
+  token = localStorage.getItem("access_token")
+) {
+  const expiry = Number(readTeacherSessionPayload(token)?.exp);
+  return Number.isFinite(expiry) && expiry > 0 ? expiry * 1000 : null;
+}
+
+export function isTeacherTokenExpired(
+  token = localStorage.getItem("access_token")
+) {
+  const expiry = getTeacherTokenExpiry(token);
+  return expiry ? expiry <= Date.now() : true;
 }
 
 export function saveLastKnownTeacherIdentity(identity) {
@@ -73,7 +105,13 @@ export function getActiveTeacherIdentity() {
   ) {
     return tokenIdentity;
   }
-  return tokenIdentity || storedIdentity;
+  return tokenIdentity
+    ? {
+      ...storedIdentity,
+      ...tokenIdentity,
+      name: storedIdentity?.name || tokenIdentity.name,
+    }
+    : storedIdentity;
 }
 
 export function clearLastKnownTeacherIdentity() {

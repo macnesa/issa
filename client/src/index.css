@@ -76,66 +76,143 @@
   }
 }
 
+/* Structural selectors that cannot be expressed through inline JSX styles. */
+.overview-page > * {
+  animation: overview-rise 440ms both;
+}
 
-.issa-not-found { position: relative; overflow: hidden; background: #edf7f7; }
-.issa-not-found__panel { position: relative; z-index: 1; overflow: hidden; border: 1px solid #173e52; border-radius: 1rem 1rem 2.6rem 1rem; background: rgba(255, 255, 255, 0.95); box-shadow: 0.8rem 0.85rem 0 rgba(38, 83, 103, 0.15); }
-.issa-not-found__kicker { color: #356d8d; font-size: 0.75rem; font-weight: 850; letter-spacing: 0.16em; }
-.issa-not-found .primary-button { border-radius: 0.75rem 0.4rem 0.75rem 0.4rem; background: #245b70; }
-.issa-not-found .primary-button:hover { background: #173e52; }
+.overview-page > *:nth-child(2) { animation-delay: 45ms; }
+.overview-page > *:nth-child(3) { animation-delay: 90ms; }
+.overview-page > *:nth-child(4) { animation-delay: 135ms; }
+.overview-page > *:nth-child(5) { animation-delay: 180ms; }
+.overview-page > *:nth-child(6) { animation-delay: 225ms; }
+.overview-page > *:nth-child(7) { animation-delay: 270ms; }
+.overview-page > *:nth-child(8) { animation-delay: 315ms; }
 
-.editorial-page-heading { position: relative; padding: 0.5rem 0 0.55rem; }
-.editorial-page-heading .page-title { font-size: clamp(1.7rem, 5vw, 2.25rem); }
+.student-identity {
+  background-image: linear-gradient(115deg, #0e2a3a, #265367);
+}
 
-.attendance-page,
-.progress-page,
-.lesson-detail-page,
-.schedule-page,
-.activities-page { display: grid; align-items: start; gap: 1.25rem; }
+.parent-journal-entry::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2.38rem;
+  width: 1px;
+  background: #d9d0b9;
+  content: "";
+}
 
-.attendance-today { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.2rem 1.35rem; border-radius: 1.1rem 0.65rem 1.1rem 0.65rem; background: #f2e291; box-shadow: 0.42rem 0.42rem 0 #e2ce73; }
-.attendance-today h2 { margin: 0.25rem 0 0; color: var(--issa-text); font-size: 1.3rem; font-weight: 850; letter-spacing: -0.025em; }
-.attendance-today p:not(.overview-kicker) { margin: 0.35rem 0 0; color: #695d2a; font-size: 0.9rem; }
-.attendance-today .status-badge { flex-shrink: 0; border: 1px solid rgba(23, 33, 43, 0.12); background: rgba(255, 255, 255, 0.72); }
+.parent-journal-entry:first-child::before {
+  top: 1.42rem;
+}
 
-.attendance-summary { position: relative; overflow: hidden; padding: 1.35rem; border: 1px solid #cfe4ec; border-radius: 1.1rem 1.1rem 1.1rem 2.75rem; background: #eaf6f8; }
-.attendance-summary > * { position: relative; z-index: 1; }
-.attendance-summary h2 { margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 850; }
-.attendance-summary__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; margin: 1rem 0 0; }
-.attendance-summary__metric { min-height: 5.1rem; padding: 0.8rem; border-radius: 0.95rem 0.52rem 0.95rem 0.52rem; background: rgba(255, 255, 255, 0.82); }
-.attendance-summary__metric dt { color: var(--issa-text-secondary); font-size: 0.8rem; font-weight: 750; }
-.attendance-summary__metric dd { margin: 0.15rem 0 0; color: var(--issa-text); font-size: 1.6rem; font-weight: 850; line-height: 1; }
-.attendance-summary__metric--hadir { border-bottom: 0.22rem solid var(--issa-success); }.attendance-summary__metric--sakit { border-bottom: 0.22rem solid var(--issa-info); }.attendance-summary__metric--izin { border-bottom: 0.22rem solid var(--issa-warning); }.attendance-summary__metric--alfa { border-bottom: 0.22rem solid var(--issa-danger); }
+.parent-journal-entry:last-child::before {
+  bottom: calc(100% - 1.42rem);
+}
 
-.attendance-history { padding: 1.35rem; border: 1px solid #d8e2e7; border-radius: 0.85rem 2.25rem 0.85rem 0.85rem; background: #fff; }
-.attendance-history h2 { margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 850; }
-.attendance-history__month { margin-top: 1.15rem; }
-.attendance-history__month h3 { display: inline-block; margin: 0; padding: 0.3rem 0.7rem; border-radius: 0.7rem 0.35rem 0.7rem 0.35rem; background: #eaf6f8; color: #315f62; font-size: 0.82rem; font-weight: 800; }
-.attendance-history__month ul { margin: 0.6rem 0 0; padding: 0 0 0 1rem; border-left: 2px solid #c9e8e7; list-style: none; }
-.attendance-history__month li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem 0; color: var(--issa-text-secondary); font-size: 0.9rem; }
-.attendance-history__month li::before { width: 0.48rem; height: 0.48rem; margin-left: -1.28rem; border-radius: 999px; background: #6bbfbc; content: ""; box-shadow: 0 0 0 0.18rem #eaf6f8; }
-.attendance-history__month time { flex: 1; }
-.attendance-heatmap { overflow: hidden; padding: 1.35rem; border: 1px solid #d5ecec; border-radius: 0.85rem; background: #f8ffff; }
-.attendance-heatmap h2 { margin: 0.25rem 0 0; font-size: 1.2rem; font-weight: 850; }.attendance-heatmap > p:not(.overview-kicker) { margin: 0.35rem 0 0; color: var(--issa-text-secondary); font-size: 0.88rem; }.attendance-heatmap__chart { margin-top: 1rem; overflow: hidden; border-radius: 0.7rem; background: rgba(255,255,255,0.78); padding: 0.5rem; }
+.recent-student-changes__timeline::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4.64rem;
+  width: 1px;
+  background: #d9ccb0;
+  content: "";
+}
 
-.progress-page__summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }.progress-page__metric { padding: 1.15rem; border: 1px solid #e0d9ff; border-radius: 0.85rem 1.8rem 0.85rem 0.85rem; background: #f5f2ff; }.progress-page__metric:nth-child(2) { border-radius: 1.8rem 0.85rem 0.85rem; background: #ede6fb; }.progress-page__metric p { margin: 0; color: #806694; font-size: 0.8rem; font-weight: 750; }.progress-page__metric strong { display: block; margin-top: 0.25rem; color: #4d315e; font-size: clamp(1.65rem, 6vw, 2.2rem); line-height: 1; }
-.progress-page__lessons { position: relative; overflow: hidden; padding: 1.35rem; border: 1px solid #e0d9ff; border-radius: 0.85rem 2.4rem 0.85rem 0.85rem; background: #faf8ff; }.progress-page__lessons > * { position: relative; z-index: 1; }.progress-page__lessons h2 { margin: 0.25rem 0 0; font-size: 1.3rem; font-weight: 850; }.progress-page__lessons ul { display: grid; gap: 0.6rem; margin: 1rem 0 0; padding: 0; list-style: none; }.progress-page__lessons li a { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.85rem; border-radius: 0.75rem 0.45rem 0.75rem 0.45rem; background: white; color: inherit; transition: transform 180ms ease, box-shadow 180ms ease; }.progress-page__lessons li a:hover { box-shadow: 0.3rem 0.35rem 0 rgba(149,85,194,0.12); transform: translate(-0.1rem, -0.1rem); }.progress-page__lessons li p { margin: 0; }.progress-page__lessons li p:first-child { color: #4d315e; font-size: 0.94rem; font-weight: 800; }.progress-page__lessons li p:last-child { margin-top: 0.25rem; color: #806694; font-size: 0.8rem; }.progress-page__lessons li span > span:first-child { display: block; color: #4d315e; font-size: 1.2rem; font-weight: 850; }.progress-page__lessons li .text-link { color: #806694; }
+.journal-direct-quote::before,
+.recent-feedback-quote::before {
+  content: "“";
+}
 
-.lesson-detail-page__heading { padding: 0.4rem 0 0.55rem 1rem; border-left: 0.35rem solid #9555c2; }.lesson-detail-page__heading .page-title { font-size: clamp(1.8rem, 6vw, 2.5rem); }.lesson-detail-page__metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }.lesson-detail-page__metrics > div { padding: 0.85rem; border: 1px solid #e0d9ff; border-radius: 0.8rem 0.4rem 0.8rem 0.4rem; background: #f8f5ff; }.lesson-detail-page__metrics p { margin: 0; color: #806694; font-size: 0.76rem; font-weight: 750; }.lesson-detail-page__metrics strong { display: block; margin-top: 0.2rem; color: #4d315e; font-size: 1.35rem; font-weight: 850; }
-.assessment-history { padding: 1.35rem; border: 1px solid #e2d9ef; border-radius: 2.2rem 0.85rem 0.85rem; background: #fff; }.assessment-history h2 { margin: 0.25rem 0 0; font-size: 1.3rem; font-weight: 850; }.assessment-history ul { display: grid; gap: 0.7rem; margin: 1rem 0 0; padding: 0; list-style: none; }.assessment-history li { padding: 0.9rem; border-left: 0.25rem solid #9555c2; border-radius: 0 0.7rem 0.7rem 0; background: #faf8ff; }.assessment-history li > div { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }.assessment-history li p { margin: 0; color: #4d315e; font-size: 0.92rem; font-weight: 800; }.assessment-history li p + p { margin-top: 0.26rem; color: #806694; font-size: 0.78rem; font-weight: 700; }.assessment-history time { display: block; margin-top: 0.3rem; color: #917e9e; font-size: 0.76rem; }.assessment-history li > div > span { flex: 0 0 auto; color: #684087; font-size: 1.35rem; font-weight: 850; }.lesson-detail-page__chart { overflow: hidden; padding: 1.35rem; border: 1px solid #e0d9ff; border-radius: 0.85rem; background: #f8f5ff; }.lesson-detail-page__chart h2 { margin: 0.25rem 0 0; font-size: 1.2rem; font-weight: 850; }.lesson-detail-page__chart > p:not(.overview-kicker) { margin: 0.35rem 0 0; color: #806694; font-size: 0.88rem; }.lesson-detail-page__chart > div { min-width: 0; margin-top: 1rem; }
+.journal-direct-quote::after,
+.recent-feedback-quote::after {
+  content: "”";
+}
 
-.schedule-page__list { display: grid; gap: 0.8rem; }.schedule-day { overflow: hidden; border: 1px solid #c9e8e7; border-radius: 0.85rem 1.85rem 0.85rem 0.85rem; background: #f8ffff; }.schedule-day h2 { margin: 0; padding: 0.85rem 1.1rem; background: rgba(107,191,188,0.17); color: #315f62; font-size: 0.9rem; font-weight: 850; }.schedule-day ul { margin: 0; padding: 0.35rem 1.1rem; list-style: none; }.schedule-day li { padding: 0.75rem 0 0.75rem 1rem; color: #315f62; font-size: 0.92rem; font-weight: 700; }.schedule-day li::before { display: inline-block; width: 0.46rem; height: 0.46rem; margin-left: -1rem; margin-right: 0.54rem; border-radius: 999px; background: #6bbfbc; content: ""; }
+@media (min-width: 900px) {
+  .overview-page > :first-child,
+  .overview-page > :nth-child(2),
+  .overview-page > :nth-child(5),
+  .overview-page > :nth-child(6) {
+    grid-column: 1 / -1;
+  }
 
-.activities-page__feed { padding: 1.35rem; border: 1px solid #eed8dd; border-radius: 0.85rem 0.85rem 2.4rem 0.85rem; background: #fff7f8; }.activities-page__feed ol { display: grid; gap: 1rem; margin: 0; padding: 0 0 0 1.1rem; border-left: 2px solid #f1cdd5; list-style: none; }.activities-page__feed li { position: relative; }.activities-page__feed li::before { position: absolute; top: 0.4rem; left: -1.38rem; width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #d28a9a; content: ""; box-shadow: 0 0 0 0.22rem #fdebed; }.activities-page__feed h2 { margin: 0; color: #573b45; font-size: 0.96rem; font-weight: 850; }.activities-page__feed time { display: block; margin-top: 0.3rem; color: #9a6b77; font-size: 0.82rem; font-weight: 650; }
+  .student-identity {
+    background-image:
+      linear-gradient(90deg, transparent 0 27%, #1c4d63 35%, #1c4d63 100%),
+      linear-gradient(115deg, #0e2a3a, #265367);
+  }
 
-.issa-not-found__panel { border-color: #684087; }.issa-not-found__kicker { color: #684087; }
+  .overview-attendance-highlight {
+    grid-row: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 1.15rem 1.2rem;
+    border: 1px solid rgba(47, 125, 91, 0.18);
+    border-bottom: 0.38rem solid var(--issa-success);
+    border-radius: 1.35rem 0.68rem 1.35rem 0.68rem;
+    background: linear-gradient(145deg, #f9fffb, #dcf1e5);
+    box-shadow: 0.3rem 0.35rem 0 rgba(47, 125, 91, 0.13);
+  }
+}
 
-@media (min-width: 640px) { .lesson-detail-page__metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }.attendance-page, .progress-page, .lesson-detail-page, .schedule-page, .activities-page { gap: 1.5rem; } }
-@media (min-width: 900px) { .attendance-page { grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr); }.attendance-page > :first-child, .attendance-page > :nth-child(2), .attendance-page > :last-child { grid-column: 1 / -1; }.progress-page { grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); }.progress-page > :first-child { grid-column: 1 / -1; }.progress-page__summary { align-self: start; grid-template-columns: 1fr; }.lesson-detail-page__heading, .lesson-detail-page__metrics { grid-column: 1 / -1; }.lesson-detail-page { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }.lesson-detail-page__chart { align-self: start; }.schedule-page__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }.activities-page__feed { max-width: 52rem; } }
+@media (max-width: 639px) {
+  .recent-student-changes__timeline::before {
+    left: 3.77rem;
+  }
+}
 
+@media (max-width: 559px) {
+  .parent-journal-entry::before {
+    left: 1.82rem;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .progress-page__lessons li a {
-    transition: none;
+  .overview-page > * {
     animation: none;
+  }
+}
+
+@keyframes overview-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.7rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes parent-realtime-notice-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -0.35rem);
+  }
+}
+
+@keyframes login-frame-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes login-form-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.65rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

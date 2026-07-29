@@ -9,6 +9,9 @@ import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
 import "./EvidenceRetractionDialog.css";
 
 function retractionErrorMessage(error) {
+  if (error?.code === "publicDemoReadOnly") {
+    return "Perubahan data tidak tersedia dalam mode demo.";
+  }
   if (error?.status === 502) {
     return "Gambar belum berhasil dicabut dari penyimpanan. Silakan coba kembali.";
   }

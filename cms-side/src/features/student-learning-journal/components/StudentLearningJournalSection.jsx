@@ -24,6 +24,7 @@ export default function StudentLearningJournalSection({
   studentId,
   refreshKey = 0,
   cachedEntries = emptyCachedEntries,
+  demoReadOnly = false,
   hasCachedSnapshot = false,
   offlineReadOnly = false,
   onJournalLoaded = ignoreJournalLoaded,
@@ -119,6 +120,7 @@ export default function StudentLearningJournalSection({
   }
 
   async function handleSubmit(payload) {
+    if (demoReadOnly) return;
     if (editingEntry) {
       await refetchAfterAuthorizationError(() => (
         updateStudentLearningJournalEntry(
@@ -137,6 +139,7 @@ export default function StudentLearningJournalSection({
   }
 
   async function handleRetract(entry) {
+    if (demoReadOnly) return;
     await refetchAfterAuthorizationError(() => (
       retractStudentLearningJournalEntry(studentId, entry.id)
     ));
@@ -145,6 +148,7 @@ export default function StudentLearningJournalSection({
   }
 
   function handleEdit(entry) {
+    if (demoReadOnly) return;
     setEditingEntry(entry);
   }
 
@@ -167,7 +171,8 @@ export default function StudentLearningJournalSection({
         evidenceError={evidenceResource.error}
         onSubmit={handleSubmit}
         onCancelEdit={() => setEditingEntry(null)}
-        readOnly={offlineReadOnly}
+        demoReadOnly={demoReadOnly}
+        readOnly={offlineReadOnly || demoReadOnly}
       />
 
       <div aria-live="polite" aria-busy={resource.status === "loading"}>
@@ -194,7 +199,8 @@ export default function StudentLearningJournalSection({
             entries={resource.data}
             onEdit={handleEdit}
             onRetract={handleRetract}
-            readOnly={offlineReadOnly}
+            demoReadOnly={demoReadOnly}
+            readOnly={offlineReadOnly || demoReadOnly}
           />
         )}
       </div>

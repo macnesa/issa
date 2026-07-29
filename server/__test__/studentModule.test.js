@@ -45,6 +45,7 @@ describe('student module service', () => {
       count: 15,
       rows: [{ id: 1 }, { id: 2 }],
       page: 2,
+      pageSize: 7,
       totalPages: 3,
     });
 
@@ -67,14 +68,14 @@ describe('student module service', () => {
       classId: 9,
       name: 'Ayu',
       pageSize: 7,
-      offset: undefined,
+      offset: 0,
     });
   });
 
-  test('preserves the first-page offset calculation', async () => {
+  test('defaults to the first page and preserves its offset calculation', async () => {
     await studentService.getStudentList({
       classId: 3,
-      pageIndex: 1,
+      pageIndex: undefined,
       name: '',
     });
 

@@ -7,262 +7,29 @@ import {
   journalEntryTypes,
   journalVoiceCaptureTypes,
 } from '../studentLearningJournal.constants';
-const journalEntryStyles = String.raw`
-.parent-journal-entry {
-  position: relative;
-  display: grid;
-  grid-template-columns: 2rem 0.85rem minmax(0, 1fr);
-  align-items: start;
-  gap: 0.72rem;
-  padding: 1.05rem 0;
-}
 
-.parent-journal-entry + .parent-journal-entry {
-  border-top: 1px solid #e1dac7;
-}
-
-.parent-journal-entry::before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 2.38rem;
-  width: 1px;
-  background: #d9d0b9;
-  content: "";
-}
-
-.parent-journal-entry:first-child::before {
-  top: 1.42rem;
-}
-
-.parent-journal-entry:last-child::before {
-  bottom: calc(100% - 1.42rem);
-}
-
-.parent-journal-entry__index {
-  padding-top: 0.17rem;
-  color: #8c846f;
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-}
-
-.parent-journal-entry__marker {
-  position: relative;
-  z-index: 1;
-  width: 0.76rem;
-  height: 0.76rem;
-  margin-top: 0.17rem;
-  border: 0.16rem solid #fffdf7;
-  border-radius: 50%;
-  background: #63827d;
-  box-shadow: 0 0 0 1px #809993;
-}
-
-.parent-journal-entry--strength .parent-journal-entry__marker {
-  background: #69865c;
-  box-shadow: 0 0 0 1px #8aa07f;
-}
-
-.parent-journal-entry--challenge .parent-journal-entry__marker {
-  background: #a18156;
-  box-shadow: 0 0 0 1px #b9a17e;
-}
-
-.parent-journal-entry--milestone .parent-journal-entry__marker {
-  background: #46768b;
-  box-shadow: 0 0 0 1px #7196a5;
-}
-
-.parent-journal-entry--reflection .parent-journal-entry__marker {
-  background: #766889;
-  box-shadow: 0 0 0 1px #978da5;
-}
-
-.parent-journal-entry > article {
-  min-width: 0;
-}
-
-.parent-journal-entry__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.42rem 1rem;
-}
-
-.parent-journal-entry__labels {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem;
-  color: #426b65;
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.065em;
-  text-transform: uppercase;
-}
-
-.parent-journal-entry--reflection .parent-journal-entry__labels {
-  color: #655978;
-}
-
-.parent-journal-entry--challenge .parent-journal-entry__labels {
-  color: #80643e;
-}
-
-.parent-journal-entry__edited {
-  margin-left: 0.3rem;
-  border: 1px solid #c6b98f;
-  border-radius: 999px;
-  padding: 0.11rem 0.4rem;
-  color: #71633b;
-  letter-spacing: 0.02em;
-  text-transform: none;
-}
-
-.parent-journal-entry__header time {
-  color: #807968;
-  font-size: 0.7rem;
-}
-
-.parent-journal-entry__content {
-  margin: 0.62rem 0 0;
-  color: var(--issa-text);
-  font-size: 0.86rem;
-  line-height: 1.68;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-blockquote.parent-journal-entry__content {
-  position: relative;
-  border-left: 2px solid #aaa0ba;
-  padding-left: 0.86rem;
-  color: #3e374c;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.94rem;
-}
-
-blockquote.parent-journal-entry__content::before {
-  content: "“";
-}
-
-blockquote.parent-journal-entry__content::after {
-  content: "”";
-}
-
-.parent-journal-entry__teacher {
-  margin: 0.5rem 0 0;
-  color: #70766f;
-  font-size: 0.72rem;
-}
-
-.parent-journal-entry__evidence {
-  display: grid;
-  grid-template-columns: 5.2rem minmax(0, 1fr);
-  align-items: center;
-  gap: 0.72rem;
-  margin-top: 0.78rem;
-  border: 1px solid #d6ceba;
-  border-radius: 0.56rem;
-  padding: 0.56rem;
-  background: #fbf7eb;
-}
-
-.parent-journal-entry__evidence > button {
-  overflow: hidden;
-  width: 5.2rem;
-  height: 3.9rem;
-  border: 1px solid #c3bba8;
-  border-radius: 0.38rem;
-  background: #e9e2d2;
-  padding: 0;
-  cursor: zoom-in;
-}
-
-.parent-journal-entry__evidence img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 180ms ease;
-}
-
-.parent-journal-entry__evidence > button:hover img {
-  transform: scale(1.04);
-}
-
-.parent-journal-entry__evidence span,
-.parent-journal-entry__evidence strong,
-.parent-journal-entry__evidence small {
-  display: block;
-}
-
-.parent-journal-entry__evidence span {
-  color: #806c3d;
-  font-size: 0.59rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.parent-journal-entry__evidence strong {
-  margin-top: 0.2rem;
-  color: var(--issa-text);
-  font-size: 0.78rem;
-}
-
-.parent-journal-entry__evidence small {
-  margin-top: 0.18rem;
-  color: #77705f;
-  font-size: 0.67rem;
-}
-
-.parent-journal-entry__evidence--retracted {
-  display: block;
-  border-style: dashed;
-  background: #f4f0e6;
-}
-
-.parent-journal-entry__evidence--retracted span {
-  color: #665e4e;
-  font-size: 0.7rem;
-  letter-spacing: 0;
-  line-height: 1.5;
-  text-transform: none;
-}
-
-@media (max-width: 559px) {
-  .parent-journal-entry {
-    grid-template-columns: 1.5rem 0.72rem minmax(0, 1fr);
-    gap: 0.52rem;
-  }
-
-  .parent-journal-entry::before {
-    left: 1.82rem;
-  }
-
-  .parent-journal-entry__header {
-    display: grid;
-  }
-
-  .parent-journal-entry__evidence {
-    grid-template-columns: 4.4rem minmax(0, 1fr);
-  }
-
-  .parent-journal-entry__evidence > button {
-    width: 4.4rem;
-    height: 3.5rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .parent-journal-entry__evidence img {
-    transition: none;
-  }
-}
-`;
+const journalToneClasses = {
+  default: {
+    marker: { backgroundColor: '#63827d', boxShadow: '0 0 0 1px #809993' },
+    labelColor: '#426b65',
+  },
+  strength: {
+    marker: { backgroundColor: '#69865c', boxShadow: '0 0 0 1px #8aa07f' },
+    labelColor: '#426b65',
+  },
+  challenge: {
+    marker: { backgroundColor: '#a18156', boxShadow: '0 0 0 1px #b9a17e' },
+    labelColor: '#80643e',
+  },
+  milestone: {
+    marker: { backgroundColor: '#46768b', boxShadow: '0 0 0 1px #7196a5' },
+    labelColor: '#426b65',
+  },
+  reflection: {
+    marker: { backgroundColor: '#766889', boxShadow: '0 0 0 1px #978da5' },
+    labelColor: '#655978',
+  },
+};
 
 export default function JournalEntry({ entry, index, onOpenEvidence }) {
   const type = journalEntryTypes[entry.type] || {
@@ -279,60 +46,61 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
     && !isEvidenceRetracted
     && entry.evidence.file?.url
   );
+  const toneClasses = journalToneClasses[type.tone] || journalToneClasses.default;
 
   return (
-    <>
-      {index === 0 && <style>{journalEntryStyles}</style>}
-      <li
-      className={`parent-journal-entry parent-journal-entry--${type.tone}`}
+    <li
+      className="parent-journal-entry relative grid grid-cols-[2rem_0.85rem_minmax(0,1fr)] items-start gap-[0.72rem] border-t border-[#e1dac7] py-[1.05rem] first:border-t-0 max-[559px]:grid-cols-[1.5rem_0.72rem_minmax(0,1fr)] max-[559px]:gap-[0.52rem]"
       data-reflection-source={captureType?.presentation || undefined}
     >
-      <span className="parent-journal-entry__index" aria-hidden="true">
+      <span className="pt-[0.17rem] text-[0.66rem] [font-weight:850] tracking-[0.08em] text-[#8c846f]" aria-hidden="true">
         {String(index + 1).padStart(2, '0')}
       </span>
-      <span className="parent-journal-entry__marker" aria-hidden="true" />
-      <article>
-        <header className="parent-journal-entry__header">
-          <div className="parent-journal-entry__labels">
+      <span className="relative z-[1] mt-[0.17rem] h-[0.76rem] w-[0.76rem] rounded-full border-[0.16rem] border-[#fffdf7]" style={toneClasses.marker} aria-hidden="true" />
+      <article className="min-w-0">
+        <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-[0.42rem] max-[559px]:grid">
+          <div className="flex flex-wrap items-center gap-1 text-[0.66rem] [font-weight:850] uppercase tracking-[0.065em]" style={{ color: toneClasses.labelColor }}>
             <span>{type.label}</span>
             {captureType && <span>· {captureType.label}</span>}
             {entry.wasEdited && (
-              <span className="parent-journal-entry__edited">Diedit</span>
+              <span className="ml-[0.3rem] rounded-full border border-[#c6b98f] px-[0.4rem] py-[0.11rem] normal-case tracking-[0.02em] text-[#71633b]">Diedit</span>
             )}
           </div>
-          <time dateTime={entry.observedAt}>
+          <time className="text-[0.7rem] text-[#807968]" dateTime={entry.observedAt}>
             {formatJournalObservedDate(entry.observedAt)}
           </time>
         </header>
 
         {isDirectQuote ? (
-          <blockquote className="parent-journal-entry__content">
+          <blockquote className="journal-direct-quote relative mt-[0.62rem] whitespace-pre-wrap break-words border-l-2 border-[#aaa0ba] pl-[0.86rem] font-serif text-[0.94rem] leading-[1.68] text-[#3e374c]">
             {entry.content}
           </blockquote>
         ) : (
-          <p className="parent-journal-entry__content">{entry.content}</p>
+          <p className="mt-[0.62rem] whitespace-pre-wrap break-words text-[0.86rem] leading-[1.68] text-[var(--issa-text)]">{entry.content}</p>
         )}
 
-        <p className="parent-journal-entry__teacher">
+        <p className="mt-2 text-[0.72rem] text-[#70766f]">
           Dicatat oleh {entry.teacher?.name || 'Guru'}
         </p>
 
         {isEvidenceAvailable && (
-          <div className="parent-journal-entry__evidence">
+          <div className="mt-[0.78rem] grid grid-cols-[5.2rem_minmax(0,1fr)] items-center gap-[0.72rem] rounded-[0.56rem] border border-[#d6ceba] bg-[#fbf7eb] p-[0.56rem] max-[559px]:grid-cols-[4.4rem_minmax(0,1fr)]">
             <button
               type="button"
+              className="group h-[3.9rem] w-[5.2rem] cursor-zoom-in overflow-hidden rounded-[0.38rem] border border-[#c3bba8] bg-[#e9e2d2] p-0 max-[559px]:h-[3.5rem] max-[559px]:w-[4.4rem]"
               onClick={() => onOpenEvidence(entry.evidence)}
               aria-label={`Buka evidence ${entry.evidence.title}`}
             >
               <img
+                className="block h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.04] motion-reduce:transition-none"
                 src={entry.evidence.file?.url}
                 alt={entry.evidence.title}
               />
             </button>
             <div>
-              <span>Evidence terkait</span>
-              <strong>{entry.evidence.title}</strong>
-              <small>
+              <span className="block text-[0.59rem] [font-weight:850] uppercase tracking-[0.08em] text-[#806c3d]">Evidence terkait</span>
+              <strong className="mt-[0.2rem] block text-[0.78rem] text-[var(--issa-text)]">{entry.evidence.title}</strong>
+              <small className="mt-[0.18rem] block text-[0.67rem] text-[#77705f]">
                 {evidenceCategoryLabels[entry.evidence.category]
                   || entry.evidence.category
                   || 'Kategori tidak tersedia'}
@@ -344,12 +112,12 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
         )}
         {isEvidenceRetracted && (
           <div
-            className="parent-journal-entry__evidence parent-journal-entry__evidence--retracted"
+            className="mt-[0.78rem] block rounded-[0.56rem] border border-dashed border-[#d6ceba] bg-[#f4f0e6] p-[0.56rem]"
           >
             <div>
-              <span>Evidence terkait telah dicabut dan tidak lagi tersedia.</span>
-              <strong>{entry.evidence.title}</strong>
-              <small>
+              <span className="block text-[0.7rem] leading-[1.5] text-[#665e4e]">Evidence terkait telah dicabut dan tidak lagi tersedia.</span>
+              <strong className="mt-[0.2rem] block text-[0.78rem] text-[var(--issa-text)]">{entry.evidence.title}</strong>
+              <small className="mt-[0.18rem] block text-[0.67rem] text-[#77705f]">
                 {evidenceCategoryLabels[entry.evidence.category]
                   || entry.evidence.category
                   || 'Kategori tidak tersedia'}
@@ -360,7 +128,6 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
           </div>
         )}
       </article>
-      </li>
-    </>
+    </li>
   );
 }

@@ -1,4 +1,7 @@
 const authenticationService = require('../authentication/authentication.service');
+const {
+  validatePublicDemoLoginRequest,
+} = require('../authentication/authentication.validator');
 const teacherService = require('./teacher.service');
 
 async function authenticateTeacher(req, res, next) {
@@ -8,6 +11,18 @@ async function authenticateTeacher(req, res, next) {
       password: req.body.password,
     });
 
+    res.status(200).json(authenticationResponse);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function authenticatePublicDemoTeacher(req, res, next) {
+  try {
+    validatePublicDemoLoginRequest(req.body);
+    const authenticationResponse =
+      await authenticationService.authenticatePublicDemoTeacher();
+    res.set('Cache-Control', 'no-store');
     res.status(200).json(authenticationResponse);
   } catch (error) {
     next(error);
@@ -24,6 +39,7 @@ async function getTeacherList(req, res, next) {
 }
 
 module.exports = {
+  authenticatePublicDemoTeacher,
   authenticateTeacher,
   getTeacherList,
 };

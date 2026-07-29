@@ -1,111 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { submitParentLogin } from '../store/actions/actionCreator';
+import {
+  submitParentDemoLogin,
+  submitParentLogin,
+} from '../store/actions/actionCreator';
 import LoginForm from '../features/authentication/components/LoginForm';
-import LoginIdentityZone from '../features/authentication/components/LoginIdentityZone';
-const loginStyles = String.raw`
-.issa-login {
-  background: linear-gradient(125deg, #eef7f8 0%, #f8fbfc 52%, #f5f0ff 100%);
-}
-
-.issa-login__frame {
-  border: 1.5px solid #173e52;
-  border-radius: 1.35rem 1.35rem 3.4rem 1.35rem;
-  background: #fffaf2;
-  box-shadow: 0.85rem 0.95rem 0 rgba(23, 62, 82, 0.14), 0 1.4rem 3.5rem rgba(29, 70, 91, 0.1);
-  animation: login-frame-in 440ms both;
-}
-
-.issa-login__record {
-  padding: 2.4rem;
-  background-color: #1c4d63;
-  background-image: linear-gradient(135deg, #0e2a3a, #265367);
-  color: white;
-}
-
-.issa-login__seal {
-  width: 4.4rem;
-  height: 4.1rem;
-  margin-left: 0.7rem;
-}
-
-.issa-login__seal img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.issa-login__record .issa-login__kicker {
-  margin: 1.4rem 0 0 0.7rem;
-  color: #c7e1eb;
-  font-size: 0.74rem;
-  font-weight: 850;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.issa-login__record h2 {
-  max-width: 19rem;
-  margin: 0.45rem 0 0 0.7rem;
-  color: white;
-  font-size: clamp(1.75rem, 3vw, 2.55rem);
-  font-weight: 850;
-  letter-spacing: -0.04em;
-  line-height: 1.02;
-}
-
-.issa-login__record > p:last-child {
-  max-width: 17rem;
-  margin: 1rem 0 0 0.7rem;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.94rem;
-  line-height: 1.55;
-}
-
-.issa-login__form {
-  padding: 2.65rem clamp(2rem, 5vw, 4.2rem);
-  border: 0;
-  border-left: 1px solid #c8dce7;
-  border-radius: 0;
-  background: #fffaf2;
-  box-shadow: none;
-  animation: login-form-in 460ms 70ms both;
-}
-
-@keyframes login-frame-in {
-  from { opacity: 0; transform: translateY(0.75rem); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes login-form-in {
-  from { opacity: 0; transform: translateX(0.65rem); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@media (min-width: 768px) {
-  .issa-login__frame { grid-template-columns: minmax(0, 0.83fr) minmax(25rem, 1.17fr); min-height: 33rem; }
-  .issa-login__record { padding: 2.8rem; }
-}
-
-@media (max-width: 767px) {
-  .issa-login__frame { grid-template-columns: minmax(0, 1fr); width: min(100%, 31rem); border-radius: 1rem 1rem 2.5rem 1rem; box-shadow: 0.55rem 0.62rem 0 rgba(23, 62, 82, 0.12); }
-  .issa-login__record { min-height: 0; padding: 0.58rem 1.18rem 0.54rem; }
-  .issa-login__seal { width: 2.65rem; height: 2.45rem; margin-left: 0.2rem; }
-  .issa-login__record .issa-login__kicker { margin: 0.36rem 0 0 0.2rem; font-size: 0.53rem; letter-spacing: 0.13em; }
-  .issa-login__record h2 { max-width: none; margin: 0.16rem 0 0 0.2rem; font-size: clamp(1.9rem, 8.2vw, 2.1rem); letter-spacing: -0.06em; line-height: 0.96; }
-  .issa-login__record > p:last-child { display: block; max-width: none; margin: 0.28rem 0 0 0.2rem; font-size: clamp(0.58rem, 2.4vw, 0.62rem); line-height: 1.22; white-space: nowrap; }
-  .issa-login__form { padding: 0.9rem 1.2rem 0.9rem; border-top: 1px solid #c8dce7; border-left: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .issa-login__frame,
-  .issa-login__form {
-    transition: none;
-    animation: none;
-  }
-}
-`;
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -113,14 +13,20 @@ export default function LoginPage() {
   const location = useLocation();
   const [loginCredentials, setLoginCredentials] = useState({ NIM: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
   const [error, setError] = useState(() => (
-    new URLSearchParams(location.search).get('session') === 'expired'
-      ? 'Sesi Anda telah berakhir. Silakan masuk kembali.'
-      : ''
+    new URLSearchParams(location.search).get('session') === 'demo-expired'
+      ? 'Sesi demo telah berakhir. Buka kembali demo untuk melanjutkan.'
+      : new URLSearchParams(location.search).get('session') === 'expired'
+        ? 'Sesi Anda telah berakhir. Silakan masuk kembali.'
+        : ''
   ));
 
   useEffect(() => {
-    if (new URLSearchParams(location.search).get('session') === 'expired') {
+    const sessionReason = new URLSearchParams(location.search).get('session');
+    if (sessionReason === 'demo-expired') {
+      setError('Sesi demo telah berakhir. Buka kembali demo untuk melanjutkan.');
+    } else if (sessionReason === 'expired') {
       setError('Sesi Anda telah berakhir. Silakan masuk kembali.');
     }
   }, [location.search]);
@@ -142,20 +48,25 @@ export default function LoginPage() {
       .finally(() => setIsSubmitting(false));
   }
 
+  function handleDemoLogin() {
+    if (isDemoSubmitting) return;
+
+    setIsDemoSubmitting(true);
+    setError('');
+    dispatch(submitParentDemoLogin())
+      .then(() => navigate('/'))
+      .catch((loginError) => setError(loginError?.message || 'Demo Parent belum dapat dibuka.'))
+      .finally(() => setIsDemoSubmitting(false));
+  }
+
   return (
-    <>
-      <style>{loginStyles}</style>
-      <main className="issa-login relative grid min-h-[100svh] place-items-center overflow-hidden px-4 py-8 sm:px-6 max-[767px]:items-start max-[767px]:px-[0.9rem] max-[767px]:pb-4 max-[767px]:pt-3">
-      <div className="issa-login__frame relative z-10 grid w-[min(100%,68rem)] overflow-hidden">
-        <LoginIdentityZone />
-        <LoginForm
-          error={error}
-          isSubmitting={isSubmitting}
-          onChange={handleLoginInputChange}
-          onSubmit={handleLoginSubmit}
-        />
-      </div>
-      </main>
-    </>
+    <LoginForm
+      error={error}
+      isSubmitting={isSubmitting}
+      isDemoSubmitting={isDemoSubmitting}
+      onChange={handleLoginInputChange}
+      onDemoLogin={handleDemoLogin}
+      onSubmit={handleLoginSubmit}
+    />
   );
 }

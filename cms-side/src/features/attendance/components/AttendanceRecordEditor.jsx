@@ -19,6 +19,7 @@ const attendanceStatusOptions = attendanceStatuses.map((status) => ({
 
 export default function AttendanceRecordEditor({
   record,
+  readOnly = false,
   saving = false,
   onChange,
 }) {
@@ -42,11 +43,18 @@ export default function AttendanceRecordEditor({
         id={`student-attendance-${record.id}`}
         label={`Status kehadiran ${record.attendanceDate}`}
         value={record.status}
-        onChange={(status) => onChange(record, status)}
-        disabled={saving || isLocked}
+        onChange={(status) => {
+          if (!readOnly) onChange(record, status);
+        }}
+        disabled={saving || isLocked || readOnly}
         options={attendanceStatusOptions}
         tone="attendance"
       />
+      {readOnly && (
+        <p className="text-xs font-semibold text-[var(--muted)]">
+          Tidak tersedia dalam mode demo.
+        </p>
+      )}
       <p
         className="attendance-offline-record__sync-label"
         data-state={record.syncState}

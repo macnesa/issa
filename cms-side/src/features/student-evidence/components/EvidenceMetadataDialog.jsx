@@ -17,6 +17,9 @@ import {
 import "./EvidenceMetadataDialog.css";
 
 function correctionErrorMessage(error) {
+  if (error?.code === "publicDemoReadOnly") {
+    return "Perubahan data tidak tersedia dalam mode demo.";
+  }
   if (error?.status === 401 || error?.status === 403) {
     return "Evidence tidak dapat dikoreksi. Evidence mungkin dibuat oleh guru lain.";
   }

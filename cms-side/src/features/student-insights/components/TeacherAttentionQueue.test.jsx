@@ -25,10 +25,10 @@ const attentionItem = {
   ],
 };
 
-function renderQueue() {
+function renderQueue(props = {}) {
   return render(
     <MemoryRouter>
-      <TeacherAttentionQueue />
+      <TeacherAttentionQueue {...props} />
     </MemoryRouter>
   );
 }
@@ -54,36 +54,36 @@ describe("TeacherAttentionQueue", () => {
       .toBeInTheDocument();
   });
 
-  it("memisahkan tindak lanjut, fakta, konteks, dan langkah manusiawi", async () => {
+  it("menampilkan satu perubahan, satu fakta, konteks yang hilang, dan satu aksi", async () => {
+    const onCountChange = vi.fn();
     global.fetch = vi.fn(() => mockFetchResponse([attentionItem]));
-    renderQueue();
+    renderQueue({ onCountChange });
 
     expect(await screen.findByText("Ari Wibowo")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Perlu ditinjau" }))
       .toBeInTheDocument();
-    expect(screen.getAllByText("Perlu ditinjau · Interpretasi sistem"))
-      .toHaveLength(1);
-    expect(screen.getByText("Data yang terlihat")).toBeInTheDocument();
-    expect(screen.getByText("Konteks")).toBeInTheDocument();
-    expect(screen.getByText("Langkah berikut")).toBeInTheDocument();
+    expect(screen.getByText(
+      "Perubahan kehadiran dalam 30 hari terakhir."
+    )).toBeInTheDocument();
     expect(screen.getByText(
       "Kehadiran tercatat 81% pada 21 hari yang memiliki catatan."
     )).toBeInTheDocument();
     expect(screen.getByText(
-      "Tanyakan kondisi siswa dan keluarga sebelum menentukan dukungan."
+      "Belum ada catatan mengenai penyebab perubahan kehadiran."
     )).toBeInTheDocument();
-    expect(screen.getByText(
-      "Nilai terbaru Matematika adalah 68, setelah sebelumnya 72. KKM saat ini adalah 75."
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      "Satu perubahan nilai belum cukup untuk menjelaskan perkembangan siswa."
-    )).toBeInTheDocument();
-    expect(screen.getByText("Tinjau segera")).toBeInTheDocument();
+    expect(screen.queryByText(/Nilai terbaru Matematika/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Data yang terlihat")).not.toBeInTheDocument();
+    expect(screen.queryByText("Interpretasi sistem")).not.toBeInTheDocument();
+    expect(screen.queryByText("Langkah berikut")).not.toBeInTheDocument();
+    expect(screen.queryByText(/NIM 2026071001/)).not.toBeInTheDocument();
 
     const row = screen.getByText("Ari Wibowo").closest("li");
     expect(row).not.toHaveTextContent(/high priority|medium priority|low priority/i);
-    expect(screen.getByRole("link", { name: "Buka Student Detail Ari Wibowo" }))
+    expect(screen.getByRole("link", { name: "Tinjau siswa Ari Wibowo" }))
       .toHaveAttribute("href", "/students/7");
+    expect(screen.getByRole("link", { name: "Tinjau siswa Ari Wibowo" }))
+      .toHaveTextContent("Tinjau siswa");
+    expect(onCountChange).toHaveBeenLastCalledWith(1);
   });
 
   it("menampilkan empty state", async () => {

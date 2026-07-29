@@ -23,8 +23,18 @@ Use the Node.js version supported by the selected provider and install from each
 | `JWT_SECRET` | Yes | JWT signing and verification secret |
 | `FRONTEND_ORIGINS` | Yes | Comma-separated exact Parent and Teacher origins, without paths |
 | `ALLOW_REMOTE_DEMO_BOOTSTRAP` | Bootstrap only | Must equal `true` for the one-time remote demo bootstrap |
+| `PUBLIC_DEMO_ENABLED=true` | Public portfolio demo only | Enables passwordless read-only demo authentication |
+| `DEMO_TEACHER_ID` | When public demo is enabled | Existing synthetic Teacher ID selected by the Server |
+| `DEMO_PARENT_ID` | When public demo is enabled | Existing synthetic Parent `User` ID selected by the Server |
 
 Production startup fails fast when `DATABASE_URL`, `JWT_SECRET`, or `FRONTEND_ORIGINS` is absent. Never commit their real values.
+
+When public demo mode is enabled, startup also fails if either demo actor ID is
+missing or invalid. Use `POST /teachers/demo-login` and
+`POST /users/demo-login`; neither endpoint accepts an actor ID or password.
+Demo sessions can read only their normal authorized scope. Every persistent
+mutation returns `403`, while the grounded AI narrative-draft endpoint remains
+available because it does not persist its result.
 
 ### Parent Client
 
@@ -72,16 +82,11 @@ The JSON files in `server/data-seeding/` are the single source of truth for the 
 - Student photos are public HTTPS references listed in `server/data-seeding/student-photos.json`; the deployed environment must allow outbound/browser access to `live.staticflickr.com`.
 - Parent and Teacher authentication tokens use browser `localStorage`, so sessions persist across normal reloads. The Server remains the authorization authority.
 
-## Demo credentials
+## Demo access
 
-These credentials belong only to the curated demo database:
-
-| Role | Identifier | Password |
-| --- | --- | --- |
-| Teacher | NIP `2026001001` | `GuruDemo2026` |
-| Parent | NIM `2026071001` | `OrangTua2026` |
-
-They are also recorded in `server/DEMO_CREDENTIALS.md`. Replace or disable demo credentials before using the deployment for non-demo data.
+The public portfolio deployment uses the passwordless demo-login endpoints.
+Do not publish or embed synthetic account passwords in a frontend bundle.
+Configure only the server-side demo actor IDs in deployment secrets.
 
 ## Deployment order
 

@@ -21,6 +21,8 @@
 .attendance-register__date-field > .issa-control-label { color: #356d70; font-size: 0.68rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
 .attendance-register__date-field .issa-date-trigger { min-height: 1.8rem; border: 0; padding: 0.15rem 0; background: transparent; font-weight: 750; box-shadow: none; }
 .attendance-register__search-field > span { color: #4f6f72; }
+.attendance-register__records { min-width: 0; }
+.attendance-register__table { min-width: 47.5rem; }
 .attendance-register__table thead { background: #e7f5f2; color: #41686a; }
 .attendance-register__table thead th { font-weight: 850; }
 .attendance-register__footer { border-top-color: #c5dfdc !important; background: #f6fbfa; }
@@ -45,8 +47,76 @@
 .attendance-register__status-control.is-alfa .inline-flex { background: #fff1f2; color: #af3744; box-shadow: inset 0 0 0 1px #efb2b8; }
 .attendance-register__record-action { border-radius: 0.52rem 0.36rem 0.68rem 0.38rem !important; background: rgba(255, 255, 255, 0.86) !important; }
 
+@media (max-width: 1023px) {
+  .attendance-register__table {
+    min-width: 0;
+  }
+
+  .attendance-register__table thead {
+    display: none;
+  }
+
+  .attendance-register__table tbody {
+    display: grid;
+  }
+
+  .attendance-register__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.35fr);
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .attendance-register__row > th,
+  .attendance-register__row > td {
+    min-width: 0;
+    padding: 0;
+  }
+
+  .attendance-register__row > td[data-label]::before {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--muted);
+    content: attr(data-label);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .attendance-register__row > td:nth-of-type(2) {
+    grid-column: 1;
+  }
+
+  .attendance-register__row > td:nth-of-type(3) {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+    text-align: left;
+  }
+
+  .attendance-register__status-control {
+    min-width: 0;
+  }
+
+  .attendance-register__record-action {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 639px) {
   .attendance-register__toolbar { padding: 1rem; }
+
+  .attendance-register__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .attendance-register__row > td:nth-of-type(2),
+  .attendance-register__row > td:nth-of-type(3) {
+    grid-column: 1;
+    grid-row: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

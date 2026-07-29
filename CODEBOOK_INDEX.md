@@ -3,7 +3,7 @@
 ## Client
 
 - `ISSA:CLIENT.ACTIVITY.FETCH_SCHOOL_ACTIVITIES`
-  - `client/src/store/actions/actionCreator.js:155`
+  - `client/src/store/actions/actionCreator.js:189`
 - `ISSA:CLIENT.ATTENDANCE.CALCULATE_SUMMARY`
   - `client/src/features/student-overview/helpers.js:39`
 - `ISSA:CLIENT.ATTENDANCE.GROUP_HISTORY_BY_MONTH`
@@ -12,57 +12,61 @@
   - `client/src/config/apiClient.js:21`
 - `ISSA:CLIENT.AUTH.PARSE_SESSION_TOKEN`
   - `client/src/utils/session.js:18`
+- `ISSA:CLIENT.AUTH.SUBMIT_PARENT_DEMO_LOGIN`
+  - `client/src/store/actions/actionCreator.js:60`
 - `ISSA:CLIENT.AUTH.SUBMIT_PARENT_LOGIN`
   - `client/src/store/actions/actionCreator.js:42`
 - `ISSA:CLIENT.PROGRESS.BUILD_OVERVIEW`
   - `client/src/features/progress/helpers.js:41`
 - `ISSA:CLIENT.SCHEDULE.FETCH_CLASS_SCHEDULE`
-  - `client/src/store/actions/actionCreator.js:139`
+  - `client/src/store/actions/actionCreator.js:173`
 - `ISSA:CLIENT.SCHEDULE.MAP_RESPONSE_TO_ENTRIES`
   - `client/src/mappers/schedule.js:6`
 - `ISSA:CLIENT.SESSION.CHECK_EXPIRATION`
-  - `client/src/utils/session.js:48`
+  - `client/src/utils/session.js:57`
 - `ISSA:CLIENT.SESSION.END_PARENT_SESSION`
-  - `client/src/utils/session.js:91`
+  - `client/src/utils/session.js:100`
 - `ISSA:CLIENT.SESSION.INITIALIZE_PARENT_SESSION`
-  - `client/src/utils/session.js:118`
+  - `client/src/utils/session.js:130`
 - `ISSA:CLIENT.SESSION.START_AND_SCHEDULE_EXPIRATION`
-  - `client/src/utils/session.js:103`
+  - `client/src/utils/session.js:115`
 - `ISSA:CLIENT.STUDENT.BUILD_ACADEMIC_SUMMARY`
   - `client/src/features/student-overview/helpers.js:81`
 - `ISSA:CLIENT.STUDENT.FETCH_OVERVIEW`
-  - `client/src/store/actions/actionCreator.js:121`
+  - `client/src/store/actions/actionCreator.js:155`
 - `ISSA:CLIENT.STUDENT.MAP_RESPONSE_TO_OVERVIEW`
   - `client/src/mappers/studentDetail.js:22`
 
 ## CMS
 
 - `ISSA:CMS.ATTENDANCE.CREATE_RECORD`
-  - `cms-side/src/store/action/ActionCreator.js:586`
+  - `cms-side/src/store/action/ActionCreator.js:617`
 - `ISSA:CMS.ATTENDANCE.UPDATE_RECORD`
-  - `cms-side/src/store/action/ActionCreator.js:610`
+  - `cms-side/src/store/action/ActionCreator.js:644`
 - `ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION`
-  - `cms-side/src/router/index.jsx:11`
+  - `cms-side/src/router/index.jsx:16`
+- `ISSA:CMS.AUTH.SUBMIT_TEACHER_DEMO_LOGIN`
+  - `cms-side/src/pages/Login.jsx:119`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
-  - `cms-side/src/pages/Login.jsx:21`
+  - `cms-side/src/pages/Login.jsx:81`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:68`
+  - `cms-side/src/pages/AddStudent.jsx:94`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:124`
+  - `cms-side/src/pages/AddStudent.jsx:174`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.APPLY_LOCAL_OVERLAY`
   - `cms-side/src/offline-workspace/attendanceOffline.js:50`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.COMPACT_MUTATION`
-  - `cms-side/src/offline-workspace/mutationQueue.js:169`
+  - `cms-side/src/offline-workspace/mutationQueue.js:170`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.PROTECT_LOGOUT_WITH_PENDING`
-  - `cms-side/src/navigation/Sidebar.jsx:54`
+  - `cms-side/src/navigation/Sidebar.jsx:80`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RECONCILE_SERVER_RECORD`
-  - `cms-side/src/offline-workspace/workspaceSnapshots.js:179`
+  - `cms-side/src/offline-workspace/workspaceSnapshots.js:182`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_LOCAL`
-  - `cms-side/src/offline-workspace/mutationQueue.js:500`
+  - `cms-side/src/offline-workspace/mutationQueue.js:511`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_SERVER`
   - `cms-side/src/offline-workspace/attendanceOffline.js:154`
 - `ISSA:CMS.OFFLINE_WORKSPACE.ENQUEUE_MUTATION`
-  - `cms-side/src/offline-workspace/mutationQueue.js:213`
+  - `cms-side/src/offline-workspace/mutationQueue.js:214`
 - `ISSA:CMS.OFFLINE_WORKSPACE.INITIALIZE_DATABASE`
   - `cms-side/src/offline-workspace/offlineDatabase.js:22`
 - `ISSA:CMS.OFFLINE_WORKSPACE.PROCESS_PENDING_SYNC_BATCH`
@@ -70,21 +74,21 @@
 - `ISSA:CMS.OFFLINE_WORKSPACE.RECONCILE_SYNC_RESULT`
   - `cms-side/src/offline-workspace/syncEngine.js:76`
 - `ISSA:CMS.OFFLINE_WORKSPACE.RECOVER_INTERRUPTED_MUTATION`
-  - `cms-side/src/offline-workspace/mutationQueue.js:453`
+  - `cms-side/src/offline-workspace/mutationQueue.js:463`
 - `ISSA:CMS.OFFLINE_WORKSPACE.SAVE_WORKSPACE_SNAPSHOT`
-  - `cms-side/src/offline-workspace/workspaceSnapshots.js:133`
+  - `cms-side/src/offline-workspace/workspaceSnapshots.js:135`
 - `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
-  - `cms-side/src/store/action/ActionCreator.js:636`
+  - `cms-side/src/store/action/ActionCreator.js:673`
 - `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
-  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:47`
+  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:65`
 - `ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE`
-  - `cms-side/src/store/action/ActionCreator.js:560`
+  - `cms-side/src/store/action/ActionCreator.js:588`
 - `ISSA:CMS.STUDENT.FETCH_DETAIL`
-  - `cms-side/src/store/action/ActionCreator.js:43`
+  - `cms-side/src/store/action/ActionCreator.js:59`
 - `ISSA:CMS.STUDENT.FETCH_LIST`
-  - `cms-side/src/store/action/ActionCreator.js:9`
+  - `cms-side/src/store/action/ActionCreator.js:25`
 - `ISSA:CMS.STUDENT.UPDATE_RECORD`
-  - `cms-side/src/store/action/ActionCreator.js:126`
+  - `cms-side/src/store/action/ActionCreator.js:143`
 
 ## Server
 
@@ -105,13 +109,17 @@
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_STATUS`
   - `server/modules/attendance/attendance.validator.js:51`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT`
-  - `server/modules/authentication/authentication.service.js:11`
+  - `server/modules/authentication/authentication.service.js:94`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_PARENT_REQUEST`
-  - `server/middlewares/authentication.js:84`
+  - `server/middlewares/authentication.js:118`
+- `ISSA:SERVER.AUTH.AUTHENTICATE_PUBLIC_DEMO_PARENT`
+  - `server/modules/authentication/authentication.service.js:140`
+- `ISSA:SERVER.AUTH.AUTHENTICATE_PUBLIC_DEMO_TEACHER`
+  - `server/modules/authentication/authentication.service.js:150`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER`
-  - `server/modules/authentication/authentication.service.js:39`
+  - `server/modules/authentication/authentication.service.js:115`
 - `ISSA:SERVER.AUTH.AUTHENTICATE_TEACHER_REQUEST`
-  - `server/middlewares/authentication.js:73`
+  - `server/middlewares/authentication.js:107`
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
   - `server/helpers/index.js:16`
 - `ISSA:SERVER.FEEDBACK.GET_HISTORY`
@@ -163,9 +171,9 @@
 - `ISSA:SERVER.STUDENT_LEARNING_JOURNAL.UPDATE`
   - `server/modules/student-learning-journal/student-learning-journal.service.js:229`
 - `ISSA:SERVER.STUDENT.GET_DETAIL`
-  - `server/modules/student/student.service.js:32`
+  - `server/modules/student/student.service.js:33`
 - `ISSA:SERVER.STUDENT.GET_LIST`
-  - `server/modules/student/student.service.js:16`
+  - `server/modules/student/student.service.js:15`
 - `ISSA:SERVER.TEACHER_SEARCH.AUTHORIZED`
   - `server/modules/teacher-search/teacher-search.service.js:229`
 - `ISSA:SERVER.TEACHER_SEARCH.SHAPE_RESULTS`

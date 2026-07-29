@@ -37,6 +37,9 @@ function formFromEntry(entry) {
 }
 
 function submitErrorMessage(error, editing) {
+  if (error?.code === "publicDemoReadOnly") {
+    return "Perubahan data tidak tersedia dalam mode demo.";
+  }
   if (error?.status === 401 || error?.status === 403) {
     return editing
       ? "Koreksi tidak dapat disimpan. Catatan mungkin dibuat oleh guru lain."
@@ -56,6 +59,7 @@ export default function JournalEntryForm({
   evidenceError,
   onSubmit,
   onCancelEdit,
+  demoReadOnly = false,
   readOnly = false,
 }) {
   const [form, setForm] = useState(emptyForm);
@@ -109,7 +113,9 @@ export default function JournalEntryForm({
     if (submittingRef.current) return;
     if (readOnly) {
       setStatusMessage(
-        "Mode offline hanya menampilkan catatan yang telah tersimpan."
+        demoReadOnly
+          ? "Perubahan data tidak tersedia dalam mode demo."
+          : "Mode offline hanya menampilkan catatan yang telah tersimpan."
       );
       return;
     }
@@ -187,6 +193,11 @@ export default function JournalEntryForm({
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
+        {demoReadOnly && (
+          <p className="m-0 px-4 pt-4 text-sm font-semibold text-[var(--muted)]">
+            Tidak tersedia dalam mode demo.
+          </p>
+        )}
         <div className="journal-entry-form__fields">
           <SelectField
             id="student-journal-type"
@@ -300,9 +311,11 @@ export default function JournalEntryForm({
             role="status"
             aria-live="polite"
           >
-            {readOnly
-              ? "Mode offline · catatan hanya dapat dibaca."
-              : statusMessage}
+            {demoReadOnly
+              ? statusMessage
+              : readOnly
+                ? "Mode offline · catatan hanya dapat dibaca."
+                : statusMessage}
           </p>
         </div>
       </form>

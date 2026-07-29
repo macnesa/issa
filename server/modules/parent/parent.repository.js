@@ -10,6 +10,17 @@ function findParentAccountByNim(parentNim) {
   });
 }
 
+function findParentAccountById(parentId) {
+  return User.findByPk(parentId, {
+    attributes: { exclude: ['password'] },
+    include: {
+      model: Student,
+      include: { model: Class },
+    },
+  });
+}
+
 module.exports = {
+  findParentAccountById,
   findParentAccountByNim,
 };

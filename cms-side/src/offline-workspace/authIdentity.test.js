@@ -1,6 +1,8 @@
 import {
   clearLastKnownTeacherIdentity,
   getActiveTeacherIdentity,
+  getTeacherAccessMode,
+  isTeacherDemoSession,
   readTeacherIdentityFromToken,
   saveLastKnownTeacherIdentity,
   teacherIdentityStorageKey,
@@ -59,5 +61,21 @@ describe("last-known Teacher identity", () => {
       studentId: 7,
     });
     expect(readTeacherIdentityFromToken(token)).toBeNull();
+  });
+
+  test("derives demo mode only from the exact JWT accessMode claim", () => {
+    const demoToken = unsignedTeacherToken({
+      role: "teacher",
+      teacherId: 19,
+      accessMode: "demo",
+    });
+
+    expect(getTeacherAccessMode(demoToken)).toBe("demo");
+    expect(isTeacherDemoSession(demoToken)).toBe(true);
+    expect(isTeacherDemoSession(unsignedTeacherToken({
+      role: "teacher",
+      teacherId: 19,
+      accessMode: "Demo",
+    }))).toBe(false);
   });
 });
