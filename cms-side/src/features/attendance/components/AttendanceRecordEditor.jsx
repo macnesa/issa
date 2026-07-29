@@ -30,11 +30,11 @@ export default function AttendanceRecordEditor({
 
   return (
     <div
-      className="attendance-offline-record record-ledger__entry rounded-xl border p-3"
+      className="attendance-offline-record record-ledger__entry"
       data-sync-state={record.syncState}
     >
       <div className="attendance-offline-record__heading">
-        <span className="text-sm font-medium text-[var(--text)]">
+        <span>
           {record.attendanceDate || "Tanggal attendance belum tersedia"}
         </span>
         <StatusBadge status={record.status} />
@@ -48,10 +48,9 @@ export default function AttendanceRecordEditor({
         }}
         disabled={saving || isLocked || readOnly}
         options={attendanceStatusOptions}
-        tone="attendance"
       />
       {readOnly && (
-        <p className="text-xs font-semibold text-[var(--muted)]">
+        <p className="attendance-offline-record__demo">
           Tidak tersedia dalam mode demo.
         </p>
       )}

@@ -4,8 +4,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
-import "./EvidenceViewerDialog.css";
+import { DestructiveButton, SecondaryButton } from "../../../shared/ui/ui";
 
 export default function EvidenceViewerDialog({
   demoReadOnly = false,
@@ -15,10 +14,10 @@ export default function EvidenceViewerDialog({
 }) {
   return (
     <Dialog open={Boolean(evidence)} onClose={onClose}>
-      <DialogBackdrop className="evidence-viewer-dialog__backdrop" />
-      <div className="evidence-viewer-dialog__container">
-        <DialogPanel className="evidence-viewer-dialog__panel">
-          <DialogTitle className="evidence-viewer-dialog__title">
+      <DialogBackdrop className="issa-dialog-backdrop" />
+      <div className="issa-dialog-container">
+        <DialogPanel className="issa-dialog-panel evidence-viewer-dialog">
+          <DialogTitle className="issa-dialog-title">
             {evidence?.title || "Evidence siswa"}
           </DialogTitle>
           {evidence?.file?.url && (
@@ -28,11 +27,11 @@ export default function EvidenceViewerDialog({
               alt={evidence.title}
             />
           )}
-          <div className="evidence-viewer-dialog__actions">
+          <div className="issa-dialog-footer">
             <SecondaryButton type="button" onClick={onClose}>
               Tutup viewer
             </SecondaryButton>
-            <PrimaryButton
+            <DestructiveButton
               type="button"
               className="evidence-viewer-dialog__retract"
               disabled={demoReadOnly}
@@ -41,9 +40,9 @@ export default function EvidenceViewerDialog({
               }}
             >
               Cabut evidence
-            </PrimaryButton>
+            </DestructiveButton>
             {demoReadOnly && (
-              <span className="text-xs text-[var(--muted)]">
+              <span className="evidence-viewer-dialog__demo">
                 Tidak tersedia dalam mode demo.
               </span>
             )}

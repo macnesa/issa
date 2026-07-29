@@ -14,6 +14,7 @@ import {
   DestructiveButton,
   PrimaryButton,
   SecondaryButton,
+  TertiaryButton,
 } from "../../shared/ui/ui";
 import { generateAiNarrative } from "./aiNarrativeApi";
 import {
@@ -27,6 +28,7 @@ import type {
   EditableNarrativeSection,
 } from "./aiNarrativeTypes";
 import type { AiNarrativeSourceType } from "./aiNarrativeSchema";
+import "./ai-narrative-workspace.css";
 
 const ALL_SOURCE_TYPES: AiNarrativeSourceType[] = [
   "attendance",
@@ -36,14 +38,13 @@ const ALL_SOURCE_TYPES: AiNarrativeSourceType[] = [
   "feedback",
 ];
 
-const bodyClasses = "grid min-w-0 gap-5 p-5 max-[639px]:px-4";
-const bodySectionClasses = "min-w-0 border-t-2 border-[var(--border-strong)] pt-[0.9rem]";
-const fieldClasses = "grid min-w-0 gap-[0.4rem] text-[0.875rem] font-[650] text-[var(--text)]";
-const fieldControlClasses = "min-h-11 w-full min-w-0 max-w-full rounded-[var(--control-radius)] border border-[var(--border-strong)] bg-white px-3 py-2.5 text-[var(--text)] [font:inherit] focus-visible:border-[var(--accent)] focus-visible:shadow-[inset_0.24rem_0_0_#6bbfbc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
-const selectionLabelClasses = "flex min-h-11 min-w-0 items-center gap-[0.6rem] [overflow-wrap:anywhere] text-[0.86rem] text-[var(--text)]";
-const actionRowClasses = "flex min-w-0 flex-wrap justify-end gap-[0.7rem] border-t border-[var(--border)] pt-4 max-[639px]:flex-col-reverse max-[639px]:[&>button]:w-full";
-const citationButtonClasses = "rounded-[0.15rem_var(--control-radius)_0.15rem_0.15rem] border border-[var(--border-strong)] bg-white px-[0.55rem] py-[0.32rem] text-[0.72rem] font-[750] text-[#294d53] hover:bg-[#edf6f4] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)]";
-const contextPanelClasses = "border border-[#d8c985] border-l-[0.3rem] border-l-[#9c7b2c] bg-[#fff8df] px-4 py-[0.85rem] text-[0.84rem] text-[var(--text)]";
+const bodyClasses = "ai-workspace__body";
+const bodySectionClasses = "ai-workspace__section";
+const fieldClasses = "ai-workspace__field";
+const fieldControlClasses = "issa-native-control";
+const selectionLabelClasses = "ai-workspace__selection";
+const actionRowClasses = "ai-workspace__actions";
+const contextPanelClasses = "ai-workspace__context";
 
 function isoToday(): string {
   const now = new Date();
@@ -197,55 +198,48 @@ function Workspace({
         : mutation.isError
           ? "error"
           : "idle";
-  const statusToneClasses = {
-    idle: "border-transparent text-[var(--muted)]",
-    loading: "border-[#9ebfc5] border-l-[var(--accent)] bg-[#edf6f4] text-[var(--text)]",
-    limited: "border-[#d8c985] border-l-[#9c7b2c] bg-[#fff8df] text-[#6e531d]",
-    validation: "border-[#d7aaa4] border-l-[var(--danger)] bg-[#fff1ef] text-[#8b3f37]",
-    error: "border-[#d7aaa4] border-l-[var(--danger)] bg-[#fff1ef] text-[#8b3f37]",
-  };
-
   return (
     <Dialog open={open} onClose={closeWorkspace} initialFocus={panelRef}>
-      <DialogBackdrop className="fixed inset-0 z-[80] bg-[rgba(11,23,27,0.68)]" />
-      <div className="fixed inset-0 z-[81] grid place-items-center overflow-y-auto p-4 max-[639px]:[place-items:end_center] max-[639px]:p-0">
+      <DialogBackdrop className="issa-dialog-backdrop" />
+      <div className="issa-dialog-container ai-workspace__container">
         <DialogPanel
           ref={panelRef}
           tabIndex={-1}
-          className="max-h-[calc(100dvh-2rem)] w-[min(100%,58rem)] min-w-0 max-w-full overflow-x-hidden overflow-y-auto rounded-[var(--dialog-radius)] border-2 border-[var(--accent-strong)] bg-[var(--surface)] shadow-[var(--shadow-floating)] focus:outline-none motion-reduce:scroll-auto max-[639px]:max-h-[96dvh] max-[639px]:w-full max-[639px]:rounded-t-lg max-[639px]:rounded-b-none max-[639px]:border-x-0 max-[639px]:border-b-0"
+          className="issa-dialog-panel ai-workspace"
         >
-          <header className="flex min-w-0 items-start justify-between gap-4 border-b-2 border-[var(--accent-strong)] bg-[#173e52] px-5 py-[1.2rem] max-[639px]:px-4">
-            <div className="min-w-0">
-              <p className="m-0 text-[0.68rem] font-[850] uppercase tracking-[0.13em] text-[#f2d86e]">
+          <header className="ai-workspace__header">
+            <div className="ai-workspace__header-copy">
+              <p className="ai-workspace__eyebrow">
                 AI-assisted drafting instrument
               </p>
-              <DialogTitle className="mt-1 text-[clamp(1.3rem,3vw,1.65rem)] font-[830] leading-[1.15] text-white">
+              <DialogTitle className="ai-workspace__title">
                 Susun draf perkembangan
               </DialogTitle>
-              <p className="mt-2 max-w-[65ch] text-[0.8rem] leading-[1.55] text-[#c7e1eb]">
+              <p className="ai-workspace__intro">
                 Record sekolah menjadi dasar draf. Guru meninjau, mengedit, dan
                 memutuskan apakah isi dipindahkan ke Feedback.
               </p>
             </div>
-            <button
+            <TertiaryButton
               type="button"
-              className="grid h-10 w-10 min-w-10 place-items-center rounded-[var(--control-radius)] border border-[#aac9ca] bg-transparent text-[1.55rem] leading-none text-white hover:border-[#f2d86e] hover:bg-[#204f62] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#f2d86e]"
+              compact
+              className="ai-workspace__close"
               aria-label="Tutup workspace"
               onClick={closeWorkspace}
             >
               ×
-            </button>
+            </TertiaryButton>
           </header>
 
           {!draft && (
             <div className={bodyClasses}>
               <section className={bodySectionClasses} aria-labelledby="ai-period-title">
-                <h3 className="text-[0.9rem] font-extrabold text-[var(--text)]" id="ai-period-title">
+                <h3 className="ai-workspace__section-title" id="ai-period-title">
                   Periode catatan
                 </h3>
-                <div className="mt-[0.7rem] grid grid-cols-2 gap-[0.8rem] max-[639px]:grid-cols-1">
+                <div className="ai-workspace__period-grid">
                   <label className={fieldClasses}>
-                    <span className="text-[0.9rem] font-extrabold text-[var(--text)]">
+                    <span>
                       Tanggal awal
                     </span>
                     <input
@@ -259,7 +253,7 @@ function Workspace({
                     />
                   </label>
                   <label className={fieldClasses}>
-                    <span className="text-[0.9rem] font-extrabold text-[var(--text)]">
+                    <span>
                       Tanggal akhir
                     </span>
                     <input
@@ -276,31 +270,23 @@ function Workspace({
               </section>
 
               <section className={bodySectionClasses} aria-labelledby="ai-source-title">
-                <h3 className="text-[0.9rem] font-extrabold text-[var(--text)]" id="ai-source-title">
+                <h3 className="ai-workspace__section-title" id="ai-source-title">
                   Sumber catatan
                 </h3>
-                <p className="mt-[0.3rem] max-w-[66ch] text-[0.82rem] leading-[1.55] text-[var(--muted)]">
+                <p className="ai-workspace__section-copy">
                   AI hanya menggunakan catatan yang dipilih dan tersedia pada periode ini.
                 </p>
-                <div className="mt-[0.8rem] grid grid-cols-2 border border-[var(--border-strong)] bg-white max-[639px]:grid-cols-1">
+                <div className="ai-workspace__source-grid">
                   {ALL_SOURCE_TYPES.map((sourceType, sourceIndex) => {
                     const checked = request.sourceTypes.includes(sourceType);
 
                     return (
                       <label
-                        className={`${selectionLabelClasses} border-b border-[var(--border)] py-[0.55rem] pr-3 ${
-                          sourceIndex % 2 === 0
-                            ? "border-r border-r-[var(--border)] max-[639px]:border-r-0"
-                            : ""
-                        } ${
-                          checked
-                            ? "border-l-[0.25rem] border-l-[var(--accent)] bg-[#e8f4f2] pl-2 font-[750]"
-                            : "pl-3"
-                        }`}
+                        className={`${selectionLabelClasses}${sourceIndex % 2 === 0 ? " is-even" : ""}${checked ? " is-selected" : ""}`}
                         key={sourceType}
                       >
                         <input
-                          className="h-4 w-4 min-w-4 [accent-color:var(--accent)]"
+                          className="ai-workspace__choice-input"
                           type="checkbox"
                           checked={checked}
                           onChange={() => toggleSource(sourceType)}
@@ -313,17 +299,17 @@ function Workspace({
               </section>
 
               <section className={bodySectionClasses} aria-labelledby="ai-length-title">
-                <h3 className="text-[0.9rem] font-extrabold text-[var(--text)]" id="ai-length-title">
+                <h3 className="ai-workspace__section-title" id="ai-length-title">
                   Panjang draf
                 </h3>
-                <div className="mt-2 flex min-w-0 flex-wrap gap-x-6 gap-y-2">
+                <div className="ai-workspace__length-options">
                   {([
                     ["short", "Ringkas"],
                     ["medium", "Sedang"],
                   ] as const).map(([value, label]) => (
                     <label className={selectionLabelClasses} key={value}>
                       <input
-                        className="h-4 w-4 min-w-4 [accent-color:var(--accent)]"
+                        className="ai-workspace__choice-input"
                         type="radio"
                         name="ai-narrative-length"
                         checked={request.length === value}
@@ -336,7 +322,7 @@ function Workspace({
               </section>
 
               <div
-                className={`min-h-11 border border-l-[0.3rem] px-3 py-[0.65rem] text-[0.83rem] font-[650] leading-normal ${statusToneClasses[generationStatusType]}`}
+                className="ai-workspace__generation-status"
                 data-state={generationStatusType}
                 aria-live="polite"
                 aria-busy={mutation.isPending}
@@ -370,10 +356,10 @@ function Workspace({
           {draft && (
             <div className={bodyClasses}>
               <div
-                className="grid gap-[0.3rem] border border-[#8eb7b4] border-l-[0.35rem] border-l-[var(--accent)] bg-[#e8f4f2] px-4 py-[0.85rem] text-[0.84rem] leading-[1.55] text-[var(--text)]"
+                className="ai-workspace__draft-notice"
                 role="status"
               >
-                <strong className="text-[0.76rem] uppercase tracking-[0.04em]">
+                <strong>
                   AI-assisted draft · belum menjadi Feedback
                 </strong>
                 <span>
@@ -382,7 +368,7 @@ function Workspace({
                 </span>
               </div>
 
-              <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-[0.7rem] text-[0.76rem] text-[var(--muted)]">
+              <div className="ai-workspace__draft-metadata">
                 <span>
                   Dibuat {new Intl.DateTimeFormat("id-ID", {
                     dateStyle: "medium",
@@ -390,18 +376,14 @@ function Workspace({
                   }).format(new Date(draft.generatedAt))}
                 </span>
                 <div
-                  className="flex min-w-0 flex-wrap border border-[var(--border)] max-[639px]:grid max-[639px]:w-full"
+                  className="ai-workspace__source-summary"
                   aria-label="Ringkasan sumber"
                 >
                   {Object.entries(draft.sourceSummary)
                     .filter(([, count]) => count > 0)
                     .map(([sourceType, count], summaryIndex) => (
                       <span
-                        className={`px-[0.55rem] py-[0.35rem] text-[0.72rem] font-[750] text-[#294d53] ${
-                          summaryIndex > 0
-                            ? "border-l border-[var(--border)] max-[639px]:border-l-0 max-[639px]:border-t"
-                            : ""
-                        }`}
+                        className={summaryIndex > 0 ? "has-divider" : ""}
                         key={sourceType}
                       >
                         {SOURCE_LABELS[sourceType] || sourceType}: {count}
@@ -411,7 +393,7 @@ function Workspace({
               </div>
 
               <label className={fieldClasses}>
-                <span className="text-[0.9rem] font-extrabold text-[var(--text)]">
+                <span>
                   Judul narasi
                 </span>
                 <input
@@ -424,27 +406,27 @@ function Workspace({
                 />
               </label>
 
-              <div className="grid min-w-0 gap-4">
+              <div className="ai-workspace__draft-sections">
                 {sections.map((section, sectionIndex) => (
                   <section
-                    className="min-w-0 border border-[var(--border-strong)] border-l-[0.35rem] border-l-[var(--accent)] bg-[#f7faf9] p-4"
+                    className="ai-workspace__draft-section"
                     key={section.localId}
                   >
-                    <div className="mb-[0.7rem] flex min-w-0 items-start justify-between gap-4 max-[639px]:flex-col max-[639px]:gap-2">
-                      <div className="flex min-w-0 items-baseline gap-[0.6rem]">
+                    <div className="ai-workspace__draft-section-header">
+                      <div className="ai-workspace__draft-section-heading">
                         <span
-                          className="text-[0.65rem] font-[850] tracking-[0.08em] text-[var(--muted)]"
+                          className="ai-workspace__section-number"
                           aria-hidden="true"
                         >
                           {String(sectionIndex + 1).padStart(2, "0")}
                         </span>
-                        <h3 className="[overflow-wrap:anywhere] text-[0.9rem] font-extrabold text-[var(--text)]">
+                        <h3>
                           {SECTION_LABELS[section.sectionType] || section.sectionType}
                         </h3>
                       </div>
-                      <button
+                      <DestructiveButton
                         type="button"
-                        className="flex-none border-b border-[#d7aaa4] text-[0.75rem] font-[750] text-[#8b3f37] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)]"
+                        compact
                         onClick={() => {
                           setSections((current) => current.filter(
                             (item) => item.localId !== section.localId,
@@ -453,14 +435,14 @@ function Workspace({
                         }}
                       >
                         Hapus bagian
-                      </button>
+                      </DestructiveButton>
                     </div>
                     <label className={fieldClasses}>
                       <span className="sr-only">
                         {SECTION_LABELS[section.sectionType] || section.sectionType}
                       </span>
                       <textarea
-                        className={`${fieldControlClasses} min-h-32 resize-y leading-[1.65] [overflow-wrap:anywhere]`}
+                        className={`${fieldControlClasses} ai-workspace__textarea`}
                         rows={5}
                         value={section.text}
                         onChange={(event) => {
@@ -474,44 +456,42 @@ function Workspace({
                       />
                     </label>
                     {section.directQuote && (
-                      <blockquote className="mt-3 grid min-w-0 gap-[0.45rem] border border-[#c8bed5] border-l-[0.3rem] border-l-[#72668c] bg-[#f5f1f8] px-[0.8rem] py-[0.7rem] text-[var(--text)]">
-                        <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.06em] text-[var(--muted)]">
+                      <blockquote className="ai-workspace__quote">
+                        <span>
                           Kutipan siswa yang tercatat
                         </span>
-                        <p className="m-0 leading-[1.65] [overflow-wrap:anywhere] [font-family:Georgia,'Times_New_Roman',serif]">
+                        <p>
                           “{section.directQuote.text}”
                         </p>
-                        <button
+                        <SecondaryButton
                           type="button"
-                          className={`${citationButtonClasses} justify-self-start`}
+                          compact
+                          className="ai-workspace__citation"
                           onClick={() => setSelectedSourceRef(
                             section.directQuote?.sourceRef || null,
                           )}
                         >
                           Sumber {section.directQuote.sourceRef}
-                        </button>
+                        </SecondaryButton>
                       </blockquote>
                     )}
                     <div
-                      className="mt-3 flex min-w-0 flex-wrap gap-[0.4rem]"
+                      className="ai-workspace__citations"
                       aria-label="Sumber bagian"
                     >
                       {section.sourceRefs.map((sourceRef) => (
-                        <button
+                        <SecondaryButton
                           type="button"
+                          compact
                           key={sourceRef}
-                          className={`${citationButtonClasses} ${
-                            selectedSourceRef === sourceRef
-                              ? "border-l-[0.3rem] border-[var(--accent-strong)] bg-[#dceceb] pl-[0.36rem]"
-                              : ""
-                          }`}
+                          className={`ai-workspace__citation${selectedSourceRef === sourceRef ? " is-selected" : ""}`}
                           aria-expanded={selectedSourceRef === sourceRef}
                           onClick={() => setSelectedSourceRef(
                             selectedSourceRef === sourceRef ? null : sourceRef,
                           )}
                         >
                           [{sourceRef}]
-                        </button>
+                        </SecondaryButton>
                       ))}
                     </div>
                   </section>
@@ -520,21 +500,21 @@ function Workspace({
 
               {selectedSource && (
                 <aside
-                  className="grid min-w-0 gap-1 rounded-[0.2rem_var(--surface-radius)_0.2rem_0.2rem] border-2 border-[var(--accent)] bg-[#edf6f4] px-4 py-[0.9rem] text-[0.84rem] leading-[1.55] text-[var(--text)]"
+                  className="ai-workspace__source-detail"
                   aria-label={`Detail sumber ${selectedSource.sourceRef}`}
                   tabIndex={0}
                 >
-                  <small className="text-[0.65rem] font-[850] uppercase tracking-[0.08em] text-[var(--accent)]">
+                  <small>
                     Source record · {selectedSource.sourceRef}
                   </small>
                   <strong>{selectedSource.label}</strong>
-                  <span className="text-[0.76rem] text-[var(--muted)]">
+                  <span>
                     {SOURCE_LABELS[selectedSource.sourceType]} ·{" "}
                     {new Intl.DateTimeFormat("id-ID", {
                       dateStyle: "medium",
                     }).format(new Date(selectedSource.observedAt))}
                   </span>
-                  <p className="mt-[0.35rem] max-w-[72ch] whitespace-pre-wrap [overflow-wrap:anywhere]">
+                  <p>
                     {selectedSource.preview}
                   </p>
                 </aside>
@@ -542,12 +522,12 @@ function Workspace({
 
               {draft.narrative.missingContext.length > 0 && (
                 <section className={contextPanelClasses}>
-                  <h3 className="text-[0.9rem] font-extrabold text-[var(--text)]">
+                  <h3>
                     Konteks yang belum tersedia
                   </h3>
-                  <ul className="mt-[0.45rem] pl-5 text-[#655d47] [list-style:square]">
+                  <ul>
                     {draft.narrative.missingContext.map((item) => (
-                      <li className="[overflow-wrap:anywhere]" key={item}>
+                      <li key={item}>
                         {item}
                       </li>
                     ))}
@@ -557,12 +537,12 @@ function Workspace({
 
               {draft.warnings.length > 0 && (
                 <section className={contextPanelClasses}>
-                  <h3 className="text-[0.9rem] font-extrabold text-[var(--text)]">
+                  <h3>
                     Catatan untuk ditinjau
                   </h3>
-                  <ul className="mt-[0.45rem] pl-5 text-[#655d47] [list-style:square]">
+                  <ul>
                     {draft.warnings.map((warning) => (
-                      <li className="[overflow-wrap:anywhere]" key={warning}>
+                      <li key={warning}>
                         {warning}
                       </li>
                     ))}
@@ -572,14 +552,14 @@ function Workspace({
 
               {confirmHandoff && (
                 <div
-                  className="border-2 border-[#b68a28] border-l-[0.4rem] bg-[#fff4c6] px-4 py-[0.9rem] text-[0.84rem] leading-[1.55] text-[var(--text)]"
+                  className="ai-workspace__handoff-warning"
                   role="alert"
                 >
                   <p>
                     Feedback saat ini akan diganti di editor dengan draf ini.
                     Perubahan belum tersimpan sampai guru menekan Simpan Feedback.
                   </p>
-                  <div className="mt-[0.8rem] flex flex-wrap justify-end gap-[0.6rem] max-[639px]:flex-col-reverse max-[639px]:[&>button]:w-full">
+                  <div className="ai-workspace__handoff-actions">
                     <SecondaryButton
                       type="button"
                       onClick={() => setConfirmHandoff(false)}
@@ -594,7 +574,7 @@ function Workspace({
               )}
 
               <div
-                className={`${actionRowClasses} sticky -bottom-5 z-[1] mx-[-1.25rem] mb-[-1.25rem] border-t-2 border-[var(--accent-strong)] bg-[#fffdf7] px-5 py-4 max-[639px]:-bottom-4 max-[639px]:mx-[-1rem] max-[639px]:mb-[-1.25rem] max-[639px]:p-4`}
+                className={`${actionRowClasses} ai-workspace__sticky-actions`}
               >
                 <SecondaryButton
                   type="button"

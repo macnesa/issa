@@ -1,5 +1,6 @@
 import { useOfflineWorkspace } from "./OfflineWorkspaceProvider";
 import AttendanceSyncReview from "./AttendanceSyncReview";
+import { PrimaryButton } from "../shared/ui/ui";
 import "./OfflineStatusIndicator.css";
 
 function formatLastSync(timestamp) {
@@ -59,7 +60,7 @@ export default function OfflineStatusIndicator() {
               Sesi perlu diperiksa kembali saat koneksi tersedia.
             </p>
           )}
-          <button
+          <PrimaryButton
             type="button"
             onClick={() => workspace.syncNow()}
             disabled={
@@ -69,7 +70,7 @@ export default function OfflineStatusIndicator() {
             }
           >
             Sinkronkan sekarang
-          </button>
+          </PrimaryButton>
           {workspace.isDemo && (
             <small>Tidak tersedia dalam mode demo.</small>
           )}

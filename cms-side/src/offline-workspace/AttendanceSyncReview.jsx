@@ -11,6 +11,12 @@ import {
   retryAttendanceMutation,
   useAttendanceServerConflict,
 } from "./attendanceOffline";
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from "../shared/ui/ui";
 
 function formatServerUpdate(timestamp) {
   if (!timestamp) return "Waktu update tidak tersedia";
@@ -61,15 +67,16 @@ export default function AttendanceSyncReview({ workspace }) {
           {attendanceConflicts.map((record) => (
             <div key={record.clientMutationId}>
               <p>{record.mutation.payload.attendanceDate}</p>
-              <button
+              <SecondaryButton
                 type="button"
+                compact
                 onClick={() => {
                   setActionError("");
                   setActiveConflict(record);
                 }}
               >
                 Tinjau konflik
-              </button>
+              </SecondaryButton>
             </div>
           ))}
         </section>
@@ -88,8 +95,9 @@ export default function AttendanceSyncReview({ workspace }) {
                 <span>{mutation.lastErrorMessage}</span>
               </p>
               <span className="offline-status__review-actions">
-                <button
+                <PrimaryButton
                   type="button"
+                  compact
                   disabled={working}
                   onClick={() => finishAction(
                     () => retryAttendanceMutation(mutation),
@@ -97,16 +105,17 @@ export default function AttendanceSyncReview({ workspace }) {
                   )}
                 >
                   Coba lagi
-                </button>
-                <button
+                </PrimaryButton>
+                <DestructiveButton
                   type="button"
+                  compact
                   disabled={working}
                   onClick={() => finishAction(
                     () => discardAttendanceMutation(mutation)
                   )}
                 >
                   Buang perubahan lokal
-                </button>
+                </DestructiveButton>
               </span>
             </div>
           ))}
@@ -165,7 +174,7 @@ export default function AttendanceSyncReview({ workspace }) {
               </div>
             )}
             <div className="offline-conflict-dialog__actions">
-              <button
+              <SecondaryButton
                 type="button"
                 disabled={working}
                 onClick={() => finishAction(
@@ -173,8 +182,8 @@ export default function AttendanceSyncReview({ workspace }) {
                 )}
               >
                 Gunakan data server
-              </button>
-              <button
+              </SecondaryButton>
+              <PrimaryButton
                 type="button"
                 disabled={working}
                 onClick={() => finishAction(
@@ -183,14 +192,14 @@ export default function AttendanceSyncReview({ workspace }) {
                 )}
               >
                 Terapkan perubahan saya
-              </button>
-              <button
+              </PrimaryButton>
+              <TertiaryButton
                 type="button"
                 disabled={working}
                 onClick={() => setActiveConflict(null)}
               >
                 Tinjau nanti
-              </button>
+              </TertiaryButton>
             </div>
           </DialogPanel>
         </div>

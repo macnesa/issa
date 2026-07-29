@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
 import baseUrl from "../config/api";
@@ -15,7 +15,22 @@ import {
   updateStudentRecord,
 } from "../store/action/ActionCreator";
 import { formatRecordedDate, toIsoDateTime } from "../utils/recordDates";
-import { EmptyState, ErrorState, LoadingState, PageContainer, PrimaryButton, SecondaryButton, StatusBadge, Surface } from "../shared/ui/ui";
+import {
+  ButtonLink,
+  EmptyState,
+  ErrorState,
+  InlineNotice,
+  LoadingState,
+  PageContainer,
+  PrimaryButton,
+  SectionHeader,
+  SecondaryButton,
+  StatusBadge,
+  StudentContextHeader,
+  Surface,
+  WorkspacePanel,
+  WorkspaceTabs,
+} from "../shared/ui/ui";
 import { useOfflineWorkspace } from "../offline-workspace/OfflineWorkspaceProvider";
 import { loadStudentDetailWorkspace } from "../offline-workspace/studentDetailSnapshot";
 import {
@@ -30,15 +45,8 @@ import { getAuthorizedClassName } from "../features/students/authorizedClass";
 import { DEMO_READ_ONLY_MESSAGE } from "../auth/demoAccess";
 import "../features/students/student-record.css";
 
-const recordSurfaceClasses = [
-  "min-w-0 overflow-hidden !border-2 !border-[var(--border-strong)]",
-  "!rounded-[0.25rem] !bg-[#fffdf7] !shadow-none",
-].join(" ");
-
-const unavailableSurfaceClasses = [
-  "min-w-0 !border-2 !border-[var(--border-strong)]",
-  "!rounded-[0.25rem] !bg-[#fffdf7] p-5 !shadow-none",
-].join(" ");
+const recordSurfaceClasses = "student-record-surface";
+const unavailableSurfaceClasses = "student-record-unavailable";
 
 const workspaceViews = Object.freeze([
   { id: "summary", label: "Ringkasan" },
@@ -248,87 +256,20 @@ export default function StudentDetail() {
   ).slice(0, 2);
   const scoreStatus = (status) => (status === true ? "Lulus" : status === false ? "Belum lulus" : undefined);
 
-  return <PageContainer className="min-w-0 w-full max-w-[90rem] [overflow-wrap:anywhere]">
-    <header
-      className={[
-        "flex min-w-0 items-stretch justify-between overflow-hidden",
-        "border-2 border-[var(--accent-strong)]",
-        "rounded-[0.25rem]",
-        "bg-[var(--accent-strong)] text-white",
-        "shadow-[0.28rem_0.3rem_0_rgba(23,62,82,0.14)]",
-        "max-[820px]:grid",
-      ].join(" ")}
-    >
-      <div className="flex min-w-0 items-center gap-4 p-5 max-[639px]:items-start max-[639px]:gap-3 max-[639px]:p-4">
-        {student?.imgUrl ? (
-          <img
-            className={[
-              "grid h-16 w-16 flex-none place-items-center border-2 border-[#fffdf7]",
-              "rounded-[0.25rem] bg-[#e8f4f2] object-cover",
-              "shadow-[0.18rem_0.2rem_0_#f2d86e]",
-              "max-[639px]:h-12 max-[639px]:w-12",
-            ].join(" ")}
-            src={student.imgUrl}
-            alt={student?.name || "Siswa"}
-          />
-        ) : (
-          <div
-            className={[
-              "grid h-16 w-16 flex-none place-items-center border-2 border-[#fffdf7]",
-              "rounded-[0.25rem] bg-[#e8f4f2]",
-              "text-xl font-black text-[var(--accent-strong)]",
-              "shadow-[0.18rem_0.2rem_0_#f2d86e]",
-              "max-[639px]:h-12 max-[639px]:w-12",
-            ].join(" ")}
-            aria-hidden="true"
-          >
-            {(student?.name || "S").slice(0, 1).toUpperCase()}
-          </div>
-        )}
-        <div className="min-w-0">
-          <p className="m-0 text-[0.68rem] font-[850] uppercase tracking-[0.13em] text-[#c7e1eb]">
-            Record perkembangan siswa
-          </p>
-          <h1 className="mt-1 max-w-[28ch] text-[clamp(1.45rem,3vw,2rem)] font-[850] leading-[1.05] tracking-[-0.025em] text-white [overflow-wrap:anywhere]">
-            {student?.name || "Detail siswa"}
-          </h1>
-          <dl className="mt-3 flex min-w-0 flex-wrap">
-            <div className="min-w-28 py-1 pr-4 max-[639px]:min-w-0">
-              <dt className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#c7e1eb]">
-                NIM
-              </dt>
-              <dd className="mt-[0.18rem] whitespace-nowrap text-[0.82rem] font-[750] tabular-nums text-white">
-                {student?.NIM || "—"}
-              </dd>
-            </div>
-            <div className="min-w-28 border-l border-white/30 px-4 py-1 max-[420px]:border-l-0 max-[420px]:border-t max-[420px]:px-0 max-[420px]:pt-2">
-              <dt className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#c7e1eb]">
-                Kelas
-              </dt>
-              <dd className="mt-[0.18rem] text-[0.82rem] font-[750] text-white">
-                {authorizedClassName || "—"}
-              </dd>
-            </div>
-            <div className="min-w-32 border-l border-white/30 py-1 pl-4 max-[520px]:basis-full max-[520px]:border-l-0 max-[520px]:border-t max-[520px]:pl-0 max-[520px]:pt-2">
-              <dt className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#c7e1eb]">
-                Status
-              </dt>
-              <dd className="mt-[0.18rem] text-[0.82rem] font-[750] text-white">
-                {usingCachedSnapshot ? "Record tersimpan" : "Record aktif"}
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-      <div
-        className={[
-          "flex max-w-[20rem] flex-none flex-wrap content-center justify-end gap-2",
-          "border-l-2 border-white/25 bg-[#204f62] p-4",
-          "max-[820px]:w-full max-[820px]:max-w-none max-[820px]:justify-start",
-          "max-[820px]:border-l-0 max-[820px]:border-t-2",
-          "max-[520px]:[&>*]:w-full",
-        ].join(" ")}
-      >
+  return <PageContainer>
+    <StudentContextHeader
+      student={student}
+      classLabel={authorizedClassName}
+      eyebrow="Record perkembangan siswa"
+      headingLevel="h1"
+      metadata={[
+        {
+          label: "Status",
+          value: usingCachedSnapshot ? "Record tersimpan" : "Record aktif",
+        },
+      ]}
+      actions={(
+        <>
         <SecondaryButton type="button" onClick={() => navigate("/")}>
           Kembali
         </SecondaryButton>
@@ -337,102 +278,59 @@ export default function StudentDetail() {
             Tambah attendance perlu online
           </PrimaryButton>
         ) : (
-          <Link className="issa-button issa-button--primary" to="/attendance">
+          <ButtonLink tone="primary" to="/attendance">
             Catat attendance
-          </Link>
+          </ButtonLink>
         )}
-      </div>
-    </header>
+        </>
+      )}
+    />
 
     {usingCachedSnapshot && (
-      <div
-        className={[
-          "mt-4 flex items-baseline gap-[0.6rem] border border-[#d4a63a]",
-          "border-l-[0.35rem] bg-[#fff8df] px-[0.9rem] py-3",
-          "text-[0.8rem] text-[#6e531d]",
-          "max-[639px]:flex-col max-[639px]:items-start max-[639px]:gap-1",
-        ].join(" ")}
-        role="status"
-      >
-        <strong className="flex-none text-[#49370f]">Workspace tersimpan</strong>
+      <InlineNotice className="student-workspace-notice" tone="warning">
+        <strong>Workspace tersimpan. </strong>
         <span>Data tersimpan dari {formatCachedAt(cachedSnapshot?.cachedAt)}. Hubungkan kembali untuk memperoleh data terbaru.</span>
-      </div>
+      </InlineNotice>
     )}
 
-    <nav
-      className="mt-5 min-w-0 overflow-x-auto border-2 border-[var(--border-strong)] bg-[#fffdf7]"
-      aria-label="Workspace siswa"
-    >
-      <div className="flex min-w-max" role="tablist" aria-label="Data siswa">
-        {workspaceViews.map((workspace) => {
-          const isActive = activeWorkspace === workspace.id;
-          return (
-            <button
-              key={workspace.id}
-              id={`student-workspace-tab-${workspace.id}`}
-              className={[
-                "min-h-12 border-0 border-r border-[var(--border-strong)] px-5",
-                "text-[0.75rem] font-[850] uppercase tracking-[0.08em]",
-                "transition-colors last:border-r-0 focus-visible:outline focus-visible:outline-2",
-                "focus-visible:outline-offset-[-0.25rem] focus-visible:outline-[#d4a63a]",
-                isActive
-                  ? "bg-[var(--accent-strong)] text-white"
-                  : "bg-[#fffdf7] text-[var(--text)] hover:bg-[#e8f4f2]",
-              ].join(" ")}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`student-workspace-${workspace.id}`}
-              onClick={() => setActiveWorkspace(workspace.id)}
-            >
-              {workspace.label}
-            </button>
-          );
-        })}
-      </div>
-    </nav>
+    <WorkspaceTabs
+      className="student-workspace-navigation"
+      items={workspaceViews}
+      activeId={activeWorkspace}
+      onChange={setActiveWorkspace}
+      ariaLabel="Workspace siswa"
+      idPrefix="student-workspace"
+    />
 
     {activeWorkspace === "summary" && (
-      <section
+      <WorkspacePanel
         id="student-workspace-summary"
-        className="mt-5 min-w-0"
-        role="tabpanel"
-        aria-labelledby="student-workspace-tab-summary"
+        labelledBy="student-workspace-tab-summary"
       >
-        <header className="mb-4 border-b-2 border-[var(--border-strong)] pb-3">
-          <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[var(--accent)]">
-            Workspace siswa
-          </p>
-          <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
-            Ringkasan terkini
-          </h2>
-          <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
-            Cakupan terbaru untuk peninjauan cepat tanpa membuka seluruh histori.
-          </p>
-        </header>
+        <SectionHeader
+          eyebrow="Workspace siswa"
+          title="Ringkasan terkini"
+          description="Cakupan terbaru untuk peninjauan cepat tanpa membuka seluruh histori."
+        />
 
-        <div className="grid min-w-0 grid-cols-2 gap-4 max-[820px]:grid-cols-1">
+        <div className="student-summary-grid">
           <Surface className={recordSurfaceClasses}>
-            <div className="border-b border-[var(--border-strong)] bg-[#edf6f4] px-4 py-3">
-              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[var(--accent)]">
-                Kehadiran
-              </p>
-              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
-                Ringkasan attendance
-              </h3>
+            <div className="student-summary-card__header">
+              <p>Kehadiran</p>
+              <h3>Ringkasan attendance</h3>
             </div>
-            <dl className="grid grid-cols-3 divide-x divide-[var(--border)]">
-              <div className="min-w-0 p-4">
-                <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Record</dt>
-                <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{attendances.length}</dd>
+            <dl className="student-summary-metrics">
+              <div>
+                <dt>Record</dt>
+                <dd>{attendances.length}</dd>
               </div>
-              <div className="min-w-0 p-4">
-                <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Hadir</dt>
-                <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{attendancePresentCount}</dd>
+              <div>
+                <dt>Hadir</dt>
+                <dd>{attendancePresentCount}</dd>
               </div>
-              <div className="min-w-0 p-4">
-                <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Terbaru</dt>
-                <dd className="mt-1 text-[0.78rem] font-[800] leading-5 text-[var(--text)]">
+              <div>
+                <dt>Terbaru</dt>
+                <dd className="student-summary-metrics__detail">
                   {attendances[0]
                     ? `${formatRecordedDate(attendances[0].attendanceDate)} · ${attendances[0].status}`
                     : "Belum ada"}
@@ -442,31 +340,27 @@ export default function StudentDetail() {
           </Surface>
 
           <Surface className={recordSurfaceClasses}>
-            <div className="border-b border-[var(--border-strong)] bg-[#f2eff8] px-4 py-3">
-              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[#665982]">
-                Akademik
-              </p>
-              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
-                Ringkasan nilai
-              </h3>
+            <div className="student-summary-card__header">
+              <p>Akademik</p>
+              <h3>Ringkasan nilai</h3>
             </div>
             {usingCachedSnapshot ? (
-              <p className="m-0 p-4 text-[0.82rem] leading-6 text-[var(--muted)]">
+              <p className="student-summary-card__empty">
                 Nilai memerlukan koneksi dan tidak tersedia dalam snapshot offline minimum.
               </p>
             ) : (
-              <dl className="grid grid-cols-3 divide-x divide-[var(--border)]">
-                <div className="min-w-0 p-4">
-                  <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Record</dt>
-                  <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{scores.length}</dd>
+              <dl className="student-summary-metrics">
+                <div>
+                  <dt>Record</dt>
+                  <dd>{scores.length}</dd>
                 </div>
-                <div className="min-w-0 p-4">
-                  <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Rata-rata</dt>
-                  <dd className="mt-1 text-xl font-[850] text-[var(--text)] tabular-nums">{averageScore ?? "-"}</dd>
+                <div>
+                  <dt>Rata-rata</dt>
+                  <dd>{averageScore ?? "-"}</dd>
                 </div>
-                <div className="min-w-0 p-4">
-                  <dt className="text-[0.62rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)]">Terbaru</dt>
-                  <dd className="mt-1 text-[0.78rem] font-[800] leading-5 text-[var(--text)]">
+                <div>
+                  <dt>Terbaru</dt>
+                  <dd className="student-summary-metrics__detail">
                     {scores[0]
                       ? `${scores[0].Lesson?.name || "Lesson"} · ${scores[0].value}`
                       : "Belum ada"}
@@ -477,20 +371,16 @@ export default function StudentDetail() {
           </Surface>
 
           <Surface className={recordSurfaceClasses}>
-            <div className="border-b border-[var(--border-strong)] bg-[#fff8df] px-4 py-3">
-              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[#7f611e]">
-                Informasi guru
-              </p>
-              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
-                Informasi relevan terbaru
-              </h3>
+            <div className="student-summary-card__header">
+              <p>Informasi guru</p>
+              <h3>Informasi relevan terbaru</h3>
             </div>
-            <div className="p-4">
-              <p className="m-0 whitespace-pre-wrap text-[0.86rem] leading-6 text-[var(--text)]">
+            <div className="student-summary-card__body">
+              <p>
                 {latestTeacherInformation || "Belum ada informasi guru yang tersimpan."}
               </p>
               {latestFeedbackRecord && (
-                <p className="mt-3 border-t border-[var(--border)] pt-3 text-[0.7rem] text-[var(--muted)]">
+                <p className="student-summary-card__metadata">
                   {latestFeedbackRecord.Teacher?.name || "Guru"} · {formatRecordedDate(latestFeedbackRecord.observedAt || latestFeedbackRecord.createdAt)}
                 </p>
               )}
@@ -498,31 +388,27 @@ export default function StudentDetail() {
           </Surface>
 
           <Surface className={recordSurfaceClasses}>
-            <div className="border-b border-[var(--border-strong)] bg-[#eef4f5] px-4 py-3">
-              <p className="m-0 text-[0.64rem] font-[850] uppercase tracking-[0.1em] text-[var(--accent)]">
-                Jurnal & bukti
-              </p>
-              <h3 className="mt-1 text-base font-[820] text-[var(--text)]">
-                Konteks observasi terbaru
-              </h3>
+            <div className="student-summary-card__header">
+              <p>Jurnal & bukti</p>
+              <h3>Konteks observasi terbaru</h3>
             </div>
             {recentJournalEntries.length ? (
-              <ol className="m-0 list-none divide-y divide-[var(--border)] p-0">
+              <ol className="student-summary-history">
                 {recentJournalEntries.map((entry) => (
-                  <li className="min-w-0 p-4" key={entry.id}>
-                    <div className="flex min-w-0 items-baseline justify-between gap-3">
-                      <strong className="min-w-0 text-[0.76rem] text-[var(--text)]">
+                  <li key={entry.id}>
+                    <div className="student-summary-history__metadata">
+                      <strong>
                         {entry.teacher?.name || "Guru"}
                       </strong>
-                      <time className="flex-none text-[0.68rem] text-[var(--muted)]" dateTime={entry.observedAt}>
+                      <time dateTime={entry.observedAt}>
                         {formatRecordedDate(entry.observedAt)}
                       </time>
                     </div>
-                    <p className="mt-2 line-clamp-2 text-[0.82rem] leading-6 text-[var(--text)]">
+                    <p className="student-summary-history__body">
                       {entry.content}
                     </p>
                     {entry.evidence && (
-                      <p className="mt-2 border-l-2 border-[#d4a63a] pl-2 text-[0.7rem] text-[var(--muted)]">
+                      <p className="student-summary-history__evidence">
                         Bukti: {entry.evidence.title || "Evidence terkait"}
                       </p>
                     )}
@@ -530,43 +416,33 @@ export default function StudentDetail() {
                 ))}
               </ol>
             ) : (
-              <p className="m-0 p-4 text-[0.82rem] leading-6 text-[var(--muted)]">
+              <p className="student-summary-card__empty">
                 Belum ada konteks jurnal tersimpan untuk ditampilkan pada ringkasan.
               </p>
             )}
           </Surface>
         </div>
-      </section>
+      </WorkspacePanel>
     )}
 
     {activeWorkspace === "attendance" && (
-      <section
+      <WorkspacePanel
         id="student-workspace-attendance"
-        className="mt-5 min-w-0"
-        role="tabpanel"
-        aria-labelledby="student-workspace-tab-attendance"
+        labelledBy="student-workspace-tab-attendance"
       >
-        <header className="mb-4 flex min-w-0 items-end justify-between gap-4 border-b-2 border-[var(--border-strong)] pb-3 max-[639px]:items-start max-[639px]:flex-col">
-          <div className="min-w-0">
-            <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[var(--accent)]">
-              Record operasional
-            </p>
-            <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
-              Kehadiran
-            </h2>
-            <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
-              Record terbaru ditampilkan lebih dahulu. Status pada record yang tersedia tetap dapat diperbarui.
-            </p>
-          </div>
-          <strong className="flex-none text-[0.78rem] text-[var(--text)]">
+        <SectionHeader
+          eyebrow="Record operasional"
+          title="Kehadiran"
+          description="Record terbaru ditampilkan lebih dahulu. Status pada record yang tersedia tetap dapat diperbarui."
+          actions={<strong className="student-workspace-count">
             {attendances.length ? `${attendances.length} record` : "Belum ada record"}
-          </strong>
-        </header>
+          </strong>}
+        />
 
-        <Surface className={`${recordSurfaceClasses} !border-t-[#56867e]`}>
+        <Surface className={recordSurfaceClasses}>
           {!isEmpty(attendances) && (
             <div
-              className="student-record-attendance-columns hidden border-b border-[var(--border-strong)] bg-[#edf6f4] px-4 py-2 text-[0.62rem] font-[850] uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:grid"
+              className="student-record-attendance-columns"
               aria-hidden="true"
             >
               <span>Record</span>
@@ -574,7 +450,7 @@ export default function StudentDetail() {
               <span>Sinkronisasi</span>
             </div>
           )}
-          <div className="student-record-attendance-list grid min-w-0 px-4 max-[639px]:px-3">
+          <div className="student-record-attendance-list">
             {isEmpty(attendances) && (
               <div className="my-4">
                 <EmptyState
@@ -597,7 +473,7 @@ export default function StudentDetail() {
             ))}
           </div>
           {attendances.length > 8 && (
-            <div className="border-t border-[var(--border)] px-4 py-3">
+            <div className="student-record-ledger__actions">
               <SecondaryButton
                 type="button"
                 onClick={() => setShowAllAttendances((current) => !current)}
@@ -609,40 +485,30 @@ export default function StudentDetail() {
             </div>
           )}
           <p
-            className="m-0 min-h-5 border-t border-[var(--border)] px-4 py-[0.65rem] text-[0.74rem] text-[var(--muted)]"
+            className="student-record-ledger__message"
             aria-live="polite"
           >
             {attendanceWorkspace.message}
           </p>
         </Surface>
-      </section>
+      </WorkspacePanel>
     )}
 
     {activeWorkspace === "scores" && (
-      <section
+      <WorkspacePanel
         id="student-workspace-scores"
-        className="mt-5 min-w-0"
-        role="tabpanel"
-        aria-labelledby="student-workspace-tab-scores"
+        labelledBy="student-workspace-tab-scores"
       >
-        <header className="mb-4 flex min-w-0 items-end justify-between gap-4 border-b-2 border-[var(--border-strong)] pb-3 max-[639px]:items-start max-[639px]:flex-col">
-          <div className="min-w-0">
-            <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[#665982]">
-              Ledger akademik
-            </p>
-            <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
-              Nilai
-            </h2>
-            <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
-              Riwayat nilai, assessment, KKM, dan status dalam satu ledger.
-            </p>
-          </div>
-          {!usingCachedSnapshot && (
-            <Link className="issa-button issa-button--secondary" to={`/scores/${studentId}`}>
+        <SectionHeader
+          eyebrow="Ledger akademik"
+          title="Nilai"
+          description="Riwayat nilai, assessment, KKM, dan status dalam satu ledger."
+          actions={!usingCachedSnapshot && (
+            <ButtonLink to={`/scores/${studentId}`}>
               Kelola nilai
-            </Link>
+            </ButtonLink>
           )}
-        </header>
+        />
 
         {usingCachedSnapshot ? (
           <Surface className={unavailableSurfaceClasses}>
@@ -652,7 +518,7 @@ export default function StudentDetail() {
             />
           </Surface>
         ) : (
-          <Surface className={`${recordSurfaceClasses} !border-t-[#72668c]`}>
+          <Surface className={recordSurfaceClasses}>
             {isEmpty(scores) ? (
               <div className="p-4">
                 <EmptyState
@@ -661,9 +527,9 @@ export default function StudentDetail() {
                 />
               </div>
             ) : (
-              <div className="min-w-0">
+              <div className="student-score-ledger">
                 <div
-                  className="hidden grid-cols-[minmax(0,1.25fr)_minmax(0,1.2fr)_8rem_5rem_8rem] gap-4 border-b border-[var(--border-strong)] bg-[#f2eff8] px-4 py-2 text-[0.62rem] font-[850] uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:grid"
+                  className="student-score-ledger__columns"
                   aria-hidden="true"
                 >
                   <span>Pelajaran</span>
@@ -672,50 +538,50 @@ export default function StudentDetail() {
                   <span>Nilai</span>
                   <span>Status</span>
                 </div>
-                <ol className="m-0 list-none divide-y divide-[var(--border)] p-0">
+                <ol className="student-score-ledger__list">
                   {scores.map((score) => (
                     <li
                       key={score.id}
-                      className="grid min-w-0 gap-3 px-4 py-3 min-[821px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1.2fr)_8rem_5rem_8rem] min-[821px]:items-center min-[821px]:gap-4"
+                      className="student-score-ledger__row"
                     >
                       <div className="min-w-0">
-                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                        <span className="student-score-ledger__label">
                           Pelajaran
                         </span>
-                        <p className="m-0 text-[0.86rem] font-[820] text-[var(--text)]">
+                        <p className="student-score-ledger__primary">
                           {score.Lesson?.name || "Lesson"}
                         </p>
                       </div>
                       <div className="min-w-0">
-                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                        <span className="student-score-ledger__label">
                           Assessment
                         </span>
-                        <p className="m-0 text-[0.8rem] text-[var(--text)]">
+                        <p className="student-score-ledger__secondary">
                           {score.Assignment?.name || "Assessment"}
                         </p>
                       </div>
                       <div className="min-w-0">
-                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                        <span className="student-score-ledger__label">
                           Tanggal
                         </span>
-                        <time className="block text-[0.75rem] text-[var(--muted)]" dateTime={score.recordedAt}>
+                        <time className="student-score-ledger__secondary" dateTime={score.recordedAt}>
                           {formatRecordedDate(score.recordedAt)}
                         </time>
                       </div>
                       <div className="min-w-0">
-                        <span className="text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                        <span className="student-score-ledger__label">
                           Nilai
                         </span>
-                        <strong className="block text-lg text-[var(--text)] tabular-nums">
+                        <strong className="student-score-ledger__value">
                           {score.value}
                         </strong>
                       </div>
                       <div className="min-w-0">
-                        <span className="mb-1 block text-[0.6rem] font-bold uppercase tracking-[0.08em] text-[var(--muted)] min-[821px]:hidden">
+                        <span className="student-score-ledger__label">
                           KKM {score.Lesson?.KKM ?? "-"}
                         </span>
                         <StatusBadge status={scoreStatus(score.status)} />
-                        <span className="mt-1 hidden text-[0.65rem] text-[var(--muted)] min-[821px]:block">
+                        <span className="student-score-ledger__kkm">
                           KKM {score.Lesson?.KKM ?? "-"}
                         </span>
                       </div>
@@ -726,28 +592,20 @@ export default function StudentDetail() {
             )}
           </Surface>
         )}
-      </section>
+      </WorkspacePanel>
     )}
 
     {activeWorkspace === "journal-evidence" && (
-      <section
+      <WorkspacePanel
         id="student-workspace-journal-evidence"
-        className="mt-5 min-w-0"
-        role="tabpanel"
-        aria-labelledby="student-workspace-tab-journal-evidence"
+        labelledBy="student-workspace-tab-journal-evidence"
       >
-        <header className="mb-4 border-b-2 border-[var(--border-strong)] pb-3">
-          <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[var(--accent)]">
-            Observasi dan dokumentasi
-          </p>
-          <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
-            Jurnal & Bukti
-          </h2>
-          <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
-            Form pencatatan dan histori jurnal berada di area jurnal; unggahan dan histori evidence berada di area bukti.
-          </p>
-        </header>
-        <div className="grid min-w-0 grid-cols-2 items-start gap-5 max-[1120px]:grid-cols-1">
+        <SectionHeader
+          eyebrow="Observasi dan dokumentasi"
+          title="Jurnal & Bukti"
+          description="Form pencatatan dan histori jurnal berada di area jurnal; unggahan dan histori evidence berada di area bukti."
+        />
+        <div className="student-journal-evidence-grid">
           <StudentLearningJournalSection
             studentId={studentId}
             refreshKey={journalRefreshKey}
@@ -774,27 +632,19 @@ export default function StudentDetail() {
             />
           )}
         </div>
-      </section>
+      </WorkspacePanel>
     )}
 
     {activeWorkspace === "feedback" && (
-      <section
+      <WorkspacePanel
         id="student-workspace-feedback"
-        className="mt-5 min-w-0"
-        role="tabpanel"
-        aria-labelledby="student-workspace-tab-feedback"
+        labelledBy="student-workspace-tab-feedback"
       >
-        <header className="mb-4 border-b-2 border-[var(--border-strong)] pb-3">
-          <p className="m-0 text-[0.66rem] font-[850] uppercase tracking-[0.12em] text-[#7f611e]">
-            Narasi milik guru
-          </p>
-          <h2 className="mt-1 text-[clamp(1.25rem,2vw,1.6rem)] font-[850] leading-tight tracking-[-0.02em] text-[var(--text)]">
-            Feedback
-          </h2>
-          <p className="mt-1 max-w-[72ch] text-[0.8rem] leading-6 text-[var(--muted)]">
-            Susun, tinjau, dan simpan feedback berbasis record. AI hanya membantu menyusun draf; keputusan akhir tetap pada guru.
-          </p>
-        </header>
+        <SectionHeader
+          eyebrow="Narasi milik guru"
+          title="Feedback"
+          description="Susun, tinjau, dan simpan feedback berbasis record. AI hanya membantu menyusun draf; keputusan akhir tetap pada guru."
+        />
         {usingCachedSnapshot ? (
           <Surface className={unavailableSurfaceClasses}>
             <EmptyState
@@ -803,7 +653,7 @@ export default function StudentDetail() {
             />
           </Surface>
         ) : (
-          <div className="grid min-w-0 grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] items-start gap-5 max-[1080px]:grid-cols-1">
+          <div className="student-feedback-grid">
             <FeedbackForm
               feedback={feedback}
               feedbackInputRef={feedbackInputRef}
@@ -819,7 +669,7 @@ export default function StudentDetail() {
             <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
           </div>
         )}
-      </section>
+      </WorkspacePanel>
     )}
 
     <AiNarrativeWorkspace

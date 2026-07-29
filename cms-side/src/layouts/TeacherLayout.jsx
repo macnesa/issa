@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../navigation/Sidebar";
 import OfflineStatusIndicator from "../offline-workspace/OfflineStatusIndicator";
 import TeacherCommandPalette from "../features/teacher-search/TeacherCommandPalette";
+import { SecondaryButton } from "../shared/ui/ui";
 import "./teacher-layout.css";
 import {
   clearLastKnownTeacherIdentity,
@@ -42,7 +43,7 @@ export default function TeacherLayout() {
       <Sidebar status={<OfflineStatusIndicator />} />
       <div className="teacher-workspace__content">
         <header className="teacher-utility-bar">
-          <button
+          <SecondaryButton
             type="button"
             onClick={() => setSearchOpen(true)}
             className="teacher-search-trigger"
@@ -60,7 +61,7 @@ export default function TeacherLayout() {
             <kbd className="teacher-search-trigger__shortcut">
               ⌘K / Ctrl K
             </kbd>
-          </button>
+          </SecondaryButton>
         </header>
         <div className="teacher-workspace__main">
           <Outlet />

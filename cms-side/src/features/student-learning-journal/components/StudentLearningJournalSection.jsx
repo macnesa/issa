@@ -3,7 +3,7 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
-  Surface,
+  LedgerShell,
 } from "../../../shared/ui/ui";
 import { fetchStudentEvidences } from "../../student-evidence/studentEvidenceApi";
 import {
@@ -157,12 +157,12 @@ export default function StudentLearningJournalSection({
     : `Jurnal belajar belum dapat dimuat. ${resource.error}`;
 
   return (
-    <Surface className="student-learning-journal">
-      <header className="student-learning-journal__header">
-        <p>Shared learning journal</p>
-        <h2>Perjalanan belajar</h2>
-        <span>Catatan ini akan dibagikan kepada orang tua siswa.</span>
-      </header>
+    <LedgerShell
+      className="student-learning-journal"
+      eyebrow="Shared learning journal"
+      title="Perjalanan belajar"
+      description="Catatan ini akan dibagikan kepada orang tua siswa."
+    >
 
       <JournalEntryForm
         editingEntry={editingEntry}
@@ -204,6 +204,6 @@ export default function StudentLearningJournalSection({
           />
         )}
       </div>
-    </Surface>
+    </LedgerShell>
   );
 }

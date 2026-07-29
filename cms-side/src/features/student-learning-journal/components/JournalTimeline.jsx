@@ -5,7 +5,10 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
+import {
+  DestructiveButton,
+  SecondaryButton,
+} from "../../../shared/ui/ui";
 import { evidenceCategoryLabels } from "../../student-evidence/studentEvidence.constants";
 import {
   formatJournalDate,
@@ -140,7 +143,8 @@ export default function JournalTimeline({
 
                 {(!readOnly || demoReadOnly) && (
                 <div className="journal-timeline__actions">
-                  <button
+                  <SecondaryButton
+                    compact
                     type="button"
                     disabled={readOnly}
                     onClick={() => {
@@ -148,8 +152,9 @@ export default function JournalTimeline({
                     }}
                   >
                     Edit
-                  </button>
-                  <button
+                  </SecondaryButton>
+                  <DestructiveButton
+                    compact
                     type="button"
                     className="journal-timeline__retract"
                     disabled={readOnly}
@@ -159,9 +164,9 @@ export default function JournalTimeline({
                     }}
                   >
                     Cabut catatan
-                  </button>
+                  </DestructiveButton>
                   {demoReadOnly && (
-                    <span className="text-xs text-[var(--muted)]">
+                    <span className="journal-timeline__demo">
                       Tidak tersedia dalam mode demo.
                     </span>
                   )}
@@ -174,26 +179,28 @@ export default function JournalTimeline({
       </ol>
 
       <Dialog open={Boolean(entryToRetract)} onClose={closeDialog}>
-        <DialogBackdrop className="journal-retract-dialog__backdrop" />
-        <div className="journal-retract-dialog__container">
-          <DialogPanel className="journal-retract-dialog__panel">
-            <DialogTitle className="journal-retract-dialog__title">
-              Cabut catatan ini?
-            </DialogTitle>
-            <p className="journal-retract-dialog__copy">
+        <DialogBackdrop className="issa-dialog-backdrop" />
+        <div className="issa-dialog-container">
+          <DialogPanel className="issa-dialog-panel">
+            <div className="issa-dialog-header">
+              <DialogTitle className="issa-dialog-title">Cabut catatan ini?</DialogTitle>
+            </div>
+            <div className="issa-dialog-body">
+            <p>
               Catatan tidak lagi terlihat oleh orang tua, tetapi tetap disimpan
               sebagai record internal.
             </p>
             {retractError && (
               <p
-                className="journal-retract-dialog__error"
+                className="issa-dialog-error"
                 role="alert"
                 aria-live="assertive"
               >
                 {retractError}
               </p>
             )}
-            <div className="journal-retract-dialog__actions">
+            </div>
+            <div className="issa-dialog-footer">
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}
@@ -201,14 +208,13 @@ export default function JournalTimeline({
               >
                 Batal
               </SecondaryButton>
-              <PrimaryButton
+              <DestructiveButton
                 type="button"
-                className="journal-retract-dialog__confirm"
                 onClick={confirmRetraction}
                 disabled={retracting}
               >
                 {retracting ? "Mencabut..." : "Cabut catatan"}
-              </PrimaryButton>
+              </DestructiveButton>
             </div>
           </DialogPanel>
         </div>

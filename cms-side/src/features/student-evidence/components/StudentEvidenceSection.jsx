@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  DestructiveButton,
   EmptyState,
   ErrorState,
+  LedgerShell,
   LoadingState,
-  Surface,
+  SecondaryButton,
 } from "../../../shared/ui/ui";
 import { formatRecordedDate } from "../../../utils/recordDates";
 import {
@@ -20,7 +22,7 @@ import EvidenceUploadForm from "./EvidenceUploadForm";
 import EvidenceMetadataDialog from "./EvidenceMetadataDialog";
 import EvidenceRetractionDialog from "./EvidenceRetractionDialog";
 import EvidenceViewerDialog from "./EvidenceViewerDialog";
-import "./StudentEvidenceSection.css";
+import "../evidence-workspace.css";
 
 export default function StudentEvidenceSection({
   demoReadOnly = false,
@@ -147,12 +149,12 @@ export default function StudentEvidenceSection({
 
   return (
     <>
-      <Surface className="student-evidence-record">
-        <header className="student-evidence-record__header">
-          <p>Student evidence</p>
-          <h2>Bukti perkembangan</h2>
-          <span>Foto dan metadata menjadi bagian dari record perkembangan siswa.</span>
-        </header>
+      <LedgerShell
+        className="student-evidence-record"
+        eyebrow="Student evidence"
+        title="Bukti perkembangan"
+        description="Foto dan metadata menjadi bagian dari record perkembangan siswa."
+      >
 
         <EvidenceUploadForm
           demoReadOnly={demoReadOnly}
@@ -218,7 +220,8 @@ export default function StudentEvidenceSection({
                       Guru: {evidence.teacher?.name || "-"} · {(evidence.file?.format || "").toUpperCase()} · {formatEvidenceFileSize(evidence.file?.size)}
                     </small>
                     <div className="student-evidence-history__actions">
-                      <button
+                      <SecondaryButton
+                        compact
                         type="button"
                         disabled={demoReadOnly}
                         onClick={(event) => {
@@ -228,10 +231,10 @@ export default function StudentEvidenceSection({
                         }}
                       >
                         Edit metadata
-                      </button>
-                      <button
+                      </SecondaryButton>
+                      <DestructiveButton
+                        compact
                         type="button"
-                        className="student-evidence-history__retract"
                         disabled={demoReadOnly}
                         onClick={(event) => {
                           if (demoReadOnly) return;
@@ -240,9 +243,9 @@ export default function StudentEvidenceSection({
                         }}
                       >
                         Cabut evidence
-                      </button>
+                      </DestructiveButton>
                       {demoReadOnly && (
-                        <span className="text-xs text-[var(--muted)]">
+                        <span className="student-evidence-history__demo">
                           Tidak tersedia dalam mode demo.
                         </span>
                       )}
@@ -253,7 +256,7 @@ export default function StudentEvidenceSection({
             </ol>
           )}
         </div>
-      </Surface>
+      </LedgerShell>
 
       <EvidenceMetadataDialog
         evidence={editingEvidence}

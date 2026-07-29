@@ -1,49 +1,71 @@
-.weekly-timetable {
+.schedule-workspace {
+  color: var(--issa-text);
+}
+
+.weekly-timetable__days {
+  display: grid;
+  gap: var(--issa-space-3);
+  padding: var(--issa-space-4);
+}
+
+.weekly-timetable__day {
+  min-width: 0;
   overflow: hidden;
-  border: 1px solid #aac9ca;
-  border-radius: 0.9rem 1.6rem 0.9rem 0.9rem;
-  background: #f7fcfb;
-  box-shadow: 0.4rem 0.46rem 0 rgba(107, 191, 188, 0.12);
 }
 
-.weekly-timetable__intro {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 1.1rem 1.25rem;
-  border-bottom: 1px solid #b9d7d5;
-  background: linear-gradient(90deg, #dff1ef, rgba(247, 252, 251, 0.86));
+.weekly-timetable__day-header {
+  border-bottom: var(--issa-border-width) solid var(--issa-border);
+  padding: var(--issa-space-3);
+  background: var(--issa-surface-subtle);
 }
 
-.weekly-timetable__intro p { color: #356d70; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
-
-.weekly-timetable__days { display: grid; }
-.weekly-timetable__day { min-width: 0; padding: 1rem; border-top: 1px solid #cbe1df; }
-.weekly-timetable__day:first-child { border-top: 0; }
-.weekly-timetable__day-header { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
-.weekly-timetable__day-name { color: #173e52; font-size: 0.95rem; font-weight: 850; }
-.weekly-timetable__day-code { color: #5e9997; font-size: 0.64rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
-.weekly-timetable__lessons { margin-top: 0.65rem; }
-.weekly-timetable__lesson { display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; min-height: 2.55rem; padding: 0.42rem 0; border-top: 1px solid rgba(170, 201, 202, 0.72); }
-.weekly-timetable__lesson:first-child { border-top: 0; }
-.weekly-timetable__lesson-name { color: #173e52; font-size: 0.83rem; font-weight: 700; line-height: 1.25; }
-.weekly-timetable__lesson-kkm { flex: none; border: 1px solid #b9d7d5; border-radius: 0.45rem 0.3rem 0.58rem 0.3rem; background: #e6f5f2; color: #356d70; font-size: 0.68rem; font-weight: 850; padding: 0.25rem 0.38rem; }
-.weekly-timetable__empty { margin-top: 0.65rem; color: #61757c; font-size: 0.8rem; line-height: 1.45; }
-
-@media (min-width: 960px) {
-  .weekly-timetable__days { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .weekly-timetable__day { min-height: 13rem; border-top: 0; border-left: 1px solid #cbe1df; }
-  .weekly-timetable__day:first-child { border-left: 0; }
+.weekly-timetable__day-name {
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-section-title);
+  font-weight: var(--issa-weight-bold);
 }
 
-@media (min-width: 640px) and (max-width: 959px) {
-  .weekly-timetable__days { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .weekly-timetable__day { border-top: 1px solid #cbe1df; }
-  .weekly-timetable__day:nth-child(-n + 2) { border-top: 0; }
-  .weekly-timetable__day:nth-child(even) { border-left: 1px solid #cbe1df; }
+.weekly-timetable__lessons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-@media (max-width: 639px) {
-  .weekly-timetable__intro { padding: 1rem; }
-  .weekly-timetable__day { padding: 0.9rem 1rem; }
+.weekly-timetable__lesson {
+  padding: var(--issa-space-3);
+}
+
+.weekly-timetable__lesson + .weekly-timetable__lesson {
+  border-top: var(--issa-border-width) solid var(--issa-border);
+}
+
+.weekly-timetable__lesson-name {
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-body);
+  font-weight: var(--issa-weight-semibold);
+  line-height: var(--issa-line-height-body);
+}
+
+.weekly-timetable__lesson-kkm,
+.weekly-timetable__empty {
+  display: block;
+  margin-top: var(--issa-space-1);
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+}
+
+.weekly-timetable__empty {
+  padding: var(--issa-space-3);
+}
+
+@media (min-width: 640px) {
+  .weekly-timetable__days {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .weekly-timetable__days {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }

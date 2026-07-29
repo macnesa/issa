@@ -219,7 +219,9 @@ describe("Attendance offline durable workspace", () => {
 
   test("network retry retains the original clientMutationId and overlay", async () => {
     await saveBaseline();
-    await enqueueMutation(mutationInput());
+    await enqueueMutation(mutationInput(), {
+      now: () => new Date(fixedNow),
+    });
     const engine = createTeacherSyncEngine({
       teacherId: 1,
       isOnline: () => true,

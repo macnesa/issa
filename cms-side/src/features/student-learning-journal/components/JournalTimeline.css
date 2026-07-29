@@ -1,300 +1,157 @@
 .journal-timeline {
-  min-width: 0;
-  border-top: 2px solid #76938f;
-  padding: 1.25rem;
-  background: #fffdf8;
+  border-top: var(--issa-border-width) solid var(--issa-border);
 }
 
-.journal-timeline__heading > p {
-  margin: 0;
-  color: #7d6938;
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.13em;
+.journal-timeline__heading {
+  padding: var(--issa-space-4);
+  background: var(--issa-surface-subtle);
+}
+
+.journal-timeline__heading p,
+.journal-timeline__labels {
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
+  letter-spacing: var(--issa-tracking-metadata);
   text-transform: uppercase;
 }
 
 .journal-timeline__heading h3 {
-  margin: 0.28rem 0 0;
-  color: #3f392c;
-  font-size: 1rem;
-  font-weight: 800;
+  margin-top: var(--issa-space-1);
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-section-title);
+  font-weight: var(--issa-weight-bold);
 }
 
 .journal-timeline__heading > span {
   display: block;
-  margin-top: 0.32rem;
-  color: #776f5f;
-  font-size: 0.72rem;
+  margin-top: var(--issa-space-1);
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-supporting);
 }
 
 .journal-timeline__list {
-  margin: 1.15rem 0 0;
+  margin: 0;
   padding: 0;
-  border-top: 1px solid #d9d1bd;
   list-style: none;
 }
 
 .journal-timeline__entry {
   display: grid;
-  grid-template-columns: 2.35rem minmax(0, 1fr);
-  border-bottom: 1px solid #d9d1bd;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--issa-space-3);
+  padding: var(--issa-space-4);
+}
+
+.journal-timeline__entry + .journal-timeline__entry {
+  border-top: var(--issa-border-width) solid var(--issa-border);
 }
 
 .journal-timeline__rail {
-  border-right: 1px solid #d9d1bd;
-  padding: 1rem 0.55rem 0 0;
-  color: #8c826c;
-  font-size: 0.64rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-align: right;
-}
-
-.journal-timeline__entry > article {
-  min-width: 0;
-  padding: 1rem 0 1rem 1rem;
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
 }
 
 .journal-timeline__entry-header {
   display: flex;
-  flex-wrap: wrap;
+  min-width: 0;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.45rem 1rem;
-}
-
-.journal-timeline__labels {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem;
-  color: #355b57;
-  font-size: 0.65rem;
-  font-weight: 850;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.journal-timeline__entry--reflection .journal-timeline__labels {
-  color: #5e5577;
-}
-
-.journal-timeline__edited {
-  margin-left: 0.3rem;
-  border: 1px solid #c6b98f;
-  border-radius: 999px;
-  padding: 0.12rem 0.42rem;
-  color: #6f633d;
-  letter-spacing: 0.03em;
-  text-transform: none;
+  gap: var(--issa-space-3);
 }
 
 .journal-timeline__entry-header time {
-  color: #807866;
-  font-size: 0.7rem;
+  flex: 0 0 auto;
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+}
+
+.journal-timeline__edited {
+  color: var(--issa-warning);
 }
 
 .journal-timeline__content {
-  margin: 0.62rem 0 0;
-  color: #293f41;
-  font-size: 0.86rem;
-  line-height: 1.68;
-  overflow-wrap: anywhere;
+  margin-top: var(--issa-space-3);
+  color: var(--issa-text);
+  font-family: inherit;
+  font-size: var(--issa-font-size-body);
+  font-style: normal;
+  line-height: var(--issa-line-height-body);
   white-space: pre-wrap;
 }
 
-blockquote.journal-timeline__content {
-  border-left: 2px solid #aaa0bf;
-  padding-left: 0.85rem;
-  color: #373246;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.94rem;
-}
-
 .journal-timeline__teacher {
-  margin: 0.55rem 0 0;
-  color: #6e756f;
-  font-size: 0.72rem;
+  margin-top: var(--issa-space-2);
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
 }
 
 .journal-timeline__evidence {
-  display: grid;
-  grid-template-columns: 4.7rem minmax(0, 1fr);
-  gap: 0.75rem;
+  display: flex;
+  min-width: 0;
   align-items: center;
-  margin-top: 0.78rem;
-  border: 1px solid #d5cdb8;
-  border-radius: 0.2rem var(--control-radius) 0.2rem 0.2rem;
-  padding: 0.55rem;
-  background: #fbf8ef;
+  gap: var(--issa-space-3);
+  margin-top: var(--issa-space-3);
+  border: var(--issa-border-width) solid var(--issa-border);
+  border-radius: var(--issa-radius-surface);
+  padding: var(--issa-space-3);
+  background: var(--issa-surface-subtle);
 }
 
 .journal-timeline__evidence img {
-  width: 4.7rem;
-  height: 3.6rem;
-  border: 1px solid #c8c0aa;
-  border-radius: 0.2rem;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+  border-radius: var(--issa-radius-control);
   object-fit: cover;
 }
 
-.journal-timeline__evidence span,
-.journal-timeline__evidence strong,
-.journal-timeline__evidence small {
-  display: block;
+.journal-timeline__evidence > div {
+  display: grid;
+  min-width: 0;
+  gap: var(--issa-space-1);
 }
 
-.journal-timeline__evidence span {
-  color: #806c39;
-  font-size: 0.58rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.journal-timeline__evidence span,
+.journal-timeline__evidence small {
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
 }
 
 .journal-timeline__evidence strong {
-  margin-top: 0.2rem;
-  color: #344a4b;
-  font-size: 0.78rem;
-}
-
-.journal-timeline__evidence small {
-  margin-top: 0.18rem;
-  color: #787262;
-  font-size: 0.66rem;
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-supporting);
 }
 
 .journal-timeline__evidence--retracted {
-  grid-template-columns: minmax(0, 1fr);
-  border-style: dashed;
-  border-color: #c8b9af;
-  background: #f8f3ef;
-}
-
-.journal-timeline__evidence--retracted span {
-  color: #7c554b;
+  border-color: var(--issa-warning);
 }
 
 .journal-timeline__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-top: 0.75rem;
+  align-items: center;
+  gap: var(--issa-space-2);
+  margin-top: var(--issa-space-3);
 }
 
-.journal-timeline__actions button {
-  border: 0;
-  background: transparent;
-  padding: 0.18rem 0;
-  color: #356a66;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-decoration: underline;
-  text-decoration-color: #9eb8b4;
-  text-underline-offset: 0.22rem;
+.journal-timeline__demo {
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
 }
 
-.journal-timeline__actions .journal-timeline__retract {
-  color: #8e4d46;
-  text-decoration-color: #d7aaa4;
-}
-
-.journal-timeline__actions button:focus-visible {
-  border-radius: 0.2rem;
-  outline: 3px solid var(--focus);
-}
-
-.journal-retract-dialog__backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: rgba(19, 35, 39, 0.58);
-}
-
-.journal-retract-dialog__container {
-  position: fixed;
-  inset: 0;
-  z-index: 61;
-  display: grid;
-  place-items: center;
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-.journal-retract-dialog__panel {
-  width: min(100%, 29rem);
-  border: 2px solid #8a7668;
-  border-radius: var(--dialog-radius);
-  background: #fffdf8;
-  padding: 1.35rem;
-  box-shadow: var(--shadow-floating);
-}
-
-.journal-retract-dialog__title {
-  color: #273f42;
-  font-size: 1.08rem;
-  font-weight: 820;
-}
-
-.journal-retract-dialog__copy {
-  margin: 0.6rem 0 0;
-  color: #665f53;
-  font-size: 0.84rem;
-  line-height: 1.6;
-}
-
-.journal-retract-dialog__error {
-  margin: 0.8rem 0 0;
-  border-left: 3px solid #b75b50;
-  padding: 0.3rem 0.65rem;
-  color: #93463e;
-  font-size: 0.78rem;
-}
-
-.journal-retract-dialog__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.7rem;
-  margin-top: 1.2rem;
-}
-
-.journal-retract-dialog__confirm {
-  background: #934a43;
-}
-
-.journal-retract-dialog__confirm:hover {
-  background: #783b36;
-}
-
-@media (min-width: 700px) {
-  .journal-timeline {
-    padding: 1.4rem 1.5rem 1.6rem;
-  }
-}
-
-@media (max-width: 479px) {
+@media (max-width: 639px) {
   .journal-timeline__entry {
-    grid-template-columns: 1.7rem minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .journal-timeline__entry > article {
-    padding-left: 0.75rem;
+  .journal-timeline__rail {
+    display: none;
   }
 
-  .journal-timeline__evidence {
-    grid-template-columns: 1fr;
-  }
-
-  .journal-timeline__evidence img {
-    width: 100%;
-    height: 9rem;
-  }
-
-  .journal-retract-dialog__actions {
-    flex-direction: column-reverse;
-  }
-
-  .journal-retract-dialog__actions button {
-    width: 100%;
+  .journal-timeline__entry-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

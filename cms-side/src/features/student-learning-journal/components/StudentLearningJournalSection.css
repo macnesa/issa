@@ -1,54 +1,7 @@
 .student-learning-journal {
   min-width: 0;
-  overflow: hidden;
-  border: 2px solid #76938f;
-  border-radius: 0.25rem var(--surface-radius) 0.25rem 0.25rem;
-  background: #fffdf7;
-}
-
-.student-learning-journal__header {
-  padding: 1.3rem 1.35rem 1.25rem;
-  border-bottom: 2px solid #76938f;
-  background: #244c4c;
-}
-
-.student-learning-journal__header > p {
-  margin: 0;
-  color: #cfe3dd;
-  font-size: 0.66rem;
-  font-weight: 850;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.student-learning-journal__header h2 {
-  margin: 0.28rem 0 0;
-  color: #fff;
-  font-size: 1.18rem;
-  font-weight: 820;
-}
-
-.student-learning-journal__header span {
-  display: block;
-  max-width: 38rem;
-  margin-top: 0.42rem;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.8rem;
-  line-height: 1.5;
 }
 
 .student-learning-journal__state {
-  padding: 1.25rem;
-  border-top: 1px solid #c9d4d1;
-  background: #fffdf8;
-}
-
-@media (min-width: 700px) {
-  .student-learning-journal__header {
-    padding: 1.35rem 1.5rem;
-  }
-
-  .student-learning-journal__state {
-    padding: 1.45rem 1.5rem 1.6rem;
-  }
+  padding: var(--issa-space-4);
 }

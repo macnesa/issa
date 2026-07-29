@@ -2,7 +2,12 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateStudentScore } from "../../../store/action/ActionCreator";
 import { formatRecordedDate, toIsoDateTime } from "../../../utils/recordDates";
-import { PrimaryButton, SecondaryButton, StatusBadge } from "../../../shared/ui/ui";
+import {
+  InlineNotice,
+  PrimaryButton,
+  SecondaryButton,
+  StatusBadge,
+} from "../../../shared/ui/ui";
 import DateTimeField from "../../../shared/ui/form-controls/DateTimeField";
 import NumberField from "../../../shared/ui/form-controls/NumberField";
 import { useOfflineWorkspace } from "../../../offline-workspace/OfflineWorkspaceProvider";
@@ -62,24 +67,24 @@ export default function TableScores({
   const status = data.status === true ? "Lulus" : data.status === false ? "Belum lulus" : undefined;
 
   return (
-    <tr className="score-history-ledger__row border-t border-[var(--border)] align-top text-[var(--text)]">
-      <td className="score-history-ledger__index px-3 py-3">{String(recordIndex).padStart(2, "0")}</td>
-      <td className="score-history-ledger__subject px-3 py-3">
+    <tr className="score-history-ledger__row">
+      <td className="score-history-ledger__index">{String(recordIndex).padStart(2, "0")}</td>
+      <td className="score-history-ledger__subject">
         {data.Lesson?.name || "Belum tersedia"}
       </td>
-      <td className="score-history-ledger__assessment px-3 py-3">
+      <td className="score-history-ledger__assessment">
         {data.Assignment?.name || "Belum tersedia"}
       </td>
-      <td className="score-history-ledger__threshold-note px-3 py-3">
+      <td className="score-history-ledger__threshold-note">
         {data.Lesson?.KKM ?? "—"}
       </td>
-      <td className="px-3 py-3">
+      <td>
         {editing ? (
           <NumberField
             id={`score-value-${data.id}`}
             label="Nilai siswa"
             hideLabel
-            className="score-history-ledger__number-field issa-control-tone--score"
+            className="score-history-ledger__number-field"
             min="0"
             max="100"
             step="1"
@@ -90,13 +95,13 @@ export default function TableScores({
           <span className="score-history-ledger__score-value">{data.value ?? "—"}</span>
         )}
       </td>
-      <td className="px-3 py-3"><StatusBadge status={status} /></td>
+      <td><StatusBadge status={status} /></td>
       {showPredikat && (
-        <td className="score-history-ledger__predicate px-3 py-3">
+        <td className="score-history-ledger__predicate">
           {data.category || "—"}
         </td>
       )}
-      <td className="score-history-ledger__date px-3 py-3">
+      <td className="score-history-ledger__date">
         <div>{formatRecordedDate(data.recordedAt)}</div>
         {editing && (
           <DateTimeField
@@ -106,25 +111,24 @@ export default function TableScores({
             value={recordedAt}
             onChange={setRecordedAt}
             optional
-            tone="score"
             className="score-history-ledger__date-field"
           />
         )}
       </td>
-      <td className="px-3 py-3">
-        <form onSubmit={handleScoreUpdateSubmit} className="min-w-28">
+      <td>
+        <form onSubmit={handleScoreUpdateSubmit} className="score-history-ledger__actions">
           {editing ? (
-            <div className="flex gap-2">
+            <div>
               <PrimaryButton
                 type="submit"
-                className="min-h-8 px-3 py-1 text-xs"
+                compact
                 disabled={submitting}
               >
                 {submitting ? "Menyimpan…" : "Simpan"}
               </PrimaryButton>
               <SecondaryButton
                 type="button"
-                className="min-h-8 px-3 py-1 text-xs"
+                compact
                 onClick={() => setEditing(false)}
                 disabled={submitting}
               >
@@ -134,7 +138,7 @@ export default function TableScores({
           ) : (
             <SecondaryButton
               type="button"
-              className="score-history-ledger__action min-h-8 px-3 py-1 text-xs"
+              compact
               onClick={handleScoreEditStart}
               disabled={isDemo}
             >
@@ -142,11 +146,18 @@ export default function TableScores({
             </SecondaryButton>
           )}
           {isDemo && (
-            <p className="mt-2 text-xs text-[var(--muted)]">
+            <InlineNotice className="score-history-ledger__notice">
               Tidak tersedia dalam mode demo.
-            </p>
+            </InlineNotice>
           )}
-          {message && <p role="status" className="mt-2 text-xs text-rose-700">{message}</p>}
+          {message && (
+            <InlineNotice
+              className="score-history-ledger__notice"
+              tone="danger"
+            >
+              {message}
+            </InlineNotice>
+          )}
         </form>
       </td>
     </tr>

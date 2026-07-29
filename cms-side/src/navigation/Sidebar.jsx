@@ -111,13 +111,13 @@ export default function Sidebar({ status = null }) {
             <span>Ruang kerja guru</span>
           </p>
         </div>
-        <button
+        <SecondaryButton
           type="button"
           onClick={handleTeacherLogout}
           className="teacher-sidebar__mobile-logout"
         >
           Keluar
-        </button>
+        </SecondaryButton>
       </div>
 
       <nav className="teacher-sidebar__navigation" aria-label="Navigasi utama">
@@ -151,13 +151,9 @@ export default function Sidebar({ status = null }) {
           </div>
         )}
         {isDemo && (
-          <div className="border-l-2 border-[#6bbfbc] px-3 py-2 text-[#edf4f4]">
-            <strong className="block text-[0.72rem] uppercase tracking-[0.08em]">
-              Mode demo
-            </strong>
-            <span className="mt-0.5 block text-[0.68rem] text-[#bcd2d6]">
-              Akses hanya-baca
-            </span>
+          <div className="teacher-sidebar__demo">
+            <strong>Mode demo</strong>
+            <span>Akses hanya-baca</span>
           </div>
         )}
         {teacherName && (
@@ -174,7 +170,7 @@ export default function Sidebar({ status = null }) {
             </div>
           </div>
         )}
-        <button
+        <SecondaryButton
           type="button"
           onClick={handleTeacherLogout}
           className="teacher-sidebar__logout"
@@ -186,7 +182,7 @@ export default function Sidebar({ status = null }) {
             logout
           </span>
           Keluar
-        </button>
+        </SecondaryButton>
       </footer>
       <Dialog
         open={logoutConfirmationOpen}

@@ -1,11 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import isEmpty from "lodash/isEmpty";
 import TableStudent from "../features/students/components/TableStudents";
 import TeacherAttentionQueue from "../features/student-insights/components/TeacherAttentionQueue";
 import { fetchStudentList } from "../store/action/ActionCreator";
-import { EmptyState, ErrorState, LoadingState, PageContainer, PageHeader, PrimaryButton } from "../shared/ui/ui";
+import {
+  ButtonLink,
+  EmptyState,
+  ErrorState,
+  LedgerShell,
+  LoadingState,
+  PageContainer,
+  PageHeader,
+  PrimaryButton,
+  SecondaryButton,
+  Surface,
+} from "../shared/ui/ui";
+import TextField from "../shared/ui/form-controls/TextField";
 import { localDateValue } from "../utils/recordDates";
 import "../features/students/student-record.css";
 
@@ -95,14 +106,14 @@ export default function Dashboard() {
   };
 
   return <PageContainer className="teacher-dashboard">
-    <div><PageHeader eyebrow="Teacher workspace" title="Dashboard siswa" description="Mulai dari daftar siswa kelas Anda untuk melihat rekam perkembangan, mencatat feedback, attendance, dan score." /></div>
-    <section className="teacher-dashboard__class-ledger" aria-label="Ringkasan kelas aktif">
-      <div className="teacher-dashboard__class-anchor"><p className="text-xs font-semibold uppercase tracking-[0.15em]">Kelas aktif</p><strong>{className}</strong><span>Scope akses teacher</span></div>
+    <PageHeader eyebrow="Teacher workspace" title="Dashboard siswa" description="Mulai dari daftar siswa kelas Anda untuk melihat rekam perkembangan, mencatat feedback, attendance, dan score." />
+    <Surface className="teacher-dashboard__class-ledger" aria-label="Ringkasan kelas aktif">
+      <div className="teacher-dashboard__class-anchor"><p>Kelas aktif</p><strong>{className}</strong><span>Scope akses teacher</span></div>
       <dl className="teacher-dashboard__class-facts">
         <div>
           <dt>Kehadiran hari ini</dt>
           <dd>
-            <Link to="/attendance">{attendanceSummaryLabel}</Link>
+            <ButtonLink compact to="/attendance">{attendanceSummaryLabel}</ButtonLink>
           </dd>
           <span>
             {classAttendanceSummary?.complete === false
@@ -120,42 +131,49 @@ export default function Dashboard() {
           <span>Antrean tindak lanjut guru</span>
         </div>
       </dl>
-    </section>
+    </Surface>
     <TeacherAttentionQueue onCountChange={setAttentionCount} />
-    <section className="teacher-dashboard__roster">
-      <div className="teacher-dashboard__roster-header flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div><h2 className="text-lg font-semibold text-[var(--text)]">Daftar siswa</h2><p className="mt-1 text-sm text-[var(--muted)]">Buka detail untuk melanjutkan pencatatan perkembangan siswa.</p></div>
-        <form className="grid w-full gap-1.5 sm:w-auto" onSubmit={handleStudentSearchSubmit}>
-          <label className="text-xs font-extrabold uppercase tracking-[0.08em] text-[var(--muted)]" htmlFor="dashboard-student-search">
-            Cari siswa
-          </label>
-          <div className="flex w-full gap-2">
-            <input id="dashboard-student-search" value={studentSearchQuery.name} onChange={(event) => setStudentSearchQuery({ name: event.target.value })} type="search" name="name" placeholder="Masukkan nama siswa" className="issa-native-control min-h-10 min-w-0 flex-1 sm:w-64" />
+    <LedgerShell
+      className="teacher-dashboard__roster"
+      eyebrow="Daftar kelas"
+      title="Daftar siswa"
+      description="Buka detail untuk melanjutkan pencatatan perkembangan siswa."
+    >
+      <form className="teacher-dashboard__search" onSubmit={handleStudentSearchSubmit}>
+          <TextField
+            id="dashboard-student-search"
+            label="Cari siswa"
+            value={studentSearchQuery.name}
+            onChange={(event) => setStudentSearchQuery({ name: event.target.value })}
+            type="search"
+            name="name"
+            placeholder="Masukkan nama siswa"
+          />
+          <div className="teacher-dashboard__search-action">
             <PrimaryButton type="submit" disabled={loading}>
               {loading ? "Mencari…" : "Cari"}
             </PrimaryButton>
           </div>
-        </form>
-      </div>
-      {loading && <div className="p-5"><LoadingState label="Memuat daftar siswa..." /></div>}
-      {!loading && error && <div className="p-5"><ErrorState message={error} onRetry={() => fetchStudentListForDashboard(appliedStudentSearchQuery, currentPage)} /></div>}
-      {!loading && !error && isEmpty(studentRows) && <div className="p-5"><EmptyState title="Belum ada siswa" description="Tidak ada siswa yang cocok dengan pencarian ini." /></div>}
+      </form>
+      {loading && <div className="teacher-dashboard__state"><LoadingState label="Memuat daftar siswa..." /></div>}
+      {!loading && error && <div className="teacher-dashboard__state"><ErrorState message={error} onRetry={() => fetchStudentListForDashboard(appliedStudentSearchQuery, currentPage)} /></div>}
+      {!loading && !error && isEmpty(studentRows) && <div className="teacher-dashboard__state"><EmptyState title="Belum ada siswa" description="Tidak ada siswa yang cocok dengan pencarian ini." /></div>}
       {!loading && !error && !isEmpty(studentRows) && <>
-        <div className="overflow-x-auto"><table className="teacher-dashboard__roster-table min-w-[760px] w-full text-left text-sm"><thead className="text-xs uppercase tracking-wide"><tr><th className="px-5 py-3">Siswa</th><th className="px-4 py-3">NIM</th><th className="px-4 py-3">Kelas</th><th className="px-4 py-3">Attendance hari ini</th><th className="px-5 py-3 text-right">Aksi</th></tr></thead><tbody>{studentRows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}</tbody></table></div>
-        <div className="border-t border-[var(--border)] p-4">
-          <nav className="flex items-center justify-between gap-3 max-[639px]:items-start max-[639px]:flex-col" aria-label="Paginasi siswa Dashboard">
-            <p className="text-sm text-[var(--muted)]">
+        <div className="teacher-dashboard__roster-overflow"><table className="teacher-dashboard__roster-table"><thead><tr><th>Siswa</th><th>NIM</th><th>Kelas</th><th>Attendance hari ini</th><th>Aksi</th></tr></thead><tbody>{studentRows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}</tbody></table></div>
+        <div className="teacher-dashboard__pagination">
+          <nav aria-label="Paginasi siswa Dashboard">
+            <p>
               Menampilkan {firstDisplayedStudent}–{lastDisplayedStudent} dari {totalStudents} siswa
-              <span className="mx-2" aria-hidden="true">·</span>
+              <span className="teacher-dashboard__pagination-separator" aria-hidden="true">·</span>
               Halaman {currentPage} dari {totalPages}
             </p>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => handleStudentPageChange(currentPage - 1)} disabled={currentPage <= 1} className="min-h-10 rounded-lg border border-[var(--border-strong)] bg-white px-3 py-2 text-sm font-semibold text-[var(--text)] hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">Sebelumnya</button>
-              <button type="button" onClick={() => handleStudentPageChange(currentPage + 1)} disabled={currentPage >= totalPages} className="min-h-10 rounded-lg border border-[var(--border-strong)] bg-white px-3 py-2 text-sm font-semibold text-[var(--text)] hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">Berikutnya</button>
+            <div>
+              <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage - 1)} disabled={currentPage <= 1}>Sebelumnya</SecondaryButton>
+              <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage + 1)} disabled={currentPage >= totalPages}>Berikutnya</SecondaryButton>
             </div>
           </nav>
         </div>
       </>}
-    </section>
+    </LedgerShell>
   </PageContainer>;
 }

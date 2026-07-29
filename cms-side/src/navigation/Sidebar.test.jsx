@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { saveLastKnownTeacherIdentity } from "../offline-workspace/authIdentity";
@@ -13,6 +13,18 @@ const sidebarMocks = vi.hoisted(() => ({
   clearTeacherData: vi.fn().mockResolvedValue(undefined),
   hasUnsyncedAttendance: vi.fn().mockResolvedValue(false),
 }));
+
+function unsignedTeacherToken(accessMode) {
+  const encode = (value) => btoa(JSON.stringify(value))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
+  return `${encode({ alg: "none" })}.${encode({
+    role: "teacher",
+    teacherId: 9,
+    accessMode,
+  })}.`;
+}
 
 vi.mock("../offline-workspace/mutationQueue", async (importOriginal) => {
   const original = await importOriginal();
@@ -73,10 +85,11 @@ describe("Sidebar CMS", () => {
       .toBeInTheDocument();
   });
 
-  test("menghapus active state kuning dan shadow dekoratif", () => {
-    expect(navigationCss).not.toContain("#f2e291");
+  test("menggunakan token shared untuk active state tanpa override paksa", () => {
+    expect(navigationCss).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+    expect(navigationCss).not.toContain("!important");
     expect(navigationCss).toMatch(
-      /\.teacher-sidebar__nav-link\.is-active\s*\{[^}]*border-left-color:\s*#6bbfbc;[^}]*background:\s*#dce9e9;/s
+      /\.teacher-sidebar__nav-link\.is-active,[^}]*\{[^}]*border-left-color:\s*var\(--issa-selection\);[^}]*background:\s*var\(--issa-surface-subtle\);/s
     );
     expect(navigationCss).not.toMatch(
       /\.teacher-sidebar__nav-link\.is-active\s*\{[^}]*box-shadow:/s
@@ -87,5 +100,38 @@ describe("Sidebar CMS", () => {
     expect(navigationCss).toContain("@media (min-width: 1024px)");
     expect(navigationCss).toContain("@media (max-width: 1023px)");
     expect(navigationCss).not.toContain("@media (min-width: 768px)");
+  });
+
+  test("indikator demo hanya bergantung pada accessMode demo yang tepat", () => {
+    localStorage.setItem("access_token", unsignedTeacherToken("demo"));
+    const { unmount } = render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+    expect(screen.getByText("Mode demo")).toBeInTheDocument();
+    unmount();
+
+    localStorage.setItem("access_token", unsignedTeacherToken("Demo"));
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+    expect(screen.queryByText("Mode demo")).not.toBeInTheDocument();
+  });
+
+  test("logout normal tetap membersihkan sesi dan data offline guru", async () => {
+    fireEvent.click(render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    ).getAllByRole("button", { name: "Keluar" })[0]);
+
+    await waitFor(() => {
+      expect(localStorage.getItem("access_token")).toBeNull();
+    });
+    expect(sidebarMocks.hasUnsyncedAttendance).toHaveBeenCalledWith(9);
+    expect(sidebarMocks.clearTeacherData).toHaveBeenCalledWith(9);
   });
 });

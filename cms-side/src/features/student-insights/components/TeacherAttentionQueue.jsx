@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import baseUrl from "../../../config/api";
+import {
+  ButtonLink,
+  LedgerShell,
+  SecondaryButton,
+} from "../../../shared/ui/ui";
 import "./TeacherAttentionQueue.css";
 
 const urgencyLevels = new Set(["high", "medium", "low"]);
@@ -103,9 +107,9 @@ function AttentionQueueMessage({ tone, title, description, onRetry }) {
         <p>{description}</p>
       </div>
       {onRetry && (
-        <button type="button" className="teacher-attention-queue__retry" onClick={onRetry}>
+        <SecondaryButton compact type="button" className="teacher-attention-queue__retry" onClick={onRetry}>
           Coba lagi
-        </button>
+        </SecondaryButton>
       )}
     </div>
   );
@@ -130,26 +134,27 @@ function AttentionQueueRow({ item, index }) {
       <div className="teacher-attention-queue__identity">
         <strong>{item.student.name}</strong>
       </div>
-      <div className="teacher-attention-queue__follow-up !grid-cols-1 !gap-2">
-        <p className="text-[0.82rem] font-extrabold leading-5 text-[var(--text)]">
+      <div className="teacher-attention-queue__follow-up">
+        <p className="teacher-attention-queue__review">
           {primaryPresentation.review}
         </p>
-        <p className="text-[0.76rem] leading-5 text-[#3f5960]">
+        <p className="teacher-attention-queue__fact">
           {primaryPresentation.fact}
         </p>
         {primaryPresentation.context && (
-          <p className="border-l-2 border-[#d4a63a] pl-2 text-[0.72rem] leading-5 text-[var(--muted)]">
+          <p className="teacher-attention-queue__context">
             {primaryPresentation.context}
           </p>
         )}
       </div>
-      <Link
+      <ButtonLink
+        compact
         className="teacher-attention-queue__action"
         to={`/students/${item.student.id}`}
         aria-label={`Tinjau siswa ${item.student.name}`}
       >
         Tinjau siswa
-      </Link>
+      </ButtonLink>
     </li>
   );
 }
@@ -198,26 +203,20 @@ export default function TeacherAttentionQueue({
   }, [loadAttentionQueue]);
 
   return (
-    <section
+    <LedgerShell
       className="teacher-attention-queue"
-      aria-labelledby="teacher-attention-queue-title"
+      eyebrow="Tindak lanjut"
+      title="Perlu ditinjau"
+      description="Daftar tindak lanjut berdasarkan data kehadiran, pengukuran akademik, dan observasi guru."
       aria-busy={status === "loading"}
     >
-      <header className="teacher-attention-queue__header">
-        <div>
-          <p className="teacher-attention-queue__taxonomy">Tindak lanjut</p>
-          <h2 id="teacher-attention-queue-title">Perlu ditinjau</h2>
-          <p>
-            Daftar tindak lanjut berdasarkan data kehadiran, pengukuran akademik,
-            dan observasi guru.
-          </p>
-        </div>
-        {status === "success" && attentionQueue.length > 0 && (
+      {status === "success" && attentionQueue.length > 0 && (
+        <div className="teacher-attention-queue__summary">
           <span className="teacher-attention-queue__count">
             {attentionQueue.length} tindak lanjut
           </span>
-        )}
-      </header>
+        </div>
+      )}
 
       {status === "loading" && <AttentionQueueSkeleton />}
       {status === "error" && (
@@ -242,6 +241,6 @@ export default function TeacherAttentionQueue({
           ))}
         </ol>
       )}
-    </section>
+    </LedgerShell>
   );
 }

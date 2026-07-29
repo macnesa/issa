@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import DateField from "../../../shared/ui/form-controls/DateField";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
-import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
+import {
+  InlineNotice,
+  PrimaryButton,
+  SecondaryButton,
+  Surface,
+} from "../../../shared/ui/ui";
 import { localDateValue, parseLocalDateValue } from "../../../utils/recordDates";
 import {
   formatJournalDate,
@@ -183,7 +188,7 @@ export default function JournalEntryForm({
   const selectedCaptureType = journalVoiceCaptureTypes[form.voiceCaptureType];
 
   return (
-    <div className={`journal-entry-form ${editing ? "is-editing" : ""}`}>
+    <Surface className={`journal-entry-form ${editing ? "is-editing" : ""}`}>
       <div className="journal-entry-form__heading">
         <p>{editing ? "Correction mode" : "New journal entry"}</p>
         <h3>{editing ? "Koreksi catatan" : "Catat perjalanan belajar"}</h3>
@@ -194,9 +199,9 @@ export default function JournalEntryForm({
 
       <form onSubmit={handleSubmit} noValidate>
         {demoReadOnly && (
-          <p className="m-0 px-4 pt-4 text-sm font-semibold text-[var(--muted)]">
+          <InlineNotice className="journal-entry-form__demo" tone="warning" role="note">
             Tidak tersedia dalam mode demo.
-          </p>
+          </InlineNotice>
         )}
         <div className="journal-entry-form__fields">
           <SelectField
@@ -210,7 +215,6 @@ export default function JournalEntryForm({
             error={errors.type}
             required
             disabled={submitting || readOnly}
-            tone="feedback"
           />
 
           <DateField
@@ -221,7 +225,6 @@ export default function JournalEntryForm({
             error={errors.observedAt}
             required
             disabled={submitting || readOnly}
-            tone="feedback"
           />
 
           {form.type === "student_reflection" && (
@@ -236,7 +239,6 @@ export default function JournalEntryForm({
               error={errors.voiceCaptureType}
               required
               disabled={submitting || readOnly}
-              tone="feedback"
             />
           )}
 
@@ -253,7 +255,6 @@ export default function JournalEntryForm({
                 : "Opsional · pilih satu evidence milik siswa ini."
             }
             disabled={readOnly || submitting || evidenceStatus === "loading"}
-            tone="feedback"
           />
 
           <div className="issa-control-field journal-entry-form__content">
@@ -319,6 +320,6 @@ export default function JournalEntryForm({
           </p>
         </div>
       </form>
-    </div>
+    </Surface>
   );
 }

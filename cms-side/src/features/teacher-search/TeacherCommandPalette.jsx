@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Command } from "cmdk";
 import { useNavigate } from "react-router-dom";
+import { SecondaryButton } from "../../shared/ui/ui";
 import {
   getOnlineHint,
   subscribeToConnectionStatus,
@@ -188,8 +189,8 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
       label="Cari data ISSA"
       loop
       shouldFilter={false}
-      overlayClassName="teacher-command-palette__overlay"
-      contentClassName="teacher-command-palette"
+      overlayClassName="issa-dialog-backdrop teacher-command-palette__overlay"
+      contentClassName="issa-dialog-panel teacher-command-palette"
     >
       <div className="teacher-command-palette__search-row">
         <span
@@ -247,13 +248,14 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
             <p className="teacher-command-palette__error-message" role="alert">
               {resource.error}
             </p>
-            <button
+            <SecondaryButton
               type="button"
+              compact
               onClick={() => setRetryKey((current) => current + 1)}
               className="teacher-command-palette__retry"
             >
               Coba lagi
-            </button>
+            </SecondaryButton>
           </div>
         )}
 

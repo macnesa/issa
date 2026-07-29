@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import baseUrl from "../../../config/api";
-import { PrimaryButton, Surface } from "../../../shared/ui/ui";
+import {
+  InlineNotice,
+  LedgerShell,
+  PrimaryButton,
+  Surface,
+} from "../../../shared/ui/ui";
 import { toIsoDateTime } from "../../../utils/recordDates";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
 import ComboboxField from "../../../shared/ui/form-controls/ComboboxField";
@@ -116,12 +121,12 @@ export default function CreateScoreForm({ studentId, onCreated }) {
   };
 
   return (
-    <Surface className="score-entry-ledger">
-      <div className="score-entry-ledger__header">
-        <p>Rekam akademik</p>
-        <h2>Catat nilai</h2>
-        <span>Pilih mata pelajaran dan penilaian yang sesuai.</span>
-      </div>
+    <LedgerShell
+      className="score-entry-ledger"
+      eyebrow="Rekam akademik"
+      title="Catat nilai"
+      description="Pilih mata pelajaran dan penilaian yang sesuai."
+    >
       <form onSubmit={handleStudentScoreSubmit} className="score-entry-ledger__form">
         <div className="score-entry-ledger__fields">
           <SelectField
@@ -133,7 +138,6 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             onChange={(LessonId) => setForm({ ...form, LessonId })}
             options={lessonOptions}
             placeholder={loadingOptions ? "Memuat..." : "Pilih mata pelajaran"}
-            tone="score"
             className="score-entry-ledger__lesson"
           />
           <ComboboxField
@@ -145,10 +149,14 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             onChange={(AssignmentId) => setForm({ ...form, AssignmentId })}
             options={assignmentOptions}
             placeholder={loadingOptions ? "Memuat..." : "Cari penilaian"}
-            tone="score"
             className="score-entry-ledger__assessment"
           />
-          <div className="score-entry-ledger__threshold" aria-live="polite">
+          <Surface
+            as="div"
+            variant="subtle"
+            className="score-entry-ledger__threshold"
+            aria-live="polite"
+          >
             <span>Ambang ketuntasan</span>
             <strong>{selectedLesson?.KKM != null ? selectedLesson.KKM : "—"}</strong>
             <small>
@@ -156,7 +164,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
                 ? "KKM mata pelajaran terpilih"
                 : "Pilih mata pelajaran"}
             </small>
-          </div>
+          </Surface>
           <NumberField
             id="student-score"
             label="Nilai siswa"
@@ -170,7 +178,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             helperText={selectedLesson?.KKM != null
               ? `Rentang 0–100. Ketuntasan mulai ${selectedLesson.KKM}.`
               : "Masukkan angka bulat 0–100."}
-            className="issa-control-tone--score score-entry-ledger__score-field"
+            className="score-entry-ledger__score-field"
           />
           <DateTimeField
             id="score-recorded-at"
@@ -179,7 +187,6 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             disabled={isDemo}
             onChange={(recordedAt) => setForm({ ...form, recordedAt })}
             optional
-            tone="score"
             className="score-entry-ledger__date-field"
           />
           <div className="score-entry-ledger__submit">
@@ -201,7 +208,14 @@ export default function CreateScoreForm({ studentId, onCreated }) {
           </div>
         </div>
       </form>
-      {message && <p role="status" className={`score-entry-ledger__message text-sm ${message.includes("berhasil") ? "text-emerald-700" : "text-rose-700"}`}>{message}</p>}
-    </Surface>
+      {message && (
+        <InlineNotice
+          className="score-entry-ledger__message"
+          tone={message.includes("berhasil") ? "success" : "danger"}
+        >
+          {message}
+        </InlineNotice>
+      )}
+    </LedgerShell>
   );
 }

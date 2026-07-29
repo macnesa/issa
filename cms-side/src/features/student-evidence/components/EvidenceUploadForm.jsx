@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
+import {
+  InlineNotice,
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from "../../../shared/ui/ui";
 import DateField from "../../../shared/ui/form-controls/DateField";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
 import TextField from "../../../shared/ui/form-controls/TextField";
@@ -10,7 +15,6 @@ import {
   maximumEvidenceFileSize,
   supportedEvidenceMimeTypes,
 } from "../studentEvidence.constants";
-import "./EvidenceUploadForm.css";
 
 function validateSelectedFile(file) {
   if (!file) return "Pilih satu file gambar.";
@@ -159,9 +163,9 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
 
       <form className="evidence-upload__form" onSubmit={handleSubmit} noValidate>
         {demoReadOnly && (
-          <p className="m-0 text-sm font-semibold text-[var(--muted)]">
+          <InlineNotice tone="warning" role="note">
             Tidak tersedia dalam mode demo.
-          </p>
+          </InlineNotice>
         )}
         <div className="evidence-upload__file-field">
           <label htmlFor="student-evidence-file">Foto evidence</label>
@@ -187,9 +191,9 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
               <span>{formatEvidenceFileSize(file.size)}</span>
               <div className="evidence-upload__preview-actions">
                 <label htmlFor="student-evidence-file">Ganti file</label>
-                <button type="button" onClick={clearFile} disabled={submitting}>
+                <TertiaryButton compact type="button" onClick={clearFile} disabled={submitting}>
                   Hapus file
-                </button>
+                </TertiaryButton>
               </div>
             </div>
           </div>
@@ -225,7 +229,6 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
             required
             disabled={submitting || demoReadOnly}
             error={errors.observedAt}
-            tone="feedback"
           />
           <div className="issa-control-field evidence-upload__description">
             <label className="issa-control-label" htmlFor="student-evidence-description">

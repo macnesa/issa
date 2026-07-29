@@ -14,7 +14,6 @@ import {
   evidenceCategoryOptions,
   evidenceDateValue,
 } from "../studentEvidence.constants";
-import "./EvidenceMetadataDialog.css";
 
 function correctionErrorMessage(error) {
   if (error?.code === "publicDemoReadOnly") {
@@ -114,13 +113,13 @@ export default function EvidenceMetadataDialog({
 
   return (
     <Dialog open={Boolean(evidence)} onClose={closeDialog}>
-      <DialogBackdrop className="evidence-metadata-dialog__backdrop" />
-      <div className="evidence-metadata-dialog__container">
-        <DialogPanel className="evidence-metadata-dialog__panel">
-          <DialogTitle className="evidence-metadata-dialog__title">
+      <DialogBackdrop className="issa-dialog-backdrop" />
+      <div className="issa-dialog-container">
+        <DialogPanel className="issa-dialog-panel evidence-metadata-dialog">
+          <DialogTitle className="issa-dialog-title">
             Edit metadata evidence
           </DialogTitle>
-          <p className="evidence-metadata-dialog__intro">
+          <p className="issa-dialog-copy">
             Koreksi informasi record tanpa mengubah gambar yang tersimpan.
           </p>
 
@@ -172,7 +171,6 @@ export default function EvidenceMetadataDialog({
                 required
                 disabled={submitting}
                 error={errors.observedAt}
-                tone="feedback"
               />
               <div className="issa-control-field">
                 <label
@@ -208,13 +206,13 @@ export default function EvidenceMetadataDialog({
             </div>
 
             <p
-              className="evidence-metadata-dialog__status"
+              className="issa-dialog-error"
               role={statusMessage ? "alert" : "status"}
               aria-live="polite"
             >
               {statusMessage}
             </p>
-            <div className="evidence-metadata-dialog__actions">
+            <div className="issa-dialog-footer">
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}

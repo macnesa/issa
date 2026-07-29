@@ -5,8 +5,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
-import "./EvidenceRetractionDialog.css";
+import { DestructiveButton, SecondaryButton } from "../../../shared/ui/ui";
 
 function retractionErrorMessage(error) {
   if (error?.code === "publicDemoReadOnly") {
@@ -72,13 +71,13 @@ export default function EvidenceRetractionDialog({
 
   return (
     <Dialog open={Boolean(evidence)} onClose={closeDialog}>
-      <DialogBackdrop className="evidence-retraction-dialog__backdrop" />
-      <div className="evidence-retraction-dialog__container">
-        <DialogPanel className="evidence-retraction-dialog__panel">
-          <DialogTitle className="evidence-retraction-dialog__title">
+      <DialogBackdrop className="issa-dialog-backdrop" />
+      <div className="issa-dialog-container">
+        <DialogPanel className="issa-dialog-panel evidence-retraction-dialog">
+          <DialogTitle className="issa-dialog-title">
             Cabut bukti perkembangan ini?
           </DialogTitle>
-          <p className="evidence-retraction-dialog__warning">
+          <p className="issa-dialog-copy">
             Gambar tidak lagi tersedia bagi guru maupun orang tua.
             Catatan jurnal yang pernah terhubung akan tetap tersedia,
             tetapi akan menunjukkan bahwa evidence telah dicabut.
@@ -140,13 +139,13 @@ export default function EvidenceRetractionDialog({
             </div>
 
             <p
-              className="evidence-retraction-dialog__status"
+              className="issa-dialog-error"
               role={statusMessage ? "alert" : "status"}
               aria-live="polite"
             >
               {statusMessage}
             </p>
-            <div className="evidence-retraction-dialog__actions">
+            <div className="issa-dialog-footer">
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}
@@ -154,13 +153,12 @@ export default function EvidenceRetractionDialog({
               >
                 Batal
               </SecondaryButton>
-              <PrimaryButton
+              <DestructiveButton
                 type="submit"
-                className="evidence-retraction-dialog__confirm"
                 disabled={submitting}
               >
                 {submitting ? "Mencabut..." : "Cabut evidence"}
-              </PrimaryButton>
+              </DestructiveButton>
             </div>
           </form>
         </DialogPanel>

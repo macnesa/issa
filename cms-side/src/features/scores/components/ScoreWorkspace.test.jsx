@@ -10,6 +10,7 @@ const scoreWorkspaceCss = readFileSync(
 
 const scoreMocks = vi.hoisted(() => ({
   dispatch: vi.fn(),
+  isDemo: false,
   updateStudentScore: vi.fn(),
 }));
 
@@ -23,6 +24,10 @@ vi.mock("../../../config/api", () => ({
 
 vi.mock("../../../store/action/ActionCreator", () => ({
   updateStudentScore: scoreMocks.updateStudentScore,
+}));
+
+vi.mock("../../../offline-workspace/OfflineWorkspaceProvider", () => ({
+  useOfflineWorkspace: () => ({ isDemo: scoreMocks.isDemo }),
 }));
 
 vi.mock("../../../shared/ui/form-controls/SelectField", () => ({
@@ -86,6 +91,7 @@ function response(data, ok = true) {
 describe("CreateScoreForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    scoreMocks.isDemo = false;
     vi.stubGlobal("fetch", vi.fn((url, options = {}) => {
       if (options.method === "POST") return response({ data: { id: 99 } });
       if (String(url).endsWith("/lessons")) {
@@ -169,6 +175,44 @@ describe("CreateScoreForm", () => {
       /\.score-entry-ledger__submit\s*\{[^}]*grid-column:\s*1\s*\/\s*-1;/s
     );
   });
+
+  test("menolak perubahan nilai yang tidak valid tanpa request POST", async () => {
+    const { container } = render(
+      <CreateScoreForm studentId={7} onCreated={vi.fn()} />
+    );
+    await screen.findByRole("option", { name: "Matematika" });
+    fireEvent.change(screen.getByLabelText("Mata pelajaran"), {
+      target: { value: "1" },
+    });
+    fireEvent.change(screen.getByLabelText("Penilaian"), {
+      target: { value: "2" },
+    });
+    fireEvent.change(screen.getByLabelText("Nilai siswa"), {
+      target: { value: "101" },
+    });
+    fireEvent.submit(container.querySelector("form"));
+
+    expect(await screen.findByText(
+      "Pilih mata pelajaran dan penilaian, lalu isi nilai bulat 0–100."
+    )).toBeInTheDocument();
+    expect(global.fetch.mock.calls.some(([, options]) => options?.method === "POST"))
+      .toBe(false);
+  });
+
+  test("mode demo menampilkan data pilihan tetapi mengunci semua input dan submit", async () => {
+    scoreMocks.isDemo = true;
+    render(<CreateScoreForm studentId={7} onCreated={vi.fn()} />);
+
+    await screen.findByRole("option", { name: "Matematika" });
+    expect(screen.getByLabelText("Mata pelajaran")).toBeDisabled();
+    expect(screen.getByLabelText("Penilaian")).toBeDisabled();
+    expect(screen.getByLabelText("Nilai siswa")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Simpan nilai" })).toBeDisabled();
+    expect(screen.getByText("Tidak tersedia dalam mode demo."))
+      .toBeInTheDocument();
+    expect(global.fetch.mock.calls.some(([, options]) => options?.method === "POST"))
+      .toBe(false);
+  });
 });
 
 describe("ScoreHistory", () => {
@@ -185,6 +229,7 @@ describe("ScoreHistory", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    scoreMocks.isDemo = false;
     scoreMocks.updateStudentScore.mockReturnValue({ type: "score/update" });
     scoreMocks.dispatch.mockResolvedValue({});
   });
@@ -241,5 +286,23 @@ describe("ScoreHistory", () => {
     await waitFor(() => {
       expect(screen.queryByLabelText("Nilai siswa")).not.toBeInTheDocument();
     });
+  });
+
+  test("mode demo mempertahankan ledger terbaca tetapi mengunci aksi pembaruan", () => {
+    scoreMocks.isDemo = true;
+    render(<ScoreHistory scores={[score]} student={student} />);
+
+    expect(screen.getByText("Matematika")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ubah" })).toBeDisabled();
+    expect(screen.getByText("Tidak tersedia dalam mode demo."))
+      .toBeInTheDocument();
+    expect(scoreMocks.updateStudentScore).not.toHaveBeenCalled();
+  });
+
+  test("menampilkan empty state ledger ketika belum ada nilai", () => {
+    render(<ScoreHistory scores={[]} student={student} />);
+
+    expect(screen.getByText("Belum ada nilai tercatat")).toBeInTheDocument();
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 });
