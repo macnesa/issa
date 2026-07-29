@@ -1,52 +1,404 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import baseUrl from "../config/api";
 import { PrimaryButton } from "../shared/ui/ui";
 import TextField from "../shared/ui/form-controls/TextField";
-import "../features/authentication/teacher-login.css";
+import issaLogo from "../../assets/img/logo.png";
+import { saveLastKnownTeacherIdentity } from "../offline-workspace/authIdentity";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [loginCredentials, setLoginCredentials] = useState({ NIP: "", password: "" });
+  const location = useLocation();
+
+  const [loginCredentials, setLoginCredentials] = useState({
+    NIP: "",
+    password: "",
+  });
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [demoSubmitting, setDemoSubmitting] = useState(false);
 
-  const handleTeacherLoginInputChange = (event) => setLoginCredentials({ ...loginCredentials, [event.target.name]: event.target.value });
+  useEffect(() => {
+    const sessionReason = new URLSearchParams(location.search).get("session");
+    if (sessionReason === "demo-expired") {
+      setMessage(
+        "Sesi demo telah berakhir. Buka kembali demo untuk melanjutkan."
+      );
+    } else if (sessionReason === "expired") {
+      setMessage("Sesi Anda telah berakhir. Silakan masuk kembali.");
+    }
+  }, [location.search]);
+
+  const completeLogin = (loginResponse) => {
+    localStorage.setItem("access_token", loginResponse.access_token);
+    saveLastKnownTeacherIdentity({ id: loginResponse.id });
+    window.dispatchEvent(new Event("issa:teacher-identity-changed"));
+    navigate("/");
+  };
+
+  const parseLoginResponse = async (
+    response,
+    fallbackMessage,
+    { publicDemo = false } = {}
+  ) => {
+    const loginResponse = await response.json().catch(() => null);
+    if (!response.ok) {
+      const errorCode = loginResponse?.error?.code || loginResponse?.code;
+      if (publicDemo && response.status === 429) {
+        throw new Error(
+          "Batas akses demo telah tercapai. Coba lagi nanti."
+        );
+      }
+      if (
+        publicDemo
+        && [
+          "publicDemoUnavailable",
+          "publicDemoConfigurationError",
+        ].includes(errorCode)
+      ) {
+        throw new Error("Demo CMS sedang tidak tersedia.");
+      }
+      throw new Error(
+        loginResponse?.error?.message
+        || loginResponse?.message
+        || loginResponse?.msg
+        || fallbackMessage
+      );
+    }
+    return loginResponse;
+  };
+
+  const handleTeacherLoginInputChange = (event) => {
+    const { name, value } = event.target;
+
+    setLoginCredentials((currentCredentials) => ({
+      ...currentCredentials,
+      [name]: value,
+    }));
+  };
 
   const handleTeacherLoginSubmit = (event) => {
-    void 'ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN';
+    void "ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN";
+
     event.preventDefault();
     setMessage("");
+
+    if (!navigator.onLine) {
+      setMessage(
+        "Login baru tidak tersedia saat offline. Hubungkan perangkat lalu coba lagi."
+      );
+      return;
+    }
+
     setSubmitting(true);
-    fetch(`${baseUrl}/teachers/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(loginCredentials) })
+
+    fetch(`${baseUrl}/teachers/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(loginCredentials),
+    })
       .then(async (response) => {
-        const loginResponse = await response.json();
-        if (!response.ok) throw new Error(loginResponse.msg || "Login gagal.");
-        return loginResponse;
+        return parseLoginResponse(response, "Login gagal.");
       })
-      .then((loginResponse) => { localStorage.setItem("access_token", loginResponse.access_token); navigate("/"); })
-      .catch((error) => setMessage(error.message || "Login gagal."))
-      .finally(() => setSubmitting(false));
+      .then(completeLogin)
+      .catch((error) => {
+        setMessage(
+          !navigator.onLine
+            ? "Login baru tidak tersedia saat offline. Hubungkan perangkat lalu coba lagi."
+            : error.message || "Login gagal."
+        );
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  };
+
+  const handleTeacherDemoLogin = () => {
+    void "ISSA:CMS.AUTH.SUBMIT_TEACHER_DEMO_LOGIN";
+    if (demoSubmitting) return;
+
+    setMessage("");
+    setDemoSubmitting(true);
+    fetch(`${baseUrl}/teachers/demo-login`, { method: "POST" })
+      .then((response) => parseLoginResponse(
+        response,
+        "Demo CMS belum dapat dibuka.",
+        { publicDemo: true }
+      ))
+      .then(completeLogin)
+      .catch((error) => {
+        setMessage(error.message || "Demo CMS belum dapat dibuka.");
+      })
+      .finally(() => {
+        setDemoSubmitting(false);
+      });
   };
 
   return (
-    <main className="teacher-login relative grid min-h-[100svh] place-items-center overflow-hidden px-4 py-6 sm:px-6">
-      <section className="teacher-access-record relative z-10 grid w-full max-w-[67rem] overflow-hidden">
-        <div className="teacher-access-record__identity min-w-0" aria-labelledby="teacher-login-title">
-          <div className="teacher-access-record__seal relative z-10 grid place-items-center" aria-hidden="true">ISSA</div>
-          <p className="teacher-access-record__index relative z-10 uppercase">Teacher workspace · record 01</p>
-          <h1 id="teacher-login-title" className="relative z-10">Ruang kerja record siswa</h1>
-          <p className="relative z-10">Akses untuk mencatat dan meninjau perkembangan siswa di kelas Anda.</p>
-        </div>
-        <div className="teacher-access-record__form min-w-0">
-        <div className="teacher-access-record__form-header pl-4"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#356d8d]">Staff access</p><h2 className="mt-1 text-3xl font-semibold tracking-tight text-[var(--text)]">Masuk ke workspace</h2><p className="mt-2 text-sm leading-6 text-[var(--muted)]">Gunakan NIP dan password yang terdaftar.</p></div>
-        <form onSubmit={handleTeacherLoginSubmit} className="mt-7 space-y-4">
-          <TextField id="teacher-nip" label="NIP" required autoComplete="username" type="text" name="NIP" value={loginCredentials.NIP} onChange={handleTeacherLoginInputChange} placeholder="Masukkan NIP" />
-          <TextField id="teacher-password" label="Password" required autoComplete="current-password" type="password" name="password" value={loginCredentials.password} onChange={handleTeacherLoginInputChange} placeholder="Masukkan password" />
-          <PrimaryButton className="w-full" type="submit" disabled={submitting}>{submitting ? "Memeriksa akun..." : "Masuk"}</PrimaryButton>
-          {message && <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{message}</p>}
-        </form></div>
-      </section>
+    <main
+      style={{ minHeight: "100vh" }}
+      className="overflow-x-hidden bg-[#173e52] text-[#edf4f4]"
+    >
+      <div
+        style={{ minHeight: "100vh" }}
+        className="
+          mx-auto
+          grid
+          w-full
+          max-w-[76rem]
+          grid-rows-[auto_1fr]
+          px-5
+          py-5
+          sm:px-8
+          sm:py-6
+          lg:px-12
+          lg:py-7
+        "
+      >
+        {/* Institutional identity */}
+        <header className="flex items-center justify-between gap-6 border-b border-[#527382] pb-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <div
+              aria-hidden="true"
+              className="
+                h-10
+                w-10
+                shrink-0
+                border
+                border-[#d7e7e8]
+                bg-[#245b70]
+                p-1
+                shadow-[0.16rem_0.16rem_0_#6bbfbc]
+              "
+            >
+              <img
+                src={issaLogo}
+                alt=""
+                className="h-full w-full object-contain"
+              />
+            </div>
+
+            <div className="min-w-0">
+              <p className="m-0 text-[0.63rem] font-[900] uppercase tracking-[0.22em] text-[#9ed4d0]">
+                ISSA CMS
+              </p>
+
+              <p className="m-0 mt-0.5 truncate text-[0.76rem] font-bold tracking-[0.01em] text-[#f7faf8]">
+                Sistem administrasi akademik
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 border-l border-[#527382] pl-5 text-right max-[480px]:hidden">
+            <p className="m-0 text-[0.56rem] font-[900] uppercase tracking-[0.2em] text-[#9ed4d0]">
+              Akses
+            </p>
+
+            <p className="m-0 mt-0.5 text-[0.76rem] font-extrabold text-[#f7faf8]">
+              Internal
+            </p>
+          </div>
+        </header>
+
+        {/* Shared operational composition */}
+        <section
+          aria-labelledby="cms-context-title"
+          className="
+            grid
+            content-center
+            items-start
+            gap-9
+            py-8
+            sm:py-10
+            lg:grid-cols-[minmax(0,1fr)_minmax(28rem,31.5rem)]
+            lg:gap-[clamp(3rem,5vw,5.5rem)]
+            lg:py-8
+          "
+        >
+          {/* Operational context */}
+          <div className="w-full max-w-[35rem] border-l-2 border-[#6bbfbc] py-1 pl-5 sm:pl-7">
+            <p className="m-0 text-[0.63rem] font-[900] uppercase tracking-[0.21em] text-[#9ed4d0]">
+              Administrasi akademik
+            </p>
+
+            <h1
+              id="cms-context-title"
+              className="
+                m-0
+                mt-4
+                max-w-[32rem]
+                text-[clamp(2.45rem,4.35vw,3.9rem)]
+                font-[900]
+                leading-[0.96]
+                tracking-[-0.05em]
+                text-[#f7faf8]
+              "
+            >
+              Kelola administrasi akademik sekolah.
+            </h1>
+
+            <p
+              className="
+                m-0
+                mt-5
+                max-w-[30rem]
+                text-[clamp(0.9rem,1.15vw,0.98rem)]
+                leading-[1.65]
+                text-[#cbdcdf]
+              "
+            >
+              Kelola catatan siswa, kehadiran, nilai, dan jadwal melalui akses
+              internal.
+            </p>
+          </div>
+
+          {/* Authorized staff access */}
+          <form
+            onSubmit={handleTeacherLoginSubmit}
+            aria-busy={submitting || demoSubmitting}
+            aria-labelledby="cms-login-title"
+            className="
+              mx-auto
+              w-full
+              max-w-[32rem]
+              border-2
+              border-[#0e2a3a]
+              bg-[#f2f5f2]
+              text-[#173e52]
+              shadow-[0.24rem_0.26rem_0_#78949e]
+              [border-radius:0.18rem_0_0.32rem_0]
+
+              lg:mx-0
+              lg:max-w-none
+            "
+          >
+            <header className="border-b-2 border-[#b9cdd0] px-6 pb-4 pt-5 sm:px-7 sm:pt-6">
+              <h2
+                id="cms-login-title"
+                className="
+                  m-0
+                  text-[clamp(1.8rem,3vw,2.15rem)]
+                  font-[900]
+                  leading-none
+                  tracking-[-0.04em]
+                  text-[#173e52]
+                "
+              >
+                Masuk ke CMS
+              </h2>
+
+              <p className="m-0 mt-2 text-[0.86rem] leading-[1.5] text-[#5d737b]">
+                Gunakan NIP dan password staf yang terdaftar.
+              </p>
+            </header>
+
+            <div className="grid gap-4 px-6 pb-6 pt-5 sm:px-7">
+              <TextField
+                id="teacher-nip"
+                label="NIP"
+                required
+                autoComplete="username"
+                type="text"
+                name="NIP"
+                value={loginCredentials.NIP}
+                onChange={handleTeacherLoginInputChange}
+                placeholder="Masukkan NIP"
+                disabled={submitting || demoSubmitting}
+              />
+
+              <TextField
+                id="teacher-password"
+                label="Password"
+                required
+                autoComplete="current-password"
+                type="password"
+                name="password"
+                value={loginCredentials.password}
+                onChange={handleTeacherLoginInputChange}
+                placeholder="Masukkan password"
+                disabled={submitting || demoSubmitting}
+              />
+
+              {message ? (
+                <p
+                  role="alert"
+                  aria-live="polite"
+                  className="
+                    m-0
+                    border
+                    border-[#d79c96]
+                    border-l-4
+                    border-l-[var(--danger)]
+                    bg-[#fff4f2]
+                    px-3
+                    py-2.5
+                    text-[0.82rem]
+                    font-semibold
+                    leading-[1.45]
+                    text-[#8a3d32]
+                  "
+                >
+                  {message}
+                </p>
+              ) : null}
+
+              <PrimaryButton
+                className="
+                  mt-0.5
+                  w-full
+                  !min-h-[2.8rem]
+                  !rounded-[0.08rem]
+                  !border-2
+                  !border-[#173e52]
+                  !bg-[#245b70]
+                  !text-[0.8rem]
+                  !font-[900]
+                  !uppercase
+                  !tracking-[0.12em]
+                  !shadow-[0.12rem_0.14rem_0_#88a5ae]
+
+                  hover:!bg-[#173e52]
+
+                  disabled:!cursor-not-allowed
+                  disabled:!opacity-60
+                  disabled:!shadow-none
+                "
+                type="submit"
+                disabled={submitting || demoSubmitting}
+              >
+                {submitting ? "Memeriksa akun..." : "Masuk"}
+              </PrimaryButton>
+              <button
+                type="button"
+                disabled={submitting || demoSubmitting}
+                onClick={handleTeacherDemoLogin}
+                className="
+                  w-full
+                  min-h-[2.8rem]
+                  rounded-[0.08rem]
+                  border-2
+                  border-[#245b70]
+                  bg-transparent
+                  px-4
+                  py-2.5
+                  text-[0.8rem]
+                  font-[900]
+                  uppercase
+                  tracking-[0.1em]
+                  text-[#245b70]
+                  hover:bg-[#e8f4f2]
+                  disabled:cursor-not-allowed
+                  disabled:opacity-60
+                "
+              >
+                {demoSubmitting ? "Membuka demo…" : "Jelajahi Demo CMS"}
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
     </main>
   );
 }

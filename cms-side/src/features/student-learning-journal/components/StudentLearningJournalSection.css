@@ -1,0 +1,7 @@
+.student-learning-journal {
+  min-width: 0;
+}
+
+.student-learning-journal__state {
+  padding: var(--issa-space-4);
+}

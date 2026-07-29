@@ -7,6 +7,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Teacher.hasOne(models.Class);
       Teacher.hasMany(models.StudentFeedback);
+      Teacher.hasMany(models.StudentEvidence);
+      Teacher.hasMany(models.StudentEvidence, {
+        as: 'RetractedStudentEvidences',
+        foreignKey: 'RetractedByTeacherId',
+      });
+      Teacher.hasMany(models.StudentLearningJournal);
+      Teacher.hasMany(models.SyncMutationReceipt);
     }
   }
   Teacher.init(

@@ -4,55 +4,60 @@
 
 .issa-control-label {
   display: block;
-  margin-bottom: 0.375rem;
-  color: var(--text);
-  font-size: 0.875rem;
-  font-weight: 650;
+  margin-bottom: var(--issa-space-1);
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-label);
+  font-weight: var(--issa-weight-semibold);
 }
 
 .issa-control-label__optional {
-  margin-left: 0.45rem;
-  color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  margin-left: var(--issa-space-2);
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-medium);
+  letter-spacing: var(--issa-tracking-metadata);
   text-transform: uppercase;
 }
 
 .issa-control-helper,
 .issa-control-error {
-  margin: 0.35rem 0 0;
-  font-size: 0.75rem;
-  line-height: 1.4;
+  margin: var(--issa-space-1) 0 0;
+  font-size: var(--issa-font-size-metadata);
+  line-height: var(--issa-line-height-body);
 }
 
-.issa-control-helper { color: var(--muted); }
-.issa-control-error { color: var(--danger); }
+.issa-control-helper { color: var(--issa-text-muted); }
+.issa-control-error {
+  color: var(--issa-danger);
+  font-weight: var(--issa-weight-semibold);
+}
 
 .issa-native-control,
 .issa-select-trigger,
 .issa-date-trigger,
 .issa-combobox-shell {
   width: 100%;
-  min-height: 2.625rem;
-  border: 1px solid var(--border-strong);
-  border-radius: 0.62rem 0.38rem 0.72rem 0.38rem;
-  background: #fff;
-  color: var(--text);
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+  min-height: var(--issa-control-height);
+  border: var(--issa-border-width) solid var(--issa-border-strong);
+  border-radius: var(--issa-radius-control);
+  background: var(--issa-surface);
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-body);
+  transition:
+    border-color var(--issa-motion-fast) ease,
+    background-color var(--issa-motion-fast) ease,
+    box-shadow var(--issa-motion-fast) ease;
 }
 
 .issa-native-control {
-  padding: 0.6rem 0.75rem;
+  padding: var(--issa-space-2) var(--issa-space-3);
 }
 
 .issa-native-control::placeholder,
 .issa-combobox-input::placeholder,
 .issa-select-trigger__value.is-placeholder,
 .issa-date-trigger .is-placeholder {
-  color: #71858b;
+  color: var(--issa-text-muted);
   opacity: 1;
 }
 
@@ -60,23 +65,30 @@
 .issa-select-trigger:hover:not(:disabled),
 .issa-date-trigger:hover:not(:disabled),
 .issa-combobox-shell:hover {
-  border-color: #739fa4;
+  border-color: var(--issa-accent);
 }
 
 .issa-native-control:focus-visible,
 .issa-select-trigger[data-focus],
 .issa-date-trigger[data-focus],
 .issa-combobox-shell:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--focus), inset 0.22rem 0 0 #6bbfbc;
+  border-color: var(--issa-accent);
+  box-shadow: inset var(--issa-border-width-emphasis) 0 0
+    var(--issa-selection);
+  outline: var(--issa-border-width-emphasis) solid var(--issa-focus);
+  outline-offset: var(--issa-space-1);
 }
 
 .issa-native-control[aria-invalid="true"],
 .issa-select-trigger[data-invalid],
 .issa-date-trigger[aria-invalid="true"],
 .issa-combobox-field:has(.issa-combobox-input[aria-invalid="true"]) .issa-combobox-shell {
-  border-color: var(--danger);
-  background: #fff7f7;
+  border-color: var(--issa-danger);
+  background: color-mix(
+    in srgb,
+    var(--issa-danger) 7%,
+    var(--issa-surface)
+  );
 }
 
 .issa-native-control:disabled,
@@ -84,26 +96,25 @@
 .issa-date-trigger:disabled,
 .issa-combobox-field:has(.issa-combobox-input:disabled) .issa-combobox-shell {
   cursor: not-allowed;
-  background: #edf2f1;
-  color: #78898d;
-  opacity: 0.68;
+  background: var(--issa-surface-disabled);
+  color: var(--issa-text-disabled);
 }
 
 .issa-native-control:not(:placeholder-shown) {
-  background: #fffdf7;
+  background: var(--issa-surface);
 }
 
 .issa-native-control:-webkit-autofill,
 .issa-native-control:-webkit-autofill:hover,
 .issa-native-control:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--text);
-  box-shadow: 0 0 0 1000px #fffdf7 inset, 0 0 0 3px var(--focus);
-  caret-color: var(--text);
+  -webkit-text-fill-color: var(--issa-text);
+  box-shadow: 0 0 0 1000px var(--issa-surface) inset;
+  caret-color: var(--issa-text);
   transition: background-color 9999s ease-out;
 }
 
 .issa-native-control--textarea {
-  min-height: 8rem;
+  min-height: 7rem;
   resize: vertical;
   line-height: 1.55;
 }
@@ -113,8 +124,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.65rem;
-  padding: 0.55rem 0.7rem 0.55rem 0.78rem;
+  gap: var(--issa-space-2);
+  padding: var(--issa-space-2) var(--issa-space-3);
   text-align: left;
 }
 
@@ -130,8 +141,8 @@
   width: 1rem;
   height: 1rem;
   flex: 0 0 auto;
-  color: #54747a;
-  transition: transform 140ms ease;
+  color: var(--issa-text-muted);
+  transition: transform var(--issa-motion-fast) ease;
 }
 
 .issa-select-trigger[data-open] .issa-select-trigger__chevron,
@@ -140,17 +151,17 @@
 }
 
 .issa-options-panel {
-  z-index: 160;
+  z-index: var(--issa-z-popover);
   width: var(--button-width, var(--input-width));
   max-width: calc(100vw - 1rem);
   max-height: min(19rem, var(--anchor-max-height));
   overflow-y: auto;
-  border: 1px solid #8db3b5;
-  border-radius: 0.58rem 0.38rem 0.82rem 0.38rem;
-  background: #fffdf7;
-  padding: 0.3rem;
-  box-shadow: 0.35rem 0.4rem 0 rgba(107, 191, 188, 0.16), 0 0.9rem 2rem rgba(23, 62, 82, 0.15);
-  color: var(--text);
+  border: var(--issa-border-width) solid var(--issa-border-strong);
+  border-radius: var(--issa-radius-dialog);
+  background: var(--issa-surface);
+  padding: var(--issa-space-1);
+  box-shadow: var(--issa-shadow-dialog);
+  color: var(--issa-text);
   outline: none;
 }
 
@@ -158,39 +169,43 @@
 
 .issa-option {
   display: flex;
-  min-height: 2.45rem;
+  min-height: 2.5rem;
   cursor: default;
   align-items: center;
   justify-content: space-between;
-  gap: 0.65rem;
+  gap: var(--issa-space-2);
   border-left: 0.2rem solid transparent;
-  border-radius: 0.38rem 0.24rem 0.5rem 0.24rem;
-  padding: 0.52rem 0.62rem;
-  color: var(--text);
-  font-size: 0.84rem;
+  border-radius: var(--issa-radius-control);
+  padding: var(--issa-space-2) var(--issa-space-3);
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-supporting);
   outline: none;
 }
 
 .issa-option[data-focus] {
-  border-left-color: #6bbfbc;
-  background: #e8f5f3;
+  border-left-color: var(--issa-selection);
+  background: var(--issa-surface-subtle);
 }
 
 .issa-option[data-selected] {
-  border-left-color: var(--accent);
-  background: #deefed;
-  color: #173e52;
-  font-weight: 700;
+  border-left-color: var(--issa-accent);
+  background: color-mix(
+    in srgb,
+    var(--issa-selection) 20%,
+    var(--issa-surface)
+  );
+  color: var(--issa-text);
+  font-weight: var(--issa-weight-bold);
 }
 
 .issa-option[data-disabled] {
   cursor: not-allowed;
-  color: #92a0a3;
+  color: var(--issa-text-disabled);
   opacity: 0.65;
 }
 
 .issa-option.is-empty {
-  color: var(--muted);
+  color: var(--issa-text-muted);
   font-style: italic;
 }
 
@@ -204,14 +219,20 @@
   width: 1rem;
   height: 1rem;
   flex: 0 0 auto;
-  color: var(--accent);
+  color: var(--issa-accent);
   opacity: 0;
 }
 
 .issa-option[data-selected] .issa-option__check { opacity: 1; }
-.issa-option[data-tone="success"][data-selected] { background: #e6f7ef; color: #17664e; }
-.issa-option[data-tone="warning"][data-selected] { background: #fff4df; color: #925c0d; }
-.issa-option[data-tone="danger"][data-selected] { background: #fff0f1; color: #a93c47; }
+.issa-option[data-tone="success"][data-selected] {
+  color: var(--issa-success);
+}
+.issa-option[data-tone="warning"][data-selected] {
+  color: var(--issa-warning);
+}
+.issa-option[data-tone="danger"][data-selected] {
+  color: var(--issa-danger);
+}
 
 .issa-combobox-shell {
   position: relative;
@@ -221,12 +242,12 @@
 
 .issa-combobox-input {
   width: 100%;
-  min-height: 2.55rem;
+  min-height: var(--issa-control-height);
   border: 0;
   background: transparent;
   padding: 0.55rem 2.45rem 0.55rem 2.25rem;
-  color: var(--text);
-  font-size: 0.875rem;
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-body);
   outline: none;
 }
 
@@ -235,7 +256,7 @@
   left: 0.72rem;
   width: 1rem;
   height: 1rem;
-  color: #628086;
+  color: var(--issa-text-muted);
   pointer-events: none;
 }
 
@@ -248,32 +269,13 @@
   place-items: center;
   border: 0;
   background: transparent;
-  color: #54747a;
+  color: var(--issa-text-muted);
   outline: none;
 }
 
 .issa-combobox-button[data-focus] {
-  box-shadow: inset 0 0 0 2px var(--focus);
-}
-
-.issa-control-tone--attendance .issa-select-trigger,
-.issa-control-tone--attendance .issa-date-trigger {
-  border-color: #8fc1bd;
-  background: #f7fffd;
-}
-
-.issa-control-tone--score .issa-select-trigger,
-.issa-control-tone--score .issa-date-trigger,
-.issa-control-tone--score .issa-combobox-shell,
-.issa-control-tone--score .issa-native-control {
-  border-color: #bca6dc;
-  background: #fdfaff;
-}
-
-.issa-control-tone--feedback .issa-date-trigger,
-.issa-control-tone--feedback .issa-native-control {
-  border-color: #d7c795;
-  background: #fffdf5;
+  outline: var(--issa-border-width-emphasis) solid var(--issa-focus);
+  outline-offset: -3px;
 }
 
 .issa-date-trigger {
@@ -284,26 +286,26 @@
   width: 1.05rem;
   height: 1.05rem;
   flex: 0 0 auto;
-  color: var(--accent);
+  color: var(--issa-accent);
 }
 
 .issa-calendar-panel {
-  z-index: 130;
+  z-index: var(--issa-z-popover);
   width: min(21rem, calc(100vw - 1rem));
   max-height: var(--anchor-max-height);
   overflow: auto;
-  border: 1px solid #8db3b5;
-  border-radius: 0.7rem 0.45rem 1rem 0.45rem;
-  background: #fffdf7;
-  padding: 0.85rem;
-  box-shadow: 0.4rem 0.45rem 0 rgba(107, 191, 188, 0.16), 0 1rem 2.2rem rgba(23, 62, 82, 0.16);
+  border: var(--issa-border-width) solid var(--issa-border-strong);
+  border-radius: var(--issa-radius-dialog);
+  background: var(--issa-surface);
+  padding: var(--issa-space-3);
+  box-shadow: var(--issa-shadow-dialog);
   outline: none;
 }
 
 .issa-calendar {
   --calendar-cell: 2.35rem;
   position: relative;
-  color: var(--text);
+  color: var(--issa-text);
 }
 
 .issa-calendar__months,
@@ -317,15 +319,15 @@
   min-height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--issa-border-width) solid var(--issa-border);
   margin-bottom: 0.45rem;
   padding-bottom: 0.45rem;
 }
 
 .issa-calendar__caption-label {
-  color: #315f62;
-  font-size: 0.88rem;
-  font-weight: 800;
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-body);
+  font-weight: var(--issa-weight-bold);
   text-transform: capitalize;
 }
 
@@ -341,18 +343,27 @@
 
 .issa-calendar__nav-button {
   display: grid;
-  width: 2.15rem;
-  height: 2.15rem;
+  width: 2.25rem;
+  height: 2.25rem;
   place-items: center;
-  border: 1px solid var(--border-strong);
-  border-radius: 0.48rem 0.3rem 0.58rem 0.3rem;
-  background: #f3faf8;
-  color: var(--accent);
+  border: var(--issa-border-width) solid var(--issa-border-strong);
+  border-radius: var(--issa-radius-control);
+  background: var(--issa-surface-subtle);
+  color: var(--issa-accent);
   pointer-events: auto;
 }
 
-.issa-calendar__nav-button:hover:not(:disabled) { background: #e2f3ef; }
-.issa-calendar__nav-button:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+.issa-calendar__nav-button:hover:not(:disabled) {
+  background: color-mix(
+    in srgb,
+    var(--issa-selection) 18%,
+    var(--issa-surface)
+  );
+}
+.issa-calendar__nav-button:focus-visible {
+  outline: var(--issa-border-width-emphasis) solid var(--issa-focus);
+  outline-offset: var(--issa-space-1);
+}
 .issa-calendar__nav-button:disabled { opacity: 0.4; }
 .issa-calendar__chevron { width: 1rem; height: 1rem; }
 
@@ -363,9 +374,9 @@
 
 .issa-calendar__weekday {
   height: 2rem;
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 750;
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
   text-align: center;
   text-transform: uppercase;
 }
@@ -383,39 +394,43 @@
   height: 100%;
   place-items: center;
   border: 1px solid transparent;
-  border-radius: 0.48rem 0.28rem 0.56rem 0.28rem;
+  border-radius: var(--issa-radius-control);
   background: transparent;
   color: inherit;
-  font-size: 0.79rem;
+  font-size: var(--issa-font-size-supporting);
   outline: none;
 }
 
 .issa-calendar__day:not(.is-disabled) .issa-calendar__day-button:hover {
-  border-color: #a8cdca;
-  background: #edf8f6;
+  border-color: var(--issa-border-strong);
+  background: var(--issa-surface-subtle);
 }
 
 .issa-calendar__day.is-today .issa-calendar__day-button {
-  border-color: #a987d8;
-  color: #67488e;
-  font-weight: 800;
+  border-color: var(--issa-selection);
+  color: var(--issa-accent);
+  font-weight: var(--issa-weight-bold);
 }
 
 .issa-calendar__day.is-selected .issa-calendar__day-button {
-  border-color: #173e52;
-  background: #245e73;
-  box-shadow: 0.13rem 0.14rem 0 #9fd7d2;
-  color: #fff;
-  font-weight: 800;
+  border-color: var(--issa-text);
+  background: var(--issa-accent);
+  box-shadow: var(--issa-shadow-elevated);
+  color: var(--issa-text-inverse);
+  font-weight: var(--issa-weight-bold);
 }
 
 .issa-calendar__day.is-focused .issa-calendar__day-button,
 .issa-calendar__day-button:focus-visible {
-  box-shadow: 0 0 0 3px var(--focus);
+  outline: var(--issa-border-width-emphasis) solid var(--issa-focus);
+  outline-offset: 1px;
 }
 
-.issa-calendar__day.is-outside { color: #9ca9ab; }
-.issa-calendar__day.is-disabled { color: #b7c0c1; text-decoration: line-through; }
+.issa-calendar__day.is-outside { color: var(--issa-text-muted); }
+.issa-calendar__day.is-disabled {
+  color: var(--issa-text-disabled);
+  text-decoration: line-through;
+}
 .issa-calendar__day.is-disabled .issa-calendar__day-button { cursor: not-allowed; }
 .issa-calendar__day.is-hidden { visibility: hidden; }
 
@@ -426,7 +441,7 @@
 .issa-time-field {
   margin-top: 0.75rem;
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: var(--issa-border-width) solid var(--issa-border);
   padding: 0.75rem 0 0;
 }
 
@@ -438,10 +453,10 @@
   display: flex;
   align-items: center;
   gap: 0.38rem;
-  color: #49686e;
-  font-size: 0.72rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
+  letter-spacing: var(--issa-tracking-metadata);
   text-transform: uppercase;
 }
 
@@ -464,8 +479,8 @@
 
 .issa-time-field__separator {
   padding-bottom: 0.52rem;
-  color: var(--text);
-  font-weight: 800;
+  color: var(--issa-text);
+  font-weight: var(--issa-weight-bold);
 }
 
 .issa-date-time-panel__actions {
@@ -473,25 +488,25 @@
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 0.75rem;
-  border-top: 1px solid var(--border);
+  border-top: var(--issa-border-width) solid var(--issa-border);
   padding-top: 0.75rem;
 }
 
 .issa-calendar-action {
   min-height: 2.25rem;
-  border: 1px solid var(--accent);
-  border-radius: 0.5rem 0.3rem 0.62rem 0.3rem;
-  background: var(--accent);
+  border: var(--issa-border-width) solid var(--issa-accent);
+  border-radius: var(--issa-radius-control);
+  background: var(--issa-accent);
   padding: 0.42rem 0.8rem;
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 700;
+  color: var(--issa-text-inverse);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
 }
 
 .issa-calendar-action--clear {
-  border-color: var(--border-strong);
-  background: #fff;
-  color: var(--text);
+  border-color: var(--issa-border-strong);
+  background: var(--issa-surface);
+  color: var(--issa-text);
 }
 
 .issa-calendar-action:disabled {
@@ -512,15 +527,14 @@
 
 .issa-dialog-backdrop {
   position: fixed;
-  z-index: 140;
+  z-index: var(--issa-z-dialog-backdrop);
   inset: 0;
-  background: rgba(14, 42, 58, 0.46);
-  backdrop-filter: blur(2px);
+  background: var(--issa-dialog-backdrop);
 }
 
 .issa-dialog-container {
   position: fixed;
-  z-index: 150;
+  z-index: var(--issa-z-dialog);
   inset: 0;
   display: grid;
   place-items: center;
@@ -531,15 +545,78 @@
 .issa-dialog-panel {
   width: min(32rem, 100%);
   overflow: hidden;
-  border: 1px solid #8db3b5;
-  border-radius: 0.8rem 0.55rem 1.2rem 0.55rem;
-  background: #fffdf7;
-  box-shadow: 0.45rem 0.5rem 0 rgba(107, 191, 188, 0.18), 0 1.2rem 3rem rgba(14, 42, 58, 0.2);
+  border: var(--issa-border-width) solid var(--issa-border-strong);
+  border-radius: var(--issa-radius-dialog);
+  background: var(--issa-surface);
+  box-shadow: var(--issa-shadow-dialog);
 }
 
-@media (max-width: 420px) {
-  .issa-calendar-panel { padding: 0.68rem; }
-  .issa-calendar { --calendar-cell: min(2.25rem, calc((100vw - 3.4rem) / 7)); }
+.issa-dialog-header,
+.issa-dialog-body,
+.issa-dialog-footer {
+  padding: var(--issa-space-4);
+}
+
+.issa-dialog-header {
+  border-bottom: var(--issa-border-width) solid var(--issa-border);
+}
+
+.issa-dialog-title {
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-section-title);
+  font-weight: var(--issa-weight-bold);
+  line-height: var(--issa-line-height-tight);
+}
+
+.issa-dialog-panel > .issa-dialog-title {
+  display: block;
+  border-bottom: var(--issa-border-width) solid var(--issa-border);
+  padding: var(--issa-space-4);
+}
+
+.issa-dialog-copy,
+.issa-dialog-header p,
+.issa-dialog-body {
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-supporting);
+  line-height: var(--issa-line-height-body);
+}
+
+.issa-dialog-copy,
+.issa-dialog-header p {
+  padding-right: var(--issa-space-4);
+  padding-left: var(--issa-space-4);
+}
+
+.issa-dialog-title + .issa-dialog-copy,
+.issa-dialog-header .issa-dialog-title + p {
+  margin-top: var(--issa-space-1);
+}
+
+.issa-dialog-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--issa-space-2);
+  border-top: var(--issa-border-width) solid var(--issa-border);
+}
+
+.issa-dialog-error {
+  min-height: var(--issa-space-6);
+  margin: var(--issa-space-3) var(--issa-space-4);
+  color: var(--issa-danger);
+  font-size: var(--issa-font-size-supporting);
+  font-weight: var(--issa-weight-semibold);
+}
+
+@media (max-width: 639px) {
+  .issa-calendar-panel { padding: var(--issa-space-2); }
+  .issa-calendar {
+    --calendar-cell: min(
+      var(--issa-control-height-compact),
+      calc((100vw - 3rem) / 7)
+    );
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

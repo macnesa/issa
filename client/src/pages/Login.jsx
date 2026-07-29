@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { submitParentLogin } from '../store/actions/actionCreator';
+import {
+  submitParentDemoLogin,
+  submitParentLogin,
+} from '../store/actions/actionCreator';
 import LoginForm from '../features/authentication/components/LoginForm';
-import LoginIdentityZone from '../features/authentication/components/LoginIdentityZone';
-import '../features/authentication/authentication.css';
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -12,14 +13,20 @@ export default function LoginPage() {
   const location = useLocation();
   const [loginCredentials, setLoginCredentials] = useState({ NIM: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
   const [error, setError] = useState(() => (
-    new URLSearchParams(location.search).get('session') === 'expired'
-      ? 'Sesi Anda telah berakhir. Silakan masuk kembali.'
-      : ''
+    new URLSearchParams(location.search).get('session') === 'demo-expired'
+      ? 'Sesi demo telah berakhir. Buka kembali demo untuk melanjutkan.'
+      : new URLSearchParams(location.search).get('session') === 'expired'
+        ? 'Sesi Anda telah berakhir. Silakan masuk kembali.'
+        : ''
   ));
 
   useEffect(() => {
-    if (new URLSearchParams(location.search).get('session') === 'expired') {
+    const sessionReason = new URLSearchParams(location.search).get('session');
+    if (sessionReason === 'demo-expired') {
+      setError('Sesi demo telah berakhir. Buka kembali demo untuk melanjutkan.');
+    } else if (sessionReason === 'expired') {
       setError('Sesi Anda telah berakhir. Silakan masuk kembali.');
     }
   }, [location.search]);
@@ -41,17 +48,25 @@ export default function LoginPage() {
       .finally(() => setIsSubmitting(false));
   }
 
+  function handleDemoLogin() {
+    if (isDemoSubmitting) return;
+
+    setIsDemoSubmitting(true);
+    setError('');
+    dispatch(submitParentDemoLogin())
+      .then(() => navigate('/'))
+      .catch((loginError) => setError(loginError?.message || 'Demo Parent belum dapat dibuka.'))
+      .finally(() => setIsDemoSubmitting(false));
+  }
+
   return (
-      <main className="issa-login relative grid min-h-[100svh] place-items-center overflow-hidden px-4 py-8 sm:px-6 max-[767px]:items-start max-[767px]:px-[0.9rem] max-[767px]:pb-4 max-[767px]:pt-3">
-      <div className="issa-login__frame relative z-10 grid w-[min(100%,68rem)] overflow-hidden">
-        <LoginIdentityZone />
-        <LoginForm
-          error={error}
-          isSubmitting={isSubmitting}
-          onChange={handleLoginInputChange}
-          onSubmit={handleLoginSubmit}
-        />
-      </div>
-    </main>
+    <LoginForm
+      error={error}
+      isSubmitting={isSubmitting}
+      isDemoSubmitting={isDemoSubmitting}
+      onChange={handleLoginInputChange}
+      onDemoLogin={handleDemoLogin}
+      onSubmit={handleLoginSubmit}
+    />
   );
 }

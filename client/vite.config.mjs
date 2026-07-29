@@ -6,6 +6,11 @@ export default defineConfig({
   server: {
     port: 3100,
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/setupTests.js',
+  },
   esbuild: {
     loader: 'jsx',
     include: /src\/.*\.jsx?$/,

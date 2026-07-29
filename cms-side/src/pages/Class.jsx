@@ -36,7 +36,7 @@ export default function Classes(props) {
               <div className="w-[70%] mask mask-squircle mx-auto">
                 <img src="https://res.cloudinary.com/dslzpyibe/image/upload/v1678270352/assets%20finalproject/undraw_Teaching_re_g7e3_y1leeh.png" />
               </div>
-              <p className="dark:text-white font-Comfortaa font-semibold text-[1.3rem] text-center mt-6">CLASSES</p>
+              <p className="dark:text-white font-sans font-semibold text-[1.3rem] text-center mt-6">CLASSES</p>
             </div>
           </div>
           <div className="w-[80%] text-l text-left text-gray-500 dark:text-gray-400 mt-6 flex justify-end">

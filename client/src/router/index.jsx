@@ -63,6 +63,10 @@ const router = createBrowserRouter(
         {
           path: "event",
           loader: () => redirect('/activities'),
+        },
+        {
+          path: "*",
+          element: <NotFound />,
         }
       ]
     },
@@ -70,10 +74,6 @@ const router = createBrowserRouter(
       path: "/login",
       element: <LoginPage />,
       loader: () => hasParentSession() ? redirect('/') : null,
-    },
-    {
-      path: "*",
-      element: <NotFound />,
     },
   ]
 )

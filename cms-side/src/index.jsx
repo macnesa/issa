@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import './shared/ui/ui.css';
 import './shared/ui/form-controls/form-controls.css';
 import App from './App';
+import { registerOfflineAppShell } from './offline-workspace/registerServiceWorker';
+
+registerOfflineAppShell();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -1,5 +1,7 @@
 import { defineConfig, transformWithEsbuild } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+import { offlineAppShellPwaOptions } from './pwa.config.mjs';
 
 const jsxInLegacyJsFiles = {
   name: 'jsx-in-legacy-js-files',
@@ -12,7 +14,11 @@ const jsxInLegacyJsFiles = {
 };
 
 export default defineConfig({
-  plugins: [jsxInLegacyJsFiles, react()],
+  plugins: [
+    jsxInLegacyJsFiles,
+    react(),
+    VitePWA(offlineAppShellPwaOptions),
+  ],
   server: {
     port: 3001,
     strictPort: true,
@@ -20,6 +26,11 @@ export default defineConfig({
   preview: {
     port: 3001,
     strictPort: true,
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/setupTests.js',
   },
   optimizeDeps: {
     esbuildOptions: {

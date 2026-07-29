@@ -1,76 +1,376 @@
 .teacher-sidebar {
-  background:
-    repeating-linear-gradient(180deg, transparent 0, transparent 2.65rem, rgba(107, 191, 188, 0.08) 2.69rem, transparent 2.73rem),
-    linear-gradient(160deg, #102f3e, #1d5064);
-  box-shadow: inset -1px 0 0 rgba(199, 225, 235, 0.16);
+  position: relative;
+  z-index: var(--issa-z-shell);
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  border-bottom: var(--issa-border-width) solid var(--issa-text);
+  background: var(--issa-text);
+  color: var(--issa-text-inverse);
 }
 
 .teacher-sidebar__brand {
-  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: var(--teacher-utility-height);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--issa-space-4);
+  border-bottom: var(--issa-border-width) solid
+    color-mix(
+      in srgb,
+      var(--issa-text-inverse-muted) 28%,
+      transparent
+    );
+  padding: var(--issa-space-2) var(--issa-space-4);
 }
 
-.teacher-sidebar__brand::after {
-  position: absolute;
-  right: 0;
-  bottom: -1rem;
-  left: 0;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(242, 226, 145, 0.78), rgba(107, 191, 188, 0.25), transparent);
-  content: "";
+.teacher-sidebar__identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--issa-space-3);
+}
+
+.teacher-sidebar__identity p {
+  display: grid;
+  min-width: 0;
+  gap: var(--issa-space-1);
+  color: var(--issa-text-inverse-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-medium);
+  line-height: var(--issa-line-height-tight);
+}
+
+.teacher-sidebar__identity p strong {
+  color: var(--issa-text-inverse);
+  font-size: var(--issa-font-size-product);
+  font-weight: var(--issa-weight-bold);
+  letter-spacing: var(--issa-tracking-product);
 }
 
 .teacher-sidebar__seal {
-  border: 1px solid rgba(199, 225, 235, 0.38);
-  border-radius: 0.55rem 0.55rem 1rem 0.3rem;
-  background: rgba(14, 42, 58, 0.46);
-  box-shadow: 0.2rem 0.22rem 0 rgba(242, 226, 145, 0.72);
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+}
+
+.teacher-sidebar__seal img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.teacher-sidebar__mobile-logout {
+  flex: 0 0 auto;
+}
+
+.teacher-sidebar__navigation {
+  min-width: 0;
+  overflow-x: auto;
+  border-bottom: var(--issa-border-width) solid
+    color-mix(
+      in srgb,
+      var(--issa-text-inverse-muted) 24%,
+      transparent
+    );
+  padding: var(--issa-space-2) var(--issa-space-3);
+  scrollbar-width: thin;
+  scrollbar-color: var(--issa-border-strong) transparent;
+}
+
+.teacher-sidebar__navigation ul {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  gap: var(--issa-space-1);
 }
 
 .teacher-sidebar__nav-link {
   position: relative;
-  border-left: 0.16rem solid transparent;
+  display: flex;
+  min-height: var(--issa-control-height);
+  align-items: center;
+  gap: var(--issa-space-3);
+  border: var(--issa-border-width) solid transparent;
+  border-left: var(--issa-border-width-emphasis) solid transparent;
+  border-radius: var(--issa-radius-control);
+  padding: var(--issa-space-2) var(--issa-space-3);
+  color: var(--issa-text-inverse-muted);
+  font-size: var(--issa-font-size-button);
+  font-weight: var(--issa-weight-semibold);
+  line-height: var(--issa-line-height-tight);
+  transition:
+    background-color var(--issa-motion-default) ease,
+    border-color var(--issa-motion-default) ease,
+    color var(--issa-motion-default) ease;
 }
 
-.teacher-sidebar__nav-link::after {
-  position: absolute;
-  right: 0.75rem;
-  bottom: 0.34rem;
-  left: 2.75rem;
-  height: 0.14rem;
-  border-radius: 999px;
-  background: #f2e291;
-  content: "";
-  opacity: 0;
-  transform: scaleX(0.35);
-  transition: opacity 180ms ease, transform 180ms ease;
+.teacher-sidebar__nav-link:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--issa-text-inverse-muted) 28%,
+    transparent
+  );
+  border-left-color: var(--issa-selection);
+  background: color-mix(
+    in srgb,
+    var(--issa-surface-subtle) 10%,
+    transparent
+  );
+  color: var(--issa-text-inverse);
 }
 
-.teacher-sidebar__nav-link.is-active {
-  border-left-color: #f2e291;
-  border-radius: 0 0.68rem 0.68rem 0;
-  background: rgba(199, 225, 235, 0.16);
-  color: white;
+.teacher-sidebar__nav-link.is-active,
+.teacher-sidebar__nav-link.is-active:hover {
+  border-color: var(--issa-border-strong);
+  border-left-color: var(--issa-selection);
+  background: var(--issa-surface-subtle);
+  color: var(--issa-text);
 }
 
-.teacher-sidebar__nav-link.is-active::after { opacity: 1; transform: scaleX(1); }
+.teacher-sidebar__nav-link:focus-visible {
+  outline: var(--issa-border-width-emphasis) solid var(--issa-focus);
+  outline-offset: var(--issa-space-1);
+}
+
+.teacher-sidebar__nav-icon {
+  width: 1.25rem;
+  flex: 0 0 1.25rem;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.teacher-sidebar__nav-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 
 .teacher-sidebar__context {
-  border-top: 1px solid rgba(199, 225, 235, 0.2);
-  background: rgba(14, 42, 58, 0.2);
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--issa-space-2);
+  margin-top: auto;
+  border-top: var(--issa-border-width) solid
+    color-mix(
+      in srgb,
+      var(--issa-text-inverse-muted) 28%,
+      transparent
+    );
+  background: color-mix(in srgb, var(--issa-text) 88%, black);
+  padding: var(--issa-space-2) var(--issa-space-3);
+}
+
+.teacher-sidebar__status {
+  min-width: 0;
+}
+
+.teacher-sidebar__context .offline-status {
+  justify-content: flex-start;
+}
+
+.teacher-sidebar__context .offline-status__panel {
+  right: 0;
+}
+
+.teacher-sidebar__demo {
+  border-left: var(--issa-border-width-emphasis) solid
+    var(--issa-selection);
+  padding: var(--issa-space-2) var(--issa-space-3);
+  color: var(--issa-text-inverse);
+}
+
+.teacher-sidebar__demo strong,
+.teacher-sidebar__demo span {
+  display: block;
+}
+
+.teacher-sidebar__demo strong {
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
+  letter-spacing: var(--issa-tracking-metadata);
+  text-transform: uppercase;
+}
+
+.teacher-sidebar__demo span {
+  margin-top: var(--issa-space-1);
+  color: var(--issa-text-inverse-muted);
+  font-size: var(--issa-font-size-metadata);
+}
+
+.teacher-sidebar__teacher {
+  display: none;
+  min-width: 0;
+  align-items: center;
+  gap: var(--issa-space-2);
+  border-top: var(--issa-border-width) solid
+    color-mix(
+      in srgb,
+      var(--issa-text-inverse-muted) 24%,
+      transparent
+    );
+  padding-top: var(--issa-space-3);
+}
+
+.teacher-sidebar__teacher > .material-symbols-outlined {
+  flex: 0 0 auto;
+  color: var(--issa-selection);
+  font-size: var(--issa-font-size-section-title);
+}
+
+.teacher-sidebar__teacher div {
+  display: grid;
+  min-width: 0;
+  gap: var(--issa-space-1);
+}
+
+.teacher-sidebar__teacher span {
+  color: var(--issa-text-inverse-muted);
+  font-size: var(--issa-font-size-metadata);
+}
+
+.teacher-sidebar__teacher strong {
+  overflow: hidden;
+  color: var(--issa-text-inverse);
+  font-size: var(--issa-font-size-supporting);
+  font-weight: var(--issa-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .teacher-sidebar__logout {
-  border-bottom: 1px solid rgba(242, 226, 145, 0.52);
+  flex: 0 0 auto;
 }
 
-@media (max-width: 767px) {
-  .teacher-sidebar { box-shadow: inset 0 -1px 0 rgba(199, 225, 235, 0.16); }
-  .teacher-sidebar__brand::after { display: none; }
-  .teacher-sidebar__nav-link { border-left: 0; border-bottom: 0.16rem solid transparent; }
-  .teacher-sidebar__nav-link.is-active { border-bottom-color: #f2e291; border-radius: 0.55rem 0.55rem 0.2rem 0.2rem; }
-  .teacher-sidebar__nav-link::after { display: none; }
+.teacher-sidebar__logout .material-symbols-outlined {
+  font-size: var(--issa-font-size-section-title);
+}
+
+.teacher-logout-dialog {
+  overflow: hidden;
+}
+
+.teacher-logout-dialog__body,
+.teacher-logout-dialog__actions {
+  padding: var(--issa-space-4);
+}
+
+.teacher-logout-dialog__body h2 {
+  color: var(--issa-text);
+  font-size: var(--issa-font-size-section-title);
+  font-weight: var(--issa-weight-bold);
+  line-height: var(--issa-line-height-tight);
+}
+
+.teacher-logout-dialog__body p {
+  margin-top: var(--issa-space-2);
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-body);
+  line-height: var(--issa-line-height-body);
+}
+
+.teacher-logout-dialog__body [role="alert"] {
+  color: var(--issa-danger);
+  font-weight: var(--issa-weight-semibold);
+}
+
+.teacher-logout-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--issa-space-3);
+  border-top: var(--issa-border-width) solid var(--issa-border);
+}
+
+.teacher-logout-dialog__actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+@media (min-width: 1024px) {
+  .teacher-sidebar {
+    position: sticky;
+    top: 0;
+    width: var(--teacher-sidebar-width);
+    height: 100svh;
+    min-height: 32rem;
+    border-right: var(--issa-border-width) solid var(--issa-text);
+    border-bottom: 0;
+  }
+
+  .teacher-sidebar__brand {
+    padding-right: var(--issa-space-4);
+    padding-left: var(--issa-space-4);
+  }
+
+  .teacher-sidebar__mobile-logout {
+    display: none;
+  }
+
+  .teacher-sidebar__navigation {
+    overflow-x: visible;
+    padding: var(--issa-space-6) var(--issa-space-4);
+  }
+
+  .teacher-sidebar__navigation ul {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: var(--issa-space-1);
+  }
+
+  .teacher-sidebar__context {
+    display: grid;
+    align-items: initial;
+    justify-content: stretch;
+    gap: var(--issa-space-3);
+    padding: var(--issa-space-4);
+  }
+
+  .teacher-sidebar__context .offline-status__panel {
+    top: auto;
+    right: auto;
+    bottom: calc(100% + var(--issa-space-2));
+    left: 0;
+  }
+
+  .teacher-sidebar__teacher {
+    display: flex;
+  }
+
+  .teacher-sidebar__logout {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1023px) {
+  .teacher-sidebar__logout {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .teacher-sidebar__identity {
+    gap: var(--issa-space-2);
+  }
+
+  .teacher-sidebar__seal {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .teacher-sidebar__navigation {
+    padding-right: var(--issa-space-2);
+    padding-left: var(--issa-space-2);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .teacher-sidebar__nav-link::after { transition: none; }
+  .teacher-sidebar__nav-link {
+    transition: none;
+  }
 }

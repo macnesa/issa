@@ -1,9 +1,49 @@
 import isEmpty from "lodash/isEmpty";
 import { formatRecordedDate } from "../../../utils/recordDates";
-import { EmptyState, ErrorState, LoadingState, Surface } from "../../../shared/ui/ui";
+import { LedgerShell } from "../../../shared/ui/ui";
 
 export default function FeedbackHistory({ resource, onRetry }) {
+  const empty = !resource.loading
+    && !resource.error
+    && isEmpty(resource.data);
+
   return (
-    <Surface className="observation-sheet observation-sheet--history p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Histori feedback</h2><p className="mt-1 text-sm text-[var(--muted)]">Catatan terbaru ditampilkan lebih dahulu.</p><div className="mt-4">{resource.loading && <LoadingState label="Memuat histori feedback..." />}{resource.error && <ErrorState message={resource.error} onRetry={onRetry} />}{!resource.loading && !resource.error && isEmpty(resource.data) && <EmptyState title="Belum ada histori feedback." />}{!resource.loading && !resource.error && !isEmpty(resource.data) && <ol className="space-y-3">{resource.data.map((item) => <li key={item.id} className="rounded-xl border border-[var(--border)] p-4"><p className="whitespace-pre-wrap text-sm leading-6 text-[var(--text)]">{item.content}</p><div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--muted)]"><span>Guru: {item.Teacher?.name || "-"}</span><span>Observasi: {formatRecordedDate(item.observedAt, "Belum tersedia")}</span><span>Dibuat: {formatRecordedDate(item.createdAt)}</span></div></li>)}</ol>}</div></Surface>
+    <LedgerShell
+      className="feedback-history"
+      eyebrow="Feedback register"
+      title="Histori Feedback"
+      description="Catatan terbaru ditampilkan lebih dahulu dan tidak tertukar dengan draf."
+      loading={resource.loading}
+      loadingLabel="Memuat histori feedback..."
+      error={resource.error}
+      onRetry={onRetry}
+      empty={empty}
+      emptyTitle="Belum ada histori Feedback."
+      emptyDescription="Feedback pertama akan tercatat setelah guru menyimpannya."
+    >
+      {!resource.loading && !resource.error && !empty && (
+        <ol className="feedback-history__list">
+          {resource.data.map((item) => (
+            <li key={item.id} className="feedback-history__entry">
+              <p className="feedback-history__content">{item.content}</p>
+              <dl className="feedback-history__metadata">
+                <div>
+                  <dt>Guru</dt>
+                  <dd>{item.Teacher?.name || "-"}</dd>
+                </div>
+                <div>
+                  <dt>Observasi</dt>
+                  <dd>{formatRecordedDate(item.observedAt, "Belum tersedia")}</dd>
+                </div>
+                <div>
+                  <dt>Disimpan</dt>
+                  <dd>{formatRecordedDate(item.createdAt)}</dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+        </ol>
+      )}
+    </LedgerShell>
   );
 }

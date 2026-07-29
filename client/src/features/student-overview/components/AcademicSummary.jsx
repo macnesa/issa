@@ -1,44 +1,49 @@
 import { Link } from 'react-router-dom';
+import { SectionHeader, Surface } from '../../../shared/ui/ui';
 
 function formatAverageScore(scoreValue) {
   const numericValue = Number(scoreValue);
-  return Number.isFinite(numericValue) ? numericValue.toLocaleString('id-ID', { maximumFractionDigits: 1 }) : '-';
+  return Number.isFinite(numericValue)
+    ? numericValue.toLocaleString('id-ID', { maximumFractionDigits: 1 })
+    : '-';
 }
 
 export default function AcademicSummary({ summary }) {
-  const score = Math.max(0, Math.min(100, Number(summary.overallAverage) || 0));
-
   return (
-    <section className="overview-academic-summary relative overflow-hidden p-[1.35rem]">
-      <div className="flex items-center justify-between gap-4">
-        <div><p className="overview-kicker">Catatan akademik</p><h2>Perkembangan Akademik</h2></div>
-        <Link to="/progress" className="text-link">Lihat perkembangan</Link>
-      </div>
-
+    <Surface className="academic-summary">
+      <SectionHeader
+        kicker="Catatan akademik"
+        title="Perkembangan Akademik"
+        action={<Link to="/progress" className="text-link">Lihat perkembangan</Link>}
+      />
       {!summary.lessonCount ? (
-        <p className="mt-3 text-sm text-[var(--issa-text-secondary)]">Belum ada nilai yang tercatat.</p>
+        <p className="page-supporting-text academic-summary__empty">
+          Belum ada nilai yang tercatat.
+        </p>
       ) : (
         <>
-          <div className="overview-academic-summary__main relative z-[1] mt-4 flex items-center gap-[1.1rem]">
-            <div className="overview-academic-summary__orb" style={{ '--overview-score': `${score}%` }} aria-label={`Rata-rata keseluruhan ${formatAverageScore(summary.overallAverage)}`}>
-              <span>{formatAverageScore(summary.overallAverage)}</span>
-              <small>rata-rata</small>
+          <dl className="metric-grid academic-summary__metrics">
+            <div className="metric-card">
+              <dt className="metric-label">Rata-rata keseluruhan</dt>
+              <dd className="metric-value">{formatAverageScore(summary.overallAverage)}</dd>
             </div>
-            <dl>
-              <div><dt>Rata-rata keseluruhan</dt><dd>{formatAverageScore(summary.overallAverage)}</dd></div>
-              <div><dt>Mata pelajaran bernilai</dt><dd>{summary.lessonCount}</dd></div>
-            </dl>
-          </div>
-          <ul className="overview-academic-summary__lessons relative z-[1] mt-[1.15rem] grid list-none gap-[0.45rem] p-0">
+            <div className="metric-card">
+              <dt className="metric-label">Mata pelajaran bernilai</dt>
+              <dd className="metric-value">{summary.lessonCount}</dd>
+            </div>
+          </dl>
+          <ul className="record-list">
             {summary.preview.map((lesson) => (
-              <li key={lesson.id ?? lesson.name} className="flex items-center justify-between gap-4">
-                <span>{lesson.name}</span>
-                <span>{formatAverageScore(lesson.average)} · {lesson.assessmentCount} assessment</span>
+              <li key={lesson.id ?? lesson.name} className="history-record">
+                <strong className="history-record__title">{lesson.name}</strong>
+                <span className="history-record__meta">
+                  {formatAverageScore(lesson.average)} · {lesson.assessmentCount} assessment
+                </span>
               </li>
             ))}
           </ul>
         </>
       )}
-    </section>
+    </Surface>
   );
 }

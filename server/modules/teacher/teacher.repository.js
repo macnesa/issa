@@ -6,6 +6,12 @@ function findTeacherByNip(teacherNip) {
   });
 }
 
+function findTeacherById(teacherId) {
+  return Teacher.findByPk(teacherId, {
+    attributes: { exclude: ['password'] },
+  });
+}
+
 function findClassByTeacherId(teacherId) {
   return Class.findOne({
     where: { TeacherId: teacherId },
@@ -21,5 +27,6 @@ function findPublicTeacherList() {
 module.exports = {
   findClassByTeacherId,
   findPublicTeacherList,
+  findTeacherById,
   findTeacherByNip,
 };

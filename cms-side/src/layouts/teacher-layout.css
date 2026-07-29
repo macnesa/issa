@@ -1,24 +1,97 @@
 .teacher-workspace {
-  background:
-    linear-gradient(90deg, rgba(107, 191, 188, 0.08) 0, rgba(107, 191, 188, 0.08) 1px, transparent 1px) 0 0 / 5.4rem 100%,
-    linear-gradient(180deg, #f6faf9, #f6f8fb 62%, #f4f0fb);
+  --teacher-sidebar-width: 16rem;
+  --teacher-utility-height: 4rem;
+  min-width: 0;
+  min-height: 100vh;
+  background: var(--issa-page);
 }
 
-.teacher-workspace__content {
-  position: relative;
+.teacher-workspace__content,
+.teacher-workspace__main {
+  min-width: 0;
+  width: 100%;
 }
 
-.teacher-workspace__content::before {
-  position: absolute;
+.teacher-utility-bar {
+  position: sticky;
+  z-index: 18;
   top: 0;
-  bottom: 0;
-  left: 0;
-  width: 0.22rem;
-  background: linear-gradient(180deg, #6bbfbc, transparent 18%, transparent 82%, #f2e291);
-  content: "";
-  opacity: 0.72;
+  display: flex;
+  min-width: 0;
+  min-height: var(--teacher-utility-height);
+  align-items: center;
+  gap: var(--issa-space-4);
+  border-bottom: var(--issa-border-width) solid var(--issa-border-strong);
+  background: var(--issa-surface);
+  padding: var(--issa-space-2) var(--issa-space-4);
 }
 
-@media (max-width: 767px) {
-  .teacher-workspace__content::before { display: none; }
+.teacher-search-trigger {
+  min-width: 0;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.teacher-search-trigger__icon {
+  flex: 0 0 auto;
+  color: var(--issa-accent);
+  font-size: var(--issa-font-size-section-title);
+}
+
+.teacher-search-trigger__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teacher-search-trigger__shortcut {
+  flex: 0 0 auto;
+  border-left: var(--issa-border-width) solid var(--issa-border-strong);
+  padding-left: var(--issa-space-2);
+  color: var(--issa-text-muted);
+  font-size: var(--issa-font-size-metadata);
+  font-weight: var(--issa-weight-bold);
+}
+
+@media (min-width: 1024px) {
+  .teacher-workspace {
+    display: grid;
+    grid-template-columns: var(--teacher-sidebar-width) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .teacher-workspace__content {
+    grid-column: 2;
+  }
+
+  .teacher-utility-bar {
+    padding-right: var(--issa-space-8);
+    padding-left: var(--issa-space-8);
+  }
+
+  .teacher-search-trigger {
+    width: min(100%, 28rem);
+  }
+}
+
+@media (max-width: 1023px) {
+  .teacher-workspace {
+    min-height: 100svh;
+  }
+
+  .teacher-utility-bar {
+    min-height: 3.5rem;
+    gap: var(--issa-space-2);
+    padding: var(--issa-space-2) var(--issa-space-4);
+  }
+
+  .teacher-search-trigger {
+    flex: 1 1 auto;
+    width: auto;
+  }
+
+  .teacher-search-trigger__shortcut {
+    display: none;
+  }
 }

@@ -20,7 +20,10 @@ apiClient.interceptors.response.use(
   (apiError) => {
     void 'ISSA:CLIENT.AUTH.HANDLE_UNAUTHORIZED_RESPONSE';
     const requestUrl = apiError?.config?.url || '';
-    const isLoginRequest = requestUrl === '/users/login' || requestUrl.endsWith('/users/login');
+    const isLoginRequest = [
+      '/users/login',
+      '/users/demo-login',
+    ].some((loginPath) => requestUrl === loginPath || requestUrl.endsWith(loginPath));
 
     if (apiError?.response?.status === 401 && !isLoginRequest) {
       endParentSession('expired');

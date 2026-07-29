@@ -1,8 +1,81 @@
-import { FormField, PrimaryButton, Surface } from "../../../shared/ui/ui";
+import {
+  FormField,
+  InlineNotice,
+  LedgerShell,
+  PrimaryButton,
+  SecondaryButton,
+} from "../../../shared/ui/ui";
 import DateTimeField from "../../../shared/ui/form-controls/DateTimeField";
+import "../feedback-workspace.css";
 
-export default function FeedbackForm({ feedback, observedAt, message, submitting, onFeedbackChange, onObservedAtChange, onSubmit }) {
+export default function FeedbackForm({
+  feedback,
+  feedbackInputRef,
+  isDemo = false,
+  observedAt,
+  message,
+  submitting,
+  onAiDraftRequested,
+  onFeedbackChange,
+  onObservedAtChange,
+  onSubmit,
+}) {
+  const messageTone = message?.toLowerCase().includes("berhasil")
+    ? "success"
+    : /(gagal|tidak valid|tidak boleh)/i.test(message || "")
+      ? "danger"
+      : "info";
+
   return (
-    <Surface className="observation-sheet observation-sheet--entry p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Catat feedback</h2><p className="mt-1 text-sm text-[var(--muted)]">Tambahkan catatan terbaru untuk rekam perkembangan siswa.</p><form onSubmit={onSubmit} className="mt-5 space-y-4"><FormField label="Feedback"><textarea id="feedback" value={feedback} onChange={onFeedbackChange} className="issa-native-control issa-native-control--textarea" rows="5" /></FormField><DateTimeField id="observedAt" label="Tanggal observasi" value={observedAt} onChange={onObservedAtChange} optional tone="feedback" /><div className="flex flex-wrap items-center gap-3"><PrimaryButton type="submit" disabled={submitting}>{submitting ? "Menyimpan..." : "Simpan feedback"}</PrimaryButton>{message && <p role="status" className="text-sm text-[var(--muted)]">{message}</p>}</div></form></Surface>
+    <LedgerShell
+      className="feedback-editor"
+      eyebrow="Final teacher record"
+      title="Catat Feedback"
+      description="Isi tetap menjadi catatan guru dan baru dibagikan setelah disimpan."
+      actions={onAiDraftRequested && (
+        <div className="feedback-editor__ai-action">
+          <span>Opsional · AI-assisted draft</span>
+          <SecondaryButton type="button" onClick={onAiDraftRequested}>
+            Buat draft dengan AI
+          </SecondaryButton>
+        </div>
+      )}
+    >
+      <form onSubmit={onSubmit} className="feedback-editor__form">
+        <FormField
+          label="Feedback guru"
+          hint="Tinjau isi secara menyeluruh sebelum menyimpan."
+        >
+          <textarea
+            ref={feedbackInputRef}
+            id="feedback"
+            value={feedback}
+            onChange={onFeedbackChange}
+            className="issa-native-control issa-native-control--textarea feedback-editor__textarea"
+            rows="8"
+          />
+        </FormField>
+        <DateTimeField
+          id="observedAt"
+          label="Tanggal observasi"
+          value={observedAt}
+          onChange={onObservedAtChange}
+          optional
+        />
+        <div className="feedback-editor__actions">
+          <PrimaryButton type="submit" disabled={submitting || isDemo}>
+            {submitting ? "Menyimpan..." : "Simpan Feedback"}
+          </PrimaryButton>
+          {isDemo && (
+            <InlineNotice tone="warning" role="note">
+              Draft AI belum disimpan. Penyimpanan dinonaktifkan dalam mode demo.
+            </InlineNotice>
+          )}
+          {message && (
+            <InlineNotice tone={messageTone}>{message}</InlineNotice>
+          )}
+        </div>
+      </form>
+    </LedgerShell>
   );
 }

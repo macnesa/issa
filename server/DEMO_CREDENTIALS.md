@@ -1,10 +1,16 @@
-# ISSA Curated Demo Credentials
+# ISSA Curated Demo Access
 
-Database demo ini hanya untuk development lokal.
+The curated database is synthetic and intended for local development or a
+read-only portfolio deployment.
 
-| Peran | Identifier | Password | Data yang tersedia |
-| --- | --- | --- | --- |
-| Teacher demo | NIP `2026001001` | `GuruDemo2026` | Kelas 1A dan seluruh flow Teacher CMS |
-| Parent demo | NIM `2026071001` | `OrangTua2026` | Record Ari Wibowo pada Parent App |
+Public visitors must use the passwordless endpoints:
 
-Jalankan `npm run db:reset-demo` dari folder `server` untuk membuat ulang dataset deterministik.
+- `POST /teachers/demo-login`
+- `POST /users/demo-login`
+
+The Server selects the configured synthetic identities from
+`DEMO_TEACHER_ID` and `DEMO_PARENT_ID`. Do not publish, embed, or send an
+account password from the public frontend.
+
+Run `npm run db:reset-demo` from `server/` to recreate the deterministic local
+dataset.

@@ -40,7 +40,7 @@ export default function NewAdmin(props) {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg ml-6 mt-[4rem] w-full md:w-full sm:[50%]">
       <div className="mb-6">
-        <p className="font-raleway italic font-semibold text-[1.3rem] ">Form New Teacher</p>
+        <p className="font-sans italic font-semibold text-[1.3rem] ">Form New Teacher</p>
       </div>
       <form onSubmit={submitForm}>
         <div className="relative z-0 w-full mb-6 group">

@@ -1,5 +1,21 @@
 import { FETCH_CLASS, FETCH_STUDENT, FETCH_STUDENT_BYID, FETCH_CLASS_BYID, FETCH_SCHEDULE, FETCH_TEACHER, FETCH_LESSON, FETCH_LESSON_BYID, FETCH_HISTORY, FETCH_SCHEDULE_BYID, FETCH_TRANSACTION } from './ActionTypes';
 import baseUrl from '../../config/api';
+import {
+  assertTeacherMutationAllowed,
+  readApiError,
+} from '../../auth/demoAccess';
+
+function requestError(responseBody, response, fallbackMessage) {
+  const normalizedError = readApiError(
+    responseBody,
+    fallbackMessage,
+    response.status
+  );
+  const error = new Error(normalizedError.message);
+  error.status = response.status;
+  error.code = normalizedError.code;
+  return error;
+}
 
 // import Swal from "sweetalert2";
 
@@ -49,8 +65,19 @@ export const fetchStudentDetail = (studentId) => {
       },
     })
       .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.msg || 'Student tidak dapat dimuat.');
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (error) {
+          data = null;
+        }
+        if (!response.ok) {
+          const requestError = new Error(
+            data?.msg || 'Student tidak dapat dimuat.'
+          );
+          requestError.status = response.status;
+          throw requestError;
+        }
         return data;
       })
       .then((studentDetailResponse) => {
@@ -72,6 +99,7 @@ export const studentAdd = (payload) => {
   console.log(payload, 'masuk ni');
 
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/students`, {
       method: 'POST',
       headers: {
@@ -114,6 +142,7 @@ export const studentAdd = (payload) => {
 export const updateStudentRecord = (studentId, studentUpdatePayload) => {
   void 'ISSA:CMS.STUDENT.UPDATE_RECORD';
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/students/${studentId}`, {
       method: 'PUT',
       headers: {
@@ -124,7 +153,9 @@ export const updateStudentRecord = (studentId, studentUpdatePayload) => {
     })
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok) throw new Error(data.msg || 'Unable to update student');
+        if (!response.ok) {
+          throw requestError(data, response, 'Unable to update student');
+        }
         return data;
       })
       .then((studentUpdateResponse) => {
@@ -138,6 +169,7 @@ export const updateStudentRecord = (studentId, studentUpdatePayload) => {
 
 export const studentDelete = (id) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     fetch(`${baseUrl}/students/${id}`, {
       method: 'DELETE',
       headers: {
@@ -194,6 +226,7 @@ export const teachersFetchSuccess = (payload) => {
 
 export const teacherAdd = (payload) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/teachers/register`, {
       method: 'POST',
       headers: {
@@ -298,6 +331,7 @@ export const classFetchSuccessById = (payload) => {
 
 export const classesAdd = (payload) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/classes`, {
       method: 'POST',
       headers: {
@@ -339,6 +373,7 @@ export const classesAdd = (payload) => {
 export const editClass = (payload) => {
   console.log(payload, 'ini action');
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/classes/${payload.StudentId}`, {
       method: 'PUT',
       headers: {
@@ -365,6 +400,7 @@ export const editClass = (payload) => {
 
 export const classDelete = (id) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     fetch(`${baseUrl}/classes/${id}`, {
       method: 'DELETE',
       headers: {
@@ -454,6 +490,7 @@ export const lessonFetchSuccessById = (payload) => {
 export const addLesson = (payload) => {
   console.log(payload);
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/lessons`, {
       method: 'POST',
       headers: {
@@ -495,6 +532,7 @@ export const addLesson = (payload) => {
 
 export const editLesson = (payload, id) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/lessons/${id}`, {
       method: 'PUT',
       headers: {
@@ -521,6 +559,7 @@ export const editLesson = (payload, id) => {
 
 export const lessonDelete = (id) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     fetch(`${baseUrl}/lessons/${id}`, {
       method: 'DELETE',
       headers: {
@@ -548,6 +587,7 @@ export const lessonDelete = (id) => {
 export const updateStudentScore = (studentId, scoreUpdatePayload) => {
   void 'ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE';
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/scores`, {
       method: 'PUT',
       headers: {
@@ -558,7 +598,9 @@ export const updateStudentScore = (studentId, scoreUpdatePayload) => {
     })
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok) throw new Error(data.msg || 'Unable to update score');
+        if (!response.ok) {
+          throw requestError(data, response, 'Unable to update score');
+        }
         return data;
       })
       .then((data) => {
@@ -574,6 +616,7 @@ export const updateStudentScore = (studentId, scoreUpdatePayload) => {
 export const createAttendanceRecord = (attendancePayload) => {
   void 'ISSA:CMS.ATTENDANCE.CREATE_RECORD';
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/attendances`, {
       method: 'POST',
       headers: {
@@ -584,7 +627,9 @@ export const createAttendanceRecord = (attendancePayload) => {
     })
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok) throw new Error(data.msg || 'Unable to create attendance');
+        if (!response.ok) {
+          throw requestError(data, response, 'Unable to create attendance');
+        }
         return data;
       })
       .then((data) => {
@@ -598,6 +643,7 @@ export const createAttendanceRecord = (attendancePayload) => {
 export const updateAttendanceRecord = (attendancePayload) => {
   void 'ISSA:CMS.ATTENDANCE.UPDATE_RECORD';
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/attendances`, {
       method: 'PUT',
       headers: {
@@ -608,7 +654,9 @@ export const updateAttendanceRecord = (attendancePayload) => {
     })
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok) throw new Error(data.msg || 'Unable to update attendance');
+        if (!response.ok) {
+          throw requestError(data, response, 'Unable to update attendance');
+        }
         return data;
       })
       .then((data) => {
@@ -685,6 +733,7 @@ export const scheduleFetchSuccessById = (payload) => {
 export const addSchedule = (payload) => {
   console.log(payload);
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/schedules`, {
       method: 'POST',
       headers: {
@@ -726,6 +775,7 @@ export const addSchedule = (payload) => {
 
 export const editSchedule = (payload, id) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     return fetch(`${baseUrl}/schedules/${id}`, {
       method: 'PUT',
       headers: {
@@ -752,6 +802,7 @@ export const editSchedule = (payload, id) => {
 
 export const scheduleDelete = (id) => {
   return (dispatch, getState) => {
+    assertTeacherMutationAllowed();
     fetch(`${baseUrl}/schedules/${id}`, {
       method: 'DELETE',
       headers: {

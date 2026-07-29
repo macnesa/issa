@@ -1,41 +1,152 @@
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/plus-jakarta-sans-variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/plus-jakarta-sans-variable-italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --page: #f2f7f6;
-  --surface: #fffdf7;
-  --border: #d7e5e3;
-  --border-strong: #aac9ca;
-  --text: #173e52;
-  --muted: #61757c;
-  --accent: #245e73;
-  --accent-strong: #173e52;
-  --success: #047857;
-  --warning: #b45309;
-  --danger: #b91c1c;
-  --info: #0369a1;
-  --focus: #b9e3e0;
-  --radius: 15px 10px 22px 12px;
-  --shadow: 0 1px 2px rgba(23, 62, 82, 0.04), 0 12px 28px rgba(23, 62, 82, 0.07);
-  --container: 80rem;
-  --space: 1.5rem;
+  /* Institutional Ledger System: canonical semantic colors. */
+  --issa-page: #f2f7f6;
+  --issa-surface: #fffdf7;
+  --issa-surface-subtle: #edf6f4;
+  --issa-surface-disabled: #edf2f1;
+  --issa-text: #173e52;
+  --issa-text-muted: #61757c;
+  --issa-text-disabled: #78898d;
+  --issa-text-inverse: var(--issa-surface);
+  --issa-text-inverse-muted: #c7e1eb;
+  --issa-accent: #245e73;
+  --issa-selection: #6bbfbc;
+  --issa-border: #d7e5e3;
+  --issa-border-strong: #aac9ca;
+  --issa-success: #047857;
+  --issa-warning: #b45309;
+  --issa-danger: #b91c1c;
+  --issa-info: #0369a1;
+  --issa-focus: #b9e3e0;
+
+  /* Institutional geometry and elevation. */
+  --issa-control-height: 2.5rem;
+  --issa-control-height-compact: 2.25rem;
+  --issa-radius-control: 0.25rem;
+  --issa-radius-surface: 0.375rem;
+  --issa-radius-dialog: 0.5rem;
+  --issa-radius-pill: 999px;
+  --issa-border-width: 1px;
+  --issa-border-width-emphasis: 2px;
+  --issa-shadow-elevated: 0.2rem 0.22rem 0 rgba(23, 62, 82, 0.12);
+  --issa-shadow-dialog: 0 0.75rem 2rem rgba(14, 42, 58, 0.18);
+
+  /* Institutional spacing, typography, width, motion, and layers. */
+  --issa-space-1: 0.25rem;
+  --issa-space-2: 0.5rem;
+  --issa-space-3: 0.75rem;
+  --issa-space-4: 1rem;
+  --issa-space-6: 1.5rem;
+  --issa-space-8: 2rem;
+  --issa-space-12: 3rem;
+  --issa-content-max: 80rem;
+  --issa-font-size-product: 0.75rem;
+  --issa-font-size-eyebrow: 0.75rem;
+  --issa-font-size-page-title: clamp(1.75rem, 2.5vw, 2.125rem);
+  --issa-font-size-section-title: 1.125rem;
+  --issa-font-size-body: 0.875rem;
+  --issa-font-size-supporting: 0.8125rem;
+  --issa-font-size-label: 0.875rem;
+  --issa-font-size-metadata: 0.75rem;
+  --issa-font-size-table: 0.875rem;
+  --issa-font-size-table-header: 0.75rem;
+  --issa-font-size-status: 0.75rem;
+  --issa-font-size-button: 0.875rem;
+  --issa-weight-regular: 400;
+  --issa-weight-medium: 500;
+  --issa-weight-semibold: 600;
+  --issa-weight-bold: 700;
+  --issa-line-height-tight: 1.25;
+  --issa-line-height-body: 1.5;
+  --issa-tracking-title: -0.02em;
+  --issa-tracking-metadata: 0.08em;
+  --issa-tracking-product: 0.1em;
+  --issa-motion-fast: 120ms;
+  --issa-motion-default: 160ms;
+  --issa-motion-slow: 220ms;
+  --issa-z-shell: 20;
+  --issa-z-dialog-backdrop: 140;
+  --issa-z-dialog: 150;
+  --issa-z-popover: 160;
+  --issa-dialog-backdrop: rgba(14, 42, 58, 0.52);
+
+  /*
+   * Compatibility aliases remain until Prompt 2 migrates every feature.
+   * New shared and reference surfaces use the --issa-* contract directly.
+   */
+  --page: var(--issa-page);
+  --surface: var(--issa-surface);
+  --border: var(--issa-border);
+  --border-strong: var(--issa-border-strong);
+  --text: var(--issa-text);
+  --muted: var(--issa-text-muted);
+  --accent: var(--issa-accent);
+  --accent-strong: var(--issa-text);
+  --success: var(--issa-success);
+  --warning: var(--issa-warning);
+  --danger: var(--issa-danger);
+  --info: var(--issa-info);
+  --focus: var(--issa-focus);
+  --control-radius: var(--issa-radius-control);
+  --surface-radius: var(--issa-radius-surface);
+  --dialog-radius: var(--issa-radius-dialog);
+  --radius: var(--issa-radius-surface);
+  --shadow: var(--issa-shadow-elevated);
+  --shadow-control: var(--issa-shadow-elevated);
+  --shadow-floating: var(--issa-shadow-dialog);
+  --container: var(--issa-content-max);
+  --space: var(--issa-space-6);
+  --motion-fast: var(--issa-motion-fast);
+  --motion-default: var(--issa-motion-default);
+  --motion-slow: var(--issa-motion-slow);
+}
+
+html {
+  min-height: 100%;
+  background: var(--issa-page);
+  overscroll-behavior-y: none;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--page);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  background: var(--issa-page);
+  color: var(--issa-text);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 * { box-sizing: border-box; }
 button, input, select, textarea { font: inherit; }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: inherit;
 }

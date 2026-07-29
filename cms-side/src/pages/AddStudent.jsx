@@ -1,21 +1,76 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
 import baseUrl from "../config/api";
 import FeedbackForm from "../features/feedback/components/FeedbackForm";
 import FeedbackHistory from "../features/feedback/components/FeedbackHistory";
-import { fetchStudentDetail, updateStudentRecord } from "../store/action/ActionCreator";
+import StudentEvidenceSection from "../features/student-evidence/components/StudentEvidenceSection";
+import StudentLearningJournalSection from "../features/student-learning-journal/components/StudentLearningJournalSection";
+import {
+  fetchStudentDetail,
+  fetchStudentList,
+  storeStudentDetail,
+  updateStudentRecord,
+} from "../store/action/ActionCreator";
 import { formatRecordedDate, toIsoDateTime } from "../utils/recordDates";
-import { EmptyState, ErrorState, LoadingState, PageContainer, PageHeader, PrimaryButton, SecondaryButton, StatusBadge, Surface } from "../shared/ui/ui";
+import {
+  ButtonLink,
+  EmptyState,
+  ErrorState,
+  InlineNotice,
+  LoadingState,
+  PageContainer,
+  PrimaryButton,
+  SectionHeader,
+  SecondaryButton,
+  StatusBadge,
+  StudentContextHeader,
+  Surface,
+  WorkspacePanel,
+  WorkspaceTabs,
+} from "../shared/ui/ui";
+import { useOfflineWorkspace } from "../offline-workspace/OfflineWorkspaceProvider";
+import { loadStudentDetailWorkspace } from "../offline-workspace/studentDetailSnapshot";
+import {
+  mergeWorkspaceSnapshot,
+} from "../offline-workspace/workspaceSnapshots";
+import {
+  useAttendanceOfflineRecords,
+} from "../offline-workspace/attendanceOffline";
+import AttendanceRecordEditor from "../features/attendance/components/AttendanceRecordEditor";
+import AiNarrativeWorkspace from "../features/ai-learning-narrative/AiNarrativeWorkspace";
+import { getAuthorizedClassName } from "../features/students/authorizedClass";
+import { DEMO_READ_ONLY_MESSAGE } from "../auth/demoAccess";
 import "../features/students/student-record.css";
+
+const recordSurfaceClasses = "student-record-surface";
+const unavailableSurfaceClasses = "student-record-unavailable";
+
+const workspaceViews = Object.freeze([
+  { id: "summary", label: "Ringkasan" },
+  { id: "attendance", label: "Kehadiran" },
+  { id: "scores", label: "Nilai" },
+  { id: "journal-evidence", label: "Jurnal & Bukti" },
+  { id: "feedback", label: "Feedback" },
+]);
+
+function formatCachedAt(timestamp) {
+  if (!timestamp) return "";
+  return new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(timestamp));
+}
 
 export default function StudentDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { studentId } = useParams();
+  const { isDemo, teacherIdentity, onlineHint } = useOfflineWorkspace();
   const student = useSelector((state) => state.students.student);
+  const studentList = useSelector((state) => state.students.students);
   const [feedback, setFeedback] = useState("");
   const [observedAt, setObservedAt] = useState("");
   const [message, setMessage] = useState("");
@@ -23,6 +78,25 @@ export default function StudentDetail() {
   const [detailLoading, setDetailLoading] = useState(true);
   const [detailError, setDetailError] = useState("");
   const [feedbackHistory, setFeedbackHistory] = useState({ loading: true, error: "", data: [] });
+  const [journalRefreshKey, setJournalRefreshKey] = useState(0);
+  const [cachedSnapshot, setCachedSnapshot] = useState(null);
+  const [usingCachedSnapshot, setUsingCachedSnapshot] = useState(false);
+  const [aiWorkspaceOpen, setAiWorkspaceOpen] = useState(false);
+  const [activeWorkspace, setActiveWorkspace] = useState("summary");
+  const [showAllAttendances, setShowAllAttendances] = useState(false);
+  const [classLookupAttemptedFor, setClassLookupAttemptedFor] = useState(null);
+  const feedbackInputRef = useRef(null);
+  const authorizedClassName = getAuthorizedClassName(student, studentList);
+  const serverAttendances = useMemo(() => orderBy(
+    student?.Attendances || [],
+    [(item) => String(item.attendanceDate || "")],
+    ["desc"]
+  ), [student?.Attendances]);
+  const attendanceWorkspace = useAttendanceOfflineRecords({
+    teacherId: isDemo ? null : teacherIdentity?.id,
+    studentId,
+    serverRecords: serverAttendances,
+  });
 
   const fetchStudentFeedbackHistory = useCallback(() => {
     void 'ISSA:CMS.FEEDBACK.FETCH_HISTORY';
@@ -39,19 +113,78 @@ export default function StudentDetail() {
   }, [studentId]);
 
   useEffect(() => {
+    let cancelled = false;
     setDetailLoading(true);
     setDetailError("");
-    dispatch(fetchStudentDetail(studentId))
-      .catch((error) => setDetailError(error.message || "Student tidak ditemukan."))
-      .finally(() => setDetailLoading(false));
+    setUsingCachedSnapshot(false);
+
+    loadStudentDetailWorkspace({
+      teacherId: isDemo ? null : teacherIdentity?.id,
+      studentId,
+      onlineHint,
+      fetchStudent: () => dispatch(fetchStudentDetail(studentId)),
+    })
+      .then((workspace) => {
+        if (cancelled) return;
+        setCachedSnapshot(workspace.snapshot);
+        setUsingCachedSnapshot(workspace.source === "snapshot");
+        if (workspace.source === "snapshot") {
+          dispatch(storeStudentDetail(workspace.student));
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setDetailError(error.message || "Student tidak ditemukan.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setDetailLoading(false);
+      });
     fetchStudentFeedbackHistory();
-  }, [dispatch, fetchStudentFeedbackHistory, studentId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    dispatch,
+    fetchStudentFeedbackHistory,
+    onlineHint,
+    studentId,
+    teacherIdentity?.id,
+    isDemo,
+  ]);
+
+  useEffect(() => {
+    setActiveWorkspace("summary");
+    setShowAllAttendances(false);
+    setClassLookupAttemptedFor(null);
+  }, [studentId]);
 
   useEffect(() => { setFeedback(student?.feedback || ""); }, [student]);
+
+  useEffect(() => {
+    if (
+      !student?.id
+      || authorizedClassName
+      || !onlineHint
+      || Number(classLookupAttemptedFor) === Number(student.id)
+    ) return;
+    setClassLookupAttemptedFor(student.id);
+    dispatch(fetchStudentList({}, 1)).catch(() => {});
+  }, [
+    authorizedClassName,
+    classLookupAttemptedFor,
+    dispatch,
+    onlineHint,
+    student?.id,
+  ]);
 
   const handleStudentFeedbackSubmit = (event) => {
     void 'ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK';
     event.preventDefault();
+    if (isDemo) {
+      setMessage(DEMO_READ_ONLY_MESSAGE);
+      return;
+    }
     const content = feedback.trim();
     if (!content) return setMessage("Feedback tidak boleh kosong.");
     const payload = { feedback: content };
@@ -62,26 +195,489 @@ export default function StudentDetail() {
     dispatch(updateStudentRecord(studentId, payload)).then(() => { setObservedAt(""); setMessage("Feedback berhasil diperbarui."); return fetchStudentFeedbackHistory(); }).catch((error) => setMessage(error.message || "Feedback gagal diperbarui.")).finally(() => setSubmitting(false));
   };
 
+  const handleJournalLoaded = useCallback((entries) => {
+    if (isDemo || !teacherIdentity?.id) return;
+    return mergeWorkspaceSnapshot({
+      teacherId: teacherIdentity.id,
+      studentId,
+      journalEntries: entries,
+    })
+      .then((snapshot) => setCachedSnapshot(snapshot))
+      .catch(() => {});
+  }, [isDemo, studentId, teacherIdentity?.id]);
+
+  const handleAiDraftHandoff = useCallback((draftText) => {
+    setFeedback(draftText);
+    setMessage("Draf telah dipindahkan ke Feedback. Periksa kembali lalu simpan untuk membagikannya kepada orang tua.");
+    window.requestAnimationFrame(() => {
+      feedbackInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      feedbackInputRef.current?.focus();
+    });
+  }, []);
+
   if (detailLoading) return <PageContainer><LoadingState label="Memuat detail siswa..." /></PageContainer>;
   if (detailError) return <PageContainer><Surface className="p-5"><ErrorState message={detailError} /><SecondaryButton className="mt-4" type="button" onClick={() => navigate("/")}>Kembali ke dashboard</SecondaryButton></Surface></PageContainer>;
 
-  const attendances = orderBy(student?.Attendances || [], [(item) => String(item.attendanceDate || "")], ['desc']);
-  const scores = student?.Scores || [];
+  const attendances = orderBy(
+    attendanceWorkspace.records,
+    [(item) => String(item.attendanceDate || "")],
+    ["desc"]
+  );
+  const scores = orderBy(
+    student?.Scores || [],
+    [(item) => String(item.recordedAt || "")],
+    ["desc"]
+  );
+  const visibleAttendances = showAllAttendances
+    ? attendances
+    : attendances.slice(0, 8);
+  const attendancePresentCount = attendances.filter(
+    (attendance) => String(attendance.status || "").toLowerCase() === "hadir"
+  ).length;
+  const numericScores = scores
+    .map((score) => score.value)
+    .filter((score) => score !== null && score !== undefined && score !== "")
+    .map(Number)
+    .filter(Number.isFinite);
+  const averageScore = numericScores.length
+    ? Math.round(
+      numericScores.reduce((total, score) => total + score, 0)
+        / numericScores.length
+    )
+    : null;
+  const latestFeedbackRecord = feedbackHistory.data[0];
+  const latestTeacherInformation = latestFeedbackRecord?.content
+    || student?.feedback
+    || "";
+  const recentJournalEntries = orderBy(
+    cachedSnapshot?.journalEntries || [],
+    [(entry) => String(entry.observedAt || entry.createdAt || "")],
+    ["desc"]
+  ).slice(0, 2);
   const scoreStatus = (status) => (status === true ? "Lulus" : status === false ? "Belum lulus" : undefined);
-  return <PageContainer className="student-case-file">
-    <PageHeader eyebrow="Student record" title={student?.name || "Detail siswa"} description={`NIM ${student?.NIM || "-"} · ${student?.Class?.name || "Kelas Anda"}`} actions={<><SecondaryButton type="button" onClick={() => navigate("/")}>Kembali</SecondaryButton><Link to="/attendance"><PrimaryButton type="button">Catat attendance</PrimaryButton></Link></>} />
-    <div className="student-case-file__grid grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.85fr)]">
-      <div className="space-y-6">
-        <Surface className="student-dossier overflow-hidden"><div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center"><img className="student-dossier__image h-16 w-16 object-cover" src={student?.imgUrl} alt={student?.name || "Siswa"} /><div className="relative z-10"><p className="student-dossier__eyebrow text-xs font-semibold uppercase tracking-[0.14em]">Identitas siswa</p><h2 className="student-dossier__title mt-1 text-xl font-semibold">{student?.name || "Memuat siswa..."}</h2><p className="student-dossier__meta mt-1 text-sm">NIM {student?.NIM || "-"} · {student?.Class?.name || "Kelas Anda"}</p></div></div></Surface>
-        <section className="student-current-state" aria-label="Status record siswa"><div><span>Attendance record</span><strong>{attendances.length ? `${attendances.length} tercatat` : "Belum ada"}</strong></div><div><span>Score record</span><strong>{scores.length ? `${scores.length} tercatat` : "Belum ada"}</strong></div></section>
-        <Surface className="observation-sheet p-5"><h2 className="text-lg font-semibold text-[var(--text)]">Feedback terbaru</h2><p className="mt-3 whitespace-pre-wrap leading-6 text-[var(--text)]">{student?.feedback || "Belum ada feedback."}</p></Surface>
-        <FeedbackForm feedback={feedback} observedAt={observedAt} message={message} submitting={submitting} onFeedbackChange={(event) => setFeedback(event.target.value)} onObservedAtChange={setObservedAt} onSubmit={handleStudentFeedbackSubmit} />
-        <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
-      </div>
-      <div className="space-y-6">
-        <Surface className="record-ledger record-ledger--attendance p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-semibold text-[var(--text)]">Attendance record</h2><p className="mt-1 text-sm text-[var(--muted)]">Tanggal kejadian dan status siswa.</p></div><Link to="/attendance"><SecondaryButton type="button">Kelola</SecondaryButton></Link></div><div className="mt-4 space-y-3">{isEmpty(attendances) && <EmptyState title="Belum ada attendance" />}{attendances.map((attendance) => <div key={attendance.id} className="record-ledger__entry flex items-center justify-between gap-3 rounded-xl border p-3"><span className="text-sm font-medium text-[var(--text)]">{attendance.attendanceDate || "Tanggal attendance belum tersedia"}</span><StatusBadge status={attendance.status} /></div>)}</div></Surface>
-        <Surface className="record-ledger record-ledger--score p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-lg font-semibold text-[var(--text)]">Score record</h2><p className="mt-1 text-sm text-[var(--muted)]">Nilai dan KKM per assessment.</p></div><Link to={`/scores/${studentId}`}><SecondaryButton type="button">Kelola</SecondaryButton></Link></div><div className="mt-4 space-y-3">{isEmpty(scores) && <EmptyState title="Belum ada score" />}{scores.map((score) => <div key={score.id} className="record-ledger__entry rounded-xl border p-3"><div className="flex items-start justify-between gap-3"><div><p className="font-medium text-[var(--text)]">{score.Lesson?.name || "Lesson"}</p><p className="mt-1 text-xs text-[var(--muted)]">{score.Assignment?.name || "Assessment"} · KKM {score.Lesson?.KKM ?? "-"}</p></div><div className="text-right"><p className="text-lg font-semibold text-[var(--text)]">{score.value}</p><StatusBadge status={scoreStatus(score.status)} /></div></div><p className="mt-3 text-xs text-[var(--muted)]">{formatRecordedDate(score.recordedAt)}</p></div>)}</div></Surface>
-      </div>
-    </div>
+
+  return <PageContainer>
+    <StudentContextHeader
+      student={student}
+      classLabel={authorizedClassName}
+      eyebrow="Record perkembangan siswa"
+      headingLevel="h1"
+      metadata={[
+        {
+          label: "Status",
+          value: usingCachedSnapshot ? "Record tersimpan" : "Record aktif",
+        },
+      ]}
+      actions={(
+        <>
+        <SecondaryButton type="button" onClick={() => navigate("/")}>
+          Kembali
+        </SecondaryButton>
+        {usingCachedSnapshot ? (
+          <PrimaryButton type="button" disabled>
+            Tambah attendance perlu online
+          </PrimaryButton>
+        ) : (
+          <ButtonLink tone="primary" to="/attendance">
+            Catat attendance
+          </ButtonLink>
+        )}
+        </>
+      )}
+    />
+
+    {usingCachedSnapshot && (
+      <InlineNotice className="student-workspace-notice" tone="warning">
+        <strong>Workspace tersimpan. </strong>
+        <span>Data tersimpan dari {formatCachedAt(cachedSnapshot?.cachedAt)}. Hubungkan kembali untuk memperoleh data terbaru.</span>
+      </InlineNotice>
+    )}
+
+    <WorkspaceTabs
+      className="student-workspace-navigation"
+      items={workspaceViews}
+      activeId={activeWorkspace}
+      onChange={setActiveWorkspace}
+      ariaLabel="Workspace siswa"
+      idPrefix="student-workspace"
+    />
+
+    {activeWorkspace === "summary" && (
+      <WorkspacePanel
+        id="student-workspace-summary"
+        labelledBy="student-workspace-tab-summary"
+      >
+        <SectionHeader
+          eyebrow="Workspace siswa"
+          title="Ringkasan terkini"
+          description="Cakupan terbaru untuk peninjauan cepat tanpa membuka seluruh histori."
+        />
+
+        <div className="student-summary-grid">
+          <Surface className={recordSurfaceClasses}>
+            <div className="student-summary-card__header">
+              <p>Kehadiran</p>
+              <h3>Ringkasan attendance</h3>
+            </div>
+            <dl className="student-summary-metrics">
+              <div>
+                <dt>Record</dt>
+                <dd>{attendances.length}</dd>
+              </div>
+              <div>
+                <dt>Hadir</dt>
+                <dd>{attendancePresentCount}</dd>
+              </div>
+              <div>
+                <dt>Terbaru</dt>
+                <dd className="student-summary-metrics__detail">
+                  {attendances[0]
+                    ? `${formatRecordedDate(attendances[0].attendanceDate)} · ${attendances[0].status}`
+                    : "Belum ada"}
+                </dd>
+              </div>
+            </dl>
+          </Surface>
+
+          <Surface className={recordSurfaceClasses}>
+            <div className="student-summary-card__header">
+              <p>Akademik</p>
+              <h3>Ringkasan nilai</h3>
+            </div>
+            {usingCachedSnapshot ? (
+              <p className="student-summary-card__empty">
+                Nilai memerlukan koneksi dan tidak tersedia dalam snapshot offline minimum.
+              </p>
+            ) : (
+              <dl className="student-summary-metrics">
+                <div>
+                  <dt>Record</dt>
+                  <dd>{scores.length}</dd>
+                </div>
+                <div>
+                  <dt>Rata-rata</dt>
+                  <dd>{averageScore ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt>Terbaru</dt>
+                  <dd className="student-summary-metrics__detail">
+                    {scores[0]
+                      ? `${scores[0].Lesson?.name || "Lesson"} · ${scores[0].value}`
+                      : "Belum ada"}
+                  </dd>
+                </div>
+              </dl>
+            )}
+          </Surface>
+
+          <Surface className={recordSurfaceClasses}>
+            <div className="student-summary-card__header">
+              <p>Informasi guru</p>
+              <h3>Informasi relevan terbaru</h3>
+            </div>
+            <div className="student-summary-card__body">
+              <p>
+                {latestTeacherInformation || "Belum ada informasi guru yang tersimpan."}
+              </p>
+              {latestFeedbackRecord && (
+                <p className="student-summary-card__metadata">
+                  {latestFeedbackRecord.Teacher?.name || "Guru"} · {formatRecordedDate(latestFeedbackRecord.observedAt || latestFeedbackRecord.createdAt)}
+                </p>
+              )}
+            </div>
+          </Surface>
+
+          <Surface className={recordSurfaceClasses}>
+            <div className="student-summary-card__header">
+              <p>Jurnal & bukti</p>
+              <h3>Konteks observasi terbaru</h3>
+            </div>
+            {recentJournalEntries.length ? (
+              <ol className="student-summary-history">
+                {recentJournalEntries.map((entry) => (
+                  <li key={entry.id}>
+                    <div className="student-summary-history__metadata">
+                      <strong>
+                        {entry.teacher?.name || "Guru"}
+                      </strong>
+                      <time dateTime={entry.observedAt}>
+                        {formatRecordedDate(entry.observedAt)}
+                      </time>
+                    </div>
+                    <p className="student-summary-history__body">
+                      {entry.content}
+                    </p>
+                    {entry.evidence && (
+                      <p className="student-summary-history__evidence">
+                        Bukti: {entry.evidence.title || "Evidence terkait"}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="student-summary-card__empty">
+                Belum ada konteks jurnal tersimpan untuk ditampilkan pada ringkasan.
+              </p>
+            )}
+          </Surface>
+        </div>
+      </WorkspacePanel>
+    )}
+
+    {activeWorkspace === "attendance" && (
+      <WorkspacePanel
+        id="student-workspace-attendance"
+        labelledBy="student-workspace-tab-attendance"
+      >
+        <SectionHeader
+          eyebrow="Record operasional"
+          title="Kehadiran"
+          description="Record terbaru ditampilkan lebih dahulu. Status pada record yang tersedia tetap dapat diperbarui."
+          actions={<strong className="student-workspace-count">
+            {attendances.length ? `${attendances.length} record` : "Belum ada record"}
+          </strong>}
+        />
+
+        <Surface className={recordSurfaceClasses}>
+          {!isEmpty(attendances) && (
+            <div
+              className="student-record-attendance-columns"
+              aria-hidden="true"
+            >
+              <span>Record</span>
+              <span>Status</span>
+              <span>Sinkronisasi</span>
+            </div>
+          )}
+          <div className="student-record-attendance-list">
+            {isEmpty(attendances) && (
+              <div className="my-4">
+                <EmptyState
+                  title="Belum ada attendance"
+                  description="Konteks kehadiran belum cukup untuk ditinjau."
+                />
+              </div>
+            )}
+            {visibleAttendances.map((attendance) => (
+              <AttendanceRecordEditor
+                key={attendance.id}
+                record={attendance}
+                saving={attendanceWorkspace.savingEntityKey === attendance.entityKey}
+                readOnly={isDemo}
+                onChange={(record, status) => {
+                  attendanceWorkspace.updateAttendance(record, status)
+                    .catch(() => {});
+                }}
+              />
+            ))}
+          </div>
+          {attendances.length > 8 && (
+            <div className="student-record-ledger__actions">
+              <SecondaryButton
+                type="button"
+                onClick={() => setShowAllAttendances((current) => !current)}
+              >
+                {showAllAttendances
+                  ? "Tampilkan 8 record terbaru"
+                  : `Tampilkan seluruh ${attendances.length} record`}
+              </SecondaryButton>
+            </div>
+          )}
+          <p
+            className="student-record-ledger__message"
+            aria-live="polite"
+          >
+            {attendanceWorkspace.message}
+          </p>
+        </Surface>
+      </WorkspacePanel>
+    )}
+
+    {activeWorkspace === "scores" && (
+      <WorkspacePanel
+        id="student-workspace-scores"
+        labelledBy="student-workspace-tab-scores"
+      >
+        <SectionHeader
+          eyebrow="Ledger akademik"
+          title="Nilai"
+          description="Riwayat nilai, assessment, KKM, dan status dalam satu ledger."
+          actions={!usingCachedSnapshot && (
+            <ButtonLink to={`/scores/${studentId}`}>
+              Kelola nilai
+            </ButtonLink>
+          )}
+        />
+
+        {usingCachedSnapshot ? (
+          <Surface className={unavailableSurfaceClasses}>
+            <EmptyState
+              title="Score memerlukan koneksi"
+              description="Score tidak disimpan dalam workspace offline minimum."
+            />
+          </Surface>
+        ) : (
+          <Surface className={recordSurfaceClasses}>
+            {isEmpty(scores) ? (
+              <div className="p-4">
+                <EmptyState
+                  title="Belum ada score"
+                  description="Konteks akademik belum cukup untuk ditinjau."
+                />
+              </div>
+            ) : (
+              <div className="student-score-ledger">
+                <div
+                  className="student-score-ledger__columns"
+                  aria-hidden="true"
+                >
+                  <span>Pelajaran</span>
+                  <span>Assessment</span>
+                  <span>Tanggal</span>
+                  <span>Nilai</span>
+                  <span>Status</span>
+                </div>
+                <ol className="student-score-ledger__list">
+                  {scores.map((score) => (
+                    <li
+                      key={score.id}
+                      className="student-score-ledger__row"
+                    >
+                      <div className="min-w-0">
+                        <span className="student-score-ledger__label">
+                          Pelajaran
+                        </span>
+                        <p className="student-score-ledger__primary">
+                          {score.Lesson?.name || "Lesson"}
+                        </p>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="student-score-ledger__label">
+                          Assessment
+                        </span>
+                        <p className="student-score-ledger__secondary">
+                          {score.Assignment?.name || "Assessment"}
+                        </p>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="student-score-ledger__label">
+                          Tanggal
+                        </span>
+                        <time className="student-score-ledger__secondary" dateTime={score.recordedAt}>
+                          {formatRecordedDate(score.recordedAt)}
+                        </time>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="student-score-ledger__label">
+                          Nilai
+                        </span>
+                        <strong className="student-score-ledger__value">
+                          {score.value}
+                        </strong>
+                      </div>
+                      <div className="min-w-0">
+                        <span className="student-score-ledger__label">
+                          KKM {score.Lesson?.KKM ?? "-"}
+                        </span>
+                        <StatusBadge status={scoreStatus(score.status)} />
+                        <span className="student-score-ledger__kkm">
+                          KKM {score.Lesson?.KKM ?? "-"}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+          </Surface>
+        )}
+      </WorkspacePanel>
+    )}
+
+    {activeWorkspace === "journal-evidence" && (
+      <WorkspacePanel
+        id="student-workspace-journal-evidence"
+        labelledBy="student-workspace-tab-journal-evidence"
+      >
+        <SectionHeader
+          eyebrow="Observasi dan dokumentasi"
+          title="Jurnal & Bukti"
+          description="Form pencatatan dan histori jurnal berada di area jurnal; unggahan dan histori evidence berada di area bukti."
+        />
+        <div className="student-journal-evidence-grid">
+          <StudentLearningJournalSection
+            studentId={studentId}
+            refreshKey={journalRefreshKey}
+            cachedEntries={cachedSnapshot?.journalEntries || []}
+            hasCachedSnapshot={Boolean(cachedSnapshot)}
+            demoReadOnly={isDemo}
+            offlineReadOnly={usingCachedSnapshot}
+            onJournalLoaded={handleJournalLoaded}
+          />
+          {usingCachedSnapshot ? (
+            <Surface className={unavailableSurfaceClasses}>
+              <EmptyState
+                title="Evidence memerlukan koneksi"
+                description="Evidence tidak disimpan dalam workspace offline minimum."
+              />
+            </Surface>
+          ) : (
+            <StudentEvidenceSection
+              studentId={studentId}
+              demoReadOnly={isDemo}
+              onEvidenceChanged={() => {
+                setJournalRefreshKey((current) => current + 1);
+              }}
+            />
+          )}
+        </div>
+      </WorkspacePanel>
+    )}
+
+    {activeWorkspace === "feedback" && (
+      <WorkspacePanel
+        id="student-workspace-feedback"
+        labelledBy="student-workspace-tab-feedback"
+      >
+        <SectionHeader
+          eyebrow="Narasi milik guru"
+          title="Feedback"
+          description="Susun, tinjau, dan simpan feedback berbasis record. AI hanya membantu menyusun draf; keputusan akhir tetap pada guru."
+        />
+        {usingCachedSnapshot ? (
+          <Surface className={unavailableSurfaceClasses}>
+            <EmptyState
+              title="Feedback memerlukan koneksi"
+              description="Feedback tidak disimpan dalam workspace offline minimum."
+            />
+          </Surface>
+        ) : (
+          <div className="student-feedback-grid">
+            <FeedbackForm
+              feedback={feedback}
+              feedbackInputRef={feedbackInputRef}
+              isDemo={isDemo}
+              observedAt={observedAt}
+              message={message}
+              submitting={submitting}
+              onAiDraftRequested={() => setAiWorkspaceOpen(true)}
+              onFeedbackChange={(event) => setFeedback(event.target.value)}
+              onObservedAtChange={setObservedAt}
+              onSubmit={handleStudentFeedbackSubmit}
+            />
+            <FeedbackHistory resource={feedbackHistory} onRetry={fetchStudentFeedbackHistory} />
+          </div>
+        )}
+      </WorkspacePanel>
+    )}
+
+    <AiNarrativeWorkspace
+      open={aiWorkspaceOpen}
+      studentId={studentId}
+      existingFeedback={feedback}
+      onClose={() => setAiWorkspaceOpen(false)}
+      onUseFeedback={handleAiDraftHandoff}
+    />
   </PageContainer>;
 }

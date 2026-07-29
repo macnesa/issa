@@ -18,9 +18,10 @@ function findStudentsInClass(classId, studentId) {
   });
 }
 
-function findStudentInClass(studentId, classId) {
+function findStudentInClass(studentId, classId, options = {}) {
   return Student.findOne({
     where: { id: studentId, ClassId: classId },
+    ...options,
   });
 }
 
@@ -30,9 +31,14 @@ function findStudentAttendanceRecords(studentIds) {
   });
 }
 
-function findAttendanceByStudentAndDate(studentId, attendanceDate) {
+function findAttendanceByStudentAndDate(
+  studentId,
+  attendanceDate,
+  options = {}
+) {
   return Attendance.findOne({
     where: { StudentId: studentId, attendanceDate },
+    ...options,
   });
 }
 
@@ -40,16 +46,20 @@ function findTeacherClass(classId) {
   return Class.findByPk(classId, { include: Teacher });
 }
 
-function createAttendanceRecord(attendancePayload) {
-  return Attendance.create(attendancePayload);
+function createAttendanceRecord(attendancePayload, options = {}) {
+  return Attendance.create(attendancePayload, options);
 }
 
 function createAttendanceHistory(attendanceHistoryPayload) {
   return History.create(attendanceHistoryPayload);
 }
 
-function updateAttendanceRecord(attendanceRecord, attendancePayload) {
-  return attendanceRecord.update(attendancePayload);
+function updateAttendanceRecord(
+  attendanceRecord,
+  attendancePayload,
+  options = {}
+) {
+  return attendanceRecord.update(attendancePayload, options);
 }
 
 module.exports = {

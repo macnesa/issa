@@ -13,6 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       Student.hasMany(models.Attendance);
       Student.hasMany(models.Score);
       Student.hasMany(models.StudentFeedback);
+      Student.hasMany(models.StudentEvidence);
+      Student.hasMany(models.StudentLearningJournal);
       Student.hasOne(models.User);
       Student.hasMany(models.Transaction);
     }
@@ -61,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       feedback: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
       ClassId: {
         type: DataTypes.INTEGER,

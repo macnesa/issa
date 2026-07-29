@@ -1,15 +1,13 @@
+import { SectionHeader, Surface } from '../../../shared/ui/ui';
+
 export default function TeacherFeedback({ profile }) {
   return (
-    <section className="overview-feedback grid grid-cols-[auto_minmax(0,1fr)] gap-[0.7rem] p-[1.4rem]">
-      <div className="overview-feedback__mark" aria-hidden="true">“</div>
-      <div>
-      <p className="overview-kicker">Catatan manusia</p>
-      <h2>Feedback Wali Kelas</h2>
-      {profile.teacherName && <p className="overview-feedback__teacher">{profile.teacherName}</p>}
-      <p className="overview-feedback__content">
+    <Surface className="teacher-feedback">
+      <SectionHeader kicker="Catatan manusia" title="Feedback Wali Kelas" />
+      {profile.teacherName && <strong className="teacher-feedback__author">{profile.teacherName}</strong>}
+      <blockquote>
         {profile.feedback || 'Belum ada feedback dari wali kelas.'}
-      </p>
-      </div>
-    </section>
+      </blockquote>
+    </Surface>
   );
 }

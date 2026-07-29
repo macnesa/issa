@@ -22,7 +22,12 @@ function SessionRuntime() {
   useEffect(() => {
     const resetParentStateAndRedirectToLogin = (sessionEndReason) => {
       dispatch(clearParentAuthenticationState());
-      router.navigate(sessionEndReason === 'expired' ? '/login?session=expired' : '/login', { replace: true });
+      const loginDestination = sessionEndReason === 'demo-expired'
+        ? '/login?session=demo-expired'
+        : sessionEndReason === 'expired'
+          ? '/login?session=expired'
+          : '/login';
+      router.navigate(loginDestination, { replace: true });
     };
 
     const unsubscribe = subscribeToParentSessionStatus(setSessionStatus);

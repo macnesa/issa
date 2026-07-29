@@ -3,15 +3,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import HeatmapDua from '../features/attendance/components/HeatmapChartDua';
 import { fetchStudentOverview } from '../store/actions/actionCreator';
 import { EmptyState, ErrorState, LoadingState } from '../shared/ui/ResourceStates';
-import { calculateAttendanceSummary, getTodayAttendance, groupAttendanceHistoryByMonth } from '../features/student-overview/helpers';
+import {
+  PageContainer,
+  PageHeader,
+  SectionHeader,
+  StatusBadge,
+  Surface,
+} from '../shared/ui/ui';
+import {
+  calculateAttendanceSummary,
+  getTodayAttendance,
+  groupAttendanceHistoryByMonth,
+} from '../features/student-overview/helpers';
 
 const statuses = ['Hadir', 'Sakit', 'Izin', 'Alfa'];
-const statusModifiers = {
-  Hadir: 'status-badge--hadir',
-  Sakit: 'status-badge--sakit',
-  Izin: 'status-badge--izin',
-  Alfa: 'status-badge--alfa',
-};
 
 function formatAttendanceDate(attendanceDate) {
   const date = new Date(attendanceDate);
@@ -28,71 +33,84 @@ export default function AttendancePage() {
   const attendanceSummary = useMemo(() => calculateAttendanceSummary(attendance), [attendance]);
   const attendanceHistoryByMonth = useMemo(() => groupAttendanceHistoryByMonth(attendance), [attendance]);
 
-  if (loading) return <main className="page-container"><LoadingState label="Memuat kehadiran..." /></main>;
-  if (error) return <main className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} /></main>;
+  if (loading) return <PageContainer><LoadingState label="Memuat kehadiran..." /></PageContainer>;
+  if (error) return <PageContainer><ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} /></PageContainer>;
 
   return (
-    <main className="page-container attendance-page">
-      <section className="editorial-page-heading">
-        <h1 className="page-title">Kehadiran</h1>
-        <p className="page-supporting-text mt-1">Histori dan ringkasan kehadiran siswa.</p>
-      </section>
+    <PageContainer className="page-grid page-grid--split">
+      <PageHeader
+        title="Kehadiran"
+        description="Histori dan ringkasan kehadiran siswa."
+        wide
+      />
 
-      <section className="attendance-today">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="overview-kicker">Hari ini</p><h2>Kehadiran</h2>
-            <p>{todayAttendance ? 'Kehadiran hari ini sudah tercatat.' : 'Belum ada catatan kehadiran hari ini.'}</p>
-          </div>
-          <span className={`status-badge ${statusModifiers[todayAttendance?.status] || 'status-badge--neutral'}`}>{todayAttendance?.status || 'Belum tercatat'}</span>
+      <Surface className="surface--full attendance-today" aqua offset>
+        <div>
+          <p className="section-kicker">Hari ini</p>
+          <h2 className="section-heading">Kehadiran</h2>
+          <p className="page-supporting-text">
+            {todayAttendance
+              ? 'Kehadiran hari ini sudah tercatat.'
+              : 'Belum ada catatan kehadiran hari ini.'}
+          </p>
         </div>
-      </section>
+        <StatusBadge status={todayAttendance?.status} />
+      </Surface>
 
-      <section className="attendance-summary">
-        <div><p className="overview-kicker">Rekam rutin</p><h2>Ringkasan Kehadiran</h2></div>
-        <dl className="attendance-summary__grid">
+      <Surface aqua>
+        <SectionHeader kicker="Rekam rutin" title="Ringkasan Kehadiran" />
+        <dl className="metric-grid">
           {statuses.map((status) => (
-            <div key={status} className={`attendance-summary__metric attendance-summary__metric--${status.toLowerCase()}`}>
-            <dt>{status}</dt><dd>{attendanceSummary[status]}</dd>
+            <div key={status} className="metric-card">
+              <dt className="metric-label">{status}</dt>
+              <dd className="metric-value">{attendanceSummary[status]}</dd>
             </div>
           ))}
         </dl>
-      </section>
+      </Surface>
 
-      <section className="attendance-history">
-        <p className="overview-kicker">Rekam kehadiran</p><h2>Histori Kehadiran</h2>
+      <Surface>
+        <SectionHeader kicker="Rekam kehadiran" title="Histori Kehadiran" />
         {!attendanceHistoryByMonth.length ? (
           <EmptyState message="Belum ada kehadiran yang tercatat." />
         ) : (
-          <div className="mt-4 space-y-5">
+          <div className="attendance-history">
             {attendanceHistoryByMonth.map((attendanceMonth) => (
-              <div key={attendanceMonth.key} className="attendance-history__month">
+              <section key={attendanceMonth.key}>
                 <h3>{attendanceMonth.label}</h3>
-                <ul>
+                <ul className="history-list">
                   {attendanceMonth.records.map((attendanceRecord) => (
-                    <li key={attendanceRecord.id ?? `${attendanceRecord.createdAt}-${attendanceRecord.status}`}>
+                    <li
+                      className="history-record"
+                      key={attendanceRecord.id ?? `${attendanceRecord.createdAt}-${attendanceRecord.status}`}
+                    >
                       <time>{formatAttendanceDate(attendanceRecord.createdAt)}</time>
-                      <span className={`status-badge ${statusModifiers[attendanceRecord.status] || 'status-badge--neutral'}`}>{attendanceRecord.status || 'Status belum tersedia'}</span>
+                      <StatusBadge status={attendanceRecord.status}>
+                        {attendanceRecord.status || 'Status belum tersedia'}
+                      </StatusBadge>
                     </li>
                   ))}
                 </ul>
-              </div>
+              </section>
             ))}
           </div>
         )}
-      </section>
+      </Surface>
 
       {!!attendance.length && (
-        <section className="attendance-heatmap">
-          <p className="overview-kicker">Visual pendukung</p><h2>Visual Kehadiran</h2>
-          <p>Visual pendukung histori kehadiran.</p>
-          <div className="attendance-heatmap__chart">
+        <Surface className="surface--full">
+          <SectionHeader
+            kicker="Visual pendukung"
+            title="Visual Kehadiran"
+            description="Visual pendukung histori kehadiran."
+          />
+          <div className="attendance-heatmap">
             <HeatmapDua data={attendance} />
           </div>
-        </section>
+        </Surface>
       )}
 
       {loaded && !attendance.length && <span className="sr-only">Attendance data is empty.</span>}
-    </main>
+    </PageContainer>
   );
 }

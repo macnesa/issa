@@ -1,91 +1,47 @@
-import { Chart } from "frappe-charts/dist/frappe-charts.min.esm";
-import { useEffect, useRef } from "react";
+import { Chart } from 'frappe-charts/dist/frappe-charts.min.esm';
+import { useEffect, useMemo, useRef } from 'react';
 
-export default function HeatmapChartDua({ data: attendanceRecords }) {
+function getHeatmapRange(attendanceRecords) {
+  const validDates = attendanceRecords
+    .map((record) => new Date(record.createdAt))
+    .filter((date) => !Number.isNaN(date.getTime()))
+    .sort((left, right) => left.getTime() - right.getTime());
 
-  const attendanceHeatmapPoints = {};
+  const today = new Date();
+  const firstDate = validDates[0] || today;
+  const lastDate = validDates.at(-1) || today;
+  return {
+    start: new Date(firstDate.getFullYear(), firstDate.getMonth(), 1),
+    end: new Date(lastDate.getFullYear(), lastDate.getMonth() + 1, 0, 23, 59, 59),
+  };
+}
+
+export default function HeatmapChartDua({ data: attendanceRecords = [] }) {
   const chartRef = useRef(null);
-
-  if (attendanceRecords) {
-
-    attendanceRecords.forEach((attendanceRecord) => {
-      const date = new Date(attendanceRecord.createdAt);
-      const unixTimestamp = Math.floor((date.getTime() / 1000));
-      //  console.log(item );
-      // return Math.floor(Date.parse(timestamp) / 1000);
-      // const timestamp = new Date(item.createdAt).setHours(0, 0, 0, 0) / 1000;
-      let attendanceStatusScore = 0;
-
-      switch (attendanceRecord.status) {
-        case 'Hadir':
-          attendanceStatusScore = 100;
-          break;
-        case 'Sakit':
-          attendanceStatusScore = 50;
-          break;
-        case 'Alfa':
-          attendanceStatusScore = 1;
-          break;
-        case 'Izin':
-          attendanceStatusScore = 70;
-          break;
-        default:
-          attendanceStatusScore = 0;
-      }
-
-      attendanceHeatmapPoints[unixTimestamp] = attendanceStatusScore;
+  const chartData = useMemo(() => {
+    const dataPoints = {};
+    attendanceRecords.forEach((record) => {
+      const date = new Date(record.createdAt);
+      if (Number.isNaN(date.getTime())) return;
+      const scores = { Hadir: 100, Izin: 70, Sakit: 50, Alfa: 1 };
+      dataPoints[Math.floor(date.getTime() / 1000)] = scores[record.status] || 0;
     });
-
-
-  }
-
-
-
+    return { dataPoints, ...getHeatmapRange(attendanceRecords) };
+  }, [attendanceRecords]);
 
   useEffect(() => {
-    const chartContainer = chartRef.current;
-    const attendanceHeatmap = new Chart(chartContainer, {
-      subtitle: "Contoh Heatmap Chart",
-      color: "#c7323e",
-      data: {
-        dataPoints: attendanceHeatmapPoints,
-        start: new Date("2023-01-01T00:00:00.000Z"),
-        end: new Date("2023-07-31T11:59:00.000Z"),
-      },
-      type: "heatmap",
+    if (!chartRef.current) return undefined;
+    const attendanceHeatmap = new Chart(chartRef.current, {
+      data: chartData,
+      type: 'heatmap',
       radius: 2,
-      //         empty      alfa       sakit      izin       hadir
-      colors: ['#d9d9d9', '#c7323e', '#73b3f3', '#e6cc4e', '#2b5c31'],
-      // width:300,
-      // height:400,
-      // responsive:true
-      // x_axis_mode: "time",
-      // y_axis_mode: "tick",
+      colors: ['#d6e3e2', '#b91c1c', '#0369a1', '#b45309', '#047857'],
     });
 
     return () => {
       attendanceHeatmap.destroy();
-    }
-  }, [attendanceRecords]);
+    };
+  }, [chartData]);
 
-  return (
-    //pointer-events-none border border-white 
-    <div ref={chartRef} id="heatmap-chart" className="  border-black " style={{clipPath: "inset(0 0 15% 0%)"}} ></div>
-     
-    
-    // <div className="grid mt-4 overflow-y-scroll justify-start sm:justify-center max-w-screen-xl mx-auto border border-red-400" >
-    //   <div ref={chartRef} id="heatmap-chart" className="pointer-events-none w-[300px] h-[500px] border border-black " ></div>
-    // </div>
-    
-    
-    
-  );
+  return <div ref={chartRef} className="attendance-heatmap__chart" />;
 }
-
-
-// {
-//   '1578355200': 1, // alfa
-//   '1578441600': 50, // // sakit
-//   '1578528000': 70, // izin
-//   '1578614400': 100, //hadir
-// },

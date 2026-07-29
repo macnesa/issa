@@ -24,6 +24,7 @@ function findStudentsForTeacher({
 
   const studentListQuery = {
     where: studentWhere,
+    distinct: true,
     include: [
       {
         model: Attendance,

@@ -1,12 +1,17 @@
+import { Surface } from '../../../shared/ui/ui';
+
 export default function ScheduleList({ day: scheduleDay, lessons: lessonNames }) {
   return (
-    <section className="schedule-day">
+    <Surface className="schedule-day" padded={false}>
       <h2>{scheduleDay}</h2>
       <ul>
         {lessonNames.map((lessonName, lessonIndex) => (
-          <li key={`${scheduleDay}-${lessonName}-${lessonIndex}`}>{lessonName}</li>
+          <li key={`${scheduleDay}-${lessonName}-${lessonIndex}`}>
+            <span aria-hidden="true" />
+            <strong>{lessonName}</strong>
+          </li>
         ))}
       </ul>
-    </section>
+    </Surface>
   );
 }

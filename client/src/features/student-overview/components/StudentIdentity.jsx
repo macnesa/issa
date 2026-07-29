@@ -1,26 +1,37 @@
 export default function StudentIdentity({ profile }) {
+  const studentName = profile.name || 'Siswa';
+  const studentInitial = studentName.slice(0, 1).toUpperCase();
+
   return (
-    <section className="overview-identity">
-      <div className="overview-identity__motif" aria-hidden="true" />
-      <p className="overview-identity__record"><span>Record</span><strong>{profile.id ? `#${profile.id}` : 'ISSA'}</strong></p>
-      <div className="overview-identity__content">
-        <div className="overview-identity__portrait">
+    <section className="student-context">
+      <div className="student-context__main">
+        <div>
+          <p className="section-kicker student-context__kicker">Rekam perkembangan siswa</p>
+          <h1 className="student-context__name">{studentName}</h1>
+          <p className="student-context__nim">
+            <strong>NIM</strong>
+            <span>{profile.nim || 'Belum tersedia'}</span>
+          </p>
+        </div>
+        <div className="student-context__avatar">
           {profile.imageUrl ? (
-            <img src={profile.imageUrl} alt={profile.name || 'Siswa'} />
+            <img src={profile.imageUrl} alt={studentName} />
           ) : (
-            <span>{profile.name?.slice(0, 1) || '?'}</span>
+            <span>{studentInitial}</span>
           )}
         </div>
-        <div className="overview-identity__copy">
-          <p className="overview-identity__eyebrow">Rekam perkembangan siswa</p>
-          <h1>{profile.name || 'Siswa'}</h1>
-          <p className="overview-identity__nim">NIM · {profile.nim || '-'}</p>
-          <dl>
-            <div><dt>Kelas</dt><dd>{profile.className || '-'}</dd></div>
-            <div><dt>Wali kelas</dt><dd>{profile.teacherName || '-'}</dd></div>
-          </dl>
-        </div>
       </div>
+
+      <dl className="student-context__meta">
+        <div>
+          <dt>Kelas</dt>
+          <dd>{profile.className || 'Belum tersedia'}</dd>
+        </div>
+        <div>
+          <dt>Wali kelas</dt>
+          <dd>{profile.teacherName || 'Belum tersedia'}</dd>
+        </div>
+      </dl>
     </section>
   );
 }

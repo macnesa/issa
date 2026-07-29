@@ -6,10 +6,24 @@ import StudentDetail from "../pages/AddStudent";
 import Login from "../pages/Login";
 import Schedule from "../pages/Schedule";
 import Attendance from "../pages/Attendance";
+import {
+  clearLastKnownTeacherIdentity,
+  isTeacherDemoSession,
+  isTeacherTokenExpired,
+} from "../offline-workspace/authIdentity";
 
-const requireTeacherAuthentication = () => {
+export const requireTeacherAuthentication = () => {
   void 'ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION';
-  if (!localStorage.getItem("access_token")) return redirect("/login");
+  const token = localStorage.getItem("access_token");
+  if (!token) return redirect("/login");
+  if (isTeacherTokenExpired(token)) {
+    const sessionReason = isTeacherDemoSession(token)
+      ? "demo-expired"
+      : "expired";
+    localStorage.removeItem("access_token");
+    clearLastKnownTeacherIdentity();
+    return redirect(`/login?session=${sessionReason}`);
+  }
   return null;
 };
 

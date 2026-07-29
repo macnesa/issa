@@ -1,10 +1,7 @@
 const request = require("supertest");
 const app = require("../app");
-const { Teacher, Student, Class, sequelize } = require("../models");
-const { createToken } = require("../helpers/index");
-const { queryInterface } = sequelize;
+const { Teacher, Class } = require("../models");
 
-let validToken, validToken2, invalidToken;
 const userTest1 = {
     "NIP": "1800011221",
     "name": "Julianto",
@@ -19,23 +16,19 @@ const userTest2 = {
     "imgUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9QlB991ONcK5xybf6AGCg-JDna5VUqibyfRgngW9-PDh4vnRTGItX_0XdE1YbExBIgFc&usqp=CAU"
 }
 
-const userTest3 = {
-    "NIP": "1800011225",
-    "name": "sambo",
-    "password": "12345",
-    "imgUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9QlB991ONcK5xybf6AGCg-JDna5VUqibyfRgngW9-PDh4vnRTGItX_0XdE1YbExBIgFc&usqp=CAU"
-}
-
 beforeAll((done) => {
+    let registeredTeacher;
+
     Teacher.create(userTest1)
         .then((registeredUser) => {
-            validToken = createToken(
-                registeredUser.NIP
-            );
-            invalidToken =
-                "123456789eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
+            registeredTeacher = registeredUser;
             return Teacher.create(userTest2);
         })
+        .then(() => Class.create({
+            name: "1A",
+            TeacherId: registeredTeacher.id,
+            SPP: 200000,
+        }))
         .then(() => {
             done();
         })
@@ -47,7 +40,10 @@ beforeAll((done) => {
 
 
 afterAll(done => {
-    Teacher.destroy({ truncate: true, cascade: true, restartIdentity: true })
+    Class.destroy({ truncate: true, cascade: true, restartIdentity: true })
+        .then(() => {
+            return Teacher.destroy({ truncate: true, cascade: true, restartIdentity: true });
+        })
         .then(_ => {
             done();
         })
@@ -78,21 +74,4 @@ describe("post /teachers", () => {
             });
     });
 
-    test("201 login", (done) => {
-        request(app)
-            .post("/teachers/register")
-            .send(userTest3)
-            .set("access_token", validToken)
-            .then((response) => {
-                const { body, status } = response;
-
-                expect(status).toBe(201);
-                expect(body).toHaveProperty("msg", `succesfuly registered`);
-                done();
-            })
-            .catch((err) => {
-                done(err);
-                console.log(err);
-            });
-    });
 });

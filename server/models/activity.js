@@ -23,7 +23,8 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: `date is required` },
         notEmpty: { msg: `date is required` },
       }
-    }
+    },
+    desc: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Activity',

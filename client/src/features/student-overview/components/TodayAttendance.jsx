@@ -1,26 +1,19 @@
+import { StatusBadge, Surface } from '../../../shared/ui/ui';
+
 export default function TodayAttendance({ attendance }) {
   const status = attendance?.status || 'Belum tercatat';
-  const statusModifiers = {
-    Hadir: 'status-badge--hadir',
-    Sakit: 'status-badge--sakit',
-    Izin: 'status-badge--izin',
-    Alfa: 'status-badge--alfa',
-  };
-  const modifier = statusModifiers[attendance?.status] || 'status-badge--neutral';
   const message = attendance
     ? 'Kehadiran hari ini sudah tercatat.'
     : 'Belum ada catatan kehadiran hari ini.';
 
   return (
-    <section className="overview-today-attendance flex items-center justify-between gap-4 px-[1.35rem] py-[1.2rem]">
+    <Surface className="overview-today" aqua offset>
       <div>
-        <div>
-          <p className="overview-kicker">Hari ini</p>
-          <h2>Kehadiran</h2>
-          <p>{message}</p>
-        </div>
+        <p className="section-kicker">Hari ini</p>
+        <h2 className="section-heading">Kehadiran</h2>
+        <p className="page-supporting-text">{message}</p>
       </div>
-      <span className={`status-badge ${modifier}`}>{status}</span>
-    </section>
+      <StatusBadge status={attendance?.status}>{status}</StatusBadge>
+    </Surface>
   );
 }

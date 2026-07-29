@@ -1,0 +1,77 @@
+import { io } from 'socket.io-client';
+import apiBaseUrl from '../config/api';
+
+export const studentRecordEventName = 'student.record.updated';
+
+let activeParentSocket = null;
+
+export function isStudentRecordEventForActiveStudent(studentRecordEvent, studentId) {
+  return Boolean(studentId)
+    && String(studentRecordEvent?.studentId) === String(studentId);
+}
+
+export function isEvidenceRecordEventForActiveStudent(studentRecordEvent, studentId) {
+  return isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)
+    && studentRecordEvent?.recordType === 'evidence';
+}
+
+export function isJournalRecordEventForActiveStudent(studentRecordEvent, studentId) {
+  return isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)
+    && studentRecordEvent?.recordType === 'journal';
+}
+
+function warnInDevelopment(message, error) {
+  if (import.meta.env.DEV) {
+    console.warn(message, error);
+  }
+}
+
+export function disconnectParentSocket() {
+  if (!activeParentSocket) return;
+
+  activeParentSocket.removeAllListeners();
+  activeParentSocket.disconnect();
+  activeParentSocket = null;
+}
+
+export function connectParentSocket({
+  accessToken,
+  studentId,
+  onStudentRecordUpdated,
+}) {
+  disconnectParentSocket();
+
+  if (!accessToken || !studentId || typeof onStudentRecordUpdated !== 'function') {
+    return disconnectParentSocket;
+  }
+
+  const socket = io(apiBaseUrl, {
+    autoConnect: false,
+    auth: {
+      accessToken,
+    },
+  });
+  activeParentSocket = socket;
+
+  socket.on(studentRecordEventName, (studentRecordEvent) => {
+    if (!isStudentRecordEventForActiveStudent(studentRecordEvent, studentId)) return;
+    onStudentRecordUpdated(studentRecordEvent);
+  });
+  socket.on('connect_error', (error) => {
+    warnInDevelopment('Parent realtime connection is unavailable.', error);
+  });
+  socket.on('error', (error) => {
+    warnInDevelopment('Parent realtime connection reported an error.', error);
+  });
+  socket.connect();
+
+  return () => {
+    if (activeParentSocket === socket) {
+      disconnectParentSocket();
+      return;
+    }
+
+    socket.removeAllListeners();
+    socket.disconnect();
+  };
+}
