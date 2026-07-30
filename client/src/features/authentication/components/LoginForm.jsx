@@ -33,13 +33,28 @@ export default function LoginForm({
     <main className="login-page">
       <div className="login-frame">
         <header className="login-brand">
-          <span aria-hidden="true" className="login-brand__mark">
-            <img src="/issa-logo-white.png" alt="" />
-          </span>
-          <div>
-            <strong>ISSA Parent</strong>
-            <span>Rekam perkembangan siswa</span>
+          <div className="login-brand__identity">
+            <span aria-hidden="true" className="login-brand__mark">
+              <img src="/issa-logo-white.png" alt="" />
+            </span>
+            <div className="login-brand__copy">
+              <strong>ISSA Parent</strong>
+              <span>Rekam perkembangan siswa</span>
+            </div>
           </div>
+          <a
+            aria-label="Buka Teacher CMS di tab baru"
+            className="login-brand__utility"
+            href="https://issa-cms.macnesa.com"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <span className="login-brand__utility-label">Untuk guru</span>
+            <span className="login-brand__utility-desktop">
+              Buka Teacher CMS ↗
+            </span>
+            <span className="login-brand__utility-mobile">CMS Guru ↗</span>
+          </a>
         </header>
 
         <div className="login-composition">

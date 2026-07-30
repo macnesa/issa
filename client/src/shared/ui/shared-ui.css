@@ -1385,9 +1385,17 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 .login-brand {
   display: flex;
   align-items: center;
-  gap: var(--issa-space-3);
+  justify-content: space-between;
+  gap: var(--issa-space-4);
   border-bottom: 1px solid rgba(185, 227, 224, 0.35);
   padding-bottom: var(--issa-space-4);
+}
+
+.login-brand__identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--issa-space-3);
 }
 
 .login-brand__mark {
@@ -1408,15 +1416,59 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   object-fit: contain;
 }
 
-.login-brand div { display: grid; }
-.login-brand strong {
+.login-brand__copy {
+  display: grid;
+  min-width: 0;
+}
+
+.login-brand__copy strong {
   color: var(--issa-aqua);
   font-size: 0.6875rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.login-brand div > span { font-size: 0.75rem; font-weight: 600; }
+.login-brand__copy > span {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.login-brand__utility {
+  display: grid;
+  flex: 0 0 auto;
+  justify-items: end;
+  border-bottom: 1px solid transparent;
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.login-brand__utility:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.7);
+}
+
+.login-brand__utility:focus-visible {
+  border-bottom-color: transparent;
+  outline: 1px solid var(--issa-aqua);
+  outline-offset: 0.25rem;
+}
+
+.login-brand__utility-label,
+.login-brand__utility-desktop {
+  display: none;
+}
+
+.login-brand__utility-label {
+  color: var(--issa-aqua);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .login-composition {
   display: grid;
   align-self: center;
@@ -1547,6 +1599,16 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   .recent-changes__metrics > div + div {
     border-top: 0;
     border-left: 1px solid var(--issa-border);
+  }
+  .login-brand__utility {
+    gap: 0.125rem;
+  }
+  .login-brand__utility-label,
+  .login-brand__utility-desktop {
+    display: block;
+  }
+  .login-brand__utility-mobile {
+    display: none;
   }
 }
 

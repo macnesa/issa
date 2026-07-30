@@ -20,6 +20,20 @@ import LoginPage from "./Login";
 describe("Parent login demo action", () => {
   beforeEach(() => vi.clearAllMocks());
 
+  test("links to Teacher CMS from the login header in a new tab", () => {
+    render(<MemoryRouter><LoginPage /></MemoryRouter>);
+
+    expect(screen.getByRole("link", {
+      name: "Buka Teacher CMS di tab baru",
+    })).toHaveAttribute("href", "https://issa-cms.macnesa.com");
+    expect(screen.getByRole("link", {
+      name: "Buka Teacher CMS di tab baru",
+    })).toHaveAttribute("target", "_blank");
+    expect(screen.getByRole("link", {
+      name: "Buka Teacher CMS di tab baru",
+    })).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   test("prevents duplicate demo submissions while the request is pending", () => {
     loginMocks.dispatch.mockReturnValue(new Promise(() => {}));
     render(<MemoryRouter><LoginPage /></MemoryRouter>);
