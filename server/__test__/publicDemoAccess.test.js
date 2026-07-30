@@ -231,6 +231,8 @@ describe('passwordless public demo authentication', () => {
     const missingRouteResponse = await request(app)
       .post('/users/not-a-real-route');
 
+    expect(parentResponse.request.header['Content-Type']).toBeUndefined();
+    expect(teacherResponse.request.header['Content-Type']).toBeUndefined();
     expect(parentResponse.status).toBe(200);
     expect(parentResponse.body).toEqual({
       access_token: 'demo-token',
