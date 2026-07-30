@@ -223,6 +223,36 @@ describe('passwordless public demo authentication', () => {
     expect(teacherResponse.body).not.toHaveProperty('password');
   });
 
+  test('full application registers demo login routes before the terminal fallback', async () => {
+    const app = require('../app');
+
+    const parentResponse = await request(app).post('/users/demo-login');
+    const teacherResponse = await request(app).post('/teachers/demo-login');
+    const missingRouteResponse = await request(app)
+      .post('/users/not-a-real-route');
+
+    expect(parentResponse.status).toBe(200);
+    expect(parentResponse.body).toEqual({
+      access_token: 'demo-token',
+      id: 17,
+      teacherId: 5,
+      demo: true,
+      readOnly: true,
+    });
+    expect(teacherResponse.status).toBe(200);
+    expect(teacherResponse.body).toEqual({
+      id: 5,
+      access_token: 'demo-token',
+      ClassId: 3,
+      demo: true,
+      readOnly: true,
+    });
+    expect(missingRouteResponse.status).toBe(404);
+    expect(missingRouteResponse.body).toEqual({
+      msg: 'Route not available in the public demo',
+    });
+  });
+
   test('configured demo identity remains read-only through password login', async () => {
     teacherRepository.findTeacherByNip.mockResolvedValue({
       id: 5,
