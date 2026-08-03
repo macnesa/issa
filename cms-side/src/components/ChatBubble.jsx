@@ -1,7 +1,8 @@
+import Icon from "../shared/ui/Icon";
 export default function Chat(params) {
   return (
     <>
-      <span className="material-symbols-outlined ">forum</span>
+      <Icon name="forum" />
     </>
   );
 }

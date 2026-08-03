@@ -1,3 +1,4 @@
+import { tw } from "../../../shared/ui/tw";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   EmptyState,
@@ -15,7 +16,6 @@ import {
 import JournalEntryForm from "./JournalEntryForm";
 import JournalTimeline from "./JournalTimeline";
 import { isNetworkFailure } from "../../../offline-workspace/networkErrors";
-import "./StudentLearningJournalSection.css";
 
 const emptyCachedEntries = Object.freeze([]);
 const ignoreJournalLoaded = () => {};
@@ -158,7 +158,7 @@ export default function StudentLearningJournalSection({
 
   return (
     <LedgerShell
-      className="student-learning-journal"
+      className={tw("student-learning-journal min-w-0")}
       eyebrow="Shared learning journal"
       title="Perjalanan belajar"
       description="Catatan ini akan dibagikan kepada orang tua siswa."
@@ -177,12 +177,12 @@ export default function StudentLearningJournalSection({
 
       <div aria-live="polite" aria-busy={resource.status === "loading"}>
         {resource.status === "loading" && (
-          <div className="student-learning-journal__state">
+          <div className={tw("student-learning-journal__state p-4")}>
             <LoadingState label="Memuat jurnal belajar siswa..." />
           </div>
         )}
         {resource.status === "error" && (
-          <div className="student-learning-journal__state">
+          <div className={tw("student-learning-journal__state p-4")}>
             <ErrorState
               message={journalError}
               onRetry={() => loadJournal()}
@@ -190,7 +190,7 @@ export default function StudentLearningJournalSection({
           </div>
         )}
         {resource.status === "success" && resource.data.length === 0 && (
-          <div className="student-learning-journal__state">
+          <div className={tw("student-learning-journal__state p-4")}>
             <EmptyState title="Belum ada catatan perjalanan belajar untuk siswa ini." />
           </div>
         )}

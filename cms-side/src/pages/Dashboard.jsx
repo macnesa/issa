@@ -1,3 +1,4 @@
+import { tw } from "../shared/ui/tw";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
@@ -18,7 +19,6 @@ import {
 } from "../shared/ui/ui";
 import TextField from "../shared/ui/form-controls/TextField";
 import { localDateValue } from "../utils/recordDates";
-import "../features/students/student-record.css";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -105,11 +105,11 @@ export default function Dashboard() {
     fetchStudentListForDashboard(appliedStudentSearchQuery, nextPage);
   };
 
-  return <PageContainer className="teacher-dashboard">
+  return <PageContainer className={tw("teacher-dashboard text-issa-text")}>
     <PageHeader eyebrow="Teacher workspace" title="Dashboard siswa" description="Mulai dari daftar siswa kelas Anda untuk melihat rekam perkembangan, mencatat feedback, attendance, dan score." />
-    <Surface className="teacher-dashboard__class-ledger" aria-label="Ringkasan kelas aktif">
-      <div className="teacher-dashboard__class-anchor"><p>Kelas aktif</p><strong>{className}</strong><span>Scope akses teacher</span></div>
-      <dl className="teacher-dashboard__class-facts">
+    <Surface className={tw("teacher-dashboard__class-ledger grid overflow-hidden mb-6 md:[grid-template-columns:minmax(16rem,_1fr)_minmax(0,_1.4fr)]")} aria-label="Ringkasan kelas aktif">
+      <div className={tw("teacher-dashboard__class-anchor p-6 border-b border-issa-border bg-issa-text text-issa-inverse md:[border-right:var(--issa-border-width)_solid_var(--issa-border)] md:[border-bottom:0] [&_p]:text-issa-inverse-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_strong]:block [&_strong]:mt-1 [&_strong]:text-page-title [&_strong]:font-bold [&_strong]:leading-tight [&>span]:block [&>span]:mt-2 [&>span]:text-issa-inverse-muted [&>span]:text-supporting")}><p>Kelas aktif</p><strong>{className}</strong><span>Scope akses teacher</span></div>
+      <dl className={tw("teacher-dashboard__class-facts grid sm:grid-cols-2 [&>div]:border-t [&>div]:border-issa-border [&>div]:p-4 [&>div:first-child]:border-t-0 sm:[&>div]:border-t-0 sm:[&>div+div]:border-l sm:[&>div+div]:border-issa-border [&_dt]:text-issa-muted [&_dt]:text-metadata [&_dt]:font-bold [&_dt]:tracking-metadata [&_dt]:uppercase [&_dd]:mt-2 [&_dd]:text-issa-text [&_dd]:text-section-title [&_dd]:font-bold [&_dd+span]:block [&_dd+span]:mt-2 [&_dd+span]:text-issa-muted [&_dd+span]:text-supporting")}>
         <div>
           <dt>Kehadiran hari ini</dt>
           <dd>
@@ -134,12 +134,12 @@ export default function Dashboard() {
     </Surface>
     <TeacherAttentionQueue onCountChange={setAttentionCount} />
     <LedgerShell
-      className="teacher-dashboard__roster"
+      className={tw("teacher-dashboard__roster")}
       eyebrow="Daftar kelas"
       title="Daftar siswa"
       description="Buka detail untuk melanjutkan pencatatan perkembangan siswa."
     >
-      <form className="teacher-dashboard__search" onSubmit={handleStudentSearchSubmit}>
+      <form className={tw("teacher-dashboard__search grid items-end gap-3 p-4 border-b border-issa-border sm:[grid-template-columns:minmax(14rem,_22rem)_auto] sm:[justify-content:end] [&_.teacher-dashboard__search-action_.issa-button]:w-full")} onSubmit={handleStudentSearchSubmit}>
           <TextField
             id="dashboard-student-search"
             label="Cari siswa"
@@ -149,25 +149,25 @@ export default function Dashboard() {
             name="name"
             placeholder="Masukkan nama siswa"
           />
-          <div className="teacher-dashboard__search-action">
+          <div className={tw("teacher-dashboard__search-action")}>
             <PrimaryButton type="submit" disabled={loading}>
               {loading ? "Mencari…" : "Cari"}
             </PrimaryButton>
           </div>
       </form>
-      {loading && <div className="teacher-dashboard__state"><LoadingState label="Memuat daftar siswa..." /></div>}
-      {!loading && error && <div className="teacher-dashboard__state"><ErrorState message={error} onRetry={() => fetchStudentListForDashboard(appliedStudentSearchQuery, currentPage)} /></div>}
-      {!loading && !error && isEmpty(studentRows) && <div className="teacher-dashboard__state"><EmptyState title="Belum ada siswa" description="Tidak ada siswa yang cocok dengan pencarian ini." /></div>}
+      {loading && <div className={tw("teacher-dashboard__state p-4")}><LoadingState label="Memuat daftar siswa..." /></div>}
+      {!loading && error && <div className={tw("teacher-dashboard__state p-4")}><ErrorState message={error} onRetry={() => fetchStudentListForDashboard(appliedStudentSearchQuery, currentPage)} /></div>}
+      {!loading && !error && isEmpty(studentRows) && <div className={tw("teacher-dashboard__state p-4")}><EmptyState title="Belum ada siswa" description="Tidak ada siswa yang cocok dengan pencarian ini." /></div>}
       {!loading && !error && !isEmpty(studentRows) && <>
-        <div className="teacher-dashboard__roster-overflow"><table className="teacher-dashboard__roster-table"><thead><tr><th>Siswa</th><th>NIM</th><th>Kelas</th><th>Attendance hari ini</th><th>Aksi</th></tr></thead><tbody>{studentRows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}</tbody></table></div>
-        <div className="teacher-dashboard__pagination">
-          <nav aria-label="Paginasi siswa Dashboard">
-            <p>
+        <div className={tw("teacher-dashboard__roster-overflow min-w-0")}><table className={tw("teacher-dashboard__roster-table w-full border-collapse text-issa-text text-table text-left [&_thead]:bg-issa-subtle [&_thead]:text-issa-muted [&_thead_th]:py-3 [&_thead_th]:px-4 [&_thead_th]:text-table-header [&_thead_th]:font-bold [&_thead_th]:tracking-metadata [&_thead_th]:uppercase max-sm:[&_thead]:hidden max-sm:[&_tbody]:grid")}><thead><tr><th>Siswa</th><th>NIM</th><th>Kelas</th><th>Attendance hari ini</th><th>Aksi</th></tr></thead><tbody>{studentRows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}</tbody></table></div>
+        <div className={tw("teacher-dashboard__pagination border-t border-issa-border p-4")}>
+          <nav className={tw("flex items-center justify-between gap-3 max-sm:items-stretch max-sm:flex-col")} aria-label="Paginasi siswa Dashboard">
+            <p className={tw("text-issa-muted text-supporting")}>
               Menampilkan {firstDisplayedStudent}–{lastDisplayedStudent} dari {totalStudents} siswa
-              <span className="teacher-dashboard__pagination-separator" aria-hidden="true">·</span>
+              <span className={tw("teacher-dashboard__pagination-separator mx-2")} aria-hidden="true">·</span>
               Halaman {currentPage} dari {totalPages}
             </p>
-            <div>
+            <div className={tw("flex items-center gap-3 max-sm:grid max-sm:grid-cols-2")}>
               <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage - 1)} disabled={currentPage <= 1}>Sebelumnya</SecondaryButton>
               <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage + 1)} disabled={currentPage >= totalPages}>Berikutnya</SecondaryButton>
             </div>

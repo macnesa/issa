@@ -1,3 +1,4 @@
+import { tw } from "../shared/ui/tw";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import baseUrl from "../config/api";
@@ -139,11 +140,11 @@ export default function Login() {
   return (
     <main
       style={{ minHeight: "100vh" }}
-      className="overflow-x-hidden bg-[#173e52] text-[#edf4f4]"
+      className={tw("overflow-x-hidden bg-[#173e52] text-[#edf4f4]")}
     >
       <div
         style={{ minHeight: "100vh" }}
-        className="
+        className={tw(`
           mx-auto
           grid
           w-full
@@ -155,14 +156,14 @@ export default function Login() {
           sm:py-6
           lg:px-12
           lg:py-7
-        "
+        `)}
       >
         {/* Institutional identity */}
-        <header className="flex items-center justify-between gap-6 border-b border-[#527382] pb-4">
-          <div className="flex min-w-0 items-center gap-3">
+        <header className={tw("flex items-center justify-between gap-6 border-b border-[#527382] pb-4")}>
+          <div className={tw("flex min-w-0 items-center gap-3")}>
             <div
               aria-hidden="true"
-              className="
+              className={tw(`
                 h-10
                 w-10
                 shrink-0
@@ -171,32 +172,32 @@ export default function Login() {
                 bg-[#245b70]
                 p-1
                 shadow-[0.16rem_0.16rem_0_#6bbfbc]
-              "
+              `)}
             >
               <img
                 src={issaLogo}
                 alt=""
-                className="h-full w-full object-contain"
+                className={tw("h-full w-full object-contain")}
               />
             </div>
 
-            <div className="min-w-0">
-              <p className="m-0 text-[0.63rem] font-[900] uppercase tracking-[0.22em] text-[#9ed4d0]">
+            <div className={tw("min-w-0")}>
+              <p className={tw("m-0 text-[0.63rem] font-extrabold uppercase tracking-[0.22em] text-[#9ed4d0]")}>
                 ISSA CMS
               </p>
 
-              <p className="m-0 mt-0.5 truncate text-[0.76rem] font-bold tracking-[0.01em] text-[#f7faf8]">
+              <p className={tw("m-0 mt-0.5 truncate text-[0.76rem] font-bold tracking-[0.01em] text-[#f7faf8]")}>
                 Sistem administrasi akademik
               </p>
             </div>
           </div>
 
-          <div className="shrink-0 border-l border-[#527382] pl-5 text-right max-[480px]:hidden">
-            <p className="m-0 text-[0.56rem] font-[900] uppercase tracking-[0.2em] text-[#9ed4d0]">
+          <div className={tw("shrink-0 border-l border-[#527382] pl-5 text-right max-[480px]:hidden")}>
+            <p className={tw("m-0 text-[0.56rem] font-extrabold uppercase tracking-[0.2em] text-[#9ed4d0]")}>
               Akses
             </p>
 
-            <p className="m-0 mt-0.5 text-[0.76rem] font-extrabold text-[#f7faf8]">
+            <p className={tw("m-0 mt-0.5 text-[0.76rem] font-extrabold text-[#f7faf8]")}>
               Internal
             </p>
           </div>
@@ -205,7 +206,7 @@ export default function Login() {
         {/* Shared operational composition */}
         <section
           aria-labelledby="cms-context-title"
-          className="
+          className={tw(`
             grid
             content-center
             items-start
@@ -215,39 +216,39 @@ export default function Login() {
             lg:grid-cols-[minmax(0,1fr)_minmax(28rem,31.5rem)]
             lg:gap-[clamp(3rem,5vw,5.5rem)]
             lg:py-8
-          "
+          `)}
         >
           {/* Operational context */}
-          <div className="w-full max-w-[35rem] border-l-2 border-[#6bbfbc] py-1 pl-5 sm:pl-7">
-            <p className="m-0 text-[0.63rem] font-[900] uppercase tracking-[0.21em] text-[#9ed4d0]">
+          <div className={tw("w-full max-w-[35rem] border-l-2 border-[#6bbfbc] py-1 pl-5 sm:pl-7")}>
+            <p className={tw("m-0 text-[0.63rem] font-extrabold uppercase tracking-[0.21em] text-[#9ed4d0]")}>
               Administrasi akademik
             </p>
 
             <h1
               id="cms-context-title"
-              className="
+              className={tw(`
                 m-0
                 mt-4
                 max-w-[32rem]
                 text-[clamp(2.45rem,4.35vw,3.9rem)]
-                font-[900]
+                font-extrabold
                 leading-[0.96]
                 tracking-[-0.05em]
                 text-[#f7faf8]
-              "
+              `)}
             >
               Kelola administrasi akademik sekolah.
             </h1>
 
             <p
-              className="
+              className={tw(`
                 m-0
                 mt-5
                 max-w-[30rem]
                 text-[clamp(0.9rem,1.15vw,0.98rem)]
                 leading-[1.65]
                 text-[#cbdcdf]
-              "
+              `)}
             >
               Kelola catatan siswa, kehadiran, nilai, dan jadwal melalui akses
               internal.
@@ -259,7 +260,7 @@ export default function Login() {
             onSubmit={handleTeacherLoginSubmit}
             aria-busy={submitting || demoSubmitting}
             aria-labelledby="cms-login-title"
-            className="
+            className={tw(`
               mx-auto
               w-full
               max-w-[32rem]
@@ -272,29 +273,29 @@ export default function Login() {
 
               lg:mx-0
               lg:max-w-none
-            "
+            `)}
           >
-            <header className="border-b-2 border-[#b9cdd0] px-6 pb-4 pt-5 sm:px-7 sm:pt-6">
+            <header className={tw("border-b-2 border-[#b9cdd0] px-6 pb-4 pt-5 sm:px-7 sm:pt-6")}>
               <h2
                 id="cms-login-title"
-                className="
+                className={tw(`
                   m-0
                   text-[clamp(1.8rem,3vw,2.15rem)]
-                  font-[900]
+                  font-extrabold
                   leading-none
                   tracking-[-0.04em]
                   text-[#173e52]
-                "
+                `)}
               >
                 Masuk ke CMS
               </h2>
 
-              <p className="m-0 mt-2 text-[0.86rem] leading-[1.5] text-[#5d737b]">
+              <p className={tw("m-0 mt-2 text-[0.86rem] leading-[1.5] text-[#5d737b]")}>
                 Gunakan NIP dan password staf yang terdaftar.
               </p>
             </header>
 
-            <div className="grid gap-4 px-6 pb-6 pt-5 sm:px-7">
+            <div className={tw("grid gap-4 px-6 pb-6 pt-5 sm:px-7")}>
               <TextField
                 id="teacher-nip"
                 label="NIP"
@@ -325,7 +326,7 @@ export default function Login() {
                 <p
                   role="alert"
                   aria-live="polite"
-                  className="
+                  className={tw(`
                     m-0
                     border
                     border-[#d79c96]
@@ -338,33 +339,18 @@ export default function Login() {
                     font-semibold
                     leading-[1.45]
                     text-[#8a3d32]
-                  "
+                  `)}
                 >
                   {message}
                 </p>
               ) : null}
 
               <PrimaryButton
-                className="
+                className={tw(`
                   mt-0.5
                   w-full
-                  !min-h-[2.8rem]
-                  !rounded-[0.08rem]
-                  !border-2
-                  !border-[#173e52]
-                  !bg-[#245b70]
-                  !text-[0.8rem]
-                  !font-[900]
-                  !uppercase
-                  !tracking-[0.12em]
-                  !shadow-[0.12rem_0.14rem_0_#88a5ae]
-
-                  hover:!bg-[#173e52]
-
-                  disabled:!cursor-not-allowed
-                  disabled:!opacity-60
-                  disabled:!shadow-none
-                "
+                `)}
+                tone="login"
                 type="submit"
                 disabled={submitting || demoSubmitting}
               >
@@ -374,7 +360,7 @@ export default function Login() {
                 type="button"
                 disabled={submitting || demoSubmitting}
                 onClick={handleTeacherDemoLogin}
-                className="
+                className={tw(`
                   w-full
                   min-h-[2.8rem]
                   rounded-[0.08rem]
@@ -384,14 +370,14 @@ export default function Login() {
                   px-4
                   py-2.5
                   text-[0.8rem]
-                  font-[900]
+                  font-extrabold
                   uppercase
                   tracking-[0.1em]
                   text-[#245b70]
                   hover:bg-[#e8f4f2]
                   disabled:cursor-not-allowed
                   disabled:opacity-60
-                "
+                `)}
               >
                 {demoSubmitting ? "Membuka demo…" : "Jelajahi Demo CMS"}
               </button>

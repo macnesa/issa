@@ -1,3 +1,4 @@
+import { tw } from "./shared/ui/tw";
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
 
@@ -7,7 +8,7 @@ import { OfflineWorkspaceProvider } from "./offline-workspace/OfflineWorkspacePr
 
 function App() {
   return (
-    <div className="App mx-auto">
+    <div className={tw("App mx-auto")}>
       <Provider store={store}>
         <OfflineWorkspaceProvider>
           <RouterProvider router={router} />

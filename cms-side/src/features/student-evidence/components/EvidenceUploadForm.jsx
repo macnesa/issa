@@ -1,3 +1,5 @@
+import { tw } from "../../../shared/ui/tw";
+import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
 import { useEffect, useRef, useState } from "react";
 import {
   InlineNotice,
@@ -155,20 +157,20 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
   }
 
   return (
-    <div className="evidence-upload">
-      <div className="evidence-upload__heading">
+    <div className={tw("evidence-upload border-b border-issa-border")}>
+      <div className={tw("evidence-upload__heading p-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
         <p>Upload evidence</p>
         <h3>Tambahkan satu foto record siswa</h3>
       </div>
 
-      <form className="evidence-upload__form" onSubmit={handleSubmit} noValidate>
+      <form className={tw("evidence-upload__form grid gap-4 p-4")} onSubmit={handleSubmit} noValidate>
         {demoReadOnly && (
           <InlineNotice tone="warning" role="note">
             Tidak tersedia dalam mode demo.
           </InlineNotice>
         )}
-        <div className="evidence-upload__file-field">
-          <label htmlFor="student-evidence-file">Foto evidence</label>
+        <div className={tw("evidence-upload__file-field grid gap-1 [&_p]:text-issa-muted [&_p]:text-metadata")}>
+          <label className={tw("text-issa-text text-label font-semibold")} htmlFor="student-evidence-file">Foto evidence</label>
           <input
             ref={fileInputRef}
             id="student-evidence-file"
@@ -178,19 +180,20 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
             aria-describedby="student-evidence-file-help student-evidence-file-error"
             aria-invalid={Boolean(errors.file)}
             disabled={submitting || demoReadOnly}
+            className={tw("w-full min-h-control border border-issa-border-strong rounded-control p-2 bg-issa-surface text-issa-text focus-visible:outline-emphasis focus-visible:outline-issa-focus focus-visible:outline-offset-1")}
           />
           <p id="student-evidence-file-help">JPEG, PNG, atau WEBP · maksimal 5 MB.</p>
-          {errors.file && <p id="student-evidence-file-error" className="evidence-upload__error">{errors.file}</p>}
+          {errors.file && <p id="student-evidence-file-error" className={tw("evidence-upload__error text-issa-danger")}>{errors.file}</p>}
         </div>
 
         {file && previewUrl && (
-          <div className="evidence-upload__preview">
+          <div className={tw("evidence-upload__preview flex min-w-0 items-center gap-3 border border-issa-border rounded-surface p-3 bg-issa-subtle [&>img]:w-16 [&>img]:h-16 [&>img]:flex-none [&>img]:rounded-control [&>img]:object-cover [&>div]:grid [&>div]:min-w-0 [&>div]:gap-1 [&_strong]:text-issa-text [&_strong]:text-supporting [&_span]:text-issa-muted [&_span]:text-metadata")}>
             <img src={previewUrl} alt={`Preview ${title.trim() || file.name}`} />
             <div>
               <strong>{file.name}</strong>
               <span>{formatEvidenceFileSize(file.size)}</span>
-              <div className="evidence-upload__preview-actions">
-                <label htmlFor="student-evidence-file">Ganti file</label>
+              <div className={tw("evidence-upload__preview-actions flex flex-wrap items-center gap-2")}>
+                <label className={tw("cursor-pointer text-issa-accent text-button font-bold")} htmlFor="student-evidence-file">Ganti file</label>
                 <TertiaryButton compact type="button" onClick={clearFile} disabled={submitting}>
                   Hapus file
                 </TertiaryButton>
@@ -199,7 +202,7 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
           </div>
         )}
 
-        <div className="evidence-upload__fields">
+        <div className={tw("evidence-upload__fields grid gap-4 md:grid-cols-2")}>
           <TextField
             id="student-evidence-title"
             label="Judul"
@@ -230,13 +233,13 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
             disabled={submitting || demoReadOnly}
             error={errors.observedAt}
           />
-          <div className="issa-control-field evidence-upload__description">
-            <label className="issa-control-label" htmlFor="student-evidence-description">
-              Deskripsi <span className="issa-control-label__optional">Opsional</span>
+          <div className={tw("issa-control-field min-w-0 evidence-upload__description col-span-full")}>
+            <label className={tw("issa-control-label block mb-1 text-issa-text text-label font-semibold")} htmlFor="student-evidence-description">
+              Deskripsi <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-metadata uppercase")}>Opsional</span>
             </label>
             <textarea
               id="student-evidence-description"
-              className="issa-native-control issa-native-control--textarea"
+              className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               maxLength={500}
@@ -246,14 +249,14 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
               aria-describedby={errors.description ? "student-evidence-description-error" : undefined}
             />
             {errors.description && (
-              <p id="student-evidence-description-error" className="issa-control-error">
+              <p id="student-evidence-description-error" className={tw("issa-control-error text-issa-danger font-semibold")}>
                 {errors.description}
               </p>
             )}
           </div>
         </div>
 
-        <div className="evidence-upload__actions">
+        <div className={tw("evidence-upload__actions flex flex-wrap items-center gap-2 max-sm:[&>.issa-button]:w-full")}>
           <PrimaryButton type="submit" disabled={submitting || demoReadOnly}>
             {submitting ? "Mengunggah..." : "Simpan evidence"}
           </PrimaryButton>
@@ -262,7 +265,7 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
               Reset form
             </SecondaryButton>
           )}
-          <p className="evidence-upload__status" role="status" aria-live="polite">
+          <p className={tw("evidence-upload__status min-w-0 [flex:1_1_12rem] text-issa-muted text-metadata")} role="status" aria-live="polite">
             {statusMessage}
           </p>
         </div>

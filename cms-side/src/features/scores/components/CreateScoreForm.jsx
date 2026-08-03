@@ -1,3 +1,4 @@
+import { tw } from "../../../shared/ui/tw";
 import { useEffect, useMemo, useState } from "react";
 import baseUrl from "../../../config/api";
 import {
@@ -122,13 +123,13 @@ export default function CreateScoreForm({ studentId, onCreated }) {
 
   return (
     <LedgerShell
-      className="score-entry-ledger"
+      className={tw("score-entry-ledger")}
       eyebrow="Rekam akademik"
       title="Catat nilai"
       description="Pilih mata pelajaran dan penilaian yang sesuai."
     >
-      <form onSubmit={handleStudentScoreSubmit} className="score-entry-ledger__form">
-        <div className="score-entry-ledger__fields">
+      <form onSubmit={handleStudentScoreSubmit} className={tw("score-entry-ledger__form p-4 max-sm:p-4")}>
+        <div className={tw("score-entry-ledger__fields grid gap-4 lg:[grid-template-columns:repeat(12,_minmax(0,_1fr))] lg:[align-items:end]")}>
           <SelectField
             id="score-lesson"
             label="Mata pelajaran"
@@ -138,7 +139,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             onChange={(LessonId) => setForm({ ...form, LessonId })}
             options={lessonOptions}
             placeholder={loadingOptions ? "Memuat..." : "Pilih mata pelajaran"}
-            className="score-entry-ledger__lesson"
+            className={tw("score-entry-ledger__lesson lg:col-span-6")}
           />
           <ComboboxField
             id="score-assignment"
@@ -149,17 +150,17 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             onChange={(AssignmentId) => setForm({ ...form, AssignmentId })}
             options={assignmentOptions}
             placeholder={loadingOptions ? "Memuat..." : "Cari penilaian"}
-            className="score-entry-ledger__assessment"
+            className={tw("score-entry-ledger__assessment lg:col-span-6")}
           />
           <Surface
             as="div"
             variant="subtle"
-            className="score-entry-ledger__threshold"
+            className={tw("score-entry-ledger__threshold flex [min-height:4rem] flex-col justify-center py-2 px-3 lg:col-span-3")}
             aria-live="polite"
           >
-            <span>Ambang ketuntasan</span>
-            <strong>{selectedLesson?.KKM != null ? selectedLesson.KKM : "—"}</strong>
-            <small>
+            <span className={tw("text-issa-muted text-metadata font-bold tracking-metadata uppercase")}>Ambang ketuntasan</span>
+            <strong className={tw("mt-1 text-issa-text text-section-title leading-tight")}>{selectedLesson?.KKM != null ? selectedLesson.KKM : "—"}</strong>
+            <small className={tw("mt-1 text-issa-muted text-metadata")}>
               {selectedLesson?.KKM != null
                 ? "KKM mata pelajaran terpilih"
                 : "Pilih mata pelajaran"}
@@ -178,7 +179,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             helperText={selectedLesson?.KKM != null
               ? `Rentang 0–100. Ketuntasan mulai ${selectedLesson.KKM}.`
               : "Masukkan angka bulat 0–100."}
-            className="score-entry-ledger__score-field"
+            className={tw("score-entry-ledger__score-field lg:col-span-3")}
           />
           <DateTimeField
             id="score-recorded-at"
@@ -187,9 +188,9 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             disabled={isDemo}
             onChange={(recordedAt) => setForm({ ...form, recordedAt })}
             optional
-            className="score-entry-ledger__date-field"
+            className={tw("score-entry-ledger__date-field lg:[grid-column:span_4]")}
           />
-          <div className="score-entry-ledger__submit">
+          <div className={tw("score-entry-ledger__submit flex min-w-0 flex-col [align-self:end] gap-1 lg:[grid-column:1_/_-1] [&>.issa-button]:w-full [&_p]:m-0 [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:leading-normal")}>
             <PrimaryButton
               type="submit"
               disabled={submitDisabled}
@@ -210,7 +211,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
       </form>
       {message && (
         <InlineNotice
-          className="score-entry-ledger__message"
+          className={tw("score-entry-ledger__message [margin:0_var(--issa-space-4)_var(--issa-space-4)] max-sm:[margin:0_var(--issa-space-4)_var(--issa-space-4)]")}
           tone={message.includes("berhasil") ? "success" : "danger"}
         >
           {message}

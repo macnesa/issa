@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import './shared/ui/ui.css';
-import './shared/ui/form-controls/form-controls.css';
+import './tailwind-overrides.css';
 import App from './App';
 import { registerOfflineAppShell } from './offline-workspace/registerServiceWorker';
 

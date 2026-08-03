@@ -1,3 +1,4 @@
+import { tw } from "../../../shared/ui/tw";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { fetchStudentList } from "../../../store/action/ActionCreator";
@@ -17,9 +18,9 @@ export default function Pagination({ data }) {
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="student-pagination" aria-label="Paginasi siswa">
-      <p>Halaman {currentPage} dari {totalPages}</p>
-      <div>
+    <nav className={tw("student-pagination flex items-center justify-between gap-2")} aria-label="Paginasi siswa">
+      <p className={tw("text-issa-muted text-body")}>Halaman {currentPage} dari {totalPages}</p>
+      <div className={tw("flex items-center gap-2")}>
         <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage - 1)} disabled={currentPage === 1}>Sebelumnya</SecondaryButton>
         <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage + 1)} disabled={currentPage === totalPages}>Berikutnya</SecondaryButton>
       </div>

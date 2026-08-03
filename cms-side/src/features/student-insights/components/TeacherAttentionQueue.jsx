@@ -1,3 +1,4 @@
+import { tw } from "../../../shared/ui/tw";
 import { useCallback, useEffect, useRef, useState } from "react";
 import baseUrl from "../../../config/api";
 import {
@@ -5,7 +6,6 @@ import {
   LedgerShell,
   SecondaryButton,
 } from "../../../shared/ui/ui";
-import "./TeacherAttentionQueue.css";
 
 const urgencyLevels = new Set(["high", "medium", "low"]);
 const ignoreCountChange = () => {};
@@ -84,14 +84,14 @@ function getFlagPresentation(flag) {
 
 function AttentionQueueSkeleton() {
   return (
-    <div className="teacher-attention-queue__skeleton" aria-label="Memuat siswa yang perlu ditinjau">
+    <div className={tw("teacher-attention-queue__skeleton")} aria-label="Memuat siswa yang perlu ditinjau">
       {[0, 1, 2].map((rowIndex) => (
-        <div className="teacher-attention-queue__skeleton-row" key={rowIndex}>
-          <span className="teacher-attention-queue__skeleton-index" />
-          <span className="teacher-attention-queue__skeleton-portrait" />
-          <span className="teacher-attention-queue__skeleton-identity" />
-          <span className="teacher-attention-queue__skeleton-fact" />
-          <span className="teacher-attention-queue__skeleton-action" />
+        <div className={tw("teacher-attention-queue__skeleton-row grid [grid-template-columns:2.75rem_minmax(8.5rem,_0.65fr)_minmax(0,_2fr)_6rem] [min-height:5rem] items-center gap-3 p-4 [&+&]:border-t [&+&]:border-issa-border [&_span]:block [&_span]:rounded-control [&_span]:bg-issa-disabled [&_span]:[animation:attention-ledger-loading_1.4s_ease-in-out_infinite_alternate] max-lg:[grid-template-columns:2.75rem_minmax(0,_1fr)] motion-reduce:[&_span]:[animation:none]")} key={rowIndex}>
+          <span className={tw("teacher-attention-queue__skeleton-index hidden")} />
+          <span className={tw("teacher-attention-queue__skeleton-portrait w-11 h-11")} />
+          <span className={tw("teacher-attention-queue__skeleton-identity [width:82%] [height:1.5rem]")} />
+          <span className={tw("teacher-attention-queue__skeleton-fact [width:92%] h-8 max-lg:col-start-2")} />
+          <span className={tw("teacher-attention-queue__skeleton-action [width:6rem] h-9 max-lg:col-start-2")} />
         </div>
       ))}
     </div>
@@ -100,14 +100,17 @@ function AttentionQueueSkeleton() {
 
 function AttentionQueueMessage({ tone, title, description, onRetry }) {
   return (
-    <div className={`teacher-attention-queue__message teacher-attention-queue__message--${tone}`}>
-      <span className="teacher-attention-queue__message-index" aria-hidden="true">—</span>
+    <div className={tw(
+      `teacher-attention-queue__message grid [grid-template-columns:minmax(0,_1fr)_auto] items-center gap-4 border-l-emphasis border-issa-info p-4 bg-issa-subtle max-sm:grid-cols-1 teacher-attention-queue__message--${tone}`,
+      tone === "error" && "border-l-issa-danger"
+    )}>
+      <span className={tw("teacher-attention-queue__message-index hidden")} aria-hidden="true">—</span>
       <div>
-        <strong>{title}</strong>
-        <p>{description}</p>
+        <strong className={tw("text-issa-text text-body")}>{title}</strong>
+        <p className={tw("mt-1 text-issa-muted text-supporting")}>{description}</p>
       </div>
       {onRetry && (
-        <SecondaryButton compact type="button" className="teacher-attention-queue__retry" onClick={onRetry}>
+        <SecondaryButton compact type="button" className={tw("teacher-attention-queue__retry max-sm:w-full")} onClick={onRetry}>
           Coba lagi
         </SecondaryButton>
       )}
@@ -122,34 +125,34 @@ function AttentionQueueRow({ item, index }) {
   const urgency = urgencyLevels.has(item.priority) ? item.priority : "low";
 
   return (
-    <li className="teacher-attention-queue__row" data-urgency={urgency}>
-      <span className="teacher-attention-queue__index" aria-hidden="true">
+    <li className={tw("teacher-attention-queue__row grid [grid-template-columns:2.75rem_minmax(8.5rem,_0.65fr)_minmax(0,_2fr)_auto] [align-items:start] gap-3 border-l-emphasis border-issa-info p-4 bg-issa-surface [&+&]:border-t [&+&]:border-issa-border data-[urgency=high]:border-l-issa-danger data-[urgency=medium]:border-l-issa-warning max-lg:[grid-template-columns:2.75rem_minmax(0,_1fr)] max-sm:p-3")} data-urgency={urgency}>
+      <span className={tw("teacher-attention-queue__index hidden")} aria-hidden="true">
         {String(index + 1).padStart(2, "0")}
       </span>
       <img
-        className="teacher-attention-queue__portrait"
+        className={tw("teacher-attention-queue__portrait w-11 h-11 border border-issa-border rounded-control bg-issa-subtle object-cover")}
         src={item.student.photo}
         alt=""
       />
-      <div className="teacher-attention-queue__identity">
-        <strong>{item.student.name}</strong>
+      <div className={tw("teacher-attention-queue__identity min-w-0")}>
+        <strong className={tw("text-issa-text text-table font-semibold")}>{item.student.name}</strong>
       </div>
-      <div className="teacher-attention-queue__follow-up">
-        <p className="teacher-attention-queue__review">
+      <div className={tw("teacher-attention-queue__follow-up grid min-w-0 gap-2 pl-4 border-l border-issa-border max-lg:[padding-left:0] max-lg:[border-left:0]")}>
+        <p className={tw("teacher-attention-queue__review text-issa-text text-supporting font-bold leading-normal")}>
           {primaryPresentation.review}
         </p>
-        <p className="teacher-attention-queue__fact">
+        <p className={tw("teacher-attention-queue__fact text-issa-muted text-metadata leading-normal")}>
           {primaryPresentation.fact}
         </p>
         {primaryPresentation.context && (
-          <p className="teacher-attention-queue__context">
+          <p className={tw("teacher-attention-queue__context [border-left:var(--issa-border-width-emphasis)_solid_var(--issa-warning)] pl-2 text-issa-muted text-metadata leading-normal")}>
             {primaryPresentation.context}
           </p>
         )}
       </div>
       <ButtonLink
         compact
-        className="teacher-attention-queue__action"
+        className={tw("teacher-attention-queue__action max-lg:col-start-2 max-lg:[justify-self:start] max-sm:w-full")}
         to={`/students/${item.student.id}`}
         aria-label={`Tinjau siswa ${item.student.name}`}
       >
@@ -204,15 +207,15 @@ export default function TeacherAttentionQueue({
 
   return (
     <LedgerShell
-      className="teacher-attention-queue"
+      className={tw("teacher-attention-queue mb-6")}
       eyebrow="Tindak lanjut"
       title="Perlu ditinjau"
       description="Daftar tindak lanjut berdasarkan data kehadiran, pengukuran akademik, dan observasi guru."
       aria-busy={status === "loading"}
     >
       {status === "success" && attentionQueue.length > 0 && (
-        <div className="teacher-attention-queue__summary">
-          <span className="teacher-attention-queue__count">
+        <div className={tw("teacher-attention-queue__summary flex justify-end [padding:var(--issa-space-3)_var(--issa-space-4)_0]")}>
+          <span className={tw("teacher-attention-queue__count text-issa-muted text-metadata font-semibold")}>
             {attentionQueue.length} tindak lanjut
           </span>
         </div>
@@ -235,7 +238,7 @@ export default function TeacherAttentionQueue({
         />
       )}
       {status === "success" && attentionQueue.length > 0 && (
-        <ol className="teacher-attention-queue__register">
+        <ol className={tw("teacher-attention-queue__register [max-height:30rem] overflow-y-auto overscroll-contain")}>
           {attentionQueue.map((item, index) => (
             <AttentionQueueRow key={item.student.id} item={item} index={index} />
           ))}

@@ -1,3 +1,4 @@
+import { tw } from "../shared/ui/tw";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -19,8 +20,8 @@ import {
   DestructiveButton,
   SecondaryButton,
 } from "../shared/ui/ui";
+import Icon from "../shared/ui/Icon";
 import issaLogo from "../../assets/img/logo.png";
-import "./teacher-navigation.css";
 
 const navigation = [
   { to: "/", label: "Dashboard", icon: "dashboard", end: true },
@@ -100,42 +101,43 @@ export default function Sidebar({ status = null }) {
   };
 
   return (
-    <aside className="teacher-sidebar">
-      <div className="teacher-sidebar__brand">
-        <div className="teacher-sidebar__identity">
-          <div className="teacher-sidebar__seal">
-            <img src={issaLogo} alt="ISSA" />
+    <aside className={tw("teacher-sidebar relative [z-index:var(--issa-z-shell)] flex w-full min-w-0 flex-col [border-bottom:var(--issa-border-width)_solid_var(--issa-text)] bg-issa-text text-issa-inverse lg:sticky lg:top-0 lg:[width:var(--teacher-sidebar-width)] lg:[height:100svh] lg:[min-height:32rem] lg:[border-right:var(--issa-border-width)_solid_var(--issa-text)] lg:[border-bottom:0]")}>
+      <div className={tw("teacher-sidebar__brand flex min-w-0 [min-height:var(--teacher-utility-height)] items-center justify-between gap-4 [border-bottom:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_28%,_______transparent_____)] py-2 px-4 lg:pr-4 lg:pl-4")}>
+        <div className={tw("teacher-sidebar__identity flex min-w-0 items-center gap-3 max-sm:gap-2")}>
+          <div className={tw("teacher-sidebar__seal h-12 w-12 flex-none max-sm:h-10 max-sm:w-10")}>
+            <img className={tw("block h-full w-full object-contain")} src={issaLogo} alt="ISSA" />
           </div>
-          <p>
-            <strong>ISSA CMS</strong>
+          <p className={tw("grid min-w-0 gap-1 text-metadata font-medium leading-tight text-issa-inverse-muted")}>
+            <strong className={tw("text-product font-bold tracking-product text-issa-inverse")}>ISSA CMS</strong>
             <span>Ruang kerja guru</span>
           </p>
         </div>
         <SecondaryButton
           type="button"
           onClick={handleTeacherLogout}
-          className="teacher-sidebar__mobile-logout"
+          className={tw("teacher-sidebar__mobile-logout flex-none lg:hidden")}
         >
           Keluar
         </SecondaryButton>
       </div>
 
-      <nav className="teacher-sidebar__navigation" aria-label="Navigasi utama">
-        <ul>
+      <nav className={tw("teacher-sidebar__navigation min-w-0 overflow-x-auto [border-bottom:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_24%,_______transparent_____)] py-2 px-3 [scrollbar-width:thin] [scrollbar-color:var(--issa-border-strong)_transparent] lg:[overflow-x:visible] lg:[padding:var(--issa-space-6)_var(--issa-space-4)] max-sm:pr-2 max-sm:pl-2")} aria-label="Navigasi utama">
+        <ul className={tw("flex w-max min-w-full gap-1 lg:grid lg:w-full lg:min-w-0 max-sm:w-full max-sm:min-w-0")}>
           {navigation.map((navigationItem) => (
-            <li key={navigationItem.to}>
+            <li className={tw("max-sm:min-w-0 max-sm:flex-1")} key={navigationItem.to}>
               <NavLink
                 end={navigationItem.end}
                 to={navigationItem.to}
-                className={({ isActive }) => `teacher-sidebar__nav-link ${isActive ? "is-active" : ""}`}
+                className={({ isActive }) => tw(
+                  "teacher-sidebar__nav-link relative flex min-h-control items-center gap-3 rounded-control border border-transparent border-l-emphasis border-l-transparent px-3 py-2 text-button font-semibold leading-tight text-issa-inverse-muted transition-colors duration-default hover:border-[color-mix(in_srgb,var(--issa-text-inverse-muted)_28%,transparent)] hover:border-l-issa-selection hover:bg-[color-mix(in_srgb,var(--issa-surface-subtle)_10%,transparent)] hover:text-issa-inverse focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus motion-reduce:transition-none max-sm:justify-center max-sm:gap-1 max-sm:px-1 max-sm:text-supporting",
+                  isActive && "is-active border-issa-border-strong border-l-issa-selection bg-issa-subtle text-issa-text hover:border-issa-border-strong hover:border-l-issa-selection hover:bg-issa-subtle hover:text-issa-text"
+                )}
               >
-                <span
-                  className="material-symbols-outlined teacher-sidebar__nav-icon"
-                  aria-hidden="true"
-                >
-                  {navigationItem.icon}
-                </span>
-                <span className="teacher-sidebar__nav-label">
+                <Icon
+                  name={navigationItem.icon}
+                  className={tw("teacher-sidebar__nav-icon [width:1.25rem] [flex:0_0_1.25rem] text-xl text-center")}
+                />
+                <span className={tw("teacher-sidebar__nav-label min-w-0 [overflow-wrap:anywhere] max-sm:[overflow-wrap:normal] max-sm:whitespace-nowrap")}>
                   {navigationItem.label}
                 </span>
               </NavLink>
@@ -144,43 +146,33 @@ export default function Sidebar({ status = null }) {
         </ul>
       </nav>
 
-      <footer className="teacher-sidebar__context">
+      <footer className={tw("teacher-sidebar__context flex min-w-0 items-center justify-end gap-2 [margin-top:auto] [border-top:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_28%,_______transparent_____)] [background:color-mix(in_srgb,_var(--issa-text)_88%,_black)] py-2 px-3 lg:grid lg:[grid-template-columns:minmax(0,_1fr)] lg:[align-items:initial] lg:justify-items-stretch lg:gap-3 lg:p-4")}>
         {status && (
-          <div className="teacher-sidebar__status">
+          <div className={tw("teacher-sidebar__status min-w-0 [&_.offline-status]:w-full [&_.offline-status]:justify-start [&_.offline-status_details]:w-full [&_.offline-status_summary]:w-full lg:w-full max-sm:flex-1")}>
             {status}
           </div>
         )}
         {isDemo && (
-          <div className="teacher-sidebar__demo">
-            <strong>Mode demo</strong>
-            <span>Akses hanya-baca</span>
+          <div className={tw("teacher-sidebar__demo border-l-emphasis border-issa-selection px-3 py-2 text-issa-inverse")}>
+            <strong className={tw("block text-metadata font-bold uppercase tracking-metadata")}>Mode demo</strong>
+            <span className={tw("mt-1 block text-metadata text-issa-inverse-muted")}>Akses hanya-baca</span>
           </div>
         )}
         {teacherName && (
-          <div className="teacher-sidebar__teacher">
-            <span
-              className="material-symbols-outlined"
-              aria-hidden="true"
-            >
-              account_circle
-            </span>
-            <div>
-              <span>Guru</span>
-              <strong>{teacherName}</strong>
+          <div className={tw("teacher-sidebar__teacher hidden min-w-0 items-center gap-2 [border-top:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_24%,_______transparent_____)] pt-3 lg:flex")}>
+            <Icon className={tw("flex-none text-section-title text-issa-selection")} name="account_circle" />
+            <div className={tw("grid min-w-0 gap-1")}>
+              <span className={tw("text-metadata text-issa-inverse-muted")}>Guru</span>
+              <strong className={tw("overflow-hidden text-ellipsis whitespace-nowrap text-supporting font-semibold text-issa-inverse")}>{teacherName}</strong>
             </div>
           </div>
         )}
         <SecondaryButton
           type="button"
           onClick={handleTeacherLogout}
-          className="teacher-sidebar__logout"
+          className={tw("teacher-sidebar__logout flex-none lg:w-full lg:justify-center max-lg:hidden")}
         >
-          <span
-            className="material-symbols-outlined"
-            aria-hidden="true"
-          >
-            logout
-          </span>
+          <Icon className={tw("text-section-title")} name="logout" />
           Keluar
         </SecondaryButton>
       </footer>
@@ -190,21 +182,21 @@ export default function Sidebar({ status = null }) {
           if (!logoutPending) setLogoutConfirmationOpen(false);
         }}
       >
-        <DialogBackdrop className="issa-dialog-backdrop" />
-        <div className="issa-dialog-container">
-          <DialogPanel className="issa-dialog-panel teacher-logout-dialog">
-            <div className="teacher-logout-dialog__body">
-              <DialogTitle>Perubahan kehadiran belum disinkronkan</DialogTitle>
-              <p>Masih ada perubahan kehadiran yang belum disinkronkan.</p>
-              <p>
+        <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
+        <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
+          <DialogPanel className={tw("issa-dialog-panel [width:min(32rem,_100%)] overflow-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] teacher-logout-dialog overflow-hidden")}>
+            <div className={tw("teacher-logout-dialog__body p-4")}>
+              <DialogTitle className={tw("text-section-title font-bold leading-tight text-issa-text")}>Perubahan kehadiran belum disinkronkan</DialogTitle>
+              <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>Masih ada perubahan kehadiran yang belum disinkronkan.</p>
+              <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>
                 Untuk mencegah data guru berikutnya tercampur, perubahan
                 lokal harus dihapus sebelum keluar.
               </p>
               {logoutError && (
-                <p role="alert" aria-live="assertive">{logoutError}</p>
+                <p className={tw("mt-2 text-body font-semibold leading-normal text-issa-danger")} role="alert" aria-live="assertive">{logoutError}</p>
               )}
             </div>
-            <div className="teacher-logout-dialog__actions">
+            <div className={tw("teacher-logout-dialog__actions flex flex-wrap justify-end gap-3 border-t border-issa-border p-4 [&_button]:max-w-full [&_button]:whitespace-normal")}>
               <SecondaryButton
                 type="button"
                 disabled={logoutPending}

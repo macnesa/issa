@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { getAuthorizedClassName } from "./authorizedClass";
 
 const studentDetailSource = readFileSync("src/pages/AddStudent.jsx", "utf8");
-const sharedUiCss = readFileSync("src/shared/ui/ui.css", "utf8");
+const sharedUiSource = readFileSync("src/shared/ui/ui.jsx", "utf8");
 
 describe("authorized student class context", () => {
   test("uses the direct detail class when available", () => {
@@ -20,8 +20,8 @@ describe("authorized student class context", () => {
   });
 
   test("keeps the mobile header compact and the NIM unbroken", () => {
-    expect(sharedUiCss).toContain(".issa-student-context__portrait");
-    expect(sharedUiCss).toContain(".issa-no-wrap");
+    expect(sharedUiSource).toContain("issa-student-context__portrait w-14 h-14");
+    expect(sharedUiSource).toContain("issa-no-wrap whitespace-nowrap");
     expect(studentDetailSource).not.toContain("Kelas Anda");
   });
 });

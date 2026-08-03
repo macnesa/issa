@@ -1,3 +1,4 @@
+import { tw } from "../tw";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { DayPicker } from "@daypicker/react";
 import { id as indonesianLocale } from "@daypicker/react/locale";
@@ -9,6 +10,7 @@ import {
 import { CalendarChevron, CalendarIcon } from "./form-control-icons";
 import TimeField from "./TimeField";
 import { calendarClassNames } from "./DateField";
+import { fieldMessageClasses, triggerClasses } from "./controlStyles";
 
 const calendarLabels = {
   labelNav: () => "Navigasi bulan",
@@ -55,23 +57,23 @@ export default function DateTimeField({
   }
 
   return (
-    <Popover className={`issa-control-field issa-date-time-field issa-control-tone--${tone} ${className}`}>
+    <Popover className={tw(`issa-control-field min-w-0 issa-date-time-field issa-control-tone--${tone} ${className}`)}>
       {({ close }) => (
         <>
-          <label id={labelId} htmlFor={id} className={`issa-control-label ${hideLabel ? "sr-only" : ""}`}>
+          <label id={labelId} htmlFor={id} className={tw(`issa-control-label block mb-1 text-issa-text text-label font-semibold ${hideLabel ? "sr-only" : ""}`)}>
             {label}
-            {optional && <span className="issa-control-label__optional">Opsional</span>}
+            {optional && <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-metadata uppercase")}>Opsional</span>}
           </label>
           <PopoverButton
             id={id}
-            className="issa-date-trigger"
+            className={tw(triggerClasses, "issa-date-trigger justify-start")}
             disabled={disabled}
             aria-labelledby={`${labelId} ${id}`}
             aria-describedby={describedBy}
             aria-invalid={Boolean(error)}
           >
-            <CalendarIcon className="issa-date-trigger__icon" />
-            <span className={parsedValue ? "" : "is-placeholder"}>
+            <CalendarIcon className={tw("issa-date-trigger__icon [width:1.05rem] [height:1.05rem] flex-none text-issa-accent")} />
+            <span className={tw(!parsedValue && "is-placeholder text-issa-muted")}>
               {parsedValue ? formatDateTimeDisplay(value) : placeholder}
             </span>
           </PopoverButton>
@@ -79,7 +81,7 @@ export default function DateTimeField({
             anchor={{ to: "bottom start", gap: 6, padding: 8 }}
             portal
             focus
-            className="issa-calendar-panel issa-date-time-panel"
+            className={tw("issa-calendar-panel z-popover [width:min(21rem,_calc(100vw_-_1rem))] [max-height:var(--anchor-max-height)] overflow-auto border border-issa-border-strong rounded-dialog bg-issa-surface p-3 shadow-dialog outline-none max-sm:p-2 issa-date-time-panel [width:min(22rem,_calc(100vw_-_1rem))]")}
           >
             <DayPicker
               mode="single"
@@ -98,19 +100,19 @@ export default function DateTimeField({
               onChange={handleTimeChange}
               disabled={!selectedDate}
             />
-            <div className="issa-date-time-panel__actions">
+            <div className={tw("issa-date-time-panel__actions flex justify-end [gap:0.5rem] [margin-top:0.75rem] border-t border-issa-border [padding-top:0.75rem]")}>
               {optional && value && (
-                <button type="button" className="issa-calendar-action issa-calendar-action--clear" onClick={() => onChange("")}>
+                <button type="button" className={tw("issa-calendar-action issa-calendar-action--clear min-h-9 rounded-control border border-issa-border-strong bg-issa-surface px-3 py-1.5 text-metadata font-bold text-issa-text disabled:cursor-not-allowed disabled:opacity-50")} onClick={() => onChange("")}>
                   Kosongkan
                 </button>
               )}
-              <button type="button" className="issa-calendar-action" onClick={() => close()} disabled={!selectedDate}>
+              <button type="button" className={tw("issa-calendar-action min-h-9 rounded-control border border-issa-accent bg-issa-accent px-3 py-1.5 text-metadata font-bold text-issa-inverse disabled:cursor-not-allowed disabled:opacity-50")} onClick={() => close()} disabled={!selectedDate}>
                 Selesai
               </button>
             </div>
           </PopoverPanel>
-          {helperText && <p id={helperId} className="issa-control-helper">{helperText}</p>}
-          {error && <p id={errorId} className="issa-control-error">{error}</p>}
+          {helperText && <p id={helperId} className={tw("issa-control-helper text-issa-muted", fieldMessageClasses)}>{helperText}</p>}
+          {error && <p id={errorId} className={tw("issa-control-error font-semibold text-issa-danger", fieldMessageClasses)}>{error}</p>}
         </>
       )}
     </Popover>

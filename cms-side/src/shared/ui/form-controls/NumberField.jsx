@@ -1,3 +1,5 @@
+import { tw } from "../tw";
+import { fieldMessageClasses, nativeControlClasses } from "./controlStyles";
 export default function NumberField({
   id,
   label,
@@ -14,21 +16,21 @@ export default function NumberField({
   const describedBy = [errorId, helperId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <div className={`issa-control-field issa-number-field ${className}`}>
-      <label className={`issa-control-label ${hideLabel ? "sr-only" : ""}`} htmlFor={id}>{label}</label>
+    <div className={tw(`issa-control-field min-w-0 issa-number-field ${className}`)}>
+      <label className={tw(`issa-control-label block mb-1 text-issa-text text-label font-semibold ${hideLabel ? "sr-only" : ""}`)} htmlFor={id}>{label}</label>
       <input
         id={id}
         type="number"
         inputMode="numeric"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="issa-native-control issa-number-control"
+        className={tw(nativeControlClasses, "issa-number-control appearance-none px-3 py-2 [-moz-appearance:textfield]")}
         aria-invalid={Boolean(error)}
         aria-describedby={describedBy}
         {...inputProps}
       />
-      {helperText && <p id={helperId} className="issa-control-helper">{helperText}</p>}
-      {error && <p id={errorId} className="issa-control-error">{error}</p>}
+      {helperText && <p id={helperId} className={tw("issa-control-helper text-issa-muted", fieldMessageClasses)}>{helperText}</p>}
+      {error && <p id={errorId} className={tw("issa-control-error font-semibold text-issa-danger", fieldMessageClasses)}>{error}</p>}
     </div>
   );
 }

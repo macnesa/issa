@@ -25,10 +25,7 @@ vi.mock("../../../offline-workspace/OfflineWorkspaceProvider", () => ({
 
 import TableAttendances from "./TableAttendance";
 
-const attendanceCss = readFileSync(
-  "src/features/attendance/attendance-workspace.css",
-  "utf8"
-);
+const attendanceRouteSource = readFileSync("src/pages/Attendance.jsx", "utf8");
 
 const student = {
   id: 7,
@@ -102,10 +99,10 @@ describe("production Attendance update path", () => {
       }));
     expect(container.querySelector('[data-label="Record"]'))
       .toContainElement(screen.getByRole("button", { name: "Lihat record" }));
-    expect(attendanceCss).toContain("@media (max-width: 1023px)");
-    expect(attendanceCss).toMatch(
-      /\.attendance-register__table\s*\{[^}]*min-width:\s*0;/s
-    );
+    expect(container.querySelector(".attendance-register__row"))
+      .toHaveClass("max-lg:grid");
+    expect(attendanceRouteSource)
+      .toMatch(/attendance-register__table[^"]*\bmin-w-0\b/);
   });
 
   test("Attendance create remains online-only", async () => {

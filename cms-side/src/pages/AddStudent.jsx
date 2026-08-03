@@ -1,3 +1,4 @@
+import { tw } from "../shared/ui/tw";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -43,10 +44,9 @@ import AttendanceRecordEditor from "../features/attendance/components/Attendance
 import AiNarrativeWorkspace from "../features/ai-learning-narrative/AiNarrativeWorkspace";
 import { getAuthorizedClassName } from "../features/students/authorizedClass";
 import { DEMO_READ_ONLY_MESSAGE } from "../auth/demoAccess";
-import "../features/students/student-record.css";
 
-const recordSurfaceClasses = "student-record-surface";
-const unavailableSurfaceClasses = "student-record-unavailable";
+const recordSurfaceClasses = "student-record-surface min-w-0 overflow-hidden";
+const unavailableSurfaceClasses = "student-record-unavailable min-w-0 p-6";
 
 const workspaceViews = Object.freeze([
   { id: "summary", label: "Ringkasan" },
@@ -216,7 +216,7 @@ export default function StudentDetail() {
   }, []);
 
   if (detailLoading) return <PageContainer><LoadingState label="Memuat detail siswa..." /></PageContainer>;
-  if (detailError) return <PageContainer><Surface className="p-5"><ErrorState message={detailError} /><SecondaryButton className="mt-4" type="button" onClick={() => navigate("/")}>Kembali ke dashboard</SecondaryButton></Surface></PageContainer>;
+  if (detailError) return <PageContainer><Surface className={tw("p-5")}><ErrorState message={detailError} /><SecondaryButton className={tw("mt-4")} type="button" onClick={() => navigate("/")}>Kembali ke dashboard</SecondaryButton></Surface></PageContainer>;
 
   const attendances = orderBy(
     attendanceWorkspace.records,
@@ -287,14 +287,14 @@ export default function StudentDetail() {
     />
 
     {usingCachedSnapshot && (
-      <InlineNotice className="student-workspace-notice" tone="warning">
+      <InlineNotice className={tw("student-workspace-notice mt-4")} tone="warning">
         <strong>Workspace tersimpan. </strong>
         <span>Data tersimpan dari {formatCachedAt(cachedSnapshot?.cachedAt)}. Hubungkan kembali untuk memperoleh data terbaru.</span>
       </InlineNotice>
     )}
 
     <WorkspaceTabs
-      className="student-workspace-navigation"
+      className={tw("student-workspace-navigation mt-4")}
       items={workspaceViews}
       activeId={activeWorkspace}
       onChange={setActiveWorkspace}
@@ -313,13 +313,13 @@ export default function StudentDetail() {
           description="Cakupan terbaru untuk peninjauan cepat tanpa membuka seluruh histori."
         />
 
-        <div className="student-summary-grid">
-          <Surface className={recordSurfaceClasses}>
-            <div className="student-summary-card__header">
+        <div className={tw("student-summary-grid grid min-w-0 items-start gap-4 md:grid-cols-2")}>
+          <Surface className={tw(recordSurfaceClasses)}>
+            <div className={tw("student-summary-card__header border-b border-issa-border py-3 px-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
               <p>Kehadiran</p>
               <h3>Ringkasan attendance</h3>
             </div>
-            <dl className="student-summary-metrics">
+            <dl className={tw("student-summary-metrics grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] [&>div]:min-w-0 [&>div]:p-4 [&>div+div]:border-l [&>div+div]:border-issa-border [&_dt]:text-issa-muted [&_dt]:text-metadata [&_dt]:font-bold [&_dt]:tracking-metadata [&_dt]:uppercase [&_dd]:mt-1 [&_dd]:text-issa-text [&_dd:not(.student-summary-metrics__detail)]:text-section-title [&_dd]:font-bold [&_dd]:tabular-nums")}>
               <div>
                 <dt>Record</dt>
                 <dd>{attendances.length}</dd>
@@ -330,7 +330,7 @@ export default function StudentDetail() {
               </div>
               <div>
                 <dt>Terbaru</dt>
-                <dd className="student-summary-metrics__detail">
+                <dd className={tw("student-summary-metrics__detail text-supporting leading-normal")}>
                   {attendances[0]
                     ? `${formatRecordedDate(attendances[0].attendanceDate)} · ${attendances[0].status}`
                     : "Belum ada"}
@@ -339,17 +339,17 @@ export default function StudentDetail() {
             </dl>
           </Surface>
 
-          <Surface className={recordSurfaceClasses}>
-            <div className="student-summary-card__header">
+          <Surface className={tw(recordSurfaceClasses)}>
+            <div className={tw("student-summary-card__header border-b border-issa-border py-3 px-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
               <p>Akademik</p>
               <h3>Ringkasan nilai</h3>
             </div>
             {usingCachedSnapshot ? (
-              <p className="student-summary-card__empty">
+              <p className={tw("student-summary-card__empty p-4 text-issa-muted text-supporting leading-normal")}>
                 Nilai memerlukan koneksi dan tidak tersedia dalam snapshot offline minimum.
               </p>
             ) : (
-              <dl className="student-summary-metrics">
+              <dl className={tw("student-summary-metrics grid [grid-template-columns:repeat(3,_minmax(0,_1fr))] [&>div]:min-w-0 [&>div]:p-4 [&>div+div]:border-l [&>div+div]:border-issa-border [&_dt]:text-issa-muted [&_dt]:text-metadata [&_dt]:font-bold [&_dt]:tracking-metadata [&_dt]:uppercase [&_dd]:mt-1 [&_dd]:text-issa-text [&_dd:not(.student-summary-metrics__detail)]:text-section-title [&_dd]:font-bold [&_dd]:tabular-nums")}>
                 <div>
                   <dt>Record</dt>
                   <dd>{scores.length}</dd>
@@ -360,7 +360,7 @@ export default function StudentDetail() {
                 </div>
                 <div>
                   <dt>Terbaru</dt>
-                  <dd className="student-summary-metrics__detail">
+                  <dd className={tw("student-summary-metrics__detail text-supporting leading-normal")}>
                     {scores[0]
                       ? `${scores[0].Lesson?.name || "Lesson"} · ${scores[0].value}`
                       : "Belum ada"}
@@ -370,45 +370,45 @@ export default function StudentDetail() {
             )}
           </Surface>
 
-          <Surface className={recordSurfaceClasses}>
-            <div className="student-summary-card__header">
+          <Surface className={tw(recordSurfaceClasses)}>
+            <div className={tw("student-summary-card__header border-b border-issa-border py-3 px-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
               <p>Informasi guru</p>
               <h3>Informasi relevan terbaru</h3>
             </div>
-            <div className="student-summary-card__body">
-              <p>
+            <div className={tw("student-summary-card__body p-4 text-issa-muted text-supporting leading-normal")}>
+              <p className={tw("text-issa-text whitespace-pre-wrap")}>
                 {latestTeacherInformation || "Belum ada informasi guru yang tersimpan."}
               </p>
               {latestFeedbackRecord && (
-                <p className="student-summary-card__metadata">
+                <p className={tw("student-summary-card__metadata mt-3 border-t border-issa-border pt-3 text-issa-muted text-metadata")}>
                   {latestFeedbackRecord.Teacher?.name || "Guru"} · {formatRecordedDate(latestFeedbackRecord.observedAt || latestFeedbackRecord.createdAt)}
                 </p>
               )}
             </div>
           </Surface>
 
-          <Surface className={recordSurfaceClasses}>
-            <div className="student-summary-card__header">
+          <Surface className={tw(recordSurfaceClasses)}>
+            <div className={tw("student-summary-card__header border-b border-issa-border py-3 px-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
               <p>Jurnal & bukti</p>
               <h3>Konteks observasi terbaru</h3>
             </div>
             {recentJournalEntries.length ? (
-              <ol className="student-summary-history">
+              <ol className={tw("student-summary-history m-0 p-0 list-none")}>
                 {recentJournalEntries.map((entry) => (
-                  <li key={entry.id}>
-                    <div className="student-summary-history__metadata">
-                      <strong>
+                  <li className={tw("min-w-0 p-4 [&+&]:border-t [&+&]:border-issa-border")} key={entry.id}>
+                    <div className={tw("student-summary-history__metadata flex min-w-0 items-baseline justify-between gap-3")}>
+                      <strong className={tw("min-w-0 text-issa-text text-supporting")}>
                         {entry.teacher?.name || "Guru"}
                       </strong>
-                      <time dateTime={entry.observedAt}>
+                      <time className={tw("text-issa-muted text-metadata")} dateTime={entry.observedAt}>
                         {formatRecordedDate(entry.observedAt)}
                       </time>
                     </div>
-                    <p className="student-summary-history__body">
+                    <p className={tw("student-summary-history__body mt-2 text-issa-text text-supporting leading-normal")}>
                       {entry.content}
                     </p>
                     {entry.evidence && (
-                      <p className="student-summary-history__evidence">
+                      <p className={tw("student-summary-history__evidence mt-2 border-l-emphasis border-issa-info pl-2")}>
                         Bukti: {entry.evidence.title || "Evidence terkait"}
                       </p>
                     )}
@@ -416,7 +416,7 @@ export default function StudentDetail() {
                 ))}
               </ol>
             ) : (
-              <p className="student-summary-card__empty">
+              <p className={tw("student-summary-card__empty p-4 text-issa-muted text-supporting leading-normal")}>
                 Belum ada konteks jurnal tersimpan untuk ditampilkan pada ringkasan.
               </p>
             )}
@@ -434,15 +434,15 @@ export default function StudentDetail() {
           eyebrow="Record operasional"
           title="Kehadiran"
           description="Record terbaru ditampilkan lebih dahulu. Status pada record yang tersedia tetap dapat diperbarui."
-          actions={<strong className="student-workspace-count">
+          actions={<strong className={tw("student-workspace-count text-issa-text text-supporting")}>
             {attendances.length ? `${attendances.length} record` : "Belum ada record"}
           </strong>}
         />
 
-        <Surface className={recordSurfaceClasses}>
+        <Surface className={tw(recordSurfaceClasses)}>
           {!isEmpty(attendances) && (
             <div
-              className="student-record-attendance-columns"
+              className={tw("student-record-attendance-columns hidden border-b border-issa-border py-2 px-4 bg-issa-subtle text-issa-muted text-table-header font-bold tracking-metadata uppercase md:grid max-md:hidden")}
               aria-hidden="true"
             >
               <span>Record</span>
@@ -450,9 +450,9 @@ export default function StudentDetail() {
               <span>Sinkronisasi</span>
             </div>
           )}
-          <div className="student-record-attendance-list">
+          <div className={tw("student-record-attendance-list grid min-w-0 py-0 px-4 md:[&>.attendance-offline-record]:[grid-template-columns:minmax(12rem,_1.15fr)_minmax(12rem,_0.9fr)_minmax(9rem,_0.7fr)] [&>.attendance-offline-record]:min-w-0 [&>.attendance-offline-record]:items-end [&>.attendance-offline-record]:gap-4 [&>.attendance-offline-record]:border-0 [&>.attendance-offline-record]:rounded-none [&>.attendance-offline-record]:bg-transparent [&>.attendance-offline-record]:py-3 [&>.attendance-offline-record]:px-0 [&>.attendance-offline-record+_.attendance-offline-record]:border-t [&>.attendance-offline-record+_.attendance-offline-record]:border-issa-border max-md:[&>.attendance-offline-record]:grid-cols-1 max-md:[&>.attendance-offline-record]:items-stretch [&>.attendance-offline-record>*]:min-w-0 [&_.attendance-offline-record__error]:col-span-full")}>
             {isEmpty(attendances) && (
-              <div className="my-4">
+              <div className={tw("my-4")}>
                 <EmptyState
                   title="Belum ada attendance"
                   description="Konteks kehadiran belum cukup untuk ditinjau."
@@ -473,7 +473,7 @@ export default function StudentDetail() {
             ))}
           </div>
           {attendances.length > 8 && (
-            <div className="student-record-ledger__actions">
+            <div className={tw("student-record-ledger__actions border-t border-issa-border py-3 px-4")}>
               <SecondaryButton
                 type="button"
                 onClick={() => setShowAllAttendances((current) => !current)}
@@ -485,7 +485,7 @@ export default function StudentDetail() {
             </div>
           )}
           <p
-            className="student-record-ledger__message"
+            className={tw("student-record-ledger__message min-h-6 border-t border-issa-border py-3 px-4 text-issa-muted text-metadata")}
             aria-live="polite"
           >
             {attendanceWorkspace.message}
@@ -511,25 +511,25 @@ export default function StudentDetail() {
         />
 
         {usingCachedSnapshot ? (
-          <Surface className={unavailableSurfaceClasses}>
+          <Surface className={tw(unavailableSurfaceClasses)}>
             <EmptyState
               title="Score memerlukan koneksi"
               description="Score tidak disimpan dalam workspace offline minimum."
             />
           </Surface>
         ) : (
-          <Surface className={recordSurfaceClasses}>
+          <Surface className={tw(recordSurfaceClasses)}>
             {isEmpty(scores) ? (
-              <div className="p-4">
+              <div className={tw("p-4")}>
                 <EmptyState
                   title="Belum ada score"
                   description="Konteks akademik belum cukup untuk ditinjau."
                 />
               </div>
             ) : (
-              <div className="student-score-ledger">
+              <div className={tw("student-score-ledger min-w-0")}>
                 <div
-                  className="student-score-ledger__columns"
+                  className={tw("student-score-ledger__columns hidden min-w-0 gap-3 border-b border-issa-border py-3 px-4 bg-issa-subtle text-issa-muted text-metadata font-bold tracking-metadata uppercase md:grid md:[grid-template-columns:minmax(0,_1.25fr)_minmax(0,_1.2fr)_8rem_5rem_8rem] md:items-center md:gap-4")}
                   aria-hidden="true"
                 >
                   <span>Pelajaran</span>
@@ -538,50 +538,50 @@ export default function StudentDetail() {
                   <span>Nilai</span>
                   <span>Status</span>
                 </div>
-                <ol className="student-score-ledger__list">
+                <ol className={tw("student-score-ledger__list m-0 p-0 list-none")}>
                   {scores.map((score) => (
                     <li
                       key={score.id}
-                      className="student-score-ledger__row"
+                      className={tw("student-score-ledger__row grid min-w-0 gap-3 py-3 px-4 [&+&]:border-t [&+&]:border-issa-border md:[grid-template-columns:minmax(0,_1.25fr)_minmax(0,_1.2fr)_8rem_5rem_8rem] md:items-center md:gap-4")}
                     >
-                      <div className="min-w-0">
-                        <span className="student-score-ledger__label">
+                      <div className={tw("min-w-0")}>
+                        <span className={tw("student-score-ledger__label text-issa-muted text-metadata font-bold tracking-metadata uppercase md:hidden")}>
                           Pelajaran
                         </span>
-                        <p className="student-score-ledger__primary">
+                        <p className={tw("student-score-ledger__primary text-issa-text text-table font-semibold")}>
                           {score.Lesson?.name || "Lesson"}
                         </p>
                       </div>
-                      <div className="min-w-0">
-                        <span className="student-score-ledger__label">
+                      <div className={tw("min-w-0")}>
+                        <span className={tw("student-score-ledger__label text-issa-muted text-metadata font-bold tracking-metadata uppercase md:hidden")}>
                           Assessment
                         </span>
-                        <p className="student-score-ledger__secondary">
+                        <p className={tw("student-score-ledger__secondary block text-issa-muted text-supporting")}>
                           {score.Assignment?.name || "Assessment"}
                         </p>
                       </div>
-                      <div className="min-w-0">
-                        <span className="student-score-ledger__label">
+                      <div className={tw("min-w-0")}>
+                        <span className={tw("student-score-ledger__label text-issa-muted text-metadata font-bold tracking-metadata uppercase md:hidden")}>
                           Tanggal
                         </span>
-                        <time className="student-score-ledger__secondary" dateTime={score.recordedAt}>
+                        <time className={tw("student-score-ledger__secondary block text-issa-muted text-supporting")} dateTime={score.recordedAt}>
                           {formatRecordedDate(score.recordedAt)}
                         </time>
                       </div>
-                      <div className="min-w-0">
-                        <span className="student-score-ledger__label">
+                      <div className={tw("min-w-0")}>
+                        <span className={tw("student-score-ledger__label text-issa-muted text-metadata font-bold tracking-metadata uppercase md:hidden")}>
                           Nilai
                         </span>
-                        <strong className="student-score-ledger__value">
+                        <strong className={tw("student-score-ledger__value block text-issa-text text-section-title [font-variant-numeric:tabular-nums]")}>
                           {score.value}
                         </strong>
                       </div>
-                      <div className="min-w-0">
-                        <span className="student-score-ledger__label">
-                          KKM {score.Lesson?.KKM ?? "-"}
+                      <div className={tw("min-w-0")}>
+                        <span className={tw("student-score-ledger__label text-issa-muted text-metadata font-bold tracking-metadata uppercase md:hidden")}>
+                          Status
                         </span>
                         <StatusBadge status={scoreStatus(score.status)} />
-                        <span className="student-score-ledger__kkm">
+                        <span className={tw("student-score-ledger__kkm block mt-1 text-issa-muted text-supporting")}>
                           KKM {score.Lesson?.KKM ?? "-"}
                         </span>
                       </div>
@@ -605,7 +605,7 @@ export default function StudentDetail() {
           title="Jurnal & Bukti"
           description="Form pencatatan dan histori jurnal berada di area jurnal; unggahan dan histori evidence berada di area bukti."
         />
-        <div className="student-journal-evidence-grid">
+        <div className={tw("student-journal-evidence-grid grid min-w-0 items-start gap-4 lg:grid-cols-2")}>
           <StudentLearningJournalSection
             studentId={studentId}
             refreshKey={journalRefreshKey}
@@ -616,7 +616,7 @@ export default function StudentDetail() {
             onJournalLoaded={handleJournalLoaded}
           />
           {usingCachedSnapshot ? (
-            <Surface className={unavailableSurfaceClasses}>
+            <Surface className={tw(unavailableSurfaceClasses)}>
               <EmptyState
                 title="Evidence memerlukan koneksi"
                 description="Evidence tidak disimpan dalam workspace offline minimum."
@@ -646,14 +646,14 @@ export default function StudentDetail() {
           description="Susun, tinjau, dan simpan feedback berbasis record. AI hanya membantu menyusun draf; keputusan akhir tetap pada guru."
         />
         {usingCachedSnapshot ? (
-          <Surface className={unavailableSurfaceClasses}>
+          <Surface className={tw(unavailableSurfaceClasses)}>
             <EmptyState
               title="Feedback memerlukan koneksi"
               description="Feedback tidak disimpan dalam workspace offline minimum."
             />
           </Surface>
         ) : (
-          <div className="student-feedback-grid">
+          <div className={tw("student-feedback-grid grid min-w-0 items-start gap-4 lg:grid-cols-2")}>
             <FeedbackForm
               feedback={feedback}
               feedbackInputRef={feedbackInputRef}

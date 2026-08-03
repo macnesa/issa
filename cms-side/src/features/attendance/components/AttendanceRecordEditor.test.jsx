@@ -19,8 +19,9 @@ describe("AttendanceRecordEditor offline state", () => {
     );
 
     expect(screen.getByText("Menunggu sinkronisasi")).toBeInTheDocument();
+    expect(screen.getByText("21/07/2026")).toBeInTheDocument();
     expect(screen.getByRole("button", {
-      name: /Status kehadiran 2026-07-21/,
+      name: /Status kehadiran 21\/07\/2026/,
     })).toBeEnabled();
   });
 
@@ -41,7 +42,7 @@ describe("AttendanceRecordEditor offline state", () => {
       "Perubahan kehadiran tidak valid."
     );
     fireEvent.click(screen.getByRole("button", {
-      name: /Status kehadiran 2026-07-21/,
+      name: /Status kehadiran 21\/07\/2026/,
     }));
     fireEvent.click(await screen.findByRole("option", { name: "Sakit" }));
     expect(onChange).toHaveBeenCalledWith(
@@ -60,7 +61,7 @@ describe("AttendanceRecordEditor offline state", () => {
 
     expect(screen.getByText("Perlu ditinjau")).toBeInTheDocument();
     expect(screen.getByRole("button", {
-      name: /Status kehadiran 2026-07-21/,
+      name: /Status kehadiran 21\/07\/2026/,
     })).toBeDisabled();
   });
 });

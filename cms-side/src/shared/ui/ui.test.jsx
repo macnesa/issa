@@ -97,6 +97,7 @@ describe("Institutional Ledger shared UI", () => {
       <LedgerShell title="Riwayat" loading loadingLabel="Memuat ledger" />
     );
     expect(screen.getByRole("status")).toHaveTextContent("Memuat ledger");
+    expect(screen.getByRole("status")).toHaveAttribute("aria-live", "polite");
 
     rerender(
       <LedgerShell title="Riwayat" error="Ledger gagal dimuat" />
@@ -111,7 +112,8 @@ describe("Institutional Ledger shared UI", () => {
         overflow
       />
     );
-    expect(screen.getByText("Belum ada record")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Belum ada record");
+    expect(screen.getByRole("status")).toHaveAttribute("aria-live", "polite");
     expect(document.querySelector(".issa-ledger-shell__body--overflow"))
       .toBeInTheDocument();
   });

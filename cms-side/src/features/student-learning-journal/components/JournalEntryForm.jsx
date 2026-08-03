@@ -1,3 +1,5 @@
+import { tw } from "../../../shared/ui/tw";
+import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
 import { useEffect, useRef, useState } from "react";
 import DateField from "../../../shared/ui/form-controls/DateField";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
@@ -17,7 +19,6 @@ import {
   journalVoiceCaptureTypes,
   maximumJournalContentLength,
 } from "../studentLearningJournal.constants";
-import "./JournalEntryForm.css";
 
 function emptyForm() {
   return {
@@ -188,8 +189,11 @@ export default function JournalEntryForm({
   const selectedCaptureType = journalVoiceCaptureTypes[form.voiceCaptureType];
 
   return (
-    <Surface className={`journal-entry-form ${editing ? "is-editing" : ""}`}>
-      <div className="journal-entry-form__heading">
+    <Surface className={tw(
+      "journal-entry-form m-4 overflow-hidden",
+      editing && "is-editing border-issa-warning"
+    )}>
+      <div className={tw("journal-entry-form__heading border-b border-issa-border p-4 bg-issa-subtle [&_p]:text-issa-accent [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold [&>span]:block [&>span]:mt-1 [&>span]:text-issa-muted [&>span]:text-supporting")}>
         <p>{editing ? "Correction mode" : "New journal entry"}</p>
         <h3>{editing ? "Koreksi catatan" : "Catat perjalanan belajar"}</h3>
         {editing && (
@@ -199,11 +203,11 @@ export default function JournalEntryForm({
 
       <form onSubmit={handleSubmit} noValidate>
         {demoReadOnly && (
-          <InlineNotice className="journal-entry-form__demo" tone="warning" role="note">
+          <InlineNotice className={tw("journal-entry-form__demo [margin:var(--issa-space-4)_var(--issa-space-4)_0]")} tone="warning" role="note">
             Tidak tersedia dalam mode demo.
           </InlineNotice>
         )}
-        <div className="journal-entry-form__fields">
+        <div className={tw("journal-entry-form__fields grid gap-4 p-4 md:grid-cols-2")}>
           <SelectField
             id="student-journal-type"
             label="Jenis catatan"
@@ -257,9 +261,9 @@ export default function JournalEntryForm({
             disabled={readOnly || submitting || evidenceStatus === "loading"}
           />
 
-          <div className="issa-control-field journal-entry-form__content">
-            <div className="journal-entry-form__content-label">
-              <label className="issa-control-label" htmlFor="student-journal-content">
+          <div className={tw("issa-control-field min-w-0 journal-entry-form__content col-span-full")}>
+            <div className={tw("journal-entry-form__content-label flex items-center justify-between gap-3 [&_span]:text-issa-muted [&_span]:text-metadata")}>
+              <label className={tw("issa-control-label block mb-1 text-issa-text text-label font-semibold")} htmlFor="student-journal-content">
                 Isi catatan
               </label>
               <span aria-hidden="true">
@@ -268,7 +272,7 @@ export default function JournalEntryForm({
             </div>
             <textarea
               id="student-journal-content"
-              className="issa-native-control issa-native-control--textarea"
+              className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
               value={form.content}
               onChange={(event) => updateField("content", event.target.value)}
               minLength={3}
@@ -283,18 +287,18 @@ export default function JournalEntryForm({
                   : "student-journal-content-help"
               }
             />
-            <p id="student-journal-content-help" className="issa-control-helper">
+            <p id="student-journal-content-help" className={tw("issa-control-helper text-issa-muted")}>
               Tulis pengamatan faktual dalam 3–1500 karakter.
             </p>
             {errors.content && (
-              <p id="student-journal-content-error" className="issa-control-error">
+              <p id="student-journal-content-error" className={tw("issa-control-error text-issa-danger font-semibold")}>
                 {errors.content}
               </p>
             )}
           </div>
         </div>
 
-        <div className="journal-entry-form__actions">
+        <div className={tw("journal-entry-form__actions flex flex-wrap items-center gap-2 border-t border-issa-border p-4 max-sm:[&>.issa-button]:w-full")}>
           <PrimaryButton type="submit" disabled={submitting || readOnly}>
             {submitting
               ? "Menyimpan..."
@@ -308,7 +312,7 @@ export default function JournalEntryForm({
             </SecondaryButton>
           )}
           <p
-            className="journal-entry-form__status"
+            className={tw("journal-entry-form__status min-w-0 [flex:1_1_14rem] text-issa-muted text-supporting")}
             role="status"
             aria-live="polite"
           >

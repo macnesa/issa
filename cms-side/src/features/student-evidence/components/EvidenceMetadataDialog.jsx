@@ -1,3 +1,5 @@
+import { tw } from "../../../shared/ui/tw";
+import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
 import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
@@ -113,18 +115,18 @@ export default function EvidenceMetadataDialog({
 
   return (
     <Dialog open={Boolean(evidence)} onClose={closeDialog}>
-      <DialogBackdrop className="issa-dialog-backdrop" />
-      <div className="issa-dialog-container">
-        <DialogPanel className="issa-dialog-panel evidence-metadata-dialog">
-          <DialogTitle className="issa-dialog-title">
+      <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
+      <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
+        <DialogPanel className={tw("issa-dialog-panel [width:min(42rem,_100%)] [max-height:calc(100svh_-_var(--issa-space-8))] overflow-y-auto overflow-x-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] evidence-metadata-dialog")}>
+          <DialogTitle className={tw("issa-dialog-title block border-b border-issa-border p-4 text-section-title font-bold leading-tight text-issa-text")}>
             Edit metadata evidence
           </DialogTitle>
-          <p className="issa-dialog-copy">
+          <p className={tw("issa-dialog-copy mt-1 px-4 text-supporting leading-normal text-issa-muted")}>
             Koreksi informasi record tanpa mengubah gambar yang tersimpan.
           </p>
 
           {evidence && (
-            <div className="evidence-metadata-dialog__reference">
+            <div className={tw("evidence-metadata-dialog__reference flex min-w-0 items-center gap-3 border border-issa-border rounded-surface p-3 bg-issa-subtle m-4 [&>img]:w-16 [&>img]:h-16 [&>img]:flex-none [&>img]:rounded-control [&>img]:object-cover [&>div]:grid [&>div]:min-w-0 [&>div]:gap-1 [&_strong]:text-issa-text [&_strong]:text-supporting [&_span]:text-issa-muted [&_span]:text-metadata")}>
               <img src={evidence.file?.url} alt="" />
               <div>
                 <strong>{evidence.title}</strong>
@@ -133,7 +135,7 @@ export default function EvidenceMetadataDialog({
             </div>
           )}
 
-          <div className="evidence-metadata-dialog__notice">
+          <div className={tw("evidence-metadata-dialog__notice grid gap-1 m-4 [&_span]:text-issa-muted [&_span]:text-metadata")}>
             <strong>Gambar tidak dapat diganti dari form ini.</strong>
             <span>
               Untuk mengganti gambar, cabut evidence lalu unggah evidence baru.
@@ -141,7 +143,7 @@ export default function EvidenceMetadataDialog({
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className="evidence-metadata-dialog__fields">
+            <div className={tw("evidence-metadata-dialog__fields grid gap-4 m-4 md:grid-cols-2")}>
               <TextField
                 id="evidence-metadata-title"
                 label="Judul"
@@ -172,16 +174,16 @@ export default function EvidenceMetadataDialog({
                 disabled={submitting}
                 error={errors.observedAt}
               />
-              <div className="issa-control-field">
+              <div className={tw("issa-control-field min-w-0")}>
                 <label
-                  className="issa-control-label"
+                  className={tw("issa-control-label block mb-1 text-issa-text text-label font-semibold")}
                   htmlFor="evidence-metadata-description"
                 >
-                  Catatan <span className="issa-control-label__optional">Opsional</span>
+                  Catatan <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-metadata uppercase")}>Opsional</span>
                 </label>
                 <textarea
                   id="evidence-metadata-description"
-                  className="issa-native-control issa-native-control--textarea"
+                  className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
                   value={form.description}
                   onChange={(event) => updateField("description", event.target.value)}
                   maxLength={500}
@@ -197,7 +199,7 @@ export default function EvidenceMetadataDialog({
                 {errors.description && (
                   <p
                     id="evidence-metadata-description-error"
-                    className="issa-control-error"
+                    className={tw("issa-control-error text-issa-danger font-semibold")}
                   >
                     {errors.description}
                   </p>
@@ -206,13 +208,13 @@ export default function EvidenceMetadataDialog({
             </div>
 
             <p
-              className="issa-dialog-error"
+              className={tw("issa-dialog-error min-h-6 [margin:var(--issa-space-3)_var(--issa-space-4)] text-issa-danger text-supporting font-semibold")}
               role={statusMessage ? "alert" : "status"}
               aria-live="polite"
             >
               {statusMessage}
             </p>
-            <div className="issa-dialog-footer">
+            <div className={tw("issa-dialog-footer flex flex-wrap justify-end gap-2 border-t border-issa-border p-4")}>
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}

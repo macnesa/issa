@@ -1,9 +1,10 @@
-import { readFileSync } from "node:fs";
 import { render, screen, within } from "@testing-library/react";
+import { readFileSync } from "node:fs";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import TeacherLayout from "./TeacherLayout";
 
-const layoutCss = readFileSync("src/layouts/teacher-layout.css", "utf8");
+const layoutSource = readFileSync("src/layouts/TeacherLayout.jsx", "utf8");
+const sidebarSource = readFileSync("src/navigation/Sidebar.jsx", "utf8");
 
 vi.mock("../navigation/Sidebar", () => ({
   default: ({ status }) => (
@@ -40,12 +41,16 @@ describe("TeacherLayout", () => {
     expect(screen.getByRole("button", {
       name: "Buka pencarian universal",
     })).toBeInTheDocument();
+    expect(screen.getByRole("link", {
+      name: "Lewati ke konten utama",
+    })).toHaveAttribute("href", "#cms-main-content");
     expect(screen.getByText("Konten halaman")).toBeInTheDocument();
   });
 
   test("mengaktifkan sidebar desktop hanya mulai 1024px", () => {
-    expect(layoutCss).toContain("@media (min-width: 1024px)");
-    expect(layoutCss).toContain("@media (max-width: 1023px)");
-    expect(layoutCss).not.toContain("@media (min-width: 768px)");
+    expect(layoutSource).toContain("lg:grid");
+    expect(sidebarSource).toContain("lg:sticky");
+    expect(layoutSource).toContain("max-lg:");
+    expect(layoutSource).not.toContain("md:grid");
   });
 });

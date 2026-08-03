@@ -1,10 +1,12 @@
+import { tw } from "../../../shared/ui/tw";
+import Icon from "../../../shared/ui/Icon";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
 import { StatusBadge } from "../../../shared/ui/ui";
 import {
   attendanceStatuses,
   attendanceSyncLabels,
 } from "../../../offline-workspace/attendanceOffline";
-import "../attendance-offline.css";
+import { formatDateDisplay } from "../../../utils/recordDates";
 
 const attendanceStatusOptions = attendanceStatuses.map((status) => ({
   value: status,
@@ -27,21 +29,23 @@ export default function AttendanceRecordEditor({
     || record.syncState === "conflict";
   const statusLabel = attendanceSyncLabels[record.syncState]
     || attendanceSyncLabels.synced;
+  const attendanceDateLabel = formatDateDisplay(record.attendanceDate)
+    || "Tanggal attendance belum tersedia";
 
   return (
     <div
-      className="attendance-offline-record record-ledger__entry"
+      className={tw("attendance-offline-record grid gap-3 border border-issa-border rounded-surface p-3 bg-issa-surface record-ledger__entry data-[sync-state=pending]:border-l-emphasis data-[sync-state=pending]:border-l-issa-warning data-[sync-state=syncing]:border-l-emphasis data-[sync-state=syncing]:border-l-issa-warning data-[sync-state=conflict]:border-l-emphasis data-[sync-state=conflict]:border-l-issa-danger data-[sync-state=failed]:border-l-emphasis data-[sync-state=failed]:border-l-issa-danger")}
       data-sync-state={record.syncState}
     >
-      <div className="attendance-offline-record__heading">
-        <span>
-          {record.attendanceDate || "Tanggal attendance belum tersedia"}
+      <div className={tw("attendance-offline-record__heading flex items-center justify-between gap-3")}>
+        <span className={tw("text-issa-text text-body font-medium")}>
+          {attendanceDateLabel}
         </span>
         <StatusBadge status={record.status} />
       </div>
       <SelectField
         id={`student-attendance-${record.id}`}
-        label={`Status kehadiran ${record.attendanceDate}`}
+        label={`Status kehadiran ${attendanceDateLabel}`}
         value={record.status}
         onChange={(status) => {
           if (!readOnly) onChange(record, status);
@@ -50,21 +54,19 @@ export default function AttendanceRecordEditor({
         options={attendanceStatusOptions}
       />
       {readOnly && (
-        <p className="attendance-offline-record__demo">
+        <p className={tw("attendance-offline-record__demo text-issa-muted text-metadata font-semibold")}>
           Tidak tersedia dalam mode demo.
         </p>
       )}
       <p
-        className="attendance-offline-record__sync-label"
+        className={tw("attendance-offline-record__sync-label inline-flex items-center gap-1 text-issa-muted text-metadata font-semibold data-[state=pending]:text-issa-warning data-[state=syncing]:text-issa-warning data-[state=conflict]:text-issa-danger data-[state=failed]:text-issa-danger")}
         data-state={record.syncState}
       >
-        <span className="material-symbols-outlined" aria-hidden="true">
-          {record.syncState === "synced" ? "cloud_done" : "schedule"}
-        </span>
+        <Icon className={tw("text-section-title")} name={record.syncState === "synced" ? "cloud_done" : "schedule"} />
         {saving ? "Menyimpan di perangkat" : statusLabel}
       </p>
       {record.syncErrorMessage && (
-        <p className="attendance-offline-record__error" role="alert">
+        <p className={tw("attendance-offline-record__error text-issa-danger text-metadata leading-normal")} role="alert">
           {record.syncErrorMessage}
         </p>
       )}

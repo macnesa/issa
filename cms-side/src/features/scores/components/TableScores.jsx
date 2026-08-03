@@ -1,3 +1,4 @@
+import { tw } from "../../../shared/ui/tw";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateStudentScore } from "../../../store/action/ActionCreator";
@@ -67,15 +68,15 @@ export default function TableScores({
   const status = data.status === true ? "Lulus" : data.status === false ? "Belum lulus" : undefined;
 
   return (
-    <tr className="score-history-ledger__row">
-      <td className="score-history-ledger__index">{String(recordIndex).padStart(2, "0")}</td>
-      <td className="score-history-ledger__subject">
+    <tr className={tw("score-history-ledger__row border-t border-issa-border bg-issa-surface text-issa-text [transition:background-color_var(--issa-motion-fast)_ease] align-top hover:bg-issa-subtle [&>td]:p-3 motion-reduce:[transition:none]")}>
+      <td className={tw("score-history-ledger__index text-issa-muted text-metadata font-bold")}>{String(recordIndex).padStart(2, "0")}</td>
+      <td className={tw("score-history-ledger__subject text-issa-text font-semibold")}>
         {data.Lesson?.name || "Belum tersedia"}
       </td>
-      <td className="score-history-ledger__assessment">
+      <td className={tw("score-history-ledger__assessment text-issa-muted text-supporting")}>
         {data.Assignment?.name || "Belum tersedia"}
       </td>
-      <td className="score-history-ledger__threshold-note">
+      <td className={tw("score-history-ledger__threshold-note text-issa-text font-semibold")}>
         {data.Lesson?.KKM ?? "—"}
       </td>
       <td>
@@ -84,7 +85,7 @@ export default function TableScores({
             id={`score-value-${data.id}`}
             label="Nilai siswa"
             hideLabel
-            className="score-history-ledger__number-field"
+            className={tw("score-history-ledger__number-field [min-width:5.25rem]")}
             min="0"
             max="100"
             step="1"
@@ -92,16 +93,16 @@ export default function TableScores({
             onChange={setValue}
           />
         ) : (
-          <span className="score-history-ledger__score-value">{data.value ?? "—"}</span>
+          <span className={tw("score-history-ledger__score-value text-issa-text text-section-title font-bold leading-tight")}>{data.value ?? "—"}</span>
         )}
       </td>
       <td><StatusBadge status={status} /></td>
       {showPredikat && (
-        <td className="score-history-ledger__predicate">
+        <td className={tw("score-history-ledger__predicate text-issa-text font-semibold")}>
           {data.category || "—"}
         </td>
       )}
-      <td className="score-history-ledger__date">
+      <td className={tw("score-history-ledger__date text-issa-muted text-supporting")}>
         <div>{formatRecordedDate(data.recordedAt)}</div>
         {editing && (
           <DateTimeField
@@ -111,12 +112,12 @@ export default function TableScores({
             value={recordedAt}
             onChange={setRecordedAt}
             optional
-            className="score-history-ledger__date-field"
+            className={tw("score-history-ledger__date-field [min-width:12rem] mt-2")}
           />
         )}
       </td>
       <td>
-        <form onSubmit={handleScoreUpdateSubmit} className="score-history-ledger__actions">
+        <form onSubmit={handleScoreUpdateSubmit} className={tw("score-history-ledger__actions [min-width:7rem] [&>div]:flex [&>div]:gap-2")}>
           {editing ? (
             <div>
               <PrimaryButton
@@ -146,13 +147,13 @@ export default function TableScores({
             </SecondaryButton>
           )}
           {isDemo && (
-            <InlineNotice className="score-history-ledger__notice">
+            <InlineNotice className={tw("score-history-ledger__notice mt-2")}>
               Tidak tersedia dalam mode demo.
             </InlineNotice>
           )}
           {message && (
             <InlineNotice
-              className="score-history-ledger__notice"
+              className={tw("score-history-ledger__notice mt-2")}
               tone="danger"
             >
               {message}

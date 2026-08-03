@@ -3,8 +3,8 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import CreateScoreForm from "./CreateScoreForm";
 import ScoreHistory from "./ScoreHistory";
 
-const scoreWorkspaceCss = readFileSync(
-  "src/features/scores/score-workspace.css",
+const scoreFormSource = readFileSync(
+  "src/features/scores/components/CreateScoreForm.jsx",
   "utf8"
 );
 
@@ -169,11 +169,10 @@ describe("CreateScoreForm", () => {
   });
 
   test("mengaktifkan form multi-kolom hanya di desktop dan menjaga submit satu baris penuh", () => {
-    expect(scoreWorkspaceCss).toContain("@media (min-width: 1024px)");
-    expect(scoreWorkspaceCss).not.toContain("@media (min-width: 760px)");
-    expect(scoreWorkspaceCss).toMatch(
-      /\.score-entry-ledger__submit\s*\{[^}]*grid-column:\s*1\s*\/\s*-1;/s
-    );
+    expect(scoreFormSource)
+      .toContain("lg:[grid-template-columns:repeat(12,_minmax(0,_1fr))]");
+    expect(scoreFormSource).not.toContain("md:");
+    expect(scoreFormSource).toContain("lg:[grid-column:1_/_-1]");
   });
 
   test("menolak perubahan nilai yang tidak valid tanpa request POST", async () => {

@@ -1,3 +1,4 @@
+import { tw } from "../../../shared/ui/tw";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DestructiveButton,
@@ -22,7 +23,6 @@ import EvidenceUploadForm from "./EvidenceUploadForm";
 import EvidenceMetadataDialog from "./EvidenceMetadataDialog";
 import EvidenceRetractionDialog from "./EvidenceRetractionDialog";
 import EvidenceViewerDialog from "./EvidenceViewerDialog";
-import "../evidence-workspace.css";
 
 export default function StudentEvidenceSection({
   demoReadOnly = false,
@@ -150,7 +150,7 @@ export default function StudentEvidenceSection({
   return (
     <>
       <LedgerShell
-        className="student-evidence-record"
+        className={tw("student-evidence-record min-w-0")}
         eyebrow="Student evidence"
         title="Bukti perkembangan"
         description="Foto dan metadata menjadi bagian dari record perkembangan siswa."
@@ -161,13 +161,13 @@ export default function StudentEvidenceSection({
           onUpload={handleUpload}
         />
 
-        <div className="student-evidence-history">
-          <div className="student-evidence-history__heading">
+        <div className={tw("student-evidence-history border-t border-issa-border")}>
+          <div className={tw("student-evidence-history__heading p-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
             <p>Evidence history</p>
             <h3>Daftar bukti perkembangan</h3>
           </div>
           <p
-            className="student-evidence-history__status"
+            className={tw("student-evidence-history__status min-h-6 py-2 px-4 text-issa-muted text-metadata")}
             role="status"
             aria-live="polite"
           >
@@ -184,15 +184,15 @@ export default function StudentEvidenceSection({
             <EmptyState title="Belum ada bukti perkembangan untuk siswa ini." />
           )}
           {resource.status === "success" && resource.data.length > 0 && (
-            <ol className="student-evidence-history__list">
+            <ol className={tw("student-evidence-history__list m-0 p-0 list-none")}>
               {resource.data.map((evidence, index) => (
-                <li key={evidence.id}>
-                  <span className="student-evidence-history__index" aria-hidden="true">
+                <li className={tw("grid [grid-template-columns:5rem_minmax(0,_1fr)] gap-3 p-4 [&+&]:border-t [&+&]:border-issa-border max-sm:grid-cols-1")} key={evidence.id}>
+                  <span className={tw("student-evidence-history__index hidden")} aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <button
                     type="button"
-                    className="student-evidence-history__thumbnail"
+                    className={tw("student-evidence-history__thumbnail [width:5rem] [height:5rem] overflow-hidden border border-issa-border-strong rounded-control p-0 bg-issa-subtle focus-visible:outline-emphasis focus-visible:outline-issa-focus focus-visible:outline-offset-1 max-sm:w-full max-sm:[height:12rem] [&_img]:w-full [&_img]:h-full [&_img]:object-cover")}
                     onClick={(event) => {
                       rememberTrigger(event);
                       setViewingEvidence(evidence);
@@ -202,24 +202,24 @@ export default function StudentEvidenceSection({
                     {evidence.file?.url ? (
                       <img src={evidence.file.url} alt="" />
                     ) : (
-                      <span className="student-evidence-history__thumbnail-placeholder">
+                      <span className={tw("student-evidence-history__thumbnail-placeholder grid h-full place-items-center p-2 text-issa-muted text-metadata")}>
                         Preview tidak tersedia
                       </span>
                     )}
                   </button>
-                  <div className="student-evidence-history__copy">
-                    <div>
+                  <div className={tw("student-evidence-history__copy min-w-0 [&>p]:block [&>p]:mt-2 [&>p]:text-issa-muted [&>p]:text-supporting [&>p]:leading-normal [&>small]:block [&>small]:mt-2 [&>small]:text-issa-muted [&>small]:text-supporting [&>small]:leading-normal")}>
+                    <div className={tw("flex flex-wrap justify-between gap-2 text-issa-muted text-metadata")}>
                       <span>{evidenceCategoryLabels[evidence.category] || evidence.category}</span>
                       <time dateTime={evidence.observedAt}>
                         {formatRecordedDate(evidence.observedAt, "Tanggal tidak tersedia")}
                       </time>
                     </div>
-                    <h4>{evidence.title}</h4>
+                    <h4 className={tw("mt-1 text-issa-text text-body font-semibold")}>{evidence.title}</h4>
                     {evidence.description && <p>{evidence.description}</p>}
                     <small>
                       Guru: {evidence.teacher?.name || "-"} · {(evidence.file?.format || "").toUpperCase()} · {formatEvidenceFileSize(evidence.file?.size)}
                     </small>
-                    <div className="student-evidence-history__actions">
+                    <div className={tw("student-evidence-history__actions flex flex-wrap items-center gap-2 mt-3 max-sm:[&>.issa-button]:w-full")}>
                       <SecondaryButton
                         compact
                         type="button"
@@ -245,7 +245,7 @@ export default function StudentEvidenceSection({
                         Cabut evidence
                       </DestructiveButton>
                       {demoReadOnly && (
-                        <span className="student-evidence-history__demo">
+                        <span className={tw("student-evidence-history__demo text-issa-muted text-metadata")}>
                           Tidak tersedia dalam mode demo.
                         </span>
                       )}

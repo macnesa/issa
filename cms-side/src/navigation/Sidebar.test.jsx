@@ -5,9 +5,10 @@ import Sidebar from "./Sidebar";
 import { saveLastKnownTeacherIdentity } from "../offline-workspace/authIdentity";
 
 const navigationCss = readFileSync(
-  "src/navigation/teacher-navigation.css",
+  "src/tailwind-overrides.css",
   "utf8"
 );
+const sidebarSource = readFileSync("src/navigation/Sidebar.jsx", "utf8");
 
 const sidebarMocks = vi.hoisted(() => ({
   clearTeacherData: vi.fn().mockResolvedValue(undefined),
@@ -83,23 +84,26 @@ describe("Sidebar CMS", () => {
     expect(within(footer).getByText("Guru Demo")).toBeInTheDocument();
     expect(within(footer).getByRole("button", { name: "Keluar" }))
       .toBeInTheDocument();
+    expect(container.querySelectorAll("svg.issa-icon").length).toBeGreaterThan(0);
+    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+    expect(screen.queryByText("fact_check")).not.toBeInTheDocument();
+    expect(screen.queryByText("calendar_month")).not.toBeInTheDocument();
+    expect(screen.queryByText("logout")).not.toBeInTheDocument();
   });
 
-  test("menggunakan token shared untuk active state tanpa override paksa", () => {
+  test("menggunakan utility token untuk active state tanpa override paksa", () => {
     expect(navigationCss).not.toMatch(/#[0-9a-f]{3,8}\b/i);
     expect(navigationCss).not.toContain("!important");
-    expect(navigationCss).toMatch(
-      /\.teacher-sidebar__nav-link\.is-active,[^}]*\{[^}]*border-left-color:\s*var\(--issa-selection\);[^}]*background:\s*var\(--issa-surface-subtle\);/s
-    );
-    expect(navigationCss).not.toMatch(
-      /\.teacher-sidebar__nav-link\.is-active\s*\{[^}]*box-shadow:/s
+    expect(navigationCss).not.toContain(".teacher-sidebar__nav-link");
+    expect(sidebarSource).toContain(
+      "border-l-issa-selection bg-issa-subtle text-issa-text"
     );
   });
 
   test("mempertahankan navigasi compact di bawah 1024px", () => {
-    expect(navigationCss).toContain("@media (min-width: 1024px)");
-    expect(navigationCss).toContain("@media (max-width: 1023px)");
-    expect(navigationCss).not.toContain("@media (min-width: 768px)");
+    expect(sidebarSource).toContain("lg:[overflow-x:visible]");
+    expect(sidebarSource).toContain("max-sm:justify-center");
+    expect(sidebarSource).not.toContain("md:");
   });
 
   test("indikator demo hanya bergantung pada accessMode demo yang tepat", () => {

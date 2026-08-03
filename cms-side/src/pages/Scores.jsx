@@ -1,3 +1,4 @@
+import { tw } from "../shared/ui/tw";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +18,6 @@ import {
   PageHeader,
   StudentContextHeader,
 } from "../shared/ui/ui";
-import "../features/scores/score-workspace.css";
 
 export default function Scores() {
   const [loading, setLoading] = useState(true);
@@ -60,7 +60,7 @@ export default function Scores() {
   if (error) return <PageContainer><ErrorState message={error} onRetry={fetchStudentScores} /></PageContainer>;
 
   return (
-    <PageContainer className="score-workspace">
+    <PageContainer className={tw("score-workspace text-issa-text")}>
       <PageHeader
         eyebrow="Rekam akademik"
         title="Nilai siswa"
@@ -72,7 +72,7 @@ export default function Scores() {
           description="Siswa ini tidak tersedia pada kelas Anda."
         />
       ) : (
-        <div className="score-workspace__stack">
+        <div className={tw("score-workspace__stack grid gap-4")}>
           <StudentContextHeader
             student={student}
             classLabel={authorizedClassName}

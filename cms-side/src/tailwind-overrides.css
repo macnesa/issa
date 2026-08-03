@@ -1,0 +1,117 @@
+/*
+ * Tailwind escape hatches only.
+ *
+ * Retained selector categories:
+ * 1. Generated mobile table labels (`content: attr(...)`) — pseudo-elements
+ *    cannot be expressed by a static utility without duplicating accessible copy.
+ * 2. Browser autofill and number-spinner internals — vendor pseudo-elements.
+ * 3. DayPicker state relationships — third-party DOM and nested state ownership.
+ * 4. Shared dialog/loading animations — reusable keyframes referenced by utilities.
+ */
+
+@media (max-width: 1023px) {
+  .attendance-register__row > td[data-label]::before {
+    display: block;
+    margin-bottom: var(--issa-space-1);
+    color: var(--issa-text-muted);
+    content: attr(data-label);
+    font-size: var(--issa-font-size-metadata);
+    font-weight: var(--issa-weight-bold);
+    letter-spacing: var(--issa-tracking-metadata);
+    text-transform: uppercase;
+  }
+}
+
+@media (max-width: 639px) {
+  .teacher-roster-row > td[data-label]::before {
+    display: block;
+    margin-bottom: var(--issa-space-1);
+    color: var(--issa-text-muted);
+    content: attr(data-label);
+    font-size: var(--issa-font-size-metadata);
+    font-weight: var(--issa-weight-bold);
+    letter-spacing: var(--issa-tracking-metadata);
+    text-transform: uppercase;
+  }
+}
+
+.issa-native-control:-webkit-autofill,
+.issa-native-control:-webkit-autofill:hover,
+.issa-native-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--issa-text);
+  box-shadow: 0 0 0 1000px var(--issa-surface) inset;
+  caret-color: var(--issa-text);
+  transition: background-color 9999s ease-out;
+}
+
+.issa-number-control::-webkit-inner-spin-button,
+.issa-number-control::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.issa-calendar__day:not(.is-disabled) .issa-calendar__day-button:hover {
+  border-color: var(--issa-border-strong);
+  background: var(--issa-surface-subtle);
+}
+
+.issa-calendar__day.is-today .issa-calendar__day-button {
+  border-color: var(--issa-selection);
+  color: var(--issa-accent);
+  font-weight: var(--issa-weight-bold);
+}
+
+.issa-calendar__day.is-selected .issa-calendar__day-button {
+  border-color: var(--issa-text);
+  background: var(--issa-accent);
+  box-shadow: var(--issa-shadow-elevated);
+  color: var(--issa-text-inverse);
+  font-weight: var(--issa-weight-bold);
+}
+
+.issa-calendar__day.is-focused .issa-calendar__day-button {
+  outline: var(--issa-border-width-emphasis) solid var(--issa-focus);
+  outline-offset: 1px;
+}
+
+.issa-calendar__day.is-outside {
+  color: var(--issa-text-muted);
+}
+
+.issa-calendar__day.is-disabled {
+  color: var(--issa-text-disabled);
+  text-decoration: line-through;
+}
+
+.issa-calendar__day.is-disabled .issa-calendar__day-button {
+  cursor: not-allowed;
+}
+
+.issa-calendar__day.is-hidden {
+  visibility: hidden;
+}
+
+@keyframes attention-ledger-loading {
+  from { opacity: 0.42; }
+  to { opacity: 0.92; }
+}
+
+@keyframes teacher-command-palette-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes issa-dialog-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes issa-dialog-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--issa-space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
