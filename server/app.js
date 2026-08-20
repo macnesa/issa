@@ -43,6 +43,14 @@ const {
   createPublicDemoAccessGuard,
 } = require('./middlewares/public-demo-access');
 const { initializeRealtimeServer } = require('./realtime/realtime-server');
+const { setRealtimeServer } = require('./realtime/student-record-events');
+const {
+  createDatabaseHealthHandler,
+} = require('./lifecycle/database-health');
+const {
+  createGracefulShutdown,
+  installShutdownSignalHandlers,
+} = require('./lifecycle/graceful-shutdown');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
@@ -70,21 +78,41 @@ app.use(createPublicDemoAccessGuard());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.get('/health', async (req, res) => {
-  try {
-    await sequelize.authenticate();
-    res.status(200).json({ status: 'ok', database: 'connected' });
-  } catch (error) {
-    res.status(503).json({ status: 'degraded', database: 'unavailable' });
-  }
-});
+app.get('/health', createDatabaseHealthHandler({
+  authenticate: () => sequelize.authenticate(),
+}));
 
 app.use('/', router);
 app.use(errorHandler);
 
-function startServer() {
+function createApplicationServer() {
   const httpServer = http.createServer(app);
-  initializeRealtimeServer(httpServer, { allowedOrigins });
+  const realtimeServer = initializeRealtimeServer(httpServer, { allowedOrigins });
+
+  return { httpServer, realtimeServer };
+}
+
+function startServer({
+  manageProcessLifecycle = require.main === module,
+  exit = (code) => process.exit(code),
+} = {}) {
+  const { httpServer, realtimeServer } = createApplicationServer();
+
+  if (manageProcessLifecycle) {
+    const shutdown = createGracefulShutdown({
+      httpServer,
+      realtimeServer,
+      sequelize,
+      clearRealtimeServer: () => setRealtimeServer(null),
+      exit,
+    });
+
+    installShutdownSignalHandlers({ shutdown });
+    httpServer.on('error', (error) => {
+      console.error('ISSA HTTP server error', error);
+      void shutdown('HTTP_SERVER_ERROR', 1);
+    });
+  }
 
   return httpServer.listen(port, '0.0.0.0', () => {
     console.log(`ISSA demo server listening on port ${port}`);
@@ -94,4 +122,5 @@ function startServer() {
 if (require.main === module) startServer();
 
 module.exports = app;
+module.exports.createApplicationServer = createApplicationServer;
 module.exports.startServer = startServer;

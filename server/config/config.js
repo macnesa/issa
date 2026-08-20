@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const productionUsesSsl = process.env.DATABASE_SSL !== 'false';
+const { postgresDialectModule } = require('./postgres-dialect');
 
 function getTestDatabaseName() {
   const testDatabaseName = process.env.TEST_DB_NAME?.trim();
@@ -46,7 +47,14 @@ module.exports = {
   production: {
     use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
+    dialectModule: postgresDialectModule,
     logging: false,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 10000,
+      idle: 10000,
+    },
     dialectOptions: productionUsesSsl ? {
       ssl: {
         require: true,
