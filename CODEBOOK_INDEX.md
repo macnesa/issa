@@ -97,7 +97,7 @@
 - `ISSA:SERVER.AI_NARRATIVE.GROUNDING_VALIDATION`
   - `server/modules/ai-learning-narrative/narrative-output-validator.js:193`
 - `ISSA:SERVER.AI_NARRATIVE.PROVIDER_BOUNDARY`
-  - `server/modules/ai-learning-narrative/narrative-provider.js:167`
+  - `server/modules/ai-learning-narrative/narrative-provider.js:181`
 - `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
   - `server/modules/attendance/attendance.service.js:26`
 - `ISSA:SERVER.ATTENDANCE.GET_RECORDS`
@@ -122,6 +122,10 @@
   - `server/middlewares/authentication.js:107`
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
   - `server/helpers/index.js:16`
+- `ISSA:SERVER.CLASSROOM_DEBRIEF.CREATE_DRAFTS`
+  - `server/modules/classroom-debrief/classroom-debrief.service.js:75`
+- `ISSA:SERVER.CLASSROOM_DEBRIEF.PROVIDER_BOUNDARY`
+  - `server/modules/ai-learning-narrative/narrative-provider.js:273`
 - `ISSA:SERVER.FEEDBACK.GET_HISTORY`
   - `server/modules/feedback/feedback.service.js:9`
 - `ISSA:SERVER.FEEDBACK.UPDATE_HISTORY`

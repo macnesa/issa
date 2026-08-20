@@ -91,6 +91,42 @@ function errorHandler(err, req, res, next) {
         });
     }
 
+    const classroomDebriefErrors = {
+        invalid_classroom_debrief_request: {
+            statusCode: 400,
+            message: "Permintaan classroom debrief tidak valid.",
+        },
+        classroom_debrief_access_denied: {
+            statusCode: 403,
+            message: "Teacher tidak memiliki akses ke kelas tersebut.",
+        },
+        classroom_debrief_context_not_found: {
+            statusCode: 404,
+            message: "Konteks lesson tidak tersedia untuk kelas Teacher.",
+        },
+        classroom_debrief_context_too_large: {
+            statusCode: 422,
+            message: "Konteks kelas terlalu besar untuk diproses dengan aman.",
+        },
+        classroom_debrief_invalid_output: {
+            statusCode: 502,
+            message: "Draf classroom debrief tidak dapat digunakan.",
+        },
+        classroom_debrief_no_usable_drafts: {
+            statusCode: 422,
+            message: "Tidak ada draf aman yang dapat dibuat dari catatan tersebut.",
+        },
+    };
+    const safeClassroomDebriefError = classroomDebriefErrors[err?.name];
+    if (safeClassroomDebriefError) {
+        return res.status(safeClassroomDebriefError.statusCode).json({
+            error: {
+                code: err.name,
+                message: safeClassroomDebriefError.message,
+            },
+        });
+    }
+
     let statusCode = 500,
         msg = "Internal Server Error"
     const errorName = String(err.code || '').startsWith('LIMIT_')

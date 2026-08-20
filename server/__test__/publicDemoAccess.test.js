@@ -354,6 +354,12 @@ describe('central public demo read-only guard', () => {
       .set('access_token', 'valid-demo-token')
       .send({})
       .expect(200, { reached: true });
+
+    await request(createGuardTestApp({ payload: demoTeacherPayload }))
+      .post('/teachers/me/classroom-debrief/drafts')
+      .set('access_token', 'valid-demo-token')
+      .send({})
+      .expect(200, { reached: true });
   });
 
   test('also protects an older standard token for the configured demo identity', async () => {

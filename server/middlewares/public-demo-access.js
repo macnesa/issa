@@ -7,11 +7,16 @@ const {
 const readOnlyMethods = new Set(['GET', 'HEAD', 'OPTIONS']);
 const aiNarrativeDraftPath =
   /^\/students\/[1-9]\d*\/ai\/narrative-draft\/?$/;
+const classroomDebriefDraftPath =
+  /^\/teachers\/me\/classroom-debrief\/drafts\/?$/;
 
 function isAiNarrativeDraftRequest(req) {
   return (
     String(req.method || '').toUpperCase() === 'POST' &&
-    aiNarrativeDraftPath.test(req.path)
+    (
+      aiNarrativeDraftPath.test(req.path) ||
+      classroomDebriefDraftPath.test(req.path)
+    )
   );
 }
 

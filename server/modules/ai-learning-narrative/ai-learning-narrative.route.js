@@ -13,10 +13,9 @@ const aiLearningNarrativeService = require(
 const {
   enforceNarrativeRequestSize,
 } = require('./ai-learning-narrative.validator');
-const { getPublicDemoConfig } = require('../../config/public-demo');
 const {
-  createFixedWindowRateLimiter,
-} = require('../../middlewares/rate-limit');
+  publicDemoAiRateLimiter,
+} = require('../../middlewares/public-demo-ai-rate-limit');
 
 function createAiLearningNarrativeRouter({
   service = aiLearningNarrativeService,
@@ -25,12 +24,7 @@ function createAiLearningNarrativeRouter({
 } = {}) {
   const router = express.Router();
   const controller = createAiLearningNarrativeController(service);
-  const { aiRateLimit } = getPublicDemoConfig();
-  const limitPublicDemoAi = rateLimit || createFixedWindowRateLimiter({
-    ...aiRateLimit,
-    key: (req) => `teacher:${req.user?.teacherId || 'unknown'}`,
-    applies: (req) => req.user?.isDemo === true,
-  });
+  const limitPublicDemoAi = rateLimit || publicDemoAiRateLimiter;
 
   router.post(
     '/:studentId/ai/narrative-draft',

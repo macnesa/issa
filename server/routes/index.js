@@ -5,6 +5,9 @@ const aiLearningNarrativeRouter = require(
 );
 const attendanceRouter = require('../modules/attendance/attendance.route');
 const assignmentRouter = require('../modules/assignment/assignment.route');
+const classroomDebriefRouter = require(
+  '../modules/classroom-debrief/classroom-debrief.route'
+);
 const feedbackRouter = require('../modules/feedback/feedback.route');
 const lessonRouter = require('../modules/lesson/lesson.route');
 const parentRouter = require('../modules/parent/parent.route');
@@ -27,6 +30,7 @@ router.use('/users', parentRouter);
 router.use('/teachers', teacherRouter);
 router.use('/teachers', teacherSearchRouter);
 router.use('/teachers', teacherSyncRouter);
+router.use('/teachers', classroomDebriefRouter);
 
 router.use('/students', aiLearningNarrativeRouter);
 router.use('/students', feedbackRouter);

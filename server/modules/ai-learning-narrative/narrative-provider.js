@@ -73,7 +73,10 @@ function safeProviderMessage(error) {
     .replace(/\b(?:gsk|sk)-?[A-Za-z0-9_-]{12,}\b/g, '[redacted]')
     .trim();
   if (!normalized) return undefined;
-  if (normalized.includes('<issa_source_packet>')) {
+  if (
+    normalized.includes('<issa_source_packet>') ||
+    normalized.includes('<issa_classroom_debrief_context>')
+  ) {
     return '[provider message omitted because it contained request data]';
   }
   return normalized.slice(0, 500);
@@ -84,6 +87,17 @@ function providerRequestId(error) {
     error?.requestId ||
     error?.headers?.get?.('x-request-id') ||
     error?.headers?.['x-request-id'];
+}
+
+function safeTokenUsage(usage) {
+  if (!usage || typeof usage !== 'object') return undefined;
+  const inputTokens = Number(usage.input_tokens);
+  const outputTokens = Number(usage.output_tokens);
+  const totalTokens = Number(usage.total_tokens);
+  if (![inputTokens, outputTokens, totalTokens].every(Number.isFinite)) {
+    return undefined;
+  }
+  return { inputTokens, outputTokens, totalTokens };
 }
 
 function schemaForProvider(schema, provider) {
@@ -251,8 +265,73 @@ function createNarrativeProvider({
     };
   }
 
+  async function generateClassroomDebrief({
+    context,
+    instructions,
+    outputSchema,
+  }) {
+    void 'ISSA:SERVER.CLASSROOM_DEBRIEF.PROVIDER_BOUNDARY';
+    const providerConfiguration = assertAvailable();
+    const requestStartedAt = clock();
+    let response;
+
+    try {
+      const client = clientFactory({
+        apiKey: providerConfiguration.apiKey,
+        baseURL: providerConfiguration.baseURL,
+        timeout: providerConfiguration.timeout,
+        maxRetries: 0,
+      });
+      const providerRequest = {
+        model: providerConfiguration.model,
+        instructions,
+        input: [
+          '<issa_classroom_debrief_context>',
+          serializeSourcePacket(context),
+          '</issa_classroom_debrief_context>',
+        ].join('\n'),
+        text: {
+          format: {
+            type: 'json_schema',
+            name: 'issa_classroom_debrief',
+            strict: true,
+            schema: schemaForProvider(
+              outputSchema,
+              providerConfiguration.provider
+            ),
+          },
+        },
+      };
+      if (providerConfiguration.supportsStore) {
+        providerRequest.store = false;
+      }
+      response = await client.responses.create(providerRequest);
+    } catch (error) {
+      logProviderDiagnostic({
+        environment,
+        logger,
+        providerConfiguration,
+        error,
+      });
+      throw aiNarrativeError('ai_provider_unavailable');
+    }
+
+    const providerMetadata = {
+      model: providerConfiguration.model,
+      latencyMs: Math.max(0, clock() - requestStartedAt),
+    };
+    const usage = safeTokenUsage(response.usage);
+    if (usage) providerMetadata.usage = usage;
+
+    return {
+      outputText: response.output_text,
+      providerMetadata,
+    };
+  }
+
   return {
     assertAvailable,
+    generateClassroomDebrief,
     generateLearningNarrative,
   };
 }
@@ -263,4 +342,5 @@ module.exports.SYSTEM_INSTRUCTION = SYSTEM_INSTRUCTION;
 module.exports.serializeSourcePacket = serializeSourcePacket;
 module.exports.PROVIDER_DEFAULTS = PROVIDER_DEFAULTS;
 module.exports.safeProviderMessage = safeProviderMessage;
+module.exports.safeTokenUsage = safeTokenUsage;
 module.exports.schemaForProvider = schemaForProvider;
