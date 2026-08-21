@@ -26,6 +26,7 @@ import issaLogo from "../../assets/img/logo.png";
 const navigation = [
   { to: "/", label: "Dashboard", icon: "dashboard", end: true },
   { to: "/attendance", label: "Kehadiran", icon: "fact_check" },
+  { to: "/classroom-debrief", label: "Classroom Debrief", icon: "edit_note" },
   { to: "/schedule", label: "Jadwal", icon: "calendar_month" },
 ];
 

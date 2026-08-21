@@ -12,10 +12,11 @@ const {
 const MAXIMUM_ROSTER_SIZE = 100;
 const MAXIMUM_ASSIGNMENT_CANDIDATES = 25;
 
-function findTeacherClass({ teacherId, classId }) {
+function findTeacherClass({ teacherId, classId }, options = {}) {
   return Class.findOne({
     where: { id: classId, TeacherId: teacherId },
     attributes: ['id', 'name', 'TeacherId'],
+    ...options,
   });
 }
 
@@ -28,7 +29,7 @@ function findClassRoster(classId) {
   });
 }
 
-function findLessonForClass({ lessonId, classId }) {
+function findLessonForClass({ lessonId, classId }, options = {}) {
   return Lesson.findOne({
     where: { id: lessonId },
     attributes: ['id', 'name'],
@@ -38,6 +39,39 @@ function findLessonForClass({ lessonId, classId }) {
       required: true,
       where: { ClassId: classId },
     },
+    ...options,
+  });
+}
+
+function findStudentInClass({ studentId, classId }, options = {}) {
+  return Student.findOne({
+    where: { id: studentId, ClassId: classId },
+    attributes: ['id', 'name', 'ClassId'],
+    ...options,
+  });
+}
+
+function findAssignmentForClassLesson({
+  assignmentId,
+  classId,
+  lessonId,
+}, options = {}) {
+  return Assignment.findOne({
+    where: { id: assignmentId },
+    attributes: ['id', 'name', 'type'],
+    include: {
+      model: Score,
+      attributes: [],
+      required: true,
+      where: { LessonId: lessonId },
+      include: {
+        model: Student,
+        attributes: [],
+        required: true,
+        where: { ClassId: classId },
+      },
+    },
+    ...options,
   });
 }
 
@@ -70,7 +104,9 @@ module.exports = {
   MAXIMUM_ASSIGNMENT_CANDIDATES,
   MAXIMUM_ROSTER_SIZE,
   findAssignmentCandidates,
+  findAssignmentForClassLesson,
   findClassRoster,
   findLessonForClass,
+  findStudentInClass,
   findTeacherClass,
 };

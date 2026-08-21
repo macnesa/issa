@@ -2,6 +2,7 @@ const isEmpty = require('lodash/isEmpty');
 const isNil = require('lodash/isNil');
 const attendanceRepository = require('./attendance.repository');
 const { emitStudentRecordUpdated } = require('../../realtime/student-record-events');
+const { appendHistorySource } = require('../../helpers/history-source');
 const {
   getRequestedAttendanceDate,
   validateAttendanceStatus,
@@ -22,39 +23,75 @@ async function getAttendanceRecords({ studentId, classId }) {
   );
 }
 
-async function createAttendanceRecord({ classId, attendancePayload }) {
+async function createAttendanceRecord({
+  classId,
+  attendancePayload,
+  transaction = null,
+  emitRealtime = true,
+  historySource = null,
+}) {
   void 'ISSA:SERVER.ATTENDANCE.CREATE_RECORD';
   const { StudentId: studentId, status } = attendancePayload;
   validateAttendanceStatus(status);
 
-  const student = await attendanceRepository.findStudentInClass(studentId, classId);
+  const transactionOptions = transaction ? { transaction } : undefined;
+  const student = transaction
+    ? await attendanceRepository.findStudentInClass(
+      studentId,
+      classId,
+      transactionOptions
+    )
+    : await attendanceRepository.findStudentInClass(studentId, classId);
   if (isNil(student)) throw { name: 'notFound' };
 
   const attendanceDate = getRequestedAttendanceDate(attendancePayload);
-  const existingAttendanceRecord = await attendanceRepository
-    .findAttendanceByStudentAndDate(studentId, attendanceDate);
+  const existingAttendanceRecord = transaction
+    ? await attendanceRepository.findAttendanceByStudentAndDate(
+      studentId,
+      attendanceDate,
+      transactionOptions
+    )
+    : await attendanceRepository.findAttendanceByStudentAndDate(
+      studentId,
+      attendanceDate
+    );
   if (existingAttendanceRecord) throw { name: 'attendanceAlreadyExists' };
 
-  const teacherClass = await attendanceRepository.findTeacherClass(classId);
+  const teacherClass = transaction
+    ? await attendanceRepository.findTeacherClass(classId, transactionOptions)
+    : await attendanceRepository.findTeacherClass(classId);
 
   let attendanceRecord;
   try {
-    attendanceRecord = await attendanceRepository.createAttendanceRecord({
-      StudentId: studentId,
-      status,
-      attendanceDate,
-    });
+    const recordPayload = { StudentId: studentId, status, attendanceDate };
+    attendanceRecord = transaction
+      ? await attendanceRepository.createAttendanceRecord(
+        recordPayload,
+        transactionOptions
+      )
+      : await attendanceRepository.createAttendanceRecord(recordPayload);
   } catch (error) {
     if (isAttendanceUniqueConflict(error)) throw { name: 'attendanceAlreadyExists' };
     throw error;
   }
 
-  await attendanceRepository.createAttendanceHistory({
-    description: `attendance ${student.name} has been created`,
+  const historyPayload = {
+    description: appendHistorySource(
+      `attendance ${student.name} has been created`,
+      historySource
+    ),
     createdBy: teacherClass.Teacher.name,
-  });
+  };
+  if (transaction) {
+    await attendanceRepository.createAttendanceHistory(
+      historyPayload,
+      transactionOptions
+    );
+  } else {
+    await attendanceRepository.createAttendanceHistory(historyPayload);
+  }
 
-  emitStudentRecordUpdated({
+  if (emitRealtime) emitStudentRecordUpdated({
     studentId,
     recordType: 'attendance',
     occurredAt: attendanceDate,

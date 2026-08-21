@@ -92,6 +92,10 @@ function errorHandler(err, req, res, next) {
     }
 
     const classroomDebriefErrors = {
+        invalid_classroom_debrief_confirmation: {
+            statusCode: 400,
+            message: "Konfirmasi classroom debrief tidak valid.",
+        },
         invalid_classroom_debrief_request: {
             statusCode: 400,
             message: "Permintaan classroom debrief tidak valid.",

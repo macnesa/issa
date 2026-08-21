@@ -6,6 +6,7 @@ import StudentDetail from "../pages/AddStudent";
 import Login from "../pages/Login";
 import Schedule from "../pages/Schedule";
 import Attendance from "../pages/Attendance";
+import ClassroomDebriefWorkspace from "../features/classroom-debrief/ClassroomDebriefWorkspace";
 import {
   clearLastKnownTeacherIdentity,
   isTeacherDemoSession,
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
       { path: "/students/:studentId", element: <StudentDetail /> },
       { path: "/scores/:studentId", element: <Scores /> },
       { path: "/attendance", element: <Attendance /> },
+      { path: "/classroom-debrief", element: <ClassroomDebriefWorkspace /> },
       { path: "/schedule", element: <Schedule /> },
       { path: "*", loader: () => redirect("/") },
     ],

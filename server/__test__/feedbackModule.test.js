@@ -91,6 +91,32 @@ describe('feedback module service', () => {
     expect(studentUpdatePayload.feedback).toBe('  Meaningful feedback  ');
   });
 
+  test('joins a Debrief transaction with provenance and deferred realtime', async () => {
+    const transaction = { id: 'debrief-transaction' };
+
+    await feedbackService.updateStudentFeedback({
+      studentId: 7,
+      classId: 3,
+      teacherId: 5,
+      studentUpdatePayload: {
+        feedback: 'Debrief feedback',
+        observedAt: '2026-07-23',
+      },
+      transaction,
+      emitRealtime: false,
+      historySource: 'classroom_debrief',
+    });
+
+    expect(sequelize.transaction).not.toHaveBeenCalled();
+    expect(feedbackRepository.createStudentUpdateHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining('[source: classroom_debrief]'),
+      }),
+      transaction
+    );
+    expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
+  });
+
   test('keeps identical feedback without writing another feedback history record', async () => {
     feedbackRepository.findStudentInClass.mockResolvedValue({
       id: 7,

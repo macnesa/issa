@@ -8,9 +8,15 @@ const {
   publicDemoAiRateLimiter,
 } = require('../../middlewares/public-demo-ai-rate-limit');
 const {
+  requireWritableAccount,
+} = require('../../middlewares/public-demo-access');
+const {
   createClassroomDebriefController,
 } = require('./classroom-debrief.controller');
 const classroomDebriefService = require('./classroom-debrief.service');
+const classroomDebriefConfirmationService = require(
+  './classroom-debrief-confirmation.service'
+);
 const {
   enforceClassroomDebriefRequestSize,
 } = require('./classroom-debrief.validator');
@@ -18,10 +24,14 @@ const {
 function createClassroomDebriefRouter({
   service = classroomDebriefService,
   authenticateTeacher = authenticateTeacherRequest,
+  confirmationService = classroomDebriefConfirmationService,
   rateLimit,
 } = {}) {
   const router = express.Router();
-  const controller = createClassroomDebriefController(service);
+  const controller = createClassroomDebriefController(
+    service,
+    confirmationService
+  );
   const limitPublicDemoAi = rateLimit || publicDemoAiRateLimiter;
 
   router.post(
@@ -30,6 +40,13 @@ function createClassroomDebriefRouter({
     limitPublicDemoAi,
     enforceClassroomDebriefRequestSize,
     controller.createDrafts
+  );
+
+  router.post(
+    '/me/classroom-debrief/confirm',
+    authenticateTeacher,
+    requireWritableAccount,
+    controller.confirmDrafts
   );
 
   return router;

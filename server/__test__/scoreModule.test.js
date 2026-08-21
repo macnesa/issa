@@ -94,6 +94,35 @@ describe('score module service', () => {
     expect(scorePayload.value).toBe(80);
   });
 
+  test('supports transactional Debrief writes with provenance and deferred realtime', async () => {
+    const transaction = { id: 'debrief-transaction' };
+
+    await scoreService.createStudentScore({
+      classId: 3,
+      scorePayload: {
+        StudentId: 7,
+        LessonId: 11,
+        AssignmentId: 13,
+        value: 80,
+      },
+      transaction,
+      emitRealtime: false,
+      historySource: 'classroom_debrief',
+    });
+
+    expect(scoreRepository.createScoreHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining('[source: classroom_debrief]'),
+      }),
+      { transaction }
+    );
+    expect(scoreRepository.createStudentScore).toHaveBeenCalledWith(
+      expect.any(Object),
+      { transaction }
+    );
+    expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
+  });
+
   test('updates a valid score using the stored academic context', async () => {
     const scoreRecord = {
       id: 31,

@@ -4,6 +4,7 @@ const { sequelize } = require('../../models');
 const feedbackRepository = require('./feedback.repository');
 const { emitStudentRecordUpdated } = require('../../realtime/student-record-events');
 const { validateFeedbackUpdate } = require('./feedback.validator');
+const { appendHistorySource } = require('../../helpers/history-source');
 
 async function getStudentFeedbackHistory({ studentId, classId }) {
   void 'ISSA:SERVER.FEEDBACK.GET_HISTORY';
@@ -28,30 +29,42 @@ async function updateStudentFeedback({
   classId,
   teacherId,
   studentUpdatePayload,
+  transaction = null,
+  emitRealtime = true,
+  historySource = null,
 }) {
   void 'ISSA:SERVER.FEEDBACK.UPDATE_HISTORY';
-  const teacherClass = await feedbackRepository.findTeacherClass(classId);
-  const existingStudent = await feedbackRepository.findStudentInClass(studentId, classId);
-  if (isNil(existingStudent)) throw { name: 'notFound' };
+  const performUpdate = async (databaseTransaction) => {
+    const transactionOptions = { transaction: databaseTransaction };
+    const teacherClass = await feedbackRepository.findTeacherClass(
+      classId,
+      transactionOptions
+    );
+    const existingStudent = await feedbackRepository.findStudentInClass(
+      studentId,
+      classId,
+      transactionOptions
+    );
+    if (isNil(existingStudent)) throw { name: 'notFound' };
 
-  const feedbackUpdate = validateFeedbackUpdate(studentUpdatePayload);
-  const studentFieldsToUpdate = buildStudentUpdatePayload(studentUpdatePayload);
-  const hasFeedbackChanged = feedbackUpdate.hasFeedback &&
-    !isEqual(feedbackUpdate.feedback, existingStudent.feedback);
+    const feedbackUpdate = validateFeedbackUpdate(studentUpdatePayload);
+    const studentFieldsToUpdate = buildStudentUpdatePayload(studentUpdatePayload);
+    const hasFeedbackChanged = feedbackUpdate.hasFeedback &&
+      !isEqual(feedbackUpdate.feedback, existingStudent.feedback);
 
-  if (hasFeedbackChanged) {
-    studentFieldsToUpdate.feedback = feedbackUpdate.feedback;
-  }
+    if (hasFeedbackChanged) {
+      studentFieldsToUpdate.feedback = feedbackUpdate.feedback;
+    }
 
-  const feedbackResult = await sequelize.transaction(async (databaseTransaction) => {
     const updatedStudent = await feedbackRepository.updateStudent(
       existingStudent,
       studentFieldsToUpdate,
       databaseTransaction
     );
 
+    let feedbackRecord = null;
     if (hasFeedbackChanged) {
-      await feedbackRepository.createFeedbackHistory({
+      feedbackRecord = await feedbackRepository.createFeedbackHistory({
         StudentId: existingStudent.id,
         TeacherId: teacherId,
         content: feedbackUpdate.feedback,
@@ -60,18 +73,30 @@ async function updateStudentFeedback({
     }
 
     const updateHistory = await feedbackRepository.createStudentUpdateHistory({
-      description: `student with name ${existingStudent.name} has been edited`,
+      description: appendHistorySource(
+        `student with name ${existingStudent.name} has been edited`,
+        historySource
+      ),
       createdBy: teacherClass.Teacher.name,
     }, databaseTransaction);
 
-    return { data: updatedStudent, history: updateHistory };
-  });
-
-  if (hasFeedbackChanged) {
-    emitStudentRecordUpdated({
-      studentId: existingStudent.id,
-      recordType: 'feedback',
+    return {
+      data: updatedStudent,
+      feedbackChanged: hasFeedbackChanged,
+      feedbackRecord,
+      history: updateHistory,
       occurredAt: feedbackUpdate.observedAt,
+    };
+  };
+  const feedbackResult = transaction
+    ? await performUpdate(transaction)
+    : await sequelize.transaction(performUpdate);
+
+  if (emitRealtime && feedbackResult.feedbackChanged) {
+    emitStudentRecordUpdated({
+      studentId,
+      recordType: 'feedback',
+      occurredAt: feedbackResult.occurredAt,
     });
   }
 

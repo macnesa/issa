@@ -8,48 +8,55 @@ const {
   Teacher,
 } = require('../../models');
 
-function findStudentInClass(studentId, classId) {
+function findStudentInClass(studentId, classId, options = {}) {
   return Student.findOne({
     where: { id: studentId, ClassId: classId },
+    ...options,
   });
 }
 
-function findLessonById(lessonId) {
-  return Lesson.findByPk(lessonId);
+function findLessonById(lessonId, options = {}) {
+  return Lesson.findByPk(lessonId, options);
 }
 
-function findAssignmentById(assignmentId) {
-  return Assignment.findByPk(assignmentId);
+function findAssignmentById(assignmentId, options = {}) {
+  return Assignment.findByPk(assignmentId, options);
 }
 
 function findScoreById(scoreId) {
   return Score.findByPk(scoreId);
 }
 
-function findScoreByStudentLessonAndAssignment(studentId, lessonId, assignmentId) {
+function findScoreByStudentLessonAndAssignment(
+  studentId,
+  lessonId,
+  assignmentId,
+  options = {}
+) {
   return Score.findOne({
     where: {
       StudentId: studentId,
       LessonId: lessonId,
       AssignmentId: assignmentId,
     },
+    ...options,
   });
 }
 
-function findTeacherClass(classId) {
-  return Class.findByPk(classId, { include: Teacher });
+function findTeacherClass(classId, options = {}) {
+  return Class.findByPk(classId, { include: Teacher, ...options });
 }
 
-function createStudentScore(scoreRecordPayload) {
-  return Score.create(scoreRecordPayload);
+function createStudentScore(scoreRecordPayload, options = {}) {
+  return Score.create(scoreRecordPayload, options);
 }
 
 function updateStudentScore(scoreRecord, scoreUpdatePayload) {
   return scoreRecord.update(scoreUpdatePayload);
 }
 
-function createScoreHistory(scoreHistoryPayload) {
-  return History.create(scoreHistoryPayload);
+function createScoreHistory(scoreHistoryPayload, options = {}) {
+  return History.create(scoreHistoryPayload, options);
 }
 
 module.exports = {

@@ -66,6 +66,34 @@ describe('attendance module service', () => {
     expect(attendancePayload.status).toBe('Hadir');
   });
 
+  test('supports transactional Debrief writes without duplicate realtime', async () => {
+    const transaction = { id: 'debrief-transaction' };
+
+    await attendanceService.createAttendanceRecord({
+      classId: 3,
+      attendancePayload: {
+        StudentId: 7,
+        status: 'Hadir',
+        attendanceDate: '2026-07-23',
+      },
+      transaction,
+      emitRealtime: false,
+      historySource: 'classroom_debrief',
+    });
+
+    expect(attendanceRepository.createAttendanceHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining('[source: classroom_debrief]'),
+      }),
+      { transaction }
+    );
+    expect(attendanceRepository.createAttendanceRecord).toHaveBeenCalledWith(
+      expect.any(Object),
+      { transaction }
+    );
+    expect(emitStudentRecordUpdated).not.toHaveBeenCalled();
+  });
+
   test('rejects a duplicate student and attendance date before create', async () => {
     attendanceRepository.findAttendanceByStudentAndDate.mockResolvedValue({ id: 31 });
 

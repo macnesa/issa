@@ -44,11 +44,13 @@
 - `ISSA:CMS.ATTENDANCE.UPDATE_RECORD`
   - `cms-side/src/store/action/ActionCreator.js:644`
 - `ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION`
-  - `cms-side/src/router/index.jsx:16`
+  - `cms-side/src/router/index.jsx:17`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_DEMO_LOGIN`
   - `cms-side/src/pages/Login.jsx:119`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
   - `cms-side/src/pages/Login.jsx:81`
+- `ISSA:CMS.CLASSROOM_DEBRIEF.REVIEW_CONFIRM`
+  - `cms-side/src/features/classroom-debrief/ClassroomDebriefWorkspace.jsx:332`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
   - `cms-side/src/pages/AddStudent.jsx:94`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
@@ -58,7 +60,7 @@
 - `ISSA:CMS.OFFLINE_ATTENDANCE.COMPACT_MUTATION`
   - `cms-side/src/offline-workspace/mutationQueue.js:170`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.PROTECT_LOGOUT_WITH_PENDING`
-  - `cms-side/src/navigation/Sidebar.jsx:80`
+  - `cms-side/src/navigation/Sidebar.jsx:82`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RECONCILE_SERVER_RECORD`
   - `cms-side/src/offline-workspace/workspaceSnapshots.js:182`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.RESOLVE_CONFLICT_WITH_LOCAL`
@@ -99,11 +101,11 @@
 - `ISSA:SERVER.AI_NARRATIVE.PROVIDER_BOUNDARY`
   - `server/modules/ai-learning-narrative/narrative-provider.js:181`
 - `ISSA:SERVER.ATTENDANCE.CREATE_RECORD`
-  - `server/modules/attendance/attendance.service.js:26`
+  - `server/modules/attendance/attendance.service.js:33`
 - `ISSA:SERVER.ATTENDANCE.GET_RECORDS`
-  - `server/modules/attendance/attendance.service.js:16`
+  - `server/modules/attendance/attendance.service.js:17`
 - `ISSA:SERVER.ATTENDANCE.UPDATE_RECORD`
-  - `server/modules/attendance/attendance.service.js:67`
+  - `server/modules/attendance/attendance.service.js:104`
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_DATE`
   - `server/modules/attendance/attendance.validator.js:24`
 - `ISSA:SERVER.ATTENDANCE.VALIDATE_STATUS`
@@ -122,14 +124,16 @@
   - `server/middlewares/authentication.js:107`
 - `ISSA:SERVER.AUTH.VERIFY_TOKEN`
   - `server/helpers/index.js:16`
+- `ISSA:SERVER.CLASSROOM_DEBRIEF.CONFIRM_DRAFTS`
+  - `server/modules/classroom-debrief/classroom-debrief-confirmation.service.js:306`
 - `ISSA:SERVER.CLASSROOM_DEBRIEF.CREATE_DRAFTS`
   - `server/modules/classroom-debrief/classroom-debrief.service.js:75`
 - `ISSA:SERVER.CLASSROOM_DEBRIEF.PROVIDER_BOUNDARY`
   - `server/modules/ai-learning-narrative/narrative-provider.js:273`
 - `ISSA:SERVER.FEEDBACK.GET_HISTORY`
-  - `server/modules/feedback/feedback.service.js:9`
+  - `server/modules/feedback/feedback.service.js:10`
 - `ISSA:SERVER.FEEDBACK.UPDATE_HISTORY`
-  - `server/modules/feedback/feedback.service.js:32`
+  - `server/modules/feedback/feedback.service.js:36`
 - `ISSA:SERVER.FEEDBACK.VALIDATE_OBSERVED_AT`
   - `server/modules/feedback/feedback.validator.js:2`
 - `ISSA:SERVER.PUBLIC.GET_STUDENT_DETAIL`
@@ -137,11 +141,11 @@
 - `ISSA:SERVER.SCHEDULE.GET_CLASS_SCHEDULE`
   - `server/modules/schedule/schedule.service.js:4`
 - `ISSA:SERVER.SCORE.CALCULATE_STATUS`
-  - `server/modules/score/score.service.js:19`
+  - `server/modules/score/score.service.js:20`
 - `ISSA:SERVER.SCORE.CREATE_STUDENT_SCORE`
-  - `server/modules/score/score.service.js:46`
+  - `server/modules/score/score.service.js:66`
 - `ISSA:SERVER.SCORE.UPDATE_STUDENT_SCORE`
-  - `server/modules/score/score.service.js:117`
+  - `server/modules/score/score.service.js:162`
 - `ISSA:SERVER.SCORE.VALIDATE_VALUE`
   - `server/modules/score/score.validator.js:2`
 - `ISSA:SERVER.STUDENT_EVIDENCE.CORRECT`

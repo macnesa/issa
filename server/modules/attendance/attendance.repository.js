@@ -42,16 +42,16 @@ function findAttendanceByStudentAndDate(
   });
 }
 
-function findTeacherClass(classId) {
-  return Class.findByPk(classId, { include: Teacher });
+function findTeacherClass(classId, options = {}) {
+  return Class.findByPk(classId, { include: Teacher, ...options });
 }
 
 function createAttendanceRecord(attendancePayload, options = {}) {
   return Attendance.create(attendancePayload, options);
 }
 
-function createAttendanceHistory(attendanceHistoryPayload) {
-  return History.create(attendanceHistoryPayload);
+function createAttendanceHistory(attendanceHistoryPayload, options = {}) {
+  return History.create(attendanceHistoryPayload, options);
 }
 
 function updateAttendanceRecord(

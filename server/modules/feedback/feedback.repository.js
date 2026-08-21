@@ -6,13 +6,14 @@ const {
   Teacher,
 } = require('../../models');
 
-function findTeacherClass(classId) {
-  return Class.findByPk(classId, { include: Teacher });
+function findTeacherClass(classId, options = {}) {
+  return Class.findByPk(classId, { include: Teacher, ...options });
 }
 
-function findStudentInClass(studentId, classId) {
+function findStudentInClass(studentId, classId, options = {}) {
   return Student.findOne({
     where: { id: studentId, ClassId: classId },
+    ...options,
   });
 }
 
