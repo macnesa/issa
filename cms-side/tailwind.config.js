@@ -1,6 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/flowbite-react/dist/components/Alert/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Badge/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Button/**/*.js",
+    "./node_modules/flowbite-react/dist/components/HelperText/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Label/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Spinner/**/*.js",
+    "./node_modules/flowbite-react/dist/components/TextInput/**/*.js",
+  ],
   darkMode: "class",
   theme: {
     extend: {
