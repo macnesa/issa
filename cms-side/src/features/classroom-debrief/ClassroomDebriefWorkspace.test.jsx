@@ -21,6 +21,7 @@ vi.mock("./classroomDebriefApi", () => ({
 }));
 
 vi.mock("../../offline-workspace/authIdentity", () => ({
+  getActiveTeacherIdentity: () => ({ id: 8, name: "Bu Sari" }),
   isTeacherDemoSession: workspaceMocks.isDemo,
 }));
 
@@ -138,7 +139,16 @@ async function generateDrafts() {
     target: { value: "5" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Generate drafts" }));
-  await screen.findByText("5 drafts");
+  await screen.findByText("5 drafts ready for review");
+}
+
+function resolveDraftsForConfirmation() {
+  const journalDraft = screen.getByText(/Nadia mencoba strategi baru/)
+    .closest("article");
+  fireEvent.click(within(journalDraft).getByRole("button", { name: "Discard" }));
+  fireEvent.click(screen.getByLabelText("Rafi Ahmad", { selector: "input[type=radio]" }));
+  fireEvent.click(screen.getByLabelText("Fraction Quiz", { selector: "input[type=radio]" }));
+  fireEvent.change(screen.getByLabelText("Canonical attendance status"), { target: { value: "Hadir" } });
 }
 
 describe("Classroom Debrief workspace", () => {
@@ -172,7 +182,7 @@ describe("Classroom Debrief workspace", () => {
     fireEvent.change(within(alyaDraft).getByLabelText("Feedback"), {
       target: { value: "Alya menyelesaikan tugas secara mandiri." },
     });
-    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Finish editing" }));
+    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Save edit" }));
 
     const nadiaJournal = screen.getByText(/Nadia mencoba strategi baru/)
       .closest("article");
@@ -191,7 +201,7 @@ describe("Classroom Debrief workspace", () => {
     expect(screen.getByText(/4 ready · 0 needs clarification · 1 discarded/))
       .toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", {
-      name: "Confirm selected drafts",
+      name: "Confirm 4 records",
     }));
 
     await waitFor(() => expect(workspaceMocks.confirm).toHaveBeenCalledTimes(1));
@@ -215,12 +225,13 @@ describe("Classroom Debrief workspace", () => {
       }),
     ]));
     expect(workspaceMocks.generate).toHaveBeenCalledTimes(1);
-    expect(await screen.findByText("4 records saved. Review is complete."))
+    expect(await screen.findByText(/4 records saved. Review is complete/))
       .toBeInTheDocument();
+    expect(screen.getAllByText("Committed")).toHaveLength(4);
   });
 
   test("keeps failed drafts actionable after a partial confirmation", async () => {
-    workspaceMocks.confirm.mockImplementation(async (items) => ({
+    workspaceMocks.confirm.mockImplementationOnce(async (items) => ({
       results: items.map((item, index) => ({
         draftId: item.draftId,
         recordType: item.recordType,
@@ -230,22 +241,27 @@ describe("Classroom Debrief workspace", () => {
     }));
     render(<ClassroomDebriefWorkspace />);
     await generateDrafts();
-    const journalDraft = screen.getByText(/Nadia mencoba strategi baru/)
-      .closest("article");
-    fireEvent.click(within(journalDraft).getByRole("button", {
-      name: "Discard",
-    }));
-    fireEvent.click(screen.getByLabelText("Rafi Ahmad", { selector: "input[type=radio]" }));
-    fireEvent.click(screen.getByLabelText("Fraction Quiz", { selector: "input[type=radio]" }));
-    fireEvent.change(screen.getByLabelText("Canonical attendance status"), { target: { value: "Hadir" } });
-    fireEvent.click(screen.getByRole("button", { name: "Confirm selected drafts" }));
+    resolveDraftsForConfirmation();
+    fireEvent.click(screen.getByRole("button", { name: "Confirm 4 records" }));
 
     expect(await screen.findByText(/records saved. Failed drafts remain selected/))
       .toBeInTheDocument();
-    expect(screen.getByText("Save failed: confirmation_failed"))
+    expect(screen.getByText(/Record ini belum dapat disimpan/))
       .toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Confirm selected drafts" }))
+    expect(screen.getByRole("button", { name: "Confirm 1 record" }))
       .toBeEnabled();
+
+    const firstPayload = workspaceMocks.confirm.mock.calls[0][0];
+    workspaceMocks.confirm.mockImplementationOnce(async (items) => committedResults(items));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm 1 record" }));
+    await waitFor(() => expect(workspaceMocks.confirm).toHaveBeenCalledTimes(2));
+    const retryPayload = workspaceMocks.confirm.mock.calls[1][0];
+    expect(retryPayload).toHaveLength(1);
+    expect(retryPayload[0].draftId).toBe(firstPayload[0].draftId);
+    expect(retryPayload[0].clientMutationId)
+      .toBe(firstPayload[0].clientMutationId);
+    expect(await screen.findByText(/4 records saved. Review is complete/))
+      .toBeInTheDocument();
   });
 
   test("shows loading and extraction errors without a second request", async () => {
@@ -260,9 +276,10 @@ describe("Classroom Debrief workspace", () => {
     fireEvent.click(screen.getByRole("button", { name: "Generate drafts" }));
     expect(screen.getByRole("button", { name: "Generating drafts…" }))
       .toBeDisabled();
-    rejectGeneration(new Error("Provider sedang tidak tersedia."));
-    expect(await screen.findByText("Provider sedang tidak tersedia."))
+    rejectGeneration(new Error("Provider secret and hostname."));
+    expect(await screen.findByText(/Draf belum dapat dibuat/))
       .toBeInTheDocument();
+    expect(screen.queryByText(/secret and hostname/)).not.toBeInTheDocument();
     expect(workspaceMocks.generate).toHaveBeenCalledTimes(1);
   });
 
@@ -272,9 +289,104 @@ describe("Classroom Debrief workspace", () => {
     await generateDrafts();
     expect(screen.getByText(/Demo mode can generate and review drafts/))
       .toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Confirm selected drafts" }))
+    expect(screen.getByRole("button", { name: "Confirm 2 records" }))
       .toBeDisabled();
     expect(workspaceMocks.confirm).not.toHaveBeenCalled();
+  });
+
+  test("does not invoke AI on load, typing, or invalid whitespace", async () => {
+    render(<ClassroomDebriefWorkspace />);
+    await waitFor(() => expect(workspaceMocks.fetchLessons).toHaveBeenCalled());
+    fireEvent.change(screen.getByLabelText("What happened in class?"), {
+      target: { value: "  " },
+    });
+    expect(workspaceMocks.generate).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Generate drafts" }));
+    expect(await screen.findByText("Tell us what happened in class."))
+      .toBeInTheDocument();
+    expect(workspaceMocks.generate).not.toHaveBeenCalled();
+  });
+
+  test("locks duplicate generation while preserving the note", async () => {
+    let resolveGeneration;
+    workspaceMocks.generate.mockImplementation(() => new Promise((resolve) => {
+      resolveGeneration = resolve;
+    }));
+    render(<ClassroomDebriefWorkspace />);
+    const note = screen.getByLabelText("What happened in class?");
+    fireEvent.change(note, { target: { value: "Catatan kelas yang valid." } });
+    const generateButton = screen.getByRole("button", { name: "Generate drafts" });
+    fireEvent.click(generateButton);
+    fireEvent.submit(generateButton.closest("form"));
+    expect(workspaceMocks.generate).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Generating drafts…" }))
+      .toBeDisabled();
+    resolveGeneration(debriefResponse);
+    expect(await screen.findByText("5 drafts ready for review"))
+      .toBeInTheDocument();
+  });
+
+  test("supports explicit edit cancel and save states", async () => {
+    render(<ClassroomDebriefWorkspace />);
+    await generateDrafts();
+    const alyaDraft = screen.getByText("Alya Putri").closest("article");
+    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Edit" }));
+    fireEvent.change(within(alyaDraft).getByLabelText("Feedback"), {
+      target: { value: "Perubahan yang dibatalkan." },
+    });
+    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Cancel edit" }));
+    expect(within(alyaDraft).getByText("Alya lebih mandiri."))
+      .toBeInTheDocument();
+    expect(within(alyaDraft).getByText("Ready")).toBeInTheDocument();
+
+    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Edit" }));
+    fireEvent.change(within(alyaDraft).getByLabelText("Feedback"), {
+      target: { value: "Perubahan yang disimpan." },
+    });
+    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Save edit" }));
+    expect(within(alyaDraft).getByText("Perubahan yang disimpan."))
+      .toBeInTheDocument();
+    expect(within(alyaDraft).getByText("Edited")).toBeInTheDocument();
+  });
+
+  test("handles an empty extraction and rate limit without clearing the note", async () => {
+    workspaceMocks.generate.mockResolvedValueOnce({ drafts: [] });
+    render(<ClassroomDebriefWorkspace />);
+    const note = screen.getByLabelText("What happened in class?");
+    fireEvent.change(note, { target: { value: "Catatan tetap tersedia." } });
+    fireEvent.click(screen.getByRole("button", { name: "Generate drafts" }));
+    expect(await screen.findByText(/Belum ada draf yang dapat digunakan/))
+      .toBeInTheDocument();
+    expect(note).toHaveValue("Catatan tetap tersedia.");
+
+    const rateError = new Error("Provider quota 12345");
+    rateError.code = "publicDemoRateLimitExceeded";
+    rateError.status = 429;
+    rateError.retryAfterSeconds = 90;
+    workspaceMocks.generate.mockRejectedValueOnce(rateError);
+    fireEvent.click(screen.getByRole("button", { name: "Generate drafts" }));
+    expect(await screen.findByText(/sekitar 2 menit lagi/)).toBeInTheDocument();
+    expect(screen.queryByText(/quota 12345/)).not.toBeInTheDocument();
+    expect(note).toHaveValue("Catatan tetap tersedia.");
+  });
+
+  test("locks duplicate confirmation and moves focus to outcomes", async () => {
+    let resolveConfirmation;
+    workspaceMocks.confirm.mockImplementation(() => new Promise((resolve) => {
+      resolveConfirmation = resolve;
+    }));
+    render(<ClassroomDebriefWorkspace />);
+    await generateDrafts();
+    expect(screen.getByRole("heading", { name: "5 drafts ready for review" }))
+      .toHaveFocus();
+    resolveDraftsForConfirmation();
+    const confirmButton = screen.getByRole("button", { name: "Confirm 4 records" });
+    fireEvent.click(confirmButton);
+    fireEvent.click(confirmButton);
+    expect(workspaceMocks.confirm).toHaveBeenCalledTimes(1);
+    resolveConfirmation(committedResults(workspaceMocks.confirm.mock.calls[0][0]));
+    const success = await screen.findByText(/4 records saved. Review is complete/);
+    expect(success.closest("[tabindex='-1']")).toHaveFocus();
   });
 
   test("uses a mobile-safe bounded workspace layout", async () => {

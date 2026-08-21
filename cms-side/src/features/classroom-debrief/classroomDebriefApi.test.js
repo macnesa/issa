@@ -60,4 +60,27 @@ describe("Classroom Debrief API", () => {
       "/teachers/me/classroom-debrief/confirm"
     );
   });
+
+  test("preserves safe error metadata and Retry-After for the UI", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: false,
+      status: 429,
+      headers: { get: (name) => name === "Retry-After" ? "90" : null },
+      json: async () => ({
+        error: {
+          code: "publicDemoRateLimitExceeded",
+          message: "Public demo request limit reached.",
+        },
+      }),
+    });
+
+    await expect(generateClassroomDebriefDrafts({
+      text: "Catatan kelas",
+      lessonId: 5,
+    })).rejects.toMatchObject({
+      code: "publicDemoRateLimitExceeded",
+      retryAfterSeconds: 90,
+      status: 429,
+    });
+  });
 });

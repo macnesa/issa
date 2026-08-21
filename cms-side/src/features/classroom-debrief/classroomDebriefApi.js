@@ -20,6 +20,10 @@ async function readResponse(response, fallbackMessage) {
     const requestError = new Error(normalizedError.message);
     requestError.code = normalizedError.code;
     requestError.status = response.status;
+    const retryAfter = Number(response.headers?.get?.("Retry-After"));
+    if (Number.isFinite(retryAfter) && retryAfter > 0) {
+      requestError.retryAfterSeconds = Math.ceil(retryAfter);
+    }
     throw requestError;
   }
   return payload;

@@ -69,6 +69,7 @@ function configuredOrigins() {
 const allowedOrigins = configuredOrigins();
 
 app.use(cors({
+  exposedHeaders: ['Retry-After'],
   origin(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     return callback(null, false);

@@ -25,6 +25,16 @@ describe('server liveness and readiness', () => {
     expect(authenticate).not.toHaveBeenCalled();
   });
 
+  test('exposes Retry-After to approved browser clients', async () => {
+    const response = await request(app)
+      .get('/')
+      .set('Origin', 'http://localhost:3001');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['access-control-expose-headers'])
+      .toContain('Retry-After');
+  });
+
   test('GET /health returns connected when database authentication succeeds', async () => {
     jest.spyOn(sequelize, 'authenticate').mockResolvedValue();
 
