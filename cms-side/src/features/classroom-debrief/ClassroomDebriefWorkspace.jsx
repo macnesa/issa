@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getActiveTeacherIdentity, isTeacherDemoSession } from "../../offline-workspace/authIdentity";
 import { DEMO_READ_ONLY_MESSAGE } from "../../auth/demoAccess";
+import SelectField from "../../shared/ui/form-controls/SelectField";
 import { tw } from "../../shared/ui/tw";
 import { InlineNotice, PageContainer, PageHeader, PrimaryButton, SecondaryButton, StatusBadge, Surface } from "../../shared/ui/ui";
 import { confirmClassroomDebriefDrafts, fetchDebriefLessons, generateClassroomDebriefDrafts } from "./classroomDebriefApi";
@@ -8,6 +9,16 @@ import { confirmClassroomDebriefDrafts, fetchDebriefLessons, generateClassroomDe
 const recordTypeLabels = { attendance: "Attendance", feedback: "Feedback", journal: "Journal", score: "Score" };
 const attendanceStatuses = ["Hadir", "Sakit", "Alfa", "Izin"];
 const journalTypes = ["observation", "strength", "challenge", "milestone", "student_reflection", "support_note"];
+const attendanceStatusOptions = [
+  { value: "", label: "Resolve attendance status" },
+  ...attendanceStatuses.map((status) => ({ value: status, label: status })),
+];
+const journalTypeOptions = journalTypes.map((type) => ({ value: type, label: type }));
+const reflectionCaptureOptions = [
+  { value: "", label: "Select capture type" },
+  { value: "direct_quote", label: "Direct quote" },
+  { value: "paraphrased", label: "Paraphrased" },
+];
 const controlClasses = "min-h-control w-full min-w-0 rounded-control border border-issa-border-strong bg-issa-surface px-3 py-2 text-body text-issa-text outline-none focus:border-issa-accent focus:ring-2 focus:ring-issa-focus disabled:bg-issa-disabled disabled:text-issa-text-disabled";
 
 function localDateValue() {
@@ -199,17 +210,13 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
         )}
         {draft.selected && draft.editing && draft.type === "journal" && (
           <div className={tw("grid min-w-0 gap-3")}>
-            <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Journal type</span>
-              <select className={tw(controlClasses)} value={draft.values.type} disabled={interactionLocked} onChange={(event) => updateValues({ type: event.target.value, voiceCaptureType: null })}>
-                {journalTypes.map((type) => <option key={type} value={type}>{type}</option>)}
-              </select>
-            </label>
+            <SelectField id={`classroom-debrief-journal-type-${draft.draftId}`} label="Journal type"
+              value={draft.values.type} options={journalTypeOptions} disabled={interactionLocked}
+              onChange={(type) => updateValues({ type, voiceCaptureType: null })} />
             {draft.values.type === "student_reflection" && (
-              <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Reflection capture</span>
-                <select className={tw(controlClasses)} value={draft.values.voiceCaptureType || ""} disabled={interactionLocked} onChange={(event) => updateValues({ voiceCaptureType: event.target.value || null })}>
-                  <option value="">Select capture type</option><option value="direct_quote">Direct quote</option><option value="paraphrased">Paraphrased</option>
-                </select>
-              </label>
+              <SelectField id={`classroom-debrief-reflection-capture-${draft.draftId}`} label="Reflection capture"
+                value={draft.values.voiceCaptureType || ""} options={reflectionCaptureOptions} disabled={interactionLocked}
+                onChange={(voiceCaptureType) => updateValues({ voiceCaptureType: voiceCaptureType || null })} />
             )}
             <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Journal content</span>
               <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
@@ -222,12 +229,10 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
           </label>
         )}
         {draft.selected && draft.type === "attendance" && (
-          <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Canonical attendance status</span>
-            <select aria-label="Canonical attendance status" className={tw(controlClasses)} value={draft.values.status} disabled={interactionLocked} onChange={(event) => applyChange({ values: { ...draft.values, status: event.target.value } })}>
-              <option value="">Resolve attendance status</option>{attendanceStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
-            </select>
-            {draft.payload?.minutesLate && <small className={tw("text-metadata text-issa-muted")}>The canonical attendance record cannot store {draft.payload.minutesLate} minutes late.</small>}
-          </label>
+          <SelectField id={`classroom-debrief-attendance-status-${draft.draftId}`} label="Canonical attendance status"
+            value={draft.values.status} options={attendanceStatusOptions} disabled={interactionLocked}
+            helperText={draft.payload?.minutesLate ? `The canonical attendance record cannot store ${draft.payload.minutesLate} minutes late.` : undefined}
+            onChange={(status) => applyChange({ values: { ...draft.values, status } })} />
         )}
         {draft.selected && !draft.editing && (
           <p className={tw("whitespace-pre-wrap text-body text-issa-text")}>
@@ -269,6 +274,10 @@ export default function ClassroomDebriefWorkspace() {
   const [generationState, setGenerationState] = useState({ pending: false, error: "" });
   const [confirmationState, setConfirmationState] = useState({ pending: false, error: "", outcome: "idle" });
   const observedAt = useMemo(() => new Date().toISOString(), [drafts.length > 0]);
+  const lessonOptions = useMemo(() => [
+    { value: "", label: "No lesson selected" },
+    ...lessons.map((lesson) => ({ value: String(lesson.id), label: lesson.name })),
+  ], [lessons]);
 
   useEffect(() => { fetchDebriefLessons().then(setLessons).catch(() => setLessons([])); }, []);
   const reviewKey = drafts[0]?.draftId || "";
@@ -365,12 +374,8 @@ export default function ClassroomDebriefWorkspace() {
                 placeholder="Example: Alya worked independently, Rafi arrived late, and Nadia scored 82 on the fraction quiz." />
               <small id="classroom-debrief-text-count" className={tw("text-metadata text-issa-muted")}>{text.length}/4000</small>
             </label>
-            <label className={tw("grid min-w-0 gap-1")} htmlFor="classroom-debrief-lesson">
-              <span className={tw("text-label font-bold")}>Lesson context (optional)</span>
-              <select aria-label="Lesson context (optional)" id="classroom-debrief-lesson" className={tw(controlClasses)} value={lessonId} onChange={(event) => setLessonId(event.target.value)}>
-                <option value="">No lesson selected</option>{lessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
-              </select>
-            </label>
+            <SelectField id="classroom-debrief-lesson" label="Lesson context (optional)"
+              value={lessonId} options={lessonOptions} onChange={setLessonId} />
             <div aria-live="polite" id="classroom-debrief-generation-status" role="status">
               {generationState.pending && <InlineNotice>Generating reviewable drafts. No records are being saved.</InlineNotice>}
               {generationState.error && <InlineNotice role="alert" tone="danger">{generationState.error}</InlineNotice>}

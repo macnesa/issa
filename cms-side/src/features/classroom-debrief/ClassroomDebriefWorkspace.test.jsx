@@ -5,6 +5,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import ClassroomDebriefWorkspace from "./ClassroomDebriefWorkspace";
 
 const workspaceMocks = vi.hoisted(() => ({
@@ -135,20 +136,24 @@ async function generateDrafts() {
   fireEvent.change(screen.getByLabelText("What happened in class?"), {
     target: { value: "Alya mandiri dan Rafi aktif berdiskusi." },
   });
-  fireEvent.change(screen.getByLabelText("Lesson context (optional)"), {
-    target: { value: "5" },
-  });
+  fireEvent.click(screen.getByLabelText("Lesson context (optional)"));
+  fireEvent.click(await screen.findByRole("option", { name: "Matematika" }));
   fireEvent.click(screen.getByRole("button", { name: "Generate drafts" }));
   await screen.findByText("5 drafts ready for review");
 }
 
-function resolveDraftsForConfirmation() {
+async function chooseOption(label, option) {
+  fireEvent.click(screen.getByLabelText(label));
+  fireEvent.click(await screen.findByRole("option", { name: option }));
+}
+
+async function resolveDraftsForConfirmation() {
   const journalDraft = screen.getByText(/Nadia mencoba strategi baru/)
     .closest("article");
   fireEvent.click(within(journalDraft).getByRole("button", { name: "Discard" }));
   fireEvent.click(screen.getByLabelText("Rafi Ahmad", { selector: "input[type=radio]" }));
   fireEvent.click(screen.getByLabelText("Fraction Quiz", { selector: "input[type=radio]" }));
-  fireEvent.change(screen.getByLabelText("Canonical attendance status"), { target: { value: "Hadir" } });
+  await chooseOption("Canonical attendance status", "Hadir");
 }
 
 describe("Classroom Debrief workspace", () => {
@@ -194,9 +199,7 @@ describe("Classroom Debrief workspace", () => {
     fireEvent.click(screen.getByLabelText("Fraction Quiz", {
       selector: "input[type=radio]",
     }));
-    fireEvent.change(screen.getByLabelText("Canonical attendance status"), {
-      target: { value: "Hadir" },
-    });
+    await chooseOption("Canonical attendance status", "Hadir");
 
     expect(screen.getByText(/4 ready · 0 needs clarification · 1 discarded/))
       .toBeInTheDocument();
@@ -241,7 +244,7 @@ describe("Classroom Debrief workspace", () => {
     }));
     render(<ClassroomDebriefWorkspace />);
     await generateDrafts();
-    resolveDraftsForConfirmation();
+    await resolveDraftsForConfirmation();
     fireEvent.click(screen.getByRole("button", { name: "Confirm 4 records" }));
 
     expect(await screen.findByText(/records saved. Failed drafts remain selected/))
@@ -349,6 +352,38 @@ describe("Classroom Debrief workspace", () => {
     expect(within(alyaDraft).getByText("Edited")).toBeInTheDocument();
   });
 
+  test("uses keyboard-accessible ISSA selectors without changing journal payloads", async () => {
+    render(<ClassroomDebriefWorkspace />);
+    await generateDrafts();
+    const journalDraft = screen.getByText(/Nadia mencoba strategi baru/)
+      .closest("article");
+    fireEvent.click(within(journalDraft).getByRole("button", { name: "Edit" }));
+
+    const journalType = within(journalDraft).getByLabelText("Journal type");
+    journalType.focus();
+    userEvent.keyboard("{arrowdown}");
+    fireEvent.click(await screen.findByRole("option", { name: "student_reflection" }));
+    await chooseOption("Reflection capture", "Paraphrased");
+    fireEvent.click(within(journalDraft).getByRole("button", { name: "Save edit" }));
+
+    fireEvent.click(screen.getByLabelText("Rafi Ahmad", { selector: "input[type=radio]" }));
+    fireEvent.click(screen.getByLabelText("Fraction Quiz", { selector: "input[type=radio]" }));
+    await chooseOption("Canonical attendance status", "Hadir");
+    fireEvent.click(screen.getByRole("button", { name: "Confirm 5 records" }));
+
+    await waitFor(() => expect(workspaceMocks.confirm).toHaveBeenCalledTimes(1));
+    expect(workspaceMocks.confirm.mock.calls[0][0]).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        recordType: "journal",
+        payload: expect.objectContaining({
+          type: "student_reflection",
+          voiceCaptureType: "paraphrased",
+        }),
+      }),
+    ]));
+    expect(workspaceMocks.generate).toHaveBeenCalledTimes(1);
+  });
+
   test("handles an empty extraction and rate limit without clearing the note", async () => {
     workspaceMocks.generate.mockResolvedValueOnce({ drafts: [] });
     render(<ClassroomDebriefWorkspace />);
@@ -379,7 +414,7 @@ describe("Classroom Debrief workspace", () => {
     await generateDrafts();
     expect(screen.getByRole("heading", { name: "5 drafts ready for review" }))
       .toHaveFocus();
-    resolveDraftsForConfirmation();
+    await resolveDraftsForConfirmation();
     const confirmButton = screen.getByRole("button", { name: "Confirm 4 records" });
     fireEvent.click(confirmButton);
     fireEvent.click(confirmButton);
