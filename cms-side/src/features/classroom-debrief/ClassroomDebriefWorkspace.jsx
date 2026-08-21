@@ -133,7 +133,7 @@ function recordTypeCounts(drafts) {
   })).filter((item) => item.value > 0);
 }
 
-function DraftEditor({ draft, onChange }) {
+function DraftEditor({ draft, interactionLocked, onChange }) {
   const studentCandidates = draft.studentResolution?.candidates || [];
   const assessmentCandidates = draft.context?.assessmentResolution?.candidates || [];
   const saved = ["committed", "duplicate"].includes(draft.result?.status);
@@ -174,7 +174,7 @@ function DraftEditor({ draft, onChange }) {
             <legend className={tw("text-label font-bold text-issa-text")}>Which student?</legend>
             {studentCandidates.map((candidate) => (
               <label className={tw("flex min-h-control min-w-0 items-center gap-2 rounded-control px-2 hover:bg-issa-subtle")} key={candidate.studentId}>
-                <input type="radio" name={`${draft.draftId}-student`} checked={Number(draft.selectedStudentId) === candidate.studentId} onChange={() => applyChange({ selectedStudentId: candidate.studentId })} />
+                <input type="radio" name={`${draft.draftId}-student`} checked={Number(draft.selectedStudentId) === candidate.studentId} disabled={interactionLocked} onChange={() => applyChange({ selectedStudentId: candidate.studentId })} />
                 <span>{candidate.name}</span>
               </label>
             ))}
@@ -185,7 +185,7 @@ function DraftEditor({ draft, onChange }) {
             <legend className={tw("text-label font-bold text-issa-text")}>Which assessment?</legend>
             {assessmentCandidates.map((candidate) => (
               <label className={tw("flex min-h-control min-w-0 items-center gap-2 rounded-control px-2 hover:bg-issa-subtle")} key={candidate.assignmentId}>
-                <input type="radio" name={`${draft.draftId}-assignment`} checked={Number(draft.selectedAssignmentId) === candidate.assignmentId} onChange={() => applyChange({ selectedAssignmentId: candidate.assignmentId })} />
+                <input type="radio" name={`${draft.draftId}-assignment`} checked={Number(draft.selectedAssignmentId) === candidate.assignmentId} disabled={interactionLocked} onChange={() => applyChange({ selectedAssignmentId: candidate.assignmentId })} />
                 <span>{candidate.name}</span>
               </label>
             ))}
@@ -194,36 +194,36 @@ function DraftEditor({ draft, onChange }) {
 
         {draft.selected && draft.editing && draft.type === "feedback" && (
           <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Feedback</span>
-            <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} onChange={(event) => updateValues({ content: event.target.value })} />
+            <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
           </label>
         )}
         {draft.selected && draft.editing && draft.type === "journal" && (
           <div className={tw("grid min-w-0 gap-3")}>
             <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Journal type</span>
-              <select className={tw(controlClasses)} value={draft.values.type} onChange={(event) => updateValues({ type: event.target.value, voiceCaptureType: null })}>
+              <select className={tw(controlClasses)} value={draft.values.type} disabled={interactionLocked} onChange={(event) => updateValues({ type: event.target.value, voiceCaptureType: null })}>
                 {journalTypes.map((type) => <option key={type} value={type}>{type}</option>)}
               </select>
             </label>
             {draft.values.type === "student_reflection" && (
               <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Reflection capture</span>
-                <select className={tw(controlClasses)} value={draft.values.voiceCaptureType || ""} onChange={(event) => updateValues({ voiceCaptureType: event.target.value || null })}>
+                <select className={tw(controlClasses)} value={draft.values.voiceCaptureType || ""} disabled={interactionLocked} onChange={(event) => updateValues({ voiceCaptureType: event.target.value || null })}>
                   <option value="">Select capture type</option><option value="direct_quote">Direct quote</option><option value="paraphrased">Paraphrased</option>
                 </select>
               </label>
             )}
             <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Journal content</span>
-              <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} onChange={(event) => updateValues({ content: event.target.value })} />
+              <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
             </label>
           </div>
         )}
         {draft.selected && draft.editing && draft.type === "score" && (
           <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Score</span>
-            <input className={tw(controlClasses)} type="number" min="0" max="100" value={draft.values.value} onChange={(event) => updateValues({ value: event.target.value })} />
+            <input className={tw(controlClasses)} type="number" min="0" max="100" value={draft.values.value} disabled={interactionLocked} onChange={(event) => updateValues({ value: event.target.value })} />
           </label>
         )}
         {draft.selected && draft.type === "attendance" && (
           <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Canonical attendance status</span>
-            <select aria-label="Canonical attendance status" className={tw(controlClasses)} value={draft.values.status} onChange={(event) => applyChange({ values: { ...draft.values, status: event.target.value } })}>
+            <select aria-label="Canonical attendance status" className={tw(controlClasses)} value={draft.values.status} disabled={interactionLocked} onChange={(event) => applyChange({ values: { ...draft.values, status: event.target.value } })}>
               <option value="">Resolve attendance status</option>{attendanceStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
             </select>
             {draft.payload?.minutesLate && <small className={tw("text-metadata text-issa-muted")}>The canonical attendance record cannot store {draft.payload.minutesLate} minutes late.</small>}
@@ -239,12 +239,12 @@ function DraftEditor({ draft, onChange }) {
         {saved && <InlineNotice tone="success">Record saved.</InlineNotice>}
         {!saved && (
           <div className={tw("flex min-w-0 flex-wrap gap-2 max-sm:flex-col max-sm:[&>button]:w-full")}>
-            {draft.selected && draft.type !== "attendance" && !draft.editing && <SecondaryButton type="button" onClick={beginEditing}>Edit</SecondaryButton>}
+            {draft.selected && draft.type !== "attendance" && !draft.editing && <SecondaryButton type="button" disabled={interactionLocked} onClick={beginEditing}>Edit</SecondaryButton>}
             {draft.selected && draft.type !== "attendance" && draft.editing && <>
-              <SecondaryButton type="button" onClick={saveEditing}>Save edit</SecondaryButton>
-              <SecondaryButton type="button" onClick={cancelEditing}>Cancel edit</SecondaryButton>
+              <SecondaryButton type="button" disabled={interactionLocked} onClick={saveEditing}>Save edit</SecondaryButton>
+              <SecondaryButton type="button" disabled={interactionLocked} onClick={cancelEditing}>Cancel edit</SecondaryButton>
             </>}
-            {!draft.editing && <SecondaryButton type="button" onClick={() => applyChange({ selected: !draft.selected, result: null }, { markEdited: false })}>
+            {!draft.editing && <SecondaryButton type="button" disabled={interactionLocked} onClick={() => applyChange({ selected: !draft.selected, result: null }, { markEdited: false })}>
               {draft.selected ? "Discard" : "Restore"}
             </SecondaryButton>}
           </div>
@@ -309,7 +309,10 @@ export default function ClassroomDebriefWorkspace() {
   const selectedDrafts = drafts.filter((draft) => draft.selected);
   const readyDrafts = selectedDrafts.filter(draftReady);
   const clarificationCount = selectedDrafts.length - readyDrafts.length;
-  const updateDraft = (draftId, updatedDraft) => setDrafts((current) => current.map((draft) => draft.draftId === draftId ? updatedDraft : draft));
+  const updateDraft = (draftId, updatedDraft) => {
+    if (confirmationInFlightRef.current) return;
+    setDrafts((current) => current.map((draft) => draft.draftId === draftId ? updatedDraft : draft));
+  };
 
   const confirmDrafts = async () => {
     if (confirmationInFlightRef.current || isDemo || selectedDrafts.length === 0 || clarificationCount > 0) return;
@@ -336,6 +339,7 @@ export default function ClassroomDebriefWorkspace() {
   const confirmationCounts = recordTypeCounts(readyDrafts);
   const savedCounts = recordTypeCounts(savedDrafts);
   const resetWorkspace = () => {
+    if (confirmationInFlightRef.current) return;
     setText(""); setLessonId(""); setDrafts([]); setReviewContext(null);
     setGenerationState({ pending: false, error: "" });
     setConfirmationState({ pending: false, error: "", outcome: "idle" });
@@ -386,10 +390,10 @@ export default function ClassroomDebriefWorkspace() {
               <p className={tw("mt-1 text-supporting text-issa-muted")}>{readyDrafts.length} ready · {clarificationCount} needs clarification · {discardedDraftCount} discarded · {savedDrafts.length} saved</p>
               <p className={tw("mt-1 text-metadata text-issa-muted")}>Class {classLabel}{reviewContext?.lesson?.name ? ` · ${reviewContext.lesson.name}` : ""}</p>
             </div>
-            <SecondaryButton type="button" onClick={resetWorkspace}>Start another Debrief</SecondaryButton>
+            <SecondaryButton type="button" disabled={confirmationState.pending} onClick={resetWorkspace}>Start another Debrief</SecondaryButton>
           </Surface>
           <div className={tw("grid min-w-0 gap-4 xl:grid-cols-2")}>
-            {drafts.map((draft) => <DraftEditor key={draft.draftId} draft={draft} onChange={(updatedDraft) => updateDraft(draft.draftId, updatedDraft)} />)}
+            {drafts.map((draft) => <DraftEditor key={draft.draftId} draft={draft} interactionLocked={confirmationState.pending} onChange={(updatedDraft) => updateDraft(draft.draftId, updatedDraft)} />)}
           </div>
           <div aria-live="polite" ref={confirmationStatusRef} role="status" tabIndex={-1} className={tw("grid gap-2 outline-none")}>
             {confirmationState.error && <InlineNotice role="alert" tone="danger">{confirmationState.error}</InlineNotice>}

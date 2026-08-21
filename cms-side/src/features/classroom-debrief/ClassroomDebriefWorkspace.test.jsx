@@ -384,6 +384,23 @@ describe("Classroom Debrief workspace", () => {
     fireEvent.click(confirmButton);
     fireEvent.click(confirmButton);
     expect(workspaceMocks.confirm).toHaveBeenCalledTimes(1);
+    const alyaDraft = screen.getByText("Alya Putri").closest("article");
+    expect(screen.getByRole("button", { name: "Start another Debrief" }))
+      .toBeDisabled();
+    expect(within(alyaDraft).getByRole("button", { name: "Edit" }))
+      .toBeDisabled();
+    expect(within(alyaDraft).getByRole("button", { name: "Discard" }))
+      .toBeDisabled();
+    expect(screen.getByLabelText("Rafi Ahmad", { selector: "input[type=radio]" }))
+      .toBeDisabled();
+    expect(screen.getByLabelText("Canonical attendance status"))
+      .toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Start another Debrief" }));
+    fireEvent.click(within(alyaDraft).getByRole("button", { name: "Discard" }));
+    expect(screen.getByRole("heading", { name: "5 drafts ready for review" }))
+      .toBeInTheDocument();
+    expect(within(alyaDraft).getByRole("button", { name: "Discard" }))
+      .toBeInTheDocument();
     resolveConfirmation(committedResults(workspaceMocks.confirm.mock.calls[0][0]));
     const success = await screen.findByText(/4 records saved. Review is complete/);
     expect(success.closest("[tabindex='-1']")).toHaveFocus();
