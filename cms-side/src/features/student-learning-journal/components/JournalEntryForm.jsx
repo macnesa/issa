@@ -1,5 +1,5 @@
 import { tw } from "../../../shared/ui/tw";
-import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
+import { Textarea } from "flowbite-react/components/Textarea";
 import { useEffect, useRef, useState } from "react";
 import DateField from "../../../shared/ui/form-controls/DateField";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
@@ -270,9 +270,10 @@ export default function JournalEntryForm({
                 {form.content.length}/{maximumJournalContentLength}
               </span>
             </div>
-            <textarea
+            <Textarea
               id="student-journal-content"
-              className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
+              className={tw("journal-entry-form__textarea min-h-28 resize-y leading-[1.55]")}
+              color={errors.content ? "failure" : "gray"}
               value={form.content}
               onChange={(event) => updateField("content", event.target.value)}
               minLength={3}

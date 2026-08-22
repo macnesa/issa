@@ -46,8 +46,9 @@ export const issaFlowbiteTheme = createTheme({
   textInput: {
     base: "flex w-full",
     field: {
+      base: "relative w-full",
       input: {
-        base: "block w-full rounded-control border bg-issa-surface text-issa-text placeholder-issa-text-muted transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-issa-focus disabled:cursor-not-allowed disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:opacity-100",
+        base: "issa-native-control block w-full min-w-0 rounded-control border bg-issa-surface text-body text-issa-text transition-[border-color,background-color,box-shadow] duration-fast placeholder:text-issa-muted placeholder:opacity-100 enabled:hover:border-issa-accent focus:outline-none focus:ring-0 focus-visible:border-issa-accent focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus focus-visible:[box-shadow:inset_var(--issa-border-width-emphasis)_0_0_var(--issa-selection)] aria-[invalid=true]:border-issa-danger aria-[invalid=true]:bg-[color-mix(in_srgb,var(--issa-danger)_7%,var(--issa-surface))] disabled:cursor-not-allowed disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:opacity-100 motion-reduce:transition-none",
         sizes: {
           sm: "min-h-control-compact px-3 py-2 text-supporting",
           md: "min-h-control px-3 py-2 text-body",
@@ -60,12 +61,34 @@ export const issaFlowbiteTheme = createTheme({
           warning: "border-issa-warning focus:border-issa-warning",
           failure: "border-issa-danger focus:border-issa-danger",
         },
+        withAddon: {
+          on: "rounded-control",
+          off: "rounded-control",
+        },
+        withShadow: {
+          on: "shadow-elevated",
+          off: "",
+        },
       },
+    },
+  },
+  textarea: {
+    base: "issa-native-control issa-native-control--textarea block min-h-control w-full min-w-0 rounded-control border bg-issa-surface px-3 py-2 text-body text-issa-text transition-[border-color,background-color,box-shadow] duration-fast placeholder:text-issa-muted placeholder:opacity-100 enabled:hover:border-issa-accent focus:outline-none focus:ring-0 focus-visible:border-issa-accent focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus focus-visible:[box-shadow:inset_var(--issa-border-width-emphasis)_0_0_var(--issa-selection)] aria-[invalid=true]:border-issa-danger aria-[invalid=true]:bg-[color-mix(in_srgb,var(--issa-danger)_7%,var(--issa-surface))] disabled:cursor-not-allowed disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:opacity-100 motion-reduce:transition-none",
+    colors: {
+      gray: "border-issa-border-strong",
+      info: "border-issa-info",
+      success: "border-issa-success",
+      warning: "border-issa-warning",
+      failure: "border-issa-danger",
+    },
+    withShadow: {
+      on: "shadow-elevated",
+      off: "",
     },
   },
   label: {
     root: {
-      base: "text-label font-semibold",
+      base: "block mb-1 text-label font-semibold",
       disabled: "text-issa-text-disabled opacity-100",
       colors: {
         default: "text-issa-text",
@@ -78,14 +101,37 @@ export const issaFlowbiteTheme = createTheme({
   },
   helperText: {
     root: {
-      base: "mt-2 text-supporting",
+      base: "mt-1 text-metadata leading-normal",
       colors: {
-        gray: "text-issa-text-muted",
+        gray: "text-issa-muted",
         info: "text-issa-info",
         success: "text-issa-success",
         warning: "text-issa-warning",
         failure: "text-issa-danger",
       },
+    },
+  },
+  checkbox: {
+    base: "issa-checkbox h-4 w-4 flex-none appearance-none rounded-[0.2rem] border border-issa-border-strong bg-issa-surface bg-[length:0.55em_0.55em] bg-center bg-no-repeat checked:border-transparent checked:bg-current checked:bg-check-icon focus:outline-none focus:ring-0 focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:bg-issa-disabled disabled:opacity-100",
+    color: {
+      issa: "text-issa-accent",
+    },
+    indeterminate: "border-transparent bg-current bg-dash-icon",
+  },
+  radio: {
+    base: "issa-radio h-4 w-4 flex-none appearance-none rounded-full border border-issa-border-strong bg-issa-surface bg-[length:1em_1em] bg-center bg-no-repeat checked:border-transparent checked:bg-current checked:bg-dot-icon focus:outline-none focus:ring-0 focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:bg-issa-disabled disabled:opacity-100",
+    color: {
+      issa: "text-issa-accent",
+    },
+  },
+  fileInput: {
+    base: "issa-file-input block min-h-control w-full cursor-pointer rounded-control border bg-issa-surface text-body text-issa-text file:mr-3 file:cursor-pointer file:border-0 file:border-r file:border-issa-border-strong file:bg-issa-subtle file:px-3 file:py-2 file:text-button file:font-bold file:text-issa-text hover:file:bg-[color-mix(in_srgb,var(--issa-selection)_16%,var(--issa-surface))] focus:outline-none focus:ring-0 focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:opacity-100 disabled:file:cursor-not-allowed",
+    sizes: {
+      issa: "text-body",
+    },
+    colors: {
+      issa: "border-issa-border-strong",
+      failure: "border-issa-danger bg-[color-mix(in_srgb,var(--issa-danger)_7%,var(--issa-surface))]",
     },
   },
   alert: {

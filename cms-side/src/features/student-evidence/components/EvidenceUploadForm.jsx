@@ -1,5 +1,8 @@
 import { tw } from "../../../shared/ui/tw";
-import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
+import { FileInput } from "flowbite-react/components/FileInput";
+import { HelperText } from "flowbite-react/components/HelperText";
+import { Label } from "flowbite-react/components/Label";
+import { Textarea } from "flowbite-react/components/Textarea";
 import { useEffect, useRef, useState } from "react";
 import {
   InlineNotice,
@@ -170,20 +173,34 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
           </InlineNotice>
         )}
         <div className={tw("evidence-upload__file-field grid gap-1 [&_p]:text-issa-muted [&_p]:text-metadata")}>
-          <label className={tw("text-issa-text text-label font-semibold")} htmlFor="student-evidence-file">Foto evidence</label>
-          <input
+          <Label htmlFor="student-evidence-file">Foto evidence</Label>
+          <FileInput
             ref={fileInputRef}
             id="student-evidence-file"
-            type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={handleFileChange}
-            aria-describedby="student-evidence-file-help student-evidence-file-error"
+            aria-describedby={[
+              "student-evidence-file-help",
+              errors.file ? "student-evidence-file-error" : "",
+            ].filter(Boolean).join(" ")}
             aria-invalid={Boolean(errors.file)}
             disabled={submitting || demoReadOnly}
-            className={tw("w-full min-h-control border border-issa-border-strong rounded-control p-2 bg-issa-surface text-issa-text focus-visible:outline-emphasis focus-visible:outline-issa-focus focus-visible:outline-offset-1")}
+            className={tw("evidence-upload__file-control")}
+            color={errors.file ? "failure" : "issa"}
+            sizing="issa"
           />
-          <p id="student-evidence-file-help">JPEG, PNG, atau WEBP · maksimal 5 MB.</p>
-          {errors.file && <p id="student-evidence-file-error" className={tw("evidence-upload__error text-issa-danger")}>{errors.file}</p>}
+          <HelperText id="student-evidence-file-help">
+            JPEG, PNG, atau WEBP · maksimal 5 MB.
+          </HelperText>
+          {errors.file && (
+            <HelperText
+              id="student-evidence-file-error"
+              className={tw("evidence-upload__error font-semibold")}
+              color="failure"
+            >
+              {errors.file}
+            </HelperText>
+          )}
         </div>
 
         {file && previewUrl && (
@@ -237,9 +254,10 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
             <label className={tw("issa-control-label block mb-1 text-issa-text text-label font-semibold")} htmlFor="student-evidence-description">
               Deskripsi <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-metadata uppercase")}>Opsional</span>
             </label>
-            <textarea
+            <Textarea
               id="student-evidence-description"
-              className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
+              className={tw("evidence-upload__description-control min-h-28 resize-y leading-[1.55]")}
+              color={errors.description ? "failure" : "gray"}
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               maxLength={500}

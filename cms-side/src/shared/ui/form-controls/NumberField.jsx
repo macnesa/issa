@@ -1,5 +1,7 @@
 import { tw } from "../tw";
-import { fieldMessageClasses, nativeControlClasses } from "./controlStyles";
+import { HelperText } from "flowbite-react/components/HelperText";
+import { Label } from "flowbite-react/components/Label";
+import { TextInput } from "flowbite-react/components/TextInput";
 export default function NumberField({
   id,
   label,
@@ -13,24 +15,50 @@ export default function NumberField({
 }) {
   const errorId = error ? `${id}-error` : undefined;
   const helperId = helperText ? `${id}-helper` : undefined;
-  const describedBy = [errorId, helperId].filter(Boolean).join(" ") || undefined;
+  const {
+    "aria-describedby": externalDescribedBy,
+    "aria-invalid": externalInvalid,
+    ...nativeInputProps
+  } = inputProps;
+  const describedBy = [externalDescribedBy, errorId, helperId]
+    .filter(Boolean)
+    .join(" ") || undefined;
 
   return (
     <div className={tw(`issa-control-field min-w-0 issa-number-field ${className}`)}>
-      <label className={tw(`issa-control-label block mb-1 text-issa-text text-label font-semibold ${hideLabel ? "sr-only" : ""}`)} htmlFor={id}>{label}</label>
-      <input
+      <Label
+        className={tw("issa-control-label", hideLabel && "sr-only")}
+        disabled={Boolean(nativeInputProps.disabled)}
+        htmlFor={id}
+      >
+        {label}
+      </Label>
+      <TextInput
         id={id}
         type="number"
         inputMode="numeric"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={tw(nativeControlClasses, "issa-number-control appearance-none px-3 py-2 [-moz-appearance:textfield]")}
-        aria-invalid={Boolean(error)}
+        className={tw("issa-number-control [&_input]:appearance-none [&_input]:[-moz-appearance:textfield]")}
+        color={error ? "failure" : "gray"}
+        aria-invalid={externalInvalid ?? Boolean(error)}
         aria-describedby={describedBy}
-        {...inputProps}
+        {...nativeInputProps}
       />
-      {helperText && <p id={helperId} className={tw("issa-control-helper text-issa-muted", fieldMessageClasses)}>{helperText}</p>}
-      {error && <p id={errorId} className={tw("issa-control-error font-semibold text-issa-danger", fieldMessageClasses)}>{error}</p>}
+      {helperText && (
+        <HelperText id={helperId} className={tw("issa-control-helper")}>
+          {helperText}
+        </HelperText>
+      )}
+      {error && (
+        <HelperText
+          id={errorId}
+          className={tw("issa-control-error font-semibold")}
+          color="failure"
+        >
+          {error}
+        </HelperText>
+      )}
     </div>
   );
 }

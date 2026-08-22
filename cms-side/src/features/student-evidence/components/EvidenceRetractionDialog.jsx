@@ -1,5 +1,5 @@
 import { tw } from "../../../shared/ui/tw";
-import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
+import { Textarea } from "flowbite-react/components/Textarea";
 import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
@@ -100,9 +100,10 @@ export default function EvidenceRetractionDialog({
               >
                 Alasan pencabutan
               </label>
-              <textarea
+              <Textarea
                 id="evidence-retraction-reason"
-                className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
+                className={tw("evidence-retraction-dialog__textarea min-h-28 resize-y leading-[1.55]")}
+                color={reasonError ? "failure" : "gray"}
                 value={reason}
                 onChange={(event) => {
                   setReason(event.target.value);

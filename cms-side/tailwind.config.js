@@ -5,10 +5,14 @@ module.exports = {
     "./node_modules/flowbite-react/dist/components/Alert/**/*.js",
     "./node_modules/flowbite-react/dist/components/Badge/**/*.js",
     "./node_modules/flowbite-react/dist/components/Button/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Checkbox/**/*.js",
+    "./node_modules/flowbite-react/dist/components/FileInput/**/*.js",
     "./node_modules/flowbite-react/dist/components/HelperText/**/*.js",
     "./node_modules/flowbite-react/dist/components/Label/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Radio/**/*.js",
     "./node_modules/flowbite-react/dist/components/Spinner/**/*.js",
     "./node_modules/flowbite-react/dist/components/TextInput/**/*.js",
+    "./node_modules/flowbite-react/dist/components/Textarea/**/*.js",
   ],
   darkMode: "class",
   theme: {
@@ -48,6 +52,14 @@ module.exports = {
       boxShadow: {
         elevated: "var(--issa-shadow-elevated)",
         dialog: "var(--issa-shadow-dialog)",
+      },
+      backgroundImage: {
+        "check-icon":
+          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m3 8 3 3 7-7'/%3E%3C/svg%3E\")",
+        "dash-icon":
+          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-linecap='round' stroke-width='2.5' d='M3 8h10'/%3E%3C/svg%3E\")",
+        "dot-icon":
+          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='3.5' fill='white'/%3E%3C/svg%3E\")",
       },
       fontSize: {
         product: "var(--issa-font-size-product)",

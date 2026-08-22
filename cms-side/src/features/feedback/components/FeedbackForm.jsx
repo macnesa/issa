@@ -1,5 +1,5 @@
 import { tw } from "../../../shared/ui/tw";
-import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
+import { Textarea } from "flowbite-react/components/Textarea";
 import {
   FormField,
   InlineNotice,
@@ -47,12 +47,12 @@ export default function FeedbackForm({
           label="Feedback guru"
           hint="Tinjau isi secara menyeluruh sebelum menyimpan."
         >
-          <textarea
+          <Textarea
             ref={feedbackInputRef}
             id="feedback"
             value={feedback}
             onChange={onFeedbackChange}
-            className={tw(nativeControlClasses, "issa-native-control--textarea feedback-editor__textarea min-h-52 max-w-full resize-y px-3 py-2 leading-[1.55] [overflow-wrap:anywhere]")}
+            className={tw("feedback-editor__textarea min-h-52 max-w-full resize-y leading-[1.55] [overflow-wrap:anywhere]")}
             rows="8"
           />
         </FormField>

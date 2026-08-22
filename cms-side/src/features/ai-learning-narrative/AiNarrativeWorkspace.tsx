@@ -10,6 +10,10 @@ import {
   QueryClientProvider,
   useMutation,
 } from "@tanstack/react-query";
+import { Checkbox } from "flowbite-react/components/Checkbox";
+import { Radio } from "flowbite-react/components/Radio";
+import { Textarea } from "flowbite-react/components/Textarea";
+import { TextInput } from "flowbite-react/components/TextInput";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DestructiveButton,
@@ -289,9 +293,9 @@ function Workspace({
                         )}
                         key={sourceType}
                       >
-                        <input
-                          className={tw("ai-workspace__choice-input w-4 h-4 flex-none [accent-color:var(--issa-accent)]")}
-                          type="checkbox"
+                        <Checkbox
+                          className={tw("ai-workspace__choice-input")}
+                          color="issa"
                           checked={checked}
                           onChange={() => toggleSource(sourceType)}
                         />
@@ -312,9 +316,9 @@ function Workspace({
                     ["medium", "Sedang"],
                   ] as const).map(([value, label]) => (
                     <label className={tw(selectionLabelClasses)} key={value}>
-                      <input
-                        className={tw("ai-workspace__choice-input w-4 h-4 flex-none [accent-color:var(--issa-accent)]")}
-                        type="radio"
+                      <Radio
+                        className={tw("ai-workspace__choice-input")}
+                        color="issa"
                         name="ai-narrative-length"
                         checked={request.length === value}
                         onChange={() => setRequest({ ...request, length: value })}
@@ -400,8 +404,8 @@ function Workspace({
                 <span>
                   Judul narasi
                 </span>
-                <input
-                  className={tw(fieldControlClasses)}
+                <TextInput
+                  className={tw("ai-workspace__title-input")}
                   value={title}
                   onChange={(event) => {
                     setTitle(event.target.value);
@@ -445,8 +449,8 @@ function Workspace({
                       <span className={tw("sr-only")}>
                         {SECTION_LABELS[section.sectionType] || section.sectionType}
                       </span>
-                      <textarea
-                        className={tw(`${fieldControlClasses} ai-workspace__textarea [min-height:8rem] resize-y [overflow-wrap:anywhere] leading-normal`)}
+                      <Textarea
+                        className={tw("ai-workspace__textarea [min-height:8rem] resize-y [overflow-wrap:anywhere] leading-normal")}
                         rows={5}
                         value={section.text}
                         onChange={(event) => {

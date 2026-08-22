@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Radio } from "flowbite-react/components/Radio";
+import { Textarea } from "flowbite-react/components/Textarea";
+import { TextInput } from "flowbite-react/components/TextInput";
 import { getActiveTeacherIdentity, isTeacherDemoSession } from "../../offline-workspace/authIdentity";
 import { DEMO_READ_ONLY_MESSAGE } from "../../auth/demoAccess";
 import SelectField from "../../shared/ui/form-controls/SelectField";
@@ -19,8 +22,6 @@ const reflectionCaptureOptions = [
   { value: "direct_quote", label: "Direct quote" },
   { value: "paraphrased", label: "Paraphrased" },
 ];
-const controlClasses = "min-h-control w-full min-w-0 rounded-control border border-issa-border-strong bg-issa-surface px-3 py-2 text-body text-issa-text outline-none focus:border-issa-accent focus:ring-2 focus:ring-issa-focus disabled:bg-issa-disabled disabled:text-issa-text-disabled";
-
 function localDateValue() {
   const date = new Date();
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -185,7 +186,7 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
             <legend className={tw("text-label font-bold text-issa-text")}>Which student?</legend>
             {studentCandidates.map((candidate) => (
               <label className={tw("flex min-h-control min-w-0 items-center gap-2 rounded-control px-2 hover:bg-issa-subtle")} key={candidate.studentId}>
-                <input type="radio" name={`${draft.draftId}-student`} checked={Number(draft.selectedStudentId) === candidate.studentId} disabled={interactionLocked} onChange={() => applyChange({ selectedStudentId: candidate.studentId })} />
+                <Radio color="issa" name={`${draft.draftId}-student`} checked={Number(draft.selectedStudentId) === candidate.studentId} disabled={interactionLocked} onChange={() => applyChange({ selectedStudentId: candidate.studentId })} />
                 <span>{candidate.name}</span>
               </label>
             ))}
@@ -196,7 +197,7 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
             <legend className={tw("text-label font-bold text-issa-text")}>Which assessment?</legend>
             {assessmentCandidates.map((candidate) => (
               <label className={tw("flex min-h-control min-w-0 items-center gap-2 rounded-control px-2 hover:bg-issa-subtle")} key={candidate.assignmentId}>
-                <input type="radio" name={`${draft.draftId}-assignment`} checked={Number(draft.selectedAssignmentId) === candidate.assignmentId} disabled={interactionLocked} onChange={() => applyChange({ selectedAssignmentId: candidate.assignmentId })} />
+                <Radio color="issa" name={`${draft.draftId}-assignment`} checked={Number(draft.selectedAssignmentId) === candidate.assignmentId} disabled={interactionLocked} onChange={() => applyChange({ selectedAssignmentId: candidate.assignmentId })} />
                 <span>{candidate.name}</span>
               </label>
             ))}
@@ -205,7 +206,7 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
 
         {draft.selected && draft.editing && draft.type === "feedback" && (
           <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Feedback</span>
-            <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
+            <Textarea className={tw("debrief-draft__feedback-textarea min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
           </label>
         )}
         {draft.selected && draft.editing && draft.type === "journal" && (
@@ -219,13 +220,13 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
                 onChange={(voiceCaptureType) => updateValues({ voiceCaptureType: voiceCaptureType || null })} />
             )}
             <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Journal content</span>
-              <textarea className={tw(controlClasses, "min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
+              <Textarea className={tw("debrief-draft__journal-textarea min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
             </label>
           </div>
         )}
         {draft.selected && draft.editing && draft.type === "score" && (
           <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Score</span>
-            <input className={tw(controlClasses)} type="number" min="0" max="100" value={draft.values.value} disabled={interactionLocked} onChange={(event) => updateValues({ value: event.target.value })} />
+            <TextInput className={tw("debrief-draft__score-input")} type="number" min="0" max="100" value={draft.values.value} disabled={interactionLocked} onChange={(event) => updateValues({ value: event.target.value })} />
           </label>
         )}
         {draft.selected && draft.type === "attendance" && (
@@ -368,8 +369,8 @@ export default function ClassroomDebriefWorkspace() {
           <form aria-busy={generationState.pending} className={tw("grid min-w-0 gap-5 p-5")} onSubmit={generateDrafts}>
             <label className={tw("grid min-w-0 gap-1")} htmlFor="classroom-debrief-text">
               <span className={tw("text-label font-bold")}>What happened in class?</span>
-              <textarea aria-describedby="classroom-debrief-text-count classroom-debrief-generation-status" aria-label="What happened in class?"
-                id="classroom-debrief-text" className={tw(controlClasses, "min-h-[10rem] resize-y")} maxLength={4000} value={text}
+              <Textarea aria-describedby="classroom-debrief-text-count classroom-debrief-generation-status" aria-label="What happened in class?"
+                id="classroom-debrief-text" className={tw("classroom-debrief-workspace__textarea min-h-[10rem] resize-y")} maxLength={4000} value={text}
                 onChange={(event) => setText(event.target.value)}
                 placeholder="Example: Alya worked independently, Rafi arrived late, and Nadia scored 82 on the fraction quiz." />
               <small id="classroom-debrief-text-count" className={tw("text-metadata text-issa-muted")}>{text.length}/4000</small>

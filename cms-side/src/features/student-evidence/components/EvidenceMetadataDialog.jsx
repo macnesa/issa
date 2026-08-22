@@ -1,5 +1,5 @@
 import { tw } from "../../../shared/ui/tw";
-import { nativeControlClasses } from "../../../shared/ui/form-controls/controlStyles";
+import { Textarea } from "flowbite-react/components/Textarea";
 import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
@@ -181,9 +181,10 @@ export default function EvidenceMetadataDialog({
                 >
                   Catatan <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-metadata uppercase")}>Opsional</span>
                 </label>
-                <textarea
+                <Textarea
                   id="evidence-metadata-description"
-                  className={tw(nativeControlClasses, "issa-native-control--textarea min-h-28 resize-y px-3 py-2 leading-[1.55]")}
+                  className={tw("evidence-metadata-dialog__textarea min-h-28 resize-y leading-[1.55]")}
+                  color={errors.description ? "failure" : "gray"}
                   value={form.description}
                   onChange={(event) => updateField("description", event.target.value)}
                   maxLength={500}
