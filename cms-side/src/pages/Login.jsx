@@ -2,7 +2,11 @@ import { tw } from "../shared/ui/tw";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import baseUrl from "../config/api";
-import { PrimaryButton, SecondaryButton } from "../shared/ui/ui";
+import {
+  InlineNotice,
+  PrimaryButton,
+  SecondaryButton,
+} from "../shared/ui/ui";
 import TextField from "../shared/ui/form-controls/TextField";
 import issaLogo from "../../assets/img/logo.png";
 import { saveLastKnownTeacherIdentity } from "../offline-workspace/authIdentity";
@@ -323,26 +327,9 @@ export default function Login() {
               />
 
               {message ? (
-                <p
-                  role="alert"
-                  aria-live="polite"
-                  className={tw(`
-                    m-0
-                    border
-                    border-[#d79c96]
-                    border-l-4
-                    border-l-[var(--danger)]
-                    bg-[#fff4f2]
-                    px-3
-                    py-2.5
-                    text-[0.82rem]
-                    font-semibold
-                    leading-[1.45]
-                    text-[#8a3d32]
-                  `)}
-                >
+                <InlineNotice role="alert" tone="danger">
                   {message}
-                </p>
+                </InlineNotice>
               ) : null}
 
               <PrimaryButton

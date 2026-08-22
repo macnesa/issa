@@ -14,6 +14,7 @@ import {
 } from "./attendanceOffline";
 import {
   DestructiveButton,
+  InlineNotice,
   PrimaryButton,
   SecondaryButton,
   TertiaryButton,
@@ -171,13 +172,13 @@ export default function AttendanceSyncReview({ workspace }) {
                   </div>
                 </dl>
                 {actionError && (
-                  <p
-                    className={tw("offline-conflict-dialog__error mt-3 text-supporting font-semibold text-issa-danger")}
+                  <InlineNotice
+                    className={tw("offline-conflict-dialog__error mt-3")}
                     role="alert"
-                    aria-live="assertive"
+                    tone="danger"
                   >
                     {actionError}
-                  </p>
+                  </InlineNotice>
                 )}
               </div>
             )}

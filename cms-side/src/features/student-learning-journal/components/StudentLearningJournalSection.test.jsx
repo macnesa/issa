@@ -498,4 +498,22 @@ describe("StudentLearningJournalSection Teacher", () => {
     expect(fetchStudentLearningJournal).toHaveBeenCalledTimes(2);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
+
+  it("menampilkan kegagalan pencabutan melalui shared Flowbite notice", async () => {
+    fetchStudentLearningJournal.mockResolvedValue([observationEntry]);
+    retractStudentLearningJournalEntry.mockRejectedValue(new Error(
+      "Catatan belum berhasil dicabut."
+    ));
+
+    render(<StudentLearningJournalSection studentId="1" />);
+    expect(await screen.findByText(observationEntry.content)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cabut catatan" }));
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", {
+      name: "Cabut catatan",
+    }));
+
+    const alert = await within(screen.getByRole("dialog")).findByRole("alert");
+    expect(alert).toHaveTextContent("Catatan belum berhasil dicabut.");
+    expect(alert).toHaveClass("issa-inline-notice--danger");
+  });
 });

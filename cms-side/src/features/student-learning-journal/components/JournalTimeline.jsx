@@ -8,6 +8,7 @@ import {
 } from "flowbite-react/components/Modal";
 import {
   DestructiveButton,
+  InlineNotice,
   SecondaryButton,
 } from "../../../shared/ui/ui";
 import { evidenceCategoryLabels } from "../../student-evidence/studentEvidence.constants";
@@ -191,13 +192,13 @@ export default function JournalTimeline({
               sebagai record internal.
             </p>
             {retractError && (
-              <p
-                className={tw("issa-dialog-error min-h-6 [margin:var(--issa-space-3)_var(--issa-space-4)] text-issa-danger text-supporting font-semibold")}
+              <InlineNotice
+                className={tw("issa-dialog-error [margin:var(--issa-space-3)_var(--issa-space-4)]")}
                 role="alert"
-                aria-live="assertive"
+                tone="danger"
               >
                 {retractError}
-              </p>
+              </InlineNotice>
             )}
         </ModalBody>
         <ModalFooter>

@@ -72,4 +72,24 @@ describe("Login form contracts", () => {
     expect(fetch.mock.calls[0][1]).toEqual({ method: "POST" });
     expect(await screen.findByText("Dashboard tujuan")).toBeInTheDocument();
   });
+
+  test("renders authentication failures through the shared Flowbite notice", async () => {
+    fetch.mockResolvedValue({
+      ok: false,
+      json: async () => ({ message: "NIP atau password tidak valid." }),
+    });
+    renderLogin();
+
+    fireEvent.change(screen.getByLabelText("NIP"), {
+      target: { value: "198765" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "keliru" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Masuk" }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("NIP atau password tidak valid.");
+    expect(alert).toHaveClass("issa-inline-notice--danger");
+  });
 });

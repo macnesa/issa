@@ -1,8 +1,9 @@
 import { tw } from "../../shared/ui/tw";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Command } from "cmdk";
+import { Spinner } from "flowbite-react/components/Spinner";
 import { useNavigate } from "react-router-dom";
-import { SecondaryButton } from "../../shared/ui/ui";
+import { InlineNotice, SecondaryButton } from "../../shared/ui/ui";
 import Icon from "../../shared/ui/Icon";
 import {
   getOnlineHint,
@@ -239,20 +240,21 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
               className={tw("teacher-command-palette__loading flex items-center justify-center gap-2 px-4 py-12 text-center text-body font-semibold text-issa-muted")}
               role="status"
             >
-              <span
-                className={tw("teacher-command-palette__spinner w-4 h-4 [border:var(--issa-border-width-emphasis)_solid_var(--issa-border-strong)] [border-top-color:var(--issa-accent)] rounded-full [animation:teacher-command-palette-spin_1s_linear_infinite] motion-reduce:[animation:none]")}
-                aria-hidden="true"
-              />
+              <Spinner aria-hidden="true" size="sm" />
               Mencari record…
             </div>
           </Command.Loading>
         )}
 
         {resource.status === "error" && (
-          <div className={tw("teacher-command-palette__error m-2 [border:var(--issa-border-width)_solid_____color-mix(in_srgb,_var(--issa-danger)_42%,_var(--issa-border))] [border-left:0.25rem_solid_var(--issa-danger)] rounded-control [background:color-mix(in_srgb,_var(--issa-danger)_7%,_var(--issa-surface))] p-4")}>
-            <p className={tw("teacher-command-palette__error-message text-issa-danger text-body font-semibold leading-normal")} role="alert">
+          <InlineNotice
+            className={tw("teacher-command-palette__error m-2 p-4 [&_[data-testid=flowbite-alert-wrapper]]:grid [&_[data-testid=flowbite-alert-wrapper]]:justify-items-start")}
+            role="alert"
+            tone="danger"
+          >
+            <span className={tw("teacher-command-palette__error-message font-semibold")}>
               {resource.error}
-            </p>
+            </span>
             <SecondaryButton
               type="button"
               compact
@@ -261,7 +263,7 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
             >
               Coba lagi
             </SecondaryButton>
-          </div>
+          </InlineNotice>
         )}
 
         {resource.status === "offline" && (

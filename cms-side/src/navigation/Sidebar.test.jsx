@@ -138,4 +138,23 @@ describe("Sidebar CMS", () => {
     expect(sidebarMocks.hasUnsyncedAttendance).toHaveBeenCalledWith(9);
     expect(sidebarMocks.clearTeacherData).toHaveBeenCalledWith(9);
   });
+
+  test("menampilkan kegagalan logout melalui shared Flowbite notice", async () => {
+    sidebarMocks.hasUnsyncedAttendance.mockResolvedValueOnce(true);
+    sidebarMocks.clearTeacherData.mockRejectedValueOnce(new Error("gagal"));
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getAllByRole("button", { name: "Keluar" })[0]);
+    fireEvent.click(await screen.findByRole("button", {
+      name: "Hapus perubahan lokal dan keluar",
+    }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Data lokal belum dapat dibersihkan.");
+    expect(alert).toHaveClass("issa-inline-notice--danger");
+  });
 });

@@ -10,7 +10,11 @@ import {
 import DateField from "../../../shared/ui/form-controls/DateField";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
 import TextField from "../../../shared/ui/form-controls/TextField";
-import { PrimaryButton, SecondaryButton } from "../../../shared/ui/ui";
+import {
+  InlineNotice,
+  PrimaryButton,
+  SecondaryButton,
+} from "../../../shared/ui/ui";
 import { parseLocalDateValue } from "../../../utils/recordDates";
 import {
   evidenceCategoryOptions,
@@ -210,13 +214,15 @@ export default function EvidenceMetadataDialog({
               </div>
             </div>
 
-            <p
-              className={tw("issa-dialog-error min-h-6 [margin:var(--issa-space-3)_var(--issa-space-4)] text-issa-danger text-supporting font-semibold")}
-              role={statusMessage ? "alert" : "status"}
-              aria-live="polite"
-            >
-              {statusMessage}
-            </p>
+            {statusMessage && (
+              <InlineNotice
+                className={tw("issa-dialog-error [margin:var(--issa-space-3)_var(--issa-space-4)]")}
+                role="alert"
+                tone="danger"
+              >
+                {statusMessage}
+              </InlineNotice>
+            )}
         </ModalBody>
         <ModalFooter>
               <SecondaryButton

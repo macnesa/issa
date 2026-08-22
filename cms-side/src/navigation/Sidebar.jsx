@@ -18,6 +18,7 @@ import {
 } from "../offline-workspace/attendanceOffline";
 import {
   DestructiveButton,
+  InlineNotice,
   SecondaryButton,
 } from "../shared/ui/ui";
 import Icon from "../shared/ui/Icon";
@@ -194,7 +195,9 @@ export default function Sidebar({ status = null }) {
                 lokal harus dihapus sebelum keluar.
               </p>
               {logoutError && (
-                <p className={tw("mt-2 text-body font-semibold leading-normal text-issa-danger")} role="alert" aria-live="assertive">{logoutError}</p>
+                <InlineNotice className={tw("mt-3")} role="alert" tone="danger">
+                  {logoutError}
+                </InlineNotice>
               )}
         </ModalBody>
         <ModalFooter className={tw("teacher-logout-dialog__actions gap-3 [&_button]:max-w-full [&_button]:whitespace-normal")}>

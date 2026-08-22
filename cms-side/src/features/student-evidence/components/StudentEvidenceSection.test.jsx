@@ -291,11 +291,11 @@ describe('StudentEvidenceSection Teacher', () => {
       within(dialog).getByRole('button', { name: 'Cabut evidence' })
     );
 
-    expect(
-      await within(dialog).findByText(
-        'Gambar belum berhasil dicabut dari penyimpanan. Silakan coba kembali.'
-      )
-    ).toBeInTheDocument();
+    const alert = await within(dialog).findByRole('alert');
+    expect(alert).toHaveTextContent(
+      'Gambar belum berhasil dicabut dari penyimpanan. Silakan coba kembali.'
+    );
+    expect(alert).toHaveClass('issa-inline-notice--danger');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.queryByText(/Cloudinary/i)).not.toBeInTheDocument();
   });
@@ -310,11 +310,11 @@ describe('StudentEvidenceSection Teacher', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Edit metadata' }));
     fireEvent.click(screen.getByRole('button', { name: 'Simpan koreksi' }));
 
-    expect(
-      await screen.findByText(
-        'Evidence tidak dapat dikoreksi. Evidence mungkin dibuat oleh guru lain.'
-      )
-    ).toBeInTheDocument();
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(
+      'Evidence tidak dapat dikoreksi. Evidence mungkin dibuat oleh guru lain.'
+    );
+    expect(alert).toHaveClass('issa-inline-notice--danger');
     expect(fetchStudentEvidences).toHaveBeenCalledTimes(2);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });

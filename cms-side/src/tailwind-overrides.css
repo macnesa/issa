@@ -96,10 +96,6 @@
   to { opacity: 0.92; }
 }
 
-@keyframes teacher-command-palette-spin {
-  to { transform: rotate(360deg); }
-}
-
 @keyframes issa-dialog-backdrop-in {
   from { opacity: 0; }
   to { opacity: 1; }

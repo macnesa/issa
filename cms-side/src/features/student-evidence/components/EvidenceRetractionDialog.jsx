@@ -7,7 +7,11 @@ import {
   ModalFooter,
   ModalHeader,
 } from "flowbite-react/components/Modal";
-import { DestructiveButton, SecondaryButton } from "../../../shared/ui/ui";
+import {
+  DestructiveButton,
+  InlineNotice,
+  SecondaryButton,
+} from "../../../shared/ui/ui";
 
 function retractionErrorMessage(error) {
   if (error?.code === "publicDemoReadOnly") {
@@ -143,13 +147,15 @@ export default function EvidenceRetractionDialog({
               )}
             </div>
 
-            <p
-              className={tw("issa-dialog-error min-h-6 [margin:var(--issa-space-3)_var(--issa-space-4)] text-issa-danger text-supporting font-semibold")}
-              role={statusMessage ? "alert" : "status"}
-              aria-live="polite"
-            >
-              {statusMessage}
-            </p>
+            {statusMessage && (
+              <InlineNotice
+                className={tw("issa-dialog-error [margin:var(--issa-space-3)_var(--issa-space-4)]")}
+                role="alert"
+                tone="danger"
+              >
+                {statusMessage}
+              </InlineNotice>
+            )}
         </ModalBody>
         <ModalFooter>
               <SecondaryButton

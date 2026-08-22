@@ -112,6 +112,21 @@ describe("Attendance conflict and rejected review UI", () => {
     expect(workspace.syncNow).not.toHaveBeenCalled();
   });
 
+  test("renders conflict action failures through the shared Flowbite notice", async () => {
+    reviewMocks.useServer.mockRejectedValueOnce(new Error(
+      "Resolusi konflik belum dapat diproses."
+    ));
+    render(<AttendanceSyncReview workspace={buildWorkspace()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Tinjau konflik" }));
+    fireEvent.click(await screen.findByRole("button", {
+      name: "Gunakan data server",
+    }));
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Resolusi konflik belum dapat diproses.");
+    expect(alert).toHaveClass("issa-inline-notice--danger");
+  });
+
   test("supports local conflict resolution and triggers sync", async () => {
     const workspace = buildWorkspace();
     render(<AttendanceSyncReview workspace={workspace} />);
