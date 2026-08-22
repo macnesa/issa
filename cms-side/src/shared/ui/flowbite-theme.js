@@ -2,33 +2,45 @@ import { createTheme } from "flowbite-react/helpers/create-theme";
 
 export const issaFlowbiteTheme = createTheme({
   button: {
-    base: "relative inline-flex items-center justify-center gap-2 rounded-control border text-center font-semibold transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-issa-focus focus:ring-offset-2 focus:ring-offset-issa-surface",
-    disabled: "pointer-events-none cursor-not-allowed opacity-50",
+    base: "issa-button inline-flex items-center justify-center gap-2 rounded-control border border-transparent text-center font-bold leading-tight transition-[background-color,border-color,color,box-shadow,transform] duration-default enabled:active:translate-x-px enabled:active:translate-y-px enabled:active:shadow-none focus:ring-0 focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:border-issa-border disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:shadow-none motion-reduce:transition-none",
+    disabled: "pointer-events-none opacity-100",
     size: {
-      xs: "min-h-control-compact px-3 text-xs",
-      sm: "min-h-control-compact px-3 text-button",
-      md: "min-h-control px-4 text-button",
-      lg: "min-h-control px-5 text-base",
-      xl: "min-h-control px-6 text-base",
+      xs: "h-auto min-h-control-compact px-3 text-xs",
+      sm: "h-auto min-h-control-compact px-3 py-1 text-metadata",
+      md: "h-auto min-h-control px-4 py-2 text-button",
+      lg: "h-auto min-h-control px-5 text-base",
+      xl: "h-auto min-h-control px-6 text-base",
+      login: "h-auto min-h-[2.8rem] px-4 py-2.5 text-[0.8rem]",
     },
     color: {
-      primary: "border-issa-accent bg-issa-accent text-issa-inverse hover:border-issa-text hover:bg-issa-text focus:ring-issa-focus",
-      secondary: "border-issa-border-strong bg-issa-surface text-issa-text hover:bg-issa-subtle focus:ring-issa-focus",
-      tertiary: "border-transparent bg-transparent text-issa-accent hover:bg-issa-subtle focus:ring-issa-focus",
-      destructive: "border-issa-danger bg-issa-danger text-issa-inverse hover:brightness-90 focus:ring-issa-focus",
+      primary: "border-issa-text bg-issa-accent text-issa-inverse enabled:hover:bg-issa-text",
+      secondary: "border-issa-border-strong bg-issa-surface text-issa-text enabled:hover:border-issa-accent enabled:hover:bg-issa-subtle",
+      tertiary: "border-transparent bg-transparent text-issa-accent enabled:hover:bg-issa-subtle enabled:hover:text-issa-text",
+      destructive: "border-issa-danger bg-issa-danger text-issa-inverse enabled:hover:bg-[color-mix(in_srgb,var(--issa-danger)_84%,black)] focus-visible:outline-[color-mix(in_srgb,var(--issa-danger)_38%,var(--issa-surface))]",
+      login: "!rounded-[0.08rem] border-2 border-[#173e52] bg-[#245b70] font-extrabold uppercase tracking-[0.12em] text-issa-inverse shadow-[0.12rem_0.14rem_0_#88a5ae] enabled:hover:bg-[#173e52] disabled:opacity-60",
+      loginSecondary: "!rounded-[0.08rem] border-2 border-[#245b70] bg-transparent font-extrabold uppercase tracking-[0.1em] text-[#245b70] enabled:hover:bg-[#e8f4f2] disabled:opacity-60",
     },
   },
   badge: {
     root: {
-      base: "inline-flex h-fit items-center gap-1 rounded-full border px-2 py-0.5 text-status font-semibold",
+      base: "inline-flex h-fit items-center gap-1 rounded-full border border-current px-2 py-1 text-status font-semibold leading-tight",
       color: {
-        neutral: "border-issa-border-strong bg-issa-subtle text-issa-text-muted",
-        success: "border-issa-success bg-issa-surface text-issa-success",
-        warning: "border-issa-warning bg-issa-surface text-issa-warning",
-        error: "border-issa-danger bg-issa-surface text-issa-danger",
-        info: "border-issa-info bg-issa-surface text-issa-info",
-        attention: "border-issa-selection bg-issa-subtle text-issa-accent",
+        issaNeutral: "bg-issa-subtle text-issa-muted",
+        issaSuccess: "bg-[color-mix(in_srgb,var(--issa-success)_10%,var(--issa-surface))] text-issa-success",
+        issaWarning: "bg-[color-mix(in_srgb,var(--issa-warning)_10%,var(--issa-surface))] text-issa-warning",
+        issaDanger: "bg-[color-mix(in_srgb,var(--issa-danger)_10%,var(--issa-surface))] text-issa-danger",
+        issaInfo: "bg-[color-mix(in_srgb,var(--issa-info)_10%,var(--issa-surface))] text-issa-info",
+        issaAttention: "bg-[color-mix(in_srgb,var(--issa-selection)_10%,var(--issa-surface))] text-issa-accent",
       },
+      size: {
+        xs: "issa-badge-size",
+        sm: "issa-badge-size",
+        issa: "issa-badge-size",
+      },
+    },
+    icon: {
+      off: "issa-badge-without-icon rounded-full px-2 py-1",
+      on: "issa-badge-with-icon",
     },
   },
   textInput: {

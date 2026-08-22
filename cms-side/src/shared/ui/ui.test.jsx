@@ -1,36 +1,66 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { ThemeProvider } from "flowbite-react/theme/provider";
+import { StoreInit } from "flowbite-react/store/init";
 import { MemoryRouter } from "react-router-dom";
 import {
   ButtonLink,
+  DestructiveButton,
   LedgerShell,
   PrimaryButton,
+  SecondaryButton,
   StatusBadge,
   StudentContextHeader,
   Surface,
+  TertiaryButton,
   WorkspacePanel,
   WorkspaceTabs,
 } from "./ui";
+import { issaFlowbiteTheme } from "./flowbite-theme";
+
+function renderWithTheme(children) {
+  return render(
+    <>
+      <StoreInit dark={false} prefix="" version={3} />
+      <ThemeProvider theme={issaFlowbiteTheme}>{children}</ThemeProvider>
+    </>
+  );
+}
 
 describe("Institutional Ledger shared UI", () => {
   test("surface variants and semantic status tones remain explicit", () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <>
         <Surface variant="subtle">Subtle record</Surface>
         <StatusBadge status="Lulus" />
         <StatusBadge status="Alfa" />
+        <StatusBadge status="Perlu perhatian" tone="attention" aria-label="Status perhatian" />
       </>
     );
 
     expect(container.querySelector(".issa-surface--subtle")).toHaveTextContent(
       "Subtle record"
     );
-    expect(screen.getByText("Lulus")).toHaveAttribute("data-tone", "success");
-    expect(screen.getByText("Alfa")).toHaveAttribute("data-tone", "danger");
+    const successBadge = screen.getByText("Lulus").closest("[data-tone]");
+    expect(successBadge).toHaveAttribute("data-tone", "success");
+    expect(successBadge).toHaveClass(
+      "issa-badge-size",
+      "issa-badge-without-icon",
+      "px-2",
+      "py-1"
+    );
+    expect(successBadge).not.toHaveClass("p-1", "text-xs");
+    expect(successBadge).not.toHaveClass("rounded", "py-0.5", "hover:bg-green-200");
+    expect(screen.getByText("Alfa").closest("[data-tone]"))
+      .toHaveAttribute("data-tone", "danger");
+    expect(screen.getByLabelText("Status perhatian"))
+      .toHaveClass("issa-status-badge--attention", "text-issa-accent");
+    expect(screen.getAllByTestId("flowbite-badge")).toHaveLength(3);
   });
 
   test("loading button is disabled and communicates busy state", () => {
-    render(
-      <PrimaryButton loading loadingLabel="Menyimpan record">
+    const onClick = vi.fn();
+    const { container } = renderWithTheme(
+      <PrimaryButton loading loadingLabel="Menyimpan record" onClick={onClick}>
         Simpan
       </PrimaryButton>
     );
@@ -38,6 +68,59 @@ describe("Institutional Ledger shared UI", () => {
     const button = screen.getByRole("button", { name: "Menyimpan record" });
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
+    expect(container.querySelector(".issa-button__spinner")?.closest("[aria-hidden='true']"))
+      .toBeInTheDocument();
+    fireEvent.click(button);
+    fireEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  test("Flowbite-backed button variants preserve behavior and passthrough", () => {
+    const onPrimary = vi.fn();
+    renderWithTheme(
+      <>
+        <PrimaryButton
+          className="consumer-button-class"
+          data-contract="preserved"
+          onClick={onPrimary}
+        >
+          Simpan
+        </PrimaryButton>
+        <SecondaryButton type="button">Batal</SecondaryButton>
+        <TertiaryButton type="button" compact>Lihat detail</TertiaryButton>
+        <DestructiveButton type="button" disabled>Hapus</DestructiveButton>
+        <PrimaryButton type="submit" tone="login">Masuk</PrimaryButton>
+        <SecondaryButton type="button" tone="loginSecondary">Jelajahi Demo</SecondaryButton>
+      </>
+    );
+
+    const primary = screen.getByRole("button", { name: "Simpan" });
+    expect(primary).toHaveClass(
+      "issa-button",
+      "issa-button--primary",
+      "bg-issa-accent",
+      "h-auto",
+      "focus:ring-0",
+      "consumer-button-class"
+    );
+    expect(primary).not.toHaveClass("h-10", "rounded-lg", "focus:ring-4");
+    expect(primary).toHaveAttribute("data-contract", "preserved");
+    expect(primary).not.toHaveAttribute("type");
+    expect(primary).toHaveProperty("type", "submit");
+    fireEvent.click(primary);
+    expect(onPrimary).toHaveBeenCalledTimes(1);
+
+    expect(screen.getByRole("button", { name: "Batal" }))
+      .toHaveClass("issa-button--secondary", "bg-issa-surface");
+    expect(screen.getByRole("button", { name: "Lihat detail" }))
+      .toHaveClass("issa-button--tertiary", "issa-button--compact");
+    expect(screen.getByRole("button", { name: "Hapus" }))
+      .toHaveClass("issa-button--destructive", "bg-issa-danger");
+    expect(screen.getByRole("button", { name: "Hapus" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Masuk" }))
+      .toHaveClass("min-h-[2.8rem]", "!rounded-[0.08rem]", "issa-button--login");
+    expect(screen.getByRole("button", { name: "Jelajahi Demo" }))
+      .toHaveClass("min-h-[2.8rem]", "!rounded-[0.08rem]", "issa-button--loginSecondary");
   });
 
   test("workspace tabs support click and roving keyboard activation", () => {
@@ -71,8 +154,8 @@ describe("Institutional Ledger shared UI", () => {
   });
 
   test("student context keeps factual identity and action contract", () => {
-    render(
-      <MemoryRouter>
+    renderWithTheme(
+      <MemoryRouter initialEntries={["/"]}>
         <StudentContextHeader
           student={{ name: "Ayu Pratama", NIM: "2026071001" }}
           classLabel="1A"
@@ -90,6 +173,10 @@ describe("Institutional Ledger shared UI", () => {
     expect(screen.getByText("Record aktif")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Kembali" }))
       .toHaveAttribute("href", "/students/7");
+    expect(screen.getByRole("link", { name: "Kembali" }))
+      .toHaveClass("issa-button", "issa-button--secondary");
+    expect(screen.getByRole("link", { name: "Kembali" }))
+      .not.toHaveAttribute("type");
   });
 
   test("ledger shell owns loading, error, empty, and overflow behavior", () => {

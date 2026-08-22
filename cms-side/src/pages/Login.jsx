@@ -2,7 +2,7 @@ import { tw } from "../shared/ui/tw";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import baseUrl from "../config/api";
-import { PrimaryButton } from "../shared/ui/ui";
+import { PrimaryButton, SecondaryButton } from "../shared/ui/ui";
 import TextField from "../shared/ui/form-controls/TextField";
 import issaLogo from "../../assets/img/logo.png";
 import { saveLastKnownTeacherIdentity } from "../offline-workspace/authIdentity";
@@ -356,31 +356,15 @@ export default function Login() {
               >
                 {submitting ? "Memeriksa akun..." : "Masuk"}
               </PrimaryButton>
-              <button
+              <SecondaryButton
                 type="button"
+                tone="loginSecondary"
                 disabled={submitting || demoSubmitting}
                 onClick={handleTeacherDemoLogin}
-                className={tw(`
-                  w-full
-                  min-h-[2.8rem]
-                  rounded-[0.08rem]
-                  border-2
-                  border-[#245b70]
-                  bg-transparent
-                  px-4
-                  py-2.5
-                  text-[0.8rem]
-                  font-extrabold
-                  uppercase
-                  tracking-[0.1em]
-                  text-[#245b70]
-                  hover:bg-[#e8f4f2]
-                  disabled:cursor-not-allowed
-                  disabled:opacity-60
-                `)}
+                className={tw("w-full")}
               >
                 {demoSubmitting ? "Membuka demo…" : "Jelajahi Demo CMS"}
-              </button>
+              </SecondaryButton>
             </div>
           </form>
         </section>

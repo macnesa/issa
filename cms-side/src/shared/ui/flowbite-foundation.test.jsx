@@ -45,16 +45,16 @@ describe("ISSA Flowbite foundation", () => {
   test("maps semantic badge tones through the centralized theme", () => {
     renderFoundation(
       <>
-        <Badge color="neutral">Netral</Badge>
-        <Badge color="success">Siap</Badge>
-        <Badge color="warning">Tinjau</Badge>
-        <Badge color="error">Gagal</Badge>
-        <Badge color="info">Informasi</Badge>
+        <Badge color="issaNeutral">Netral</Badge>
+        <Badge color="issaSuccess">Siap</Badge>
+        <Badge color="issaWarning">Tinjau</Badge>
+        <Badge color="issaDanger">Gagal</Badge>
+        <Badge color="issaInfo">Informasi</Badge>
       </>
     );
 
     expect(screen.getByText("Netral").closest("[data-testid='flowbite-badge']"))
-      .toHaveClass("text-issa-text-muted");
+      .toHaveClass("text-issa-muted");
     expect(screen.getByText("Siap").closest("[data-testid='flowbite-badge']"))
       .toHaveClass("text-issa-success");
     expect(screen.getByText("Tinjau").closest("[data-testid='flowbite-badge']"))

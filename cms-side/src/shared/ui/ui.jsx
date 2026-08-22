@@ -1,27 +1,14 @@
 import { tw } from "./tw";
 import { useRef } from "react";
+import { Badge } from "flowbite-react/components/Badge";
+import { Button as FlowbiteButton } from "flowbite-react/components/Button";
+import { Spinner } from "flowbite-react/components/Spinner";
 import { Link } from "react-router-dom";
 
 const surfaceVariants = {
   default: "",
   subtle: "bg-issa-subtle",
   emphasized: "border-emphasis border-issa-border-strong shadow-elevated",
-};
-
-const statusTones = {
-  success: "bg-[color-mix(in_srgb,var(--issa-success)_10%,var(--issa-surface))] text-issa-success",
-  warning: "bg-[color-mix(in_srgb,var(--issa-warning)_10%,var(--issa-surface))] text-issa-warning",
-  danger: "bg-[color-mix(in_srgb,var(--issa-danger)_10%,var(--issa-surface))] text-issa-danger",
-  info: "bg-[color-mix(in_srgb,var(--issa-info)_10%,var(--issa-surface))] text-issa-info",
-  neutral: "bg-issa-subtle text-issa-muted",
-};
-
-const buttonTones = {
-  primary: "border-issa-text bg-issa-accent text-issa-inverse enabled:hover:bg-issa-text",
-  secondary: "border-issa-border-strong bg-issa-surface text-issa-text enabled:hover:border-issa-accent enabled:hover:bg-issa-subtle",
-  tertiary: "bg-transparent text-issa-accent enabled:hover:bg-issa-subtle enabled:hover:text-issa-text",
-  destructive: "border-issa-danger bg-issa-danger text-issa-inverse enabled:hover:bg-[color-mix(in_srgb,var(--issa-danger)_84%,black)] focus-visible:outline-[color-mix(in_srgb,var(--issa-danger)_38%,var(--issa-surface))]",
-  login: "min-h-[2.8rem] rounded-[0.08rem] border-2 border-[#173e52] bg-[#245b70] text-[0.8rem] font-extrabold uppercase tracking-[0.12em] text-issa-inverse shadow-[0.12rem_0.14rem_0_#88a5ae] enabled:hover:bg-[#173e52] disabled:opacity-60",
 };
 
 const noticeTones = {
@@ -31,8 +18,6 @@ const noticeTones = {
   danger: "text-issa-danger",
   info: "text-issa-info",
 };
-
-const buttonBase = "issa-button inline-flex min-h-control items-center justify-center gap-2 rounded-control border border-transparent px-4 py-2 text-center text-button font-bold leading-tight transition-[background-color,border-color,color,box-shadow,transform] duration-default enabled:active:translate-x-px enabled:active:translate-y-px enabled:active:shadow-none focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:border-issa-border disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:shadow-none motion-reduce:transition-none";
 
 export function PageContainer({ children, className = "", ...props }) {
   return (
@@ -128,15 +113,29 @@ const statusToneByLabel = {
   "Belum lulus": "warning",
 };
 
-export function StatusBadge({ status, tone }) {
+const badgeColorsByTone = {
+  neutral: "issaNeutral",
+  success: "issaSuccess",
+  warning: "issaWarning",
+  danger: "issaDanger",
+  error: "issaDanger",
+  failure: "issaDanger",
+  info: "issaInfo",
+  attention: "issaAttention",
+};
+
+export function StatusBadge({ status, tone, className = "", ...props }) {
   const resolvedTone = tone || statusToneByLabel[status] || "neutral";
   return (
-    <span
-      className={tw("issa-status-badge inline-flex items-center rounded-full border border-current px-2 py-1 text-status font-semibold leading-tight", `issa-status-badge--${resolvedTone}`, statusTones[resolvedTone] || statusTones.neutral)}
+    <Badge
+      {...props}
+      color={badgeColorsByTone[resolvedTone] || "issaNeutral"}
+      size="issa"
+      className={tw("issa-status-badge", `issa-status-badge--${resolvedTone}`, className)}
       data-tone={resolvedTone}
     >
       {status || "Belum ada"}
-    </span>
+    </Badge>
   );
 }
 
@@ -160,6 +159,15 @@ export function FormField({
   );
 }
 
+const supportedButtonTones = new Set([
+  "primary",
+  "secondary",
+  "tertiary",
+  "destructive",
+  "login",
+  "loginSecondary",
+]);
+
 function Button({
   children,
   className = "",
@@ -170,15 +178,37 @@ function Button({
   loadingLabel = "Memproses…",
   ...props
 }) {
+  const {
+    type,
+    "aria-busy": ariaBusy,
+    ...buttonProps
+  } = props;
+  const resolvedTone = supportedButtonTones.has(tone) ? tone : "primary";
+  const resolvedSize = resolvedTone === "login" || resolvedTone === "loginSecondary"
+    ? "login"
+    : compact ? "sm" : "md";
+
   return (
-    <button
-      className={tw(buttonBase, `issa-button--${tone}`, buttonTones[tone] || buttonTones.primary, compact && "issa-button--compact min-h-control-compact px-3 py-1 text-metadata", className)}
+    <FlowbiteButton
+      {...buttonProps}
+      type={type ?? null}
+      color={resolvedTone}
+      size={resolvedSize}
+      className={tw(`issa-button--${resolvedTone}`, compact && "issa-button--compact", className)}
       disabled={disabled || loading}
-      aria-busy={loading || undefined}
-      {...props}
+      aria-busy={loading ? true : ariaBusy}
     >
-      {loading ? loadingLabel : children}
-    </button>
+      {loading ? (
+        <>
+          <Spinner
+            aria-hidden="true"
+            className={tw("issa-button__spinner flex-none fill-current text-current")}
+            size="sm"
+          />
+          <span>{loadingLabel}</span>
+        </>
+      ) : children}
+    </FlowbiteButton>
   );
 }
 
@@ -205,13 +235,18 @@ export function ButtonLink({
   tone = "secondary",
   ...props
 }) {
+  const resolvedTone = supportedButtonTones.has(tone) ? tone : "secondary";
   return (
-    <Link
-      className={tw(buttonBase, `issa-button--${tone}`, buttonTones[tone] || buttonTones.secondary, compact && "issa-button--compact min-h-control-compact px-3 py-1 text-metadata", className)}
+    <FlowbiteButton
       {...props}
+      as={Link}
+      type={null}
+      color={resolvedTone}
+      size={compact ? "sm" : "md"}
+      className={tw(`issa-button--${resolvedTone}`, compact && "issa-button--compact", className)}
     >
       {children}
-    </Link>
+    </FlowbiteButton>
   );
 }
 
