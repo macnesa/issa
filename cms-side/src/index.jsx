@@ -6,14 +6,20 @@ import './index.css';
 import './tailwind-overrides.css';
 import App from './App';
 import { registerOfflineAppShell } from './offline-workspace/registerServiceWorker';
-import { issaFlowbiteTheme } from './shared/ui/flowbite-theme';
+import {
+  issaFlowbiteApplyTheme,
+  issaFlowbiteTheme,
+} from './shared/ui/flowbite-theme';
 
 registerOfflineAppShell();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <StoreInit dark={false} prefix="" version={3} />
-    <ThemeProvider theme={issaFlowbiteTheme}>
+    <ThemeProvider
+      applyTheme={issaFlowbiteApplyTheme}
+      theme={issaFlowbiteTheme}
+    >
       <App />
     </ThemeProvider>
   </React.StrictMode>

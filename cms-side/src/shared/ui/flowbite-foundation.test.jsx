@@ -10,13 +10,15 @@ import {
   ThemeProvider,
 } from "flowbite-react";
 import { StoreInit } from "flowbite-react/store/init";
-import { issaFlowbiteTheme } from "./flowbite-theme";
+import { issaFlowbiteApplyTheme, issaFlowbiteTheme } from "./flowbite-theme";
 
 function renderFoundation(children) {
   return render(
     <>
       <StoreInit dark={false} prefix="" version={3} />
-      <ThemeProvider theme={issaFlowbiteTheme}>{children}</ThemeProvider>
+      <ThemeProvider applyTheme={issaFlowbiteApplyTheme} theme={issaFlowbiteTheme}>
+        {children}
+      </ThemeProvider>
     </>
   );
 }

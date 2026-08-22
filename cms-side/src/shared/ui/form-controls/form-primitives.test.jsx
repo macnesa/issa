@@ -6,7 +6,7 @@ import { Radio } from "flowbite-react/components/Radio";
 import { Textarea } from "flowbite-react/components/Textarea";
 import { StoreInit } from "flowbite-react/store/init";
 import { ThemeProvider } from "flowbite-react/theme/provider";
-import { issaFlowbiteTheme } from "../flowbite-theme";
+import { issaFlowbiteApplyTheme, issaFlowbiteTheme } from "../flowbite-theme";
 import NumberField from "./NumberField";
 import TextField from "./TextField";
 
@@ -14,7 +14,9 @@ function renderWithTheme(children) {
   return render(
     <>
       <StoreInit dark={false} prefix="" version={3} />
-      <ThemeProvider theme={issaFlowbiteTheme}>{children}</ThemeProvider>
+      <ThemeProvider applyTheme={issaFlowbiteApplyTheme} theme={issaFlowbiteTheme}>
+        {children}
+      </ThemeProvider>
     </>
   );
 }

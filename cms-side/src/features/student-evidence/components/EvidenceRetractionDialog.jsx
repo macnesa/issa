@@ -2,11 +2,11 @@ import { tw } from "../../../shared/ui/tw";
 import { Textarea } from "flowbite-react/components/Textarea";
 import { useEffect, useRef, useState } from "react";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "flowbite-react/components/Modal";
 import { DestructiveButton, SecondaryButton } from "../../../shared/ui/ui";
 
 function retractionErrorMessage(error) {
@@ -72,13 +72,16 @@ export default function EvidenceRetractionDialog({
   }
 
   return (
-    <Dialog open={Boolean(evidence)} onClose={closeDialog}>
-      <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
-      <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
-        <DialogPanel className={tw("issa-dialog-panel [width:min(42rem,_100%)] [max-height:calc(100svh_-_var(--issa-space-8))] overflow-y-auto overflow-x-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] evidence-retraction-dialog")}>
-          <DialogTitle className={tw("issa-dialog-title block border-b border-issa-border p-4 text-section-title font-bold leading-tight text-issa-text")}>
-            Cabut bukti perkembangan ini?
-          </DialogTitle>
+    <Modal
+      className={tw("evidence-retraction-dialog")}
+      dismissible={!submitting}
+      onClose={closeDialog}
+      show={Boolean(evidence)}
+      size="issaWide"
+    >
+      <ModalHeader>Cabut bukti perkembangan ini?</ModalHeader>
+      <form onSubmit={handleSubmit} noValidate>
+        <ModalBody>
           <p className={tw("issa-dialog-copy mt-1 px-4 text-supporting leading-normal text-issa-muted")}>
             Gambar tidak lagi tersedia bagi guru maupun orang tua.
             Catatan jurnal yang pernah terhubung akan tetap tersedia,
@@ -92,7 +95,6 @@ export default function EvidenceRetractionDialog({
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate>
             <div className={tw("issa-control-field min-w-0 evidence-retraction-dialog__reason m-4")}>
               <label
                 className={tw("issa-control-label block mb-1 text-issa-text text-label font-semibold")}
@@ -148,7 +150,8 @@ export default function EvidenceRetractionDialog({
             >
               {statusMessage}
             </p>
-            <div className={tw("issa-dialog-footer flex flex-wrap justify-end gap-2 border-t border-issa-border p-4")}>
+        </ModalBody>
+        <ModalFooter>
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}
@@ -162,10 +165,8 @@ export default function EvidenceRetractionDialog({
               >
                 {submitting ? "Mencabut..." : "Cabut evidence"}
               </DestructiveButton>
-            </div>
-          </form>
-        </DialogPanel>
-      </div>
-    </Dialog>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }

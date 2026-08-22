@@ -1,11 +1,11 @@
 import { tw } from "../shared/ui/tw";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "flowbite-react/components/Modal";
 import {
   applyAttendanceLocalConflict,
   discardAttendanceMutation,
@@ -31,12 +31,17 @@ export default function AttendanceSyncReview({ workspace }) {
   const [activeConflict, setActiveConflict] = useState(null);
   const [working, setWorking] = useState(false);
   const [actionError, setActionError] = useState("");
+  const activeTriggerRef = useRef(null);
   const attendanceConflicts = workspace.conflicts.filter((record) => (
     record.mutation?.type === "attendance.update"
   ));
   const failedAttendances = workspace.failedMutations.filter((mutation) => (
     mutation.type === "attendance.update"
   ));
+
+  useEffect(() => {
+    if (!activeConflict) activeTriggerRef.current?.focus();
+  }, [activeConflict]);
 
   const finishAction = async (action, { syncAfter = false } = {}) => {
     setWorking(true);
@@ -71,7 +76,8 @@ export default function AttendanceSyncReview({ workspace }) {
               <SecondaryButton
                 type="button"
                 compact
-                onClick={() => {
+                onClick={(event) => {
+                  activeTriggerRef.current = event.currentTarget;
                   setActionError("");
                   setActiveConflict(record);
                 }}
@@ -123,17 +129,18 @@ export default function AttendanceSyncReview({ workspace }) {
         </section>
       )}
 
-      <Dialog
-        open={Boolean(activeConflict)}
+      <Modal
+        className={tw("offline-conflict-dialog")}
+        dismissible={!working}
         onClose={() => {
           if (!working) setActiveConflict(null);
         }}
+        show={Boolean(activeConflict)}
+        size="issaCompact"
       >
-        <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
-        <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
-          <DialogPanel className={tw("issa-dialog-panel [width:min(32rem,_100%)] overflow-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] offline-conflict-dialog overflow-hidden")}>
-            <div className={tw("offline-conflict-dialog__header border-b border-issa-border p-4")}>
-              <DialogTitle className={tw("text-section-title font-bold leading-tight text-issa-text")}>Konflik attendance</DialogTitle>
+        <ModalHeader>Konflik attendance</ModalHeader>
+        <ModalBody>
+            <div className={tw("offline-conflict-dialog__header")}>
               <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>
                 Data server berubah setelah workspace terakhir disimpan.
                 Pilih data yang ingin digunakan.
@@ -174,7 +181,8 @@ export default function AttendanceSyncReview({ workspace }) {
                 )}
               </div>
             )}
-            <div className={tw("offline-conflict-dialog__actions flex flex-wrap justify-end gap-2 border-t border-issa-border p-4 max-sm:[&>button]:w-full")}>
+        </ModalBody>
+        <ModalFooter className={tw("offline-conflict-dialog__actions max-sm:[&>button]:w-full")}>
               <SecondaryButton
                 type="button"
                 disabled={working}
@@ -201,10 +209,8 @@ export default function AttendanceSyncReview({ workspace }) {
               >
                 Tinjau nanti
               </TertiaryButton>
-            </div>
-          </DialogPanel>
-        </div>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
     </>
   );
 }

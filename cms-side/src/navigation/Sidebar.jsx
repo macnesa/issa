@@ -2,11 +2,11 @@ import { tw } from "../shared/ui/tw";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "flowbite-react/components/Modal";
 import {
   clearLastKnownTeacherIdentity,
   getActiveTeacherIdentity,
@@ -123,9 +123,9 @@ export default function Sidebar({ status = null }) {
       </div>
 
       <nav className={tw("teacher-sidebar__navigation min-w-0 overflow-x-auto [border-bottom:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_24%,_______transparent_____)] py-2 px-3 [scrollbar-width:thin] [scrollbar-color:var(--issa-border-strong)_transparent] lg:[overflow-x:visible] lg:[padding:var(--issa-space-6)_var(--issa-space-4)] max-sm:pr-2 max-sm:pl-2")} aria-label="Navigasi utama">
-        <ul className={tw("flex w-max min-w-full gap-1 lg:grid lg:w-full lg:min-w-0 max-sm:w-full max-sm:min-w-0")}>
+        <ul className={tw("flex w-max min-w-full gap-1 lg:grid lg:w-full lg:min-w-0")}>
           {navigation.map((navigationItem) => (
-            <li className={tw("max-sm:min-w-0 max-sm:flex-1")} key={navigationItem.to}>
+            <li key={navigationItem.to}>
               <NavLink
                 end={navigationItem.end}
                 to={navigationItem.to}
@@ -177,17 +177,17 @@ export default function Sidebar({ status = null }) {
           Keluar
         </SecondaryButton>
       </footer>
-      <Dialog
-        open={logoutConfirmationOpen}
+      <Modal
+        className={tw("teacher-logout-dialog")}
+        dismissible={!logoutPending}
         onClose={() => {
           if (!logoutPending) setLogoutConfirmationOpen(false);
         }}
+        show={logoutConfirmationOpen}
+        size="issaCompact"
       >
-        <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
-        <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
-          <DialogPanel className={tw("issa-dialog-panel [width:min(32rem,_100%)] overflow-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] teacher-logout-dialog overflow-hidden")}>
-            <div className={tw("teacher-logout-dialog__body p-4")}>
-              <DialogTitle className={tw("text-section-title font-bold leading-tight text-issa-text")}>Perubahan kehadiran belum disinkronkan</DialogTitle>
+        <ModalHeader>Perubahan kehadiran belum disinkronkan</ModalHeader>
+        <ModalBody className={tw("teacher-logout-dialog__body")}>
               <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>Masih ada perubahan kehadiran yang belum disinkronkan.</p>
               <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>
                 Untuk mencegah data guru berikutnya tercampur, perubahan
@@ -196,8 +196,8 @@ export default function Sidebar({ status = null }) {
               {logoutError && (
                 <p className={tw("mt-2 text-body font-semibold leading-normal text-issa-danger")} role="alert" aria-live="assertive">{logoutError}</p>
               )}
-            </div>
-            <div className={tw("teacher-logout-dialog__actions flex flex-wrap justify-end gap-3 border-t border-issa-border p-4 [&_button]:max-w-full [&_button]:whitespace-normal")}>
+        </ModalBody>
+        <ModalFooter className={tw("teacher-logout-dialog__actions gap-3 [&_button]:max-w-full [&_button]:whitespace-normal")}>
               <SecondaryButton
                 type="button"
                 disabled={logoutPending}
@@ -212,10 +212,8 @@ export default function Sidebar({ status = null }) {
               >
                 Hapus perubahan lokal dan keluar
               </DestructiveButton>
-            </div>
-          </DialogPanel>
-        </div>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
     </aside>
   );
 }

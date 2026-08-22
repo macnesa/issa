@@ -2,11 +2,11 @@ import { tw } from "../../../shared/ui/tw";
 import { Textarea } from "flowbite-react/components/Textarea";
 import { useEffect, useRef, useState } from "react";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "flowbite-react/components/Modal";
 import DateField from "../../../shared/ui/form-controls/DateField";
 import SelectField from "../../../shared/ui/form-controls/SelectField";
 import TextField from "../../../shared/ui/form-controls/TextField";
@@ -114,13 +114,16 @@ export default function EvidenceMetadataDialog({
   }
 
   return (
-    <Dialog open={Boolean(evidence)} onClose={closeDialog}>
-      <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
-      <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
-        <DialogPanel className={tw("issa-dialog-panel [width:min(42rem,_100%)] [max-height:calc(100svh_-_var(--issa-space-8))] overflow-y-auto overflow-x-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] evidence-metadata-dialog")}>
-          <DialogTitle className={tw("issa-dialog-title block border-b border-issa-border p-4 text-section-title font-bold leading-tight text-issa-text")}>
-            Edit metadata evidence
-          </DialogTitle>
+    <Modal
+      className={tw("evidence-metadata-dialog")}
+      dismissible={!submitting}
+      onClose={closeDialog}
+      show={Boolean(evidence)}
+      size="issaWide"
+    >
+      <ModalHeader>Edit metadata evidence</ModalHeader>
+      <form onSubmit={handleSubmit} noValidate>
+        <ModalBody>
           <p className={tw("issa-dialog-copy mt-1 px-4 text-supporting leading-normal text-issa-muted")}>
             Koreksi informasi record tanpa mengubah gambar yang tersimpan.
           </p>
@@ -142,7 +145,6 @@ export default function EvidenceMetadataDialog({
             </span>
           </div>
 
-          <form onSubmit={handleSubmit} noValidate>
             <div className={tw("evidence-metadata-dialog__fields grid gap-4 m-4 md:grid-cols-2")}>
               <TextField
                 id="evidence-metadata-title"
@@ -215,7 +217,8 @@ export default function EvidenceMetadataDialog({
             >
               {statusMessage}
             </p>
-            <div className={tw("issa-dialog-footer flex flex-wrap justify-end gap-2 border-t border-issa-border p-4")}>
+        </ModalBody>
+        <ModalFooter>
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}
@@ -226,10 +229,8 @@ export default function EvidenceMetadataDialog({
               <PrimaryButton type="submit" disabled={submitting}>
                 {submitting ? "Menyimpan..." : "Simpan koreksi"}
               </PrimaryButton>
-            </div>
-          </form>
-        </DialogPanel>
-      </div>
-    </Dialog>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }

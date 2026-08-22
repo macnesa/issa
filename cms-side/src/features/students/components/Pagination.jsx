@@ -1,8 +1,8 @@
 import { tw } from "../../../shared/ui/tw";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Pagination as FlowbitePagination } from "flowbite-react/components/Pagination";
 import { fetchStudentList } from "../../../store/action/ActionCreator";
-import { SecondaryButton } from "../../../shared/ui/ui";
 
 export default function Pagination({ data }) {
   const dispatch = useDispatch();
@@ -18,12 +18,17 @@ export default function Pagination({ data }) {
   if (totalPages <= 1) return null;
 
   return (
-    <nav className={tw("student-pagination flex items-center justify-between gap-2")} aria-label="Paginasi siswa">
+    <div className={tw("student-pagination flex items-center justify-between gap-3 max-sm:items-stretch max-sm:flex-col")}>
       <p className={tw("text-issa-muted text-body")}>Halaman {currentPage} dari {totalPages}</p>
-      <div className={tw("flex items-center gap-2")}>
-        <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage - 1)} disabled={currentPage === 1}>Sebelumnya</SecondaryButton>
-        <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage + 1)} disabled={currentPage === totalPages}>Berikutnya</SecondaryButton>
-      </div>
-    </nav>
+      <FlowbitePagination
+        aria-label="Paginasi siswa"
+        currentPage={currentPage}
+        layout="navigation"
+        nextLabel="Berikutnya"
+        onPageChange={handleStudentPageChange}
+        previousLabel="Sebelumnya"
+        totalPages={totalPages}
+      />
+    </div>
   );
 }

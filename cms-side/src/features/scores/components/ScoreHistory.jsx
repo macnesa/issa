@@ -1,4 +1,11 @@
 import { tw } from "../../../shared/ui/tw";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "flowbite-react/components/Table";
 import { LedgerShell } from "../../../shared/ui/ui";
 import TableScores from "./TableScores";
 
@@ -18,21 +25,21 @@ export default function ScoreHistory({ scores, student }) {
       emptyDescription="Catat penilaian pertama untuk membuka riwayat akademik siswa."
     >
       {scoreRecords.length > 0 && (
-          <table className={tw("score-history-ledger__table w-full [min-width:58rem] border-collapse text-table text-left [&_thead]:bg-issa-subtle [&_thead]:text-issa-muted [&_thead_th]:p-3 [&_thead_th]:text-table-header [&_thead_th]:font-bold [&_thead_th]:tracking-metadata [&_thead_th]:whitespace-nowrap")}>
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Mata pelajaran</th>
-                <th>Penilaian</th>
-                <th>KKM</th>
-                <th>Nilai</th>
-                <th>Status</th>
-                {showPredikat && <th>Predikat</th>}
-                <th>Tanggal</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className={tw("score-history-ledger__table [min-width:58rem]")} hoverable>
+            <TableHead>
+              <TableRow>
+                <TableHeadCell>No.</TableHeadCell>
+                <TableHeadCell>Mata pelajaran</TableHeadCell>
+                <TableHeadCell>Penilaian</TableHeadCell>
+                <TableHeadCell>KKM</TableHeadCell>
+                <TableHeadCell>Nilai</TableHeadCell>
+                <TableHeadCell>Status</TableHeadCell>
+                {showPredikat && <TableHeadCell>Predikat</TableHeadCell>}
+                <TableHeadCell>Tanggal</TableHeadCell>
+                <TableHeadCell>Aksi</TableHeadCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {scoreRecords.map((score, index) => (
                 <TableScores
                   key={score.id}
@@ -42,8 +49,8 @@ export default function ScoreHistory({ scores, student }) {
                   showPredikat={showPredikat}
                 />
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
       )}
     </LedgerShell>
   );

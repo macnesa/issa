@@ -1,5 +1,6 @@
 import { tw } from "./tw";
 import { useRef } from "react";
+import { Alert } from "flowbite-react/components/Alert";
 import { Badge } from "flowbite-react/components/Badge";
 import { Button as FlowbiteButton } from "flowbite-react/components/Button";
 import { Spinner } from "flowbite-react/components/Spinner";
@@ -11,12 +12,12 @@ const surfaceVariants = {
   emphasized: "border-emphasis border-issa-border-strong shadow-elevated",
 };
 
-const noticeTones = {
-  neutral: "text-issa-muted",
-  success: "text-issa-success",
-  warning: "text-issa-warning",
-  danger: "text-issa-danger",
-  info: "text-issa-info",
+const noticeColors = {
+  neutral: "gray",
+  success: "success",
+  warning: "warning",
+  danger: "failure",
+  info: "info",
 };
 
 export function PageContainer({ children, className = "", ...props }) {
@@ -257,7 +258,10 @@ export function LoadingState({ label = "Memuat data..." }) {
       role="status"
       aria-live="polite"
     >
-      {label}
+      <span className={tw("issa-state__loading-content flex items-center justify-center gap-3")}>
+        <Spinner aria-hidden="true" size="md" />
+        <span>{label}</span>
+      </span>
     </div>
   );
 }
@@ -279,14 +283,18 @@ export function EmptyState({ title, description }) {
 
 export function ErrorState({ message, onRetry }) {
   return (
-    <div className={tw("issa-state issa-state--error grid min-h-36 place-items-center justify-items-start rounded-surface border border-[color-mix(in_srgb,var(--issa-danger)_35%,var(--issa-border))] bg-[color-mix(in_srgb,var(--issa-danger)_8%,var(--issa-surface))] p-6 text-left text-body text-issa-danger [&_.issa-button]:mt-3")} role="alert">
+    <Alert
+      className={tw("issa-state issa-state--error grid min-h-36 place-items-center justify-items-start text-left text-body [&_[data-testid=flowbite-alert-wrapper]]:grid [&_[data-testid=flowbite-alert-wrapper]]:justify-items-start [&_.issa-button]:mt-3")}
+      color="failure"
+      role="alert"
+    >
       <p>{message}</p>
       {onRetry && (
         <SecondaryButton type="button" onClick={onRetry}>
           Coba lagi
         </SecondaryButton>
       )}
-    </div>
+    </Alert>
   );
 }
 
@@ -297,12 +305,13 @@ export function InlineNotice({
   className = "",
 }) {
   return (
-    <p
-      className={tw("issa-inline-notice m-0 border-l-emphasis border-current bg-issa-subtle px-3 py-2 text-supporting leading-normal", `issa-inline-notice--${tone}`, noticeTones[tone] || noticeTones.neutral, className)}
+    <Alert
+      className={tw("issa-inline-notice m-0 px-3 py-2 text-supporting leading-normal", `issa-inline-notice--${tone}`, className)}
+      color={noticeColors[tone] || noticeColors.neutral}
       role={role}
     >
       {children}
-    </p>
+    </Alert>
   );
 }
 

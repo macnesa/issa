@@ -1,11 +1,11 @@
 import { tw } from "../../../shared/ui/tw";
 import { useState } from "react";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "flowbite-react/components/Modal";
 import {
   DestructiveButton,
   SecondaryButton,
@@ -178,14 +178,14 @@ export default function JournalTimeline({
         })}
       </ol>
 
-      <Dialog open={Boolean(entryToRetract)} onClose={closeDialog}>
-        <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
-        <div className={tw("issa-dialog-container fixed z-dialog inset-0 grid place-items-center overflow-y-auto p-4")}>
-          <DialogPanel className={tw("issa-dialog-panel [width:min(32rem,_100%)] overflow-hidden border border-issa-border-strong rounded-dialog bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both]")}>
-            <div className={tw("issa-dialog-header border-b border-issa-border p-4")}>
-              <DialogTitle className={tw("issa-dialog-title text-issa-text text-section-title font-bold leading-tight")}>Cabut catatan ini?</DialogTitle>
-            </div>
-            <div className={tw("issa-dialog-body p-4 text-supporting leading-normal text-issa-muted")}>
+      <Modal
+        dismissible={!retracting}
+        onClose={closeDialog}
+        show={Boolean(entryToRetract)}
+        size="issaCompact"
+      >
+        <ModalHeader>Cabut catatan ini?</ModalHeader>
+        <ModalBody className={tw("text-supporting leading-normal text-issa-muted")}>
             <p>
               Catatan tidak lagi terlihat oleh orang tua, tetapi tetap disimpan
               sebagai record internal.
@@ -199,8 +199,8 @@ export default function JournalTimeline({
                 {retractError}
               </p>
             )}
-            </div>
-            <div className={tw("issa-dialog-footer flex flex-wrap justify-end gap-2 border-t border-issa-border p-4")}>
+        </ModalBody>
+        <ModalFooter>
               <SecondaryButton
                 type="button"
                 onClick={closeDialog}
@@ -215,10 +215,8 @@ export default function JournalTimeline({
               >
                 {retracting ? "Mencabut..." : "Cabut catatan"}
               </DestructiveButton>
-            </div>
-          </DialogPanel>
-        </div>
-      </Dialog>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }

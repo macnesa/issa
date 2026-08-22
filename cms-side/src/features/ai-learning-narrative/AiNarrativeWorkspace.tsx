@@ -1,10 +1,8 @@
 import { tw } from "../../shared/ui/tw";
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+  Modal,
+  ModalHeader,
+} from "flowbite-react/components/Modal";
 import {
   QueryClient,
   QueryClientProvider,
@@ -203,22 +201,36 @@ function Workspace({
           ? "error"
           : "idle";
   return (
-    <Dialog open={open} onClose={closeWorkspace} initialFocus={panelRef}>
-      <DialogBackdrop className={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both]")} />
-      <div className={tw("issa-dialog-container ai-workspace__container fixed inset-0 z-dialog grid place-items-center overflow-y-auto p-4 max-[640px]:place-items-end_center max-[640px]:p-0")}>
-        <DialogPanel
-          ref={panelRef}
-          tabIndex={-1}
-          className={tw("issa-dialog-panel ai-workspace w-[min(58rem,100%)] max-h-[calc(100dvh_-_var(--issa-space-8))] overflow-x-hidden overflow-y-auto rounded-dialog border-emphasis border-issa-border-strong bg-issa-surface shadow-dialog outline-none [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] max-[640px]:max-h-[96dvh] max-[640px]:w-full max-[640px]:rounded-b-none max-[640px]:border-x-0 max-[640px]:border-b-0")}
-        >
+    <Modal
+      className={tw("ai-workspace__container max-[640px]:items-end max-[640px]:p-0")}
+      dismissible
+      initialFocus={panelRef}
+      onClose={closeWorkspace}
+      ref={panelRef}
+      show={open}
+      size="issaWorkspace"
+      tabIndex={-1}
+      theme={{
+        content: {
+          base: "ai-workspace relative w-full max-h-[calc(100dvh_-_var(--issa-space-8))] overflow-x-hidden overflow-y-auto outline-none max-[640px]:max-h-[96dvh]",
+          inner: "relative flex flex-col overflow-visible rounded-dialog border-emphasis border-issa-border-strong bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] max-[640px]:rounded-b-none max-[640px]:border-x-0 max-[640px]:border-b-0",
+        },
+      }}
+    >
           <header className={tw("ai-workspace__header flex min-w-0 items-start justify-between gap-4 border-b-emphasis border-issa-border-strong bg-issa-text px-6 py-4 max-[640px]:px-4")}>
             <div className={tw("ai-workspace__header-copy min-w-0")}>
               <p className={tw("ai-workspace__eyebrow text-issa-focus text-eyebrow font-bold tracking-product uppercase")}>
                 AI-assisted drafting instrument
               </p>
-              <DialogTitle className={tw("ai-workspace__title mt-1 text-issa-inverse text-page-title font-bold leading-tight")}>
+              <ModalHeader
+                className={tw("contents")}
+                theme={{
+                  base: "contents",
+                  title: "ai-workspace__title mt-1 text-issa-inverse text-page-title font-bold leading-tight",
+                }}
+              >
                 Susun draf perkembangan
-              </DialogTitle>
+              </ModalHeader>
               <p className={tw("ai-workspace__intro [max-width:65ch] mt-2 text-issa-inverse-muted text-supporting leading-normal")}>
                 Record sekolah menjadi dasar draf. Guru meninjau, mengedit, dan
                 memutuskan apakah isi dipindahkan ke Feedback.
@@ -618,9 +630,7 @@ function Workspace({
               </div>
             </div>
           )}
-        </DialogPanel>
-      </div>
-    </Dialog>
+    </Modal>
   );
 }
 

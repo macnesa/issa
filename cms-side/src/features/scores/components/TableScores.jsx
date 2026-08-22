@@ -1,5 +1,6 @@
 import { tw } from "../../../shared/ui/tw";
 import { useState } from "react";
+import { TableCell, TableRow } from "flowbite-react/components/Table";
 import { useDispatch } from "react-redux";
 import { updateStudentScore } from "../../../store/action/ActionCreator";
 import { formatRecordedDate, toIsoDateTime } from "../../../utils/recordDates";
@@ -68,18 +69,18 @@ export default function TableScores({
   const status = data.status === true ? "Lulus" : data.status === false ? "Belum lulus" : undefined;
 
   return (
-    <tr className={tw("score-history-ledger__row border-t border-issa-border bg-issa-surface text-issa-text [transition:background-color_var(--issa-motion-fast)_ease] align-top hover:bg-issa-subtle [&>td]:p-3 motion-reduce:[transition:none]")}>
-      <td className={tw("score-history-ledger__index text-issa-muted text-metadata font-bold")}>{String(recordIndex).padStart(2, "0")}</td>
-      <td className={tw("score-history-ledger__subject text-issa-text font-semibold")}>
+    <TableRow className={tw("score-history-ledger__row")}>
+      <TableCell className={tw("score-history-ledger__index text-issa-muted text-metadata font-bold")}>{String(recordIndex).padStart(2, "0")}</TableCell>
+      <TableCell className={tw("score-history-ledger__subject text-issa-text font-semibold")}>
         {data.Lesson?.name || "Belum tersedia"}
-      </td>
-      <td className={tw("score-history-ledger__assessment text-issa-muted text-supporting")}>
+      </TableCell>
+      <TableCell className={tw("score-history-ledger__assessment text-issa-muted text-supporting")}>
         {data.Assignment?.name || "Belum tersedia"}
-      </td>
-      <td className={tw("score-history-ledger__threshold-note text-issa-text font-semibold")}>
+      </TableCell>
+      <TableCell className={tw("score-history-ledger__threshold-note text-issa-text font-semibold")}>
         {data.Lesson?.KKM ?? "—"}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         {editing ? (
           <NumberField
             id={`score-value-${data.id}`}
@@ -95,14 +96,14 @@ export default function TableScores({
         ) : (
           <span className={tw("score-history-ledger__score-value text-issa-text text-section-title font-bold leading-tight")}>{data.value ?? "—"}</span>
         )}
-      </td>
-      <td><StatusBadge status={status} /></td>
+      </TableCell>
+      <TableCell><StatusBadge status={status} /></TableCell>
       {showPredikat && (
-        <td className={tw("score-history-ledger__predicate text-issa-text font-semibold")}>
+        <TableCell className={tw("score-history-ledger__predicate text-issa-text font-semibold")}>
           {data.category || "—"}
-        </td>
+        </TableCell>
       )}
-      <td className={tw("score-history-ledger__date text-issa-muted text-supporting")}>
+      <TableCell className={tw("score-history-ledger__date text-issa-muted text-supporting")}>
         <div>{formatRecordedDate(data.recordedAt)}</div>
         {editing && (
           <DateTimeField
@@ -115,8 +116,8 @@ export default function TableScores({
             className={tw("score-history-ledger__date-field [min-width:12rem] mt-2")}
           />
         )}
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         <form onSubmit={handleScoreUpdateSubmit} className={tw("score-history-ledger__actions [min-width:7rem] [&>div]:flex [&>div]:gap-2")}>
           {editing ? (
             <div>
@@ -160,7 +161,7 @@ export default function TableScores({
             </InlineNotice>
           )}
         </form>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }

@@ -1,6 +1,7 @@
 import { tw } from "../shared/ui/tw";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { Pagination as FlowbitePagination } from "flowbite-react/components/Pagination";
 import isEmpty from "lodash/isEmpty";
 import TableStudent from "../features/students/components/TableStudents";
 import TeacherAttentionQueue from "../features/student-insights/components/TeacherAttentionQueue";
@@ -14,7 +15,6 @@ import {
   PageContainer,
   PageHeader,
   PrimaryButton,
-  SecondaryButton,
   Surface,
 } from "../shared/ui/ui";
 import TextField from "../shared/ui/form-controls/TextField";
@@ -161,17 +161,22 @@ export default function Dashboard() {
       {!loading && !error && !isEmpty(studentRows) && <>
         <div className={tw("teacher-dashboard__roster-overflow min-w-0")}><table className={tw("teacher-dashboard__roster-table w-full border-collapse text-issa-text text-table text-left [&_thead]:bg-issa-subtle [&_thead]:text-issa-muted [&_thead_th]:py-3 [&_thead_th]:px-4 [&_thead_th]:text-table-header [&_thead_th]:font-bold [&_thead_th]:tracking-metadata [&_thead_th]:uppercase max-sm:[&_thead]:hidden max-sm:[&_tbody]:grid")}><thead><tr><th>Siswa</th><th>NIM</th><th>Kelas</th><th>Attendance hari ini</th><th>Aksi</th></tr></thead><tbody>{studentRows.map((student, index) => <TableStudent key={student.id} data={student} index={index} />)}</tbody></table></div>
         <div className={tw("teacher-dashboard__pagination border-t border-issa-border p-4")}>
-          <nav className={tw("flex items-center justify-between gap-3 max-sm:items-stretch max-sm:flex-col")} aria-label="Paginasi siswa Dashboard">
+          <div className={tw("flex items-center justify-between gap-3 max-sm:items-stretch max-sm:flex-col")}>
             <p className={tw("text-issa-muted text-supporting")}>
               Menampilkan {firstDisplayedStudent}–{lastDisplayedStudent} dari {totalStudents} siswa
               <span className={tw("teacher-dashboard__pagination-separator mx-2")} aria-hidden="true">·</span>
               Halaman {currentPage} dari {totalPages}
             </p>
-            <div className={tw("flex items-center gap-3 max-sm:grid max-sm:grid-cols-2")}>
-              <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage - 1)} disabled={currentPage <= 1}>Sebelumnya</SecondaryButton>
-              <SecondaryButton compact type="button" onClick={() => handleStudentPageChange(currentPage + 1)} disabled={currentPage >= totalPages}>Berikutnya</SecondaryButton>
-            </div>
-          </nav>
+            <FlowbitePagination
+              aria-label="Paginasi siswa Dashboard"
+              currentPage={currentPage}
+              layout="navigation"
+              nextLabel="Berikutnya"
+              onPageChange={handleStudentPageChange}
+              previousLabel="Sebelumnya"
+              totalPages={totalPages}
+            />
+          </div>
         </div>
       </>}
     </LedgerShell>

@@ -5,7 +5,10 @@ import { MemoryRouter } from "react-router-dom";
 import {
   ButtonLink,
   DestructiveButton,
+  ErrorState,
+  InlineNotice,
   LedgerShell,
+  LoadingState,
   PrimaryButton,
   SecondaryButton,
   StatusBadge,
@@ -15,13 +18,15 @@ import {
   WorkspacePanel,
   WorkspaceTabs,
 } from "./ui";
-import { issaFlowbiteTheme } from "./flowbite-theme";
+import { issaFlowbiteApplyTheme, issaFlowbiteTheme } from "./flowbite-theme";
 
 function renderWithTheme(children) {
   return render(
     <>
       <StoreInit dark={false} prefix="" version={3} />
-      <ThemeProvider theme={issaFlowbiteTheme}>{children}</ThemeProvider>
+      <ThemeProvider applyTheme={issaFlowbiteApplyTheme} theme={issaFlowbiteTheme}>
+        {children}
+      </ThemeProvider>
     </>
   );
 }
@@ -73,6 +78,30 @@ describe("Institutional Ledger shared UI", () => {
     fireEvent.click(button);
     fireEvent.click(button);
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  test("Flowbite-backed feedback and loading preserve application semantics", () => {
+    const { container } = renderWithTheme(
+      <>
+        <InlineNotice role="note" tone="warning">
+          Demo hanya-baca
+        </InlineNotice>
+        <ErrorState message="Record gagal dimuat" />
+        <LoadingState label="Memuat record" />
+      </>
+    );
+
+    expect(screen.getByRole("note")).toHaveTextContent("Demo hanya-baca");
+    expect(screen.getByRole("note")).toHaveClass(
+      "issa-inline-notice",
+      "border-l-issa-warning"
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Record gagal dimuat");
+    expect(screen.getByRole("alert")).toHaveClass("issa-state--error");
+    expect(screen.getByRole("status")).toHaveTextContent("Memuat record");
+    expect(screen.getByRole("status")).toHaveAttribute("aria-live", "polite");
+    expect(container.querySelector(".issa-state__loading-content svg"))
+      .toBeInTheDocument();
   });
 
   test("Flowbite-backed button variants preserve behavior and passthrough", () => {
