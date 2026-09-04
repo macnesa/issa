@@ -1,6 +1,6 @@
 # ISSA Parent App
 
-Vite SPA untuk demo parent/student. Backend harus tersedia dan mengizinkan origin frontend yang dipakai.
+Vite SPA untuk pengalaman orang tua ISSA. Backend harus tersedia dan mengizinkan origin frontend yang dipakai.
 
 ```bash
 npm install
@@ -15,6 +15,16 @@ Konfigurasi API melalui `.env` lokal:
 VITE_API_BASE_URL=http://localhost:3000
 ```
 
-Route utama: `/`, `/attendance`, `/progress`, `/progress/:lessonId`, `/schedule`, dan `/activities`.
+## Experience model
+
+Primary navigation sekarang sengaja dibatasi menjadi:
+
+- `/` — **Hari ini**
+- `/journey` — **Perjalanan**
+- `/schedule` — **Jadwal**
+
+Detail kontekstual tetap tersedia melalui `/attendance`, `/progress`, dan `/progress/:lessonId`, tetapi bukan primary navigation.
+
+Baca `PARENT_EXPERIENCE_MODEL.md` sebelum mengubah IA, visual philosophy, atau interpretasi data parent-facing.
 
 Hasil produksi ada di `dist/`. Pada Vercel, `vercel.json` meneruskan semua route SPA ke entry aplikasi.

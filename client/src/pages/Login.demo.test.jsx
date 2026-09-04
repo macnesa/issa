@@ -20,6 +20,15 @@ import LoginPage from "./Login";
 describe("Parent login demo action", () => {
   beforeEach(() => vi.clearAllMocks());
 
+  test("introduces the child's learning without design jargon and keeps labeled sign-in controls", () => {
+    render(<MemoryRouter><LoginPage /></MemoryRouter>);
+    expect(screen.getByRole("heading", { level: 1, name: "Ikuti cerita belajar anak." })).toBeInTheDocument();
+    expect(screen.queryByText(/dashboard/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("form", { name: "Masuk" })).toBeInTheDocument();
+    expect(screen.getByLabelText("NIM siswa")).toHaveAttribute("autocomplete", "username");
+    expect(screen.getByLabelText("Password")).toHaveAttribute("autocomplete", "current-password");
+  });
+
   test("links to Teacher CMS from the login header in a new tab", () => {
     render(<MemoryRouter><LoginPage /></MemoryRouter>);
 

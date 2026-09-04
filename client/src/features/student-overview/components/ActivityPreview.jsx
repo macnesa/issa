@@ -16,9 +16,9 @@ export default function ActivityPreview({ resource, activities, onRetry }) {
         title="Aktivitas Terbaru"
         action={<Link to="/activities" className="text-link">Lihat aktivitas</Link>}
       />
-      {resource.loading && <LoadingState label="Loading activities..." />}
+      {resource.loading && <LoadingState label="Memuat aktivitas..." />}
       {resource.error && <ErrorState error={resource.error} onRetry={onRetry} />}
-      {resource.loaded && !activities.length && <EmptyState message="No activities are available yet." />}
+      {resource.loaded && !activities.length && <EmptyState message="Belum ada aktivitas yang tersedia." />}
       {!!activities.length && !resource.loading && !resource.error && (
         <ol className="activity-list activity-list--preview">
           {activities.map((activity) => (

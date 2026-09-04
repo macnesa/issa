@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import baseUrl from "../../../config/api";
 import {
   ButtonLink,
-  LedgerShell,
   SecondaryButton,
+  SectionHeader,
 } from "../../../shared/ui/ui";
 
 const urgencyLevels = new Set(["high", "medium", "low"]);
@@ -24,74 +24,53 @@ function formatMetric(value) {
 function getKkmFact(latestScore, kkm) {
   const numericScore = Number(latestScore);
   const numericKkm = Number(kkm);
-  if (!Number.isFinite(numericScore) || !Number.isFinite(numericKkm)) {
-    return `KKM saat ini adalah ${formatMetric(kkm)}.`;
-  }
-  if (numericScore > numericKkm) {
-    return `Nilai masih berada di atas KKM ${formatMetric(kkm)}.`;
-  }
-  if (numericScore === numericKkm) {
-    return `Nilai terbaru memenuhi KKM ${formatMetric(kkm)}.`;
-  }
-  return `KKM saat ini adalah ${formatMetric(kkm)}.`;
+  if (!Number.isFinite(numericKkm)) return "KKM belum tersedia.";
+  if (!Number.isFinite(numericScore)) return `KKM ${formatMetric(kkm)}.`;
+  if (numericScore > numericKkm) return `Masih di atas KKM ${formatMetric(kkm)}.`;
+  if (numericScore === numericKkm) return `Tepat memenuhi KKM ${formatMetric(kkm)}.`;
+  return `Di bawah KKM ${formatMetric(kkm)}.`;
 }
 
 function getFlagPresentation(flag) {
   if (flag.type === "academic_attention") {
-    const lessonName = flag.lessonName || "pelajaran ini";
-    const latestScores = Array.isArray(flag.latestScores)
-      ? flag.latestScores
-      : [];
-    const latestScore = formatMetric(latestScores[0]);
-    const previousScore = formatMetric(latestScores[1]);
-
+    const lessonName = flag.lessonName || "Pelajaran";
+    const latestScores = Array.isArray(flag.latestScores) ? flag.latestScores : [];
     return {
-      review: `Pengukuran akademik ${lessonName}.`,
-      fact: `Nilai terbaru ${lessonName} adalah ${latestScore}, setelah sebelumnya ${previousScore}. ${getKkmFact(latestScores[0], flag.kkm)}`,
-      context: "Satu perubahan nilai belum cukup untuk menjelaskan perkembangan siswa.",
+      label: "Penilaian",
+      reason: `${lessonName}: ${formatMetric(latestScores[0])} setelah ${formatMetric(latestScores[1])}. ${getKkmFact(latestScores[0], flag.kkm)}`,
     };
   }
 
   if (flag.type === "attendance_attention") {
     return {
-      review: "Perubahan kehadiran dalam 30 hari terakhir.",
-      fact: `Kehadiran tercatat ${formatMetric(flag.rate)}% pada ${formatMetric(flag.recordedDays)} hari yang memiliki catatan.`,
-      context: "Belum ada catatan mengenai penyebab perubahan kehadiran.",
+      label: "Kehadiran",
+      reason: `${formatMetric(flag.rate)}% pada ${formatMetric(flag.recordedDays)} hari tercatat dalam 30 hari terakhir.`,
     };
   }
 
   if (flag.type === "feedback_stale") {
-    if (flag.latestObservedAt === null || flag.daysSinceLatest === null) {
-      return {
-        review: "Kelengkapan observasi guru terbaru.",
-        fact: "Belum ada catatan perkembangan baru dalam periode yang ditinjau.",
-        context: "Konteks perkembangan terbaru belum tersedia dari observasi guru.",
-      };
-    }
     return {
-      review: "Kelengkapan observasi guru terbaru.",
-      fact: `Observasi guru terakhir tercatat ${formatMetric(flag.daysSinceLatest)} hari lalu.`,
-      context: "Konteks perkembangan setelah observasi tersebut belum tersedia.",
+      label: "Feedback",
+      reason: flag.latestObservedAt === null || flag.daysSinceLatest === null
+        ? "Belum ada feedback guru baru dalam periode yang ditinjau."
+        : `Feedback guru terakhir ${formatMetric(flag.daysSinceLatest)} hari lalu.`,
     };
   }
 
   return {
-    review: "Catatan perkembangan memerlukan pemeriksaan guru.",
-    fact: "Sistem menandai record ini untuk ditinjau.",
-    context: "Konteks tambahan belum tersedia dari data ini.",
+    label: "Tinjauan",
+    reason: "Data siswa ini ditandai untuk diperiksa guru.",
   };
 }
 
 function AttentionQueueSkeleton() {
   return (
-    <div className={tw("teacher-attention-queue__skeleton")} aria-label="Memuat siswa yang perlu ditinjau">
+    <div className={tw("teacher-attention-queue__skeleton divide-y divide-issa-border border-y border-issa-border")} aria-label="Memuat siswa yang perlu ditinjau">
       {[0, 1, 2].map((rowIndex) => (
-        <div className={tw("teacher-attention-queue__skeleton-row grid [grid-template-columns:2.75rem_minmax(8.5rem,_0.65fr)_minmax(0,_2fr)_6rem] [min-height:5rem] items-center gap-3 p-4 [&+&]:border-t [&+&]:border-issa-border [&_span]:block [&_span]:rounded-control [&_span]:bg-issa-disabled [&_span]:[animation:attention-ledger-loading_1.4s_ease-in-out_infinite_alternate] max-lg:[grid-template-columns:2.75rem_minmax(0,_1fr)] motion-reduce:[&_span]:[animation:none]")} key={rowIndex}>
-          <span className={tw("teacher-attention-queue__skeleton-index hidden")} />
-          <span className={tw("teacher-attention-queue__skeleton-portrait w-11 h-11")} />
-          <span className={tw("teacher-attention-queue__skeleton-identity [width:82%] [height:1.5rem]")} />
-          <span className={tw("teacher-attention-queue__skeleton-fact [width:92%] h-8 max-lg:col-start-2")} />
-          <span className={tw("teacher-attention-queue__skeleton-action [width:6rem] h-9 max-lg:col-start-2")} />
+        <div className={tw("grid min-h-[5.75rem] grid-cols-[3rem_minmax(0,_1fr)_6rem] items-center gap-4 py-4 max-sm:grid-cols-[3rem_minmax(0,_1fr)]")} key={rowIndex}>
+          <span className={tw("h-11 w-11 rounded-lg bg-issa-disabled [animation:attention-ledger-loading_1.4s_ease-in-out_infinite_alternate] motion-reduce:[animation:none]")} />
+          <span className={tw("grid gap-2")}><span className={tw("h-4 w-36 rounded bg-issa-disabled [animation:attention-ledger-loading_1.4s_ease-in-out_infinite_alternate] motion-reduce:[animation:none]")} /><span className={tw("h-3 w-[80%] rounded bg-issa-disabled [animation:attention-ledger-loading_1.4s_ease-in-out_infinite_alternate] motion-reduce:[animation:none]")} /></span>
+          <span className={tw("h-9 rounded bg-issa-disabled max-sm:hidden [animation:attention-ledger-loading_1.4s_ease-in-out_infinite_alternate] motion-reduce:[animation:none]")} />
         </div>
       ))}
     </div>
@@ -100,64 +79,39 @@ function AttentionQueueSkeleton() {
 
 function AttentionQueueMessage({ tone, title, description, onRetry }) {
   return (
-    <div className={tw(
-      `teacher-attention-queue__message grid [grid-template-columns:minmax(0,_1fr)_auto] items-center gap-4 border-l-emphasis border-issa-info p-4 bg-issa-subtle max-sm:grid-cols-1 teacher-attention-queue__message--${tone}`,
-      tone === "error" && "border-l-issa-danger"
-    )}>
-      <span className={tw("teacher-attention-queue__message-index hidden")} aria-hidden="true">—</span>
+    <div className={tw("grid min-h-28 items-center border-y border-issa-border py-5 sm:grid-cols-[minmax(0,_1fr)_auto] sm:gap-6", tone === "error" && "text-issa-danger")}>
       <div>
-        <strong className={tw("text-issa-text text-body")}>{title}</strong>
-        <p className={tw("mt-1 text-issa-muted text-supporting")}>{description}</p>
+        <strong className={tw("text-body font-semibold text-issa-text")}>{title}</strong>
+        <p className={tw("mt-1 max-w-[44rem] text-supporting leading-relaxed text-issa-muted")}>{description}</p>
       </div>
-      {onRetry && (
-        <SecondaryButton compact type="button" className={tw("teacher-attention-queue__retry max-sm:w-full")} onClick={onRetry}>
-          Coba lagi
-        </SecondaryButton>
-      )}
+      {onRetry && <SecondaryButton compact type="button" className={tw("mt-4 sm:mt-0")} onClick={onRetry}>Coba lagi</SecondaryButton>}
     </div>
   );
 }
 
-function AttentionQueueRow({ item, index }) {
-  const primaryPresentation = getFlagPresentation(
-    (Array.isArray(item.flags) ? item.flags : [])[0] || {}
-  );
+function AttentionQueueRow({ item }) {
+  const flags = Array.isArray(item.flags) ? item.flags : [];
+  const presentations = (flags.length ? flags : [{}]).map(getFlagPresentation).slice(0, 3);
   const urgency = urgencyLevels.has(item.priority) ? item.priority : "low";
+  const initial = String(item.student.name || "S").slice(0, 1).toUpperCase();
 
   return (
-    <li className={tw("teacher-attention-queue__row grid [grid-template-columns:2.75rem_minmax(8.5rem,_0.65fr)_minmax(0,_2fr)_auto] [align-items:start] gap-3 border-l-emphasis border-issa-info p-4 bg-issa-surface [&+&]:border-t [&+&]:border-issa-border data-[urgency=high]:border-l-issa-danger data-[urgency=medium]:border-l-issa-warning max-lg:[grid-template-columns:2.75rem_minmax(0,_1fr)] max-sm:p-3")} data-urgency={urgency}>
-      <span className={tw("teacher-attention-queue__index hidden")} aria-hidden="true">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-      <img
-        className={tw("teacher-attention-queue__portrait w-11 h-11 border border-issa-border rounded-control bg-issa-subtle object-cover")}
-        src={item.student.photo}
-        alt=""
-      />
-      <div className={tw("teacher-attention-queue__identity min-w-0")}>
-        <strong className={tw("text-issa-text text-table font-semibold")}>{item.student.name}</strong>
+    <li className={tw("group relative grid min-h-[6.25rem] grid-cols-[3.25rem_minmax(10rem,_0.48fr)_minmax(0,_1.52fr)_auto] items-start gap-4 py-4 transition-colors duration-fast hover:bg-[color-mix(in_srgb,var(--issa-surface-subtle)_48%,transparent)] [&+&]:border-t [&+&]:border-issa-border max-lg:grid-cols-[3.25rem_minmax(0,_1fr)] motion-reduce:transition-none")} data-urgency={urgency}>
+      <span className={tw("absolute left-0 top-5 h-2 w-2 -translate-x-[calc(50%_+_1px)] rounded-full bg-issa-info data-[urgency=high]:bg-issa-danger data-[urgency=medium]:bg-issa-warning")} data-urgency={urgency} aria-hidden="true" />
+      {item.student.photo ? <img className={tw("h-11 w-11 rounded-lg bg-issa-subtle object-cover ring-1 ring-issa-border")} src={item.student.photo} alt="" /> : <span className={tw("grid h-11 w-11 place-items-center rounded-lg bg-issa-subtle text-supporting font-semibold text-issa-text ring-1 ring-issa-border")} aria-hidden="true">{initial}</span>}
+      <div className={tw("min-w-0 pt-0.5")}>
+        <strong className={tw("block truncate text-table font-semibold text-issa-text")}>{item.student.name}</strong>
+        <p className={tw("mt-1 text-metadata text-issa-muted")}>{presentations.length} alasan untuk ditinjau</p>
       </div>
-      <div className={tw("teacher-attention-queue__follow-up grid min-w-0 gap-2 pl-4 border-l border-issa-border max-lg:[padding-left:0] max-lg:[border-left:0]")}>
-        <p className={tw("teacher-attention-queue__review text-issa-text text-supporting font-bold leading-normal")}>
-          {primaryPresentation.review}
-        </p>
-        <p className={tw("teacher-attention-queue__fact text-issa-muted text-metadata leading-normal")}>
-          {primaryPresentation.fact}
-        </p>
-        {primaryPresentation.context && (
-          <p className={tw("teacher-attention-queue__context [border-left:var(--issa-border-width-emphasis)_solid_var(--issa-warning)] pl-2 text-issa-muted text-metadata leading-normal")}>
-            {primaryPresentation.context}
-          </p>
-        )}
-      </div>
-      <ButtonLink
-        compact
-        className={tw("teacher-attention-queue__action max-lg:col-start-2 max-lg:[justify-self:start] max-sm:w-full")}
-        to={`/students/${item.student.id}`}
-        aria-label={`Tinjau siswa ${item.student.name}`}
-      >
-        Tinjau siswa
-      </ButtonLink>
+      <ul className={tw("m-0 min-w-0 list-none p-0 max-lg:col-start-2")}>
+        {presentations.map((presentation, index) => (
+          <li key={`${presentation.label}-${index}`} className={tw("grid min-w-0 gap-1 py-1.5 first:pt-0 [&+&]:border-t [&+&]:border-issa-border")}>
+            <span className={tw("text-metadata font-semibold text-issa-muted")}>{presentation.label}</span>
+            <span className={tw("text-supporting leading-relaxed text-issa-text")}>{presentation.reason}</span>
+          </li>
+        ))}
+      </ul>
+      <ButtonLink compact className={tw("max-lg:col-start-2 max-lg:justify-self-start max-sm:w-full")} to={`/students/${item.student.id}`} aria-label={`Tinjau siswa ${item.student.name}`}>Buka siswa</ButtonLink>
     </li>
   );
 }
@@ -177,14 +131,10 @@ export default function TeacherAttentionQueue({
 
     try {
       const response = await fetch(`${baseUrl}/teachers/me/attention`, {
-        headers: {
-          access_token: localStorage.access_token,
-        },
+        headers: { access_token: localStorage.access_token },
       });
       const responseBody = await response.json();
-      if (!response.ok) {
-        throw new Error(responseBody.msg || "Daftar tinjauan siswa tidak dapat dimuat.");
-      }
+      if (!response.ok) throw new Error(responseBody.msg || "Daftar tinjauan siswa tidak dapat dimuat.");
 
       const nextAttentionQueue = Array.isArray(responseBody) ? responseBody : [];
       setAttentionQueue(nextAttentionQueue);
@@ -192,9 +142,7 @@ export default function TeacherAttentionQueue({
       setStatus("success");
     } catch (requestError) {
       onCountChange(null);
-      setErrorMessage(
-        requestError?.message || "Daftar tinjauan siswa tidak dapat dimuat."
-      );
+      setErrorMessage(requestError?.message || "Daftar tinjauan siswa tidak dapat dimuat.");
       setStatus("error");
     }
   }, [onCountChange]);
@@ -206,44 +154,15 @@ export default function TeacherAttentionQueue({
   }, [loadAttentionQueue]);
 
   return (
-    <LedgerShell
-      className={tw("teacher-attention-queue mb-6")}
-      eyebrow="Tindak lanjut"
-      title="Perlu ditinjau"
-      description="Daftar tindak lanjut berdasarkan data kehadiran, pengukuran akademik, dan observasi guru."
-      aria-busy={status === "loading"}
-    >
-      {status === "success" && attentionQueue.length > 0 && (
-        <div className={tw("teacher-attention-queue__summary flex justify-end [padding:var(--issa-space-3)_var(--issa-space-4)_0]")}>
-          <span className={tw("teacher-attention-queue__count text-issa-muted text-metadata font-semibold")}>
-            {attentionQueue.length} tindak lanjut
-          </span>
-        </div>
-      )}
-
+    <section id="teacher-attention-queue-title" className={tw("teacher-attention-queue mb-9")} aria-busy={status === "loading"}>
+      <div className={tw("mb-4 flex items-end justify-between gap-5 max-sm:items-start")}>
+        <SectionHeader eyebrow="Perhatian" title="Perlu ditinjau" />
+        {status === "success" && attentionQueue.length > 0 && <span className={tw("shrink-0 pb-1 text-metadata font-semibold tabular-nums text-issa-muted")}>{attentionQueue.length} siswa</span>}
+      </div>
       {status === "loading" && <AttentionQueueSkeleton />}
-      {status === "error" && (
-        <AttentionQueueMessage
-          tone="error"
-          title="Catatan tinjauan belum tersedia"
-          description={errorMessage}
-          onRetry={loadAttentionQueue}
-        />
-      )}
-      {status === "success" && attentionQueue.length === 0 && (
-        <AttentionQueueMessage
-          tone="empty"
-          title="Tidak ada tindak lanjut yang ditandai saat ini."
-          description="Belum ada perubahan data yang memenuhi rule tinjauan."
-        />
-      )}
-      {status === "success" && attentionQueue.length > 0 && (
-        <ol className={tw("teacher-attention-queue__register [max-height:30rem] overflow-y-auto overscroll-contain")}>
-          {attentionQueue.map((item, index) => (
-            <AttentionQueueRow key={item.student.id} item={item} index={index} />
-          ))}
-        </ol>
-      )}
-    </LedgerShell>
+      {status === "error" && <AttentionQueueMessage tone="error" title="Catatan tinjauan belum tersedia" description={errorMessage} onRetry={loadAttentionQueue} />}
+      {status === "success" && attentionQueue.length === 0 && <AttentionQueueMessage tone="empty" title="Tidak ada siswa yang perlu ditinjau saat ini." description="Belum ada perubahan data yang memenuhi rule tinjauan." />}
+      {status === "success" && attentionQueue.length > 0 && <ol className={tw("border-y border-issa-border pl-1 [max-height:34rem] overflow-y-auto overscroll-contain")}>{attentionQueue.map((item) => <AttentionQueueRow key={item.student.id} item={item} />)}</ol>}
+    </section>
   );
 }

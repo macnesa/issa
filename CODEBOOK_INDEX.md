@@ -46,15 +46,15 @@
 - `ISSA:CMS.AUTH.REQUIRE_TEACHER_SESSION`
   - `cms-side/src/router/index.jsx:17`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_DEMO_LOGIN`
-  - `cms-side/src/pages/Login.jsx:119`
+  - `cms-side/src/pages/Login.jsx:120`
 - `ISSA:CMS.AUTH.SUBMIT_TEACHER_LOGIN`
-  - `cms-side/src/pages/Login.jsx:81`
+  - `cms-side/src/pages/Login.jsx:82`
 - `ISSA:CMS.CLASSROOM_DEBRIEF.REVIEW_CONFIRM`
   - `cms-side/src/features/classroom-debrief/ClassroomDebriefWorkspace.jsx:332`
 - `ISSA:CMS.FEEDBACK.FETCH_HISTORY`
-  - `cms-side/src/pages/AddStudent.jsx:94`
+  - `cms-side/src/pages/AddStudent.jsx:102`
 - `ISSA:CMS.FEEDBACK.SUBMIT_STUDENT_FEEDBACK`
-  - `cms-side/src/pages/AddStudent.jsx:174`
+  - `cms-side/src/pages/AddStudent.jsx:182`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.APPLY_LOCAL_OVERLAY`
   - `cms-side/src/offline-workspace/attendanceOffline.js:50`
 - `ISSA:CMS.OFFLINE_ATTENDANCE.COMPACT_MUTATION`
@@ -82,7 +82,7 @@
 - `ISSA:CMS.SCHEDULE.FETCH_CLASS_SCHEDULE`
   - `cms-side/src/store/action/ActionCreator.js:673`
 - `ISSA:CMS.SCORE.CREATE_STUDENT_SCORE`
-  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:65`
+  - `cms-side/src/features/scores/components/CreateScoreForm.jsx:71`
 - `ISSA:CMS.SCORE.UPDATE_STUDENT_SCORE`
   - `cms-side/src/store/action/ActionCreator.js:588`
 - `ISSA:CMS.STUDENT.FETCH_DETAIL`

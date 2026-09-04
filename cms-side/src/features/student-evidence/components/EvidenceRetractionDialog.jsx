@@ -21,9 +21,9 @@ function retractionErrorMessage(error) {
     return "Gambar belum berhasil dicabut dari penyimpanan. Silakan coba kembali.";
   }
   if (error?.status === 401 || error?.status === 403) {
-    return "Evidence tidak dapat dicabut. Evidence mungkin dibuat oleh guru lain.";
+    return "Bukti tidak dapat dicabut. Bukti mungkin dibuat oleh guru lain.";
   }
-  return error?.message || "Evidence belum berhasil dicabut.";
+  return error?.message || "Bukti belum berhasil dicabut.";
 }
 
 export default function EvidenceRetractionDialog({
@@ -89,7 +89,7 @@ export default function EvidenceRetractionDialog({
           <p className={tw("issa-dialog-copy mt-1 px-4 text-supporting leading-normal text-issa-muted")}>
             Gambar tidak lagi tersedia bagi guru maupun orang tua.
             Catatan jurnal yang pernah terhubung akan tetap tersedia,
-            tetapi akan menunjukkan bahwa evidence telah dicabut.
+            tetapi akan menunjukkan bahwa bukti telah dicabut.
           </p>
 
           {evidence && (
@@ -134,7 +134,7 @@ export default function EvidenceRetractionDialog({
                 id="evidence-retraction-reason-helper"
                 className={tw("issa-control-helper text-issa-muted")}
               >
-                Jelaskan secara singkat mengapa evidence perlu dicabut.
+                Jelaskan secara singkat mengapa bukti perlu dicabut.
                 Alasan ini tidak ditampilkan kepada orang tua.
               </p>
               {reasonError && (
@@ -169,7 +169,7 @@ export default function EvidenceRetractionDialog({
                 type="submit"
                 disabled={submitting}
               >
-                {submitting ? "Mencabut..." : "Cabut evidence"}
+                {submitting ? "Mencabut..." : "Cabut bukti"}
               </DestructiveButton>
         </ModalFooter>
       </form>

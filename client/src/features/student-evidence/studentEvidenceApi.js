@@ -5,5 +5,6 @@ export async function fetchStudentEvidences(studentId, { signal } = {}) {
     `/students/${studentId}/evidences`,
     { signal }
   );
-  return Array.isArray(data) ? data : [];
+  if (!Array.isArray(data)) throw new Error('Dokumentasi belum dapat dimuat.');
+  return data;
 }

@@ -261,6 +261,29 @@ describe("StudentLearningJournalSection Teacher", () => {
     expect(createStudentLearningJournalEntry).not.toHaveBeenCalled();
   });
 
+  it("snapshot kosong tidak diklaim sebagai histori server kosong", async () => {
+    fetchStudentLearningJournal.mockRejectedValue(new TypeError("Failed to fetch"));
+
+    render(
+      <StudentLearningJournalSection
+        studentId="1"
+        cachedEntries={[]}
+        hasCachedSnapshot
+        offlineReadOnly
+      />
+    );
+
+    expect(
+      await screen.findByText("Tidak ada catatan dalam snapshot offline ini.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/tidak membuktikan bahwa histori jurnal server kosong/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Belum ada catatan perjalanan belajar untuk siswa ini.")
+    ).not.toBeInTheDocument();
+  });
+
   it("mengubah helper sesuai jenis dan menghapus field capture setelah reflection diganti", async () => {
     fetchStudentLearningJournal.mockResolvedValue([]);
     render(<StudentLearningJournalSection studentId="1" />);

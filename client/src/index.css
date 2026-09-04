@@ -83,6 +83,7 @@
     min-width: 320px;
     min-height: 100%;
     margin: 0;
+    overflow-x: hidden;
     background: var(--issa-page);
     color: var(--issa-text);
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -112,8 +113,32 @@
 
 .parent-app {
   min-height: 100vh;
-  padding-top: var(--issa-space-4);
+  min-height: 100dvh;
+  padding-top: max(var(--issa-space-4), env(safe-area-inset-top));
   background: var(--issa-page);
+}
+
+.skip-link {
+  position: fixed;
+  top: max(var(--issa-space-3), env(safe-area-inset-top));
+  left: var(--issa-space-4);
+  z-index: 100;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  transform: translateY(calc(-100% - 2rem));
+  border: 2px solid var(--issa-text);
+  border-radius: var(--issa-control-radius);
+  background: var(--issa-yellow);
+  color: var(--issa-text);
+  padding: var(--issa-space-2) var(--issa-space-4);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: transform var(--issa-motion-fast) ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 .overview-page > * {
@@ -161,6 +186,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .overview-page > * { animation: none; }
+  .skip-link { transition: none; }
 }
 
 @keyframes overview-rise {

@@ -1,12 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { parentNavigation } from '../config/parentNavigation';
+import { isParentNavigationActive, parentNavigation } from '../config/parentNavigation';
 import { endParentSession, isParentDemoSession } from '../utils/session';
-
-function desktopLinkClass({ isActive }) {
-  return `parent-nav__link${isActive ? ' parent-nav__link--active' : ''}`;
-}
 
 function StudentAvatar({ imageUrl, name }) {
   const initial = typeof name === 'string' && name.trim()
@@ -47,7 +43,7 @@ export default function Header() {
     }
 
     function handleKeyDown(event) {
-      if (event.key !== 'Escape') return;
+      if (event.key !== 'Escape' || !isProfileMenuOpen) return;
       setIsProfileMenuOpen(false);
       profileButtonRef.current?.focus();
     }
@@ -58,7 +54,7 @@ export default function Header() {
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [isProfileMenuOpen]);
 
   function handleSignOut() {
     setIsProfileMenuOpen(false);
@@ -69,22 +65,25 @@ export default function Header() {
     <header className="parent-header">
       <nav aria-label="Navigasi utama orang tua" className="issa-header">
         <div className="issa-header__grid">
-          <NavLink to="/" aria-label="Buka Ringkasan ISSA" className="issa-header__brand">
+          <Link to="/" aria-label="Buka Hari ini ISSA" className="issa-header__brand">
             <img src="/issa-logo.png" alt="" />
-          </NavLink>
+          </Link>
 
           <ul className="parent-nav">
-            {parentNavigation.map((navigationItem) => (
-              <li key={navigationItem.path}>
-                <NavLink
-                  to={navigationItem.path}
-                  end={navigationItem.end}
-                  className={desktopLinkClass}
-                >
-                  {navigationItem.label}
-                </NavLink>
-              </li>
-            ))}
+            {parentNavigation.map((navigationItem) => {
+              const isActive = isParentNavigationActive(navigationItem, location.pathname);
+              return (
+                <li key={navigationItem.path}>
+                  <Link
+                    to={navigationItem.path}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`parent-nav__link${isActive ? ' parent-nav__link--active' : ''}`}
+                  >
+                    {navigationItem.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div ref={profileAreaRef} className="parent-profile">

@@ -1,18 +1,40 @@
+import { useEffect, useState } from "react";
 import { tw } from "../../../shared/ui/tw";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { Pagination as FlowbitePagination } from "flowbite-react/components/Pagination";
-import { fetchStudentList } from "../../../store/action/ActionCreator";
 
-export default function Pagination({ data }) {
-  const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Number(data?.totalPages) || 1;
+function numericPage(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 1 ? parsed : null;
+}
 
-  const handleStudentPageChange = (nextPage) => {
-    if (nextPage < 1 || nextPage > totalPages || nextPage === currentPage) return;
-    setCurrentPage(nextPage);
-    dispatch(fetchStudentList({}, nextPage));
+export default function Pagination({
+  data,
+  onPageChange,
+  ariaLabel = "Paginasi siswa",
+}) {
+  const totalPages = Math.max(Number(data?.totalPages) || 1, 1);
+  const serverPage = numericPage(
+    data?.page ?? data?.currentPage ?? data?.pageIndex
+  );
+  const [fallbackPage, setFallbackPage] = useState(1);
+  const currentPage = Math.min(serverPage ?? fallbackPage, totalPages);
+
+  useEffect(() => {
+    if (serverPage === null && fallbackPage > totalPages) {
+      setFallbackPage(totalPages);
+    }
+  }, [fallbackPage, serverPage, totalPages]);
+
+  const handlePageChange = (nextPage) => {
+    if (
+      nextPage < 1
+      || nextPage > totalPages
+      || nextPage === currentPage
+      || typeof onPageChange !== "function"
+    ) return;
+
+    if (serverPage === null) setFallbackPage(nextPage);
+    onPageChange(nextPage);
   };
 
   if (totalPages <= 1) return null;
@@ -21,11 +43,11 @@ export default function Pagination({ data }) {
     <div className={tw("student-pagination flex items-center justify-between gap-3 max-sm:items-stretch max-sm:flex-col")}>
       <p className={tw("text-issa-muted text-body")}>Halaman {currentPage} dari {totalPages}</p>
       <FlowbitePagination
-        aria-label="Paginasi siswa"
+        aria-label={ariaLabel}
         currentPage={currentPage}
         layout="navigation"
         nextLabel="Berikutnya"
-        onPageChange={handleStudentPageChange}
+        onPageChange={handlePageChange}
         previousLabel="Sebelumnya"
         totalPages={totalPages}
       />

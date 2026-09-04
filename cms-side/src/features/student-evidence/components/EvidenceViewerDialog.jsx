@@ -21,7 +21,7 @@ export default function EvidenceViewerDialog({
       show={Boolean(evidence)}
       size="issaWide"
     >
-      <ModalHeader>{evidence?.title || "Evidence siswa"}</ModalHeader>
+      <ModalHeader>{evidence?.title || "Bukti siswa"}</ModalHeader>
       <ModalBody>
         {evidence?.file?.url && (
             <img
@@ -33,7 +33,7 @@ export default function EvidenceViewerDialog({
       </ModalBody>
       <ModalFooter>
         <SecondaryButton type="button" onClick={onClose}>
-          Tutup viewer
+          Tutup
         </SecondaryButton>
         <DestructiveButton
           type="button"
@@ -43,7 +43,7 @@ export default function EvidenceViewerDialog({
             if (!demoReadOnly) onRequestRetraction(evidence);
           }}
         >
-          Cabut evidence
+          Cabut bukti
         </DestructiveButton>
         {demoReadOnly && (
           <span className={tw("evidence-viewer-dialog__demo text-issa-muted text-metadata")}>

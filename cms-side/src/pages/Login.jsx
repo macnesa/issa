@@ -142,216 +142,56 @@ export default function Login() {
   };
 
   return (
-    <main
-      style={{ minHeight: "100vh" }}
-      className={tw("overflow-x-hidden bg-[#173e52] text-[#edf4f4]")}
-    >
-      <div
-        style={{ minHeight: "100vh" }}
-        className={tw(`
-          mx-auto
-          grid
-          w-full
-          max-w-[76rem]
-          grid-rows-[auto_1fr]
-          px-5
-          py-5
-          sm:px-8
-          sm:py-6
-          lg:px-12
-          lg:py-7
-        `)}
-      >
-        {/* Institutional identity */}
-        <header className={tw("flex items-center justify-between gap-6 border-b border-[#527382] pb-4")}>
+    <main className={tw("min-h-screen bg-issa-page text-issa-text")}>
+      <div className={tw("mx-auto grid min-h-screen w-full max-w-[74rem] grid-rows-[auto_1fr] px-5 py-5 sm:px-8 sm:py-7 lg:px-10")}>
+        <header className={tw("flex items-center justify-between gap-6 border-b border-issa-border pb-4")}>
           <div className={tw("flex min-w-0 items-center gap-3")}>
-            <div
-              aria-hidden="true"
-              className={tw(`
-                h-10
-                w-10
-                shrink-0
-                border
-                border-[#d7e7e8]
-                bg-[#245b70]
-                p-1
-                shadow-[0.16rem_0.16rem_0_#6bbfbc]
-              `)}
-            >
-              <img
-                src={issaLogo}
-                alt=""
-                className={tw("h-full w-full object-contain")}
-              />
-            </div>
-
+            <img src={issaLogo} alt="" className={tw("h-9 w-9 object-contain")} />
             <div className={tw("min-w-0")}>
-              <p className={tw("m-0 text-[0.63rem] font-extrabold uppercase tracking-[0.22em] text-[#9ed4d0]")}>
-                ISSA CMS
-              </p>
-
-              <p className={tw("m-0 mt-0.5 truncate text-[0.76rem] font-bold tracking-[0.01em] text-[#f7faf8]")}>
-                Sistem administrasi akademik
-              </p>
+              <p className={tw("text-label font-semibold text-issa-text")}>ISSA</p>
+              <p className={tw("mt-0.5 text-metadata text-issa-muted")}>Ruang kerja guru</p>
             </div>
           </div>
-
-          <div className={tw("shrink-0 border-l border-[#527382] pl-5 text-right max-[480px]:hidden")}>
-            <p className={tw("m-0 text-[0.56rem] font-extrabold uppercase tracking-[0.2em] text-[#9ed4d0]")}>
-              Akses
-            </p>
-
-            <p className={tw("m-0 mt-0.5 text-[0.76rem] font-extrabold text-[#f7faf8]")}>
-              Internal
-            </p>
-          </div>
+          <span className={tw("text-metadata font-semibold text-issa-muted")}>Akses internal</span>
         </header>
 
-        {/* Shared operational composition */}
-        <section
-          aria-labelledby="cms-context-title"
-          className={tw(`
-            grid
-            content-center
-            items-start
-            gap-9
-            py-8
-            sm:py-10
-            lg:grid-cols-[minmax(0,1fr)_minmax(28rem,31.5rem)]
-            lg:gap-[clamp(3rem,5vw,5.5rem)]
-            lg:py-8
-          `)}
-        >
-          {/* Operational context */}
-          <div className={tw("w-full max-w-[35rem] border-l-2 border-[#6bbfbc] py-1 pl-5 sm:pl-7")}>
-            <p className={tw("m-0 text-[0.63rem] font-extrabold uppercase tracking-[0.21em] text-[#9ed4d0]")}>
-              Administrasi akademik
-            </p>
-
-            <h1
-              id="cms-context-title"
-              className={tw(`
-                m-0
-                mt-4
-                max-w-[32rem]
-                text-[clamp(2.45rem,4.35vw,3.9rem)]
-                font-extrabold
-                leading-[0.96]
-                tracking-[-0.05em]
-                text-[#f7faf8]
-              `)}
-            >
-              Kelola administrasi akademik sekolah.
+        <section className={tw("grid content-center gap-12 py-10 lg:grid-cols-[minmax(0,_1fr)_minmax(24rem,_27rem)] lg:gap-20")}>
+          <div className={tw("max-w-[37rem]")}>
+            <p className={tw("text-eyebrow font-semibold text-issa-accent")}>Operasional guru</p>
+            <h1 className={tw("mt-3 max-w-[34rem] text-[clamp(2.25rem,4.5vw,4.35rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-issa-text")}>
+              Satu ruang kerja untuk melihat kelas, memahami siswa, dan mencatat yang penting.
             </h1>
-
-            <p
-              className={tw(`
-                m-0
-                mt-5
-                max-w-[30rem]
-                text-[clamp(0.9rem,1.15vw,0.98rem)]
-                leading-[1.65]
-                text-[#cbdcdf]
-              `)}
-            >
-              Kelola catatan siswa, kehadiran, nilai, dan jadwal melalui akses
-              internal.
+            <p className={tw("mt-6 max-w-[32rem] text-body leading-relaxed text-issa-muted")}>
+              Kehadiran, penilaian, observasi, bukti, dan feedback tetap terhubung pada konteks siswa dan kelas yang sama.
             </p>
+            <dl className={tw("mt-10 grid gap-4 border-y border-issa-border py-5 sm:grid-cols-3 sm:divide-x sm:divide-issa-border")}>
+              {[
+                ["Hari ini", "Lanjutkan pekerjaan yang perlu perhatian sekarang."],
+                ["Siswa", "Baca perkembangan siswa tanpa kehilangan konteks roster."],
+                ["Kelas", "Kelola kehadiran dan jadwal dari satu konteks."],
+              ].map(([term, detail]) => (
+                <div key={term} className={tw("min-w-0 sm:px-4 sm:first:pl-0 sm:last:pr-0")}>
+                  <dt className={tw("text-label font-semibold text-issa-text")}>{term}</dt>
+                  <dd className={tw("mt-1 text-metadata leading-relaxed text-issa-muted")}>{detail}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
 
-          {/* Authorized staff access */}
-          <form
-            onSubmit={handleTeacherLoginSubmit}
-            aria-busy={submitting || demoSubmitting}
-            aria-labelledby="cms-login-title"
-            className={tw(`
-              mx-auto
-              w-full
-              max-w-[32rem]
-              border-2
-              border-[#0e2a3a]
-              bg-[#f2f5f2]
-              text-[#173e52]
-              shadow-[0.24rem_0.26rem_0_#78949e]
-              [border-radius:0.18rem_0_0.32rem_0]
-
-              lg:mx-0
-              lg:max-w-none
-            `)}
-          >
-            <header className={tw("border-b-2 border-[#b9cdd0] px-6 pb-4 pt-5 sm:px-7 sm:pt-6")}>
-              <h2
-                id="cms-login-title"
-                className={tw(`
-                  m-0
-                  text-[clamp(1.8rem,3vw,2.15rem)]
-                  font-extrabold
-                  leading-none
-                  tracking-[-0.04em]
-                  text-[#173e52]
-                `)}
-              >
-                Masuk ke CMS
-              </h2>
-
-              <p className={tw("m-0 mt-2 text-[0.86rem] leading-[1.5] text-[#5d737b]")}>
-                Gunakan NIP dan password staf yang terdaftar.
-              </p>
-            </header>
-
-            <div className={tw("grid gap-4 px-6 pb-6 pt-5 sm:px-7")}>
-              <TextField
-                id="teacher-nip"
-                label="NIP"
-                required
-                autoComplete="username"
-                type="text"
-                name="NIP"
-                value={loginCredentials.NIP}
-                onChange={handleTeacherLoginInputChange}
-                placeholder="Masukkan NIP"
-                disabled={submitting || demoSubmitting}
-              />
-
-              <TextField
-                id="teacher-password"
-                label="Password"
-                required
-                autoComplete="current-password"
-                type="password"
-                name="password"
-                value={loginCredentials.password}
-                onChange={handleTeacherLoginInputChange}
-                placeholder="Masukkan password"
-                disabled={submitting || demoSubmitting}
-              />
-
-              {message ? (
-                <InlineNotice role="alert" tone="danger">
-                  {message}
-                </InlineNotice>
-              ) : null}
-
-              <PrimaryButton
-                className={tw(`
-                  mt-0.5
-                  w-full
-                `)}
-                tone="login"
-                type="submit"
-                disabled={submitting || demoSubmitting}
-              >
-                {submitting ? "Memeriksa akun..." : "Masuk"}
-              </PrimaryButton>
-              <SecondaryButton
-                type="button"
-                tone="loginSecondary"
-                disabled={submitting || demoSubmitting}
-                onClick={handleTeacherDemoLogin}
-                className={tw("w-full")}
-              >
-                {demoSubmitting ? "Membuka demo…" : "Jelajahi Demo CMS"}
-              </SecondaryButton>
+          <form onSubmit={handleTeacherLoginSubmit} aria-busy={submitting || demoSubmitting} aria-labelledby="cms-login-title" className={tw("self-center border-y border-issa-border py-6")}>
+            <div className={tw("mb-6")}>
+              <p className={tw("text-eyebrow font-semibold text-issa-accent")}>Akses</p>
+              <h2 id="cms-login-title" className={tw("mt-1 text-[1.65rem] font-semibold tracking-[-0.035em] text-issa-text")}>Masuk ke workspace</h2>
+              <p className={tw("mt-2 text-supporting leading-relaxed text-issa-muted")}>Gunakan NIP dan password staf yang terdaftar.</p>
+            </div>
+            <div className={tw("grid gap-4")}>
+              <TextField id="teacher-nip" label="NIP" required autoComplete="username" type="text" name="NIP" value={loginCredentials.NIP} onChange={handleTeacherLoginInputChange} placeholder="Masukkan NIP" disabled={submitting || demoSubmitting} />
+              <TextField id="teacher-password" label="Password" required autoComplete="current-password" type="password" name="password" value={loginCredentials.password} onChange={handleTeacherLoginInputChange} placeholder="Masukkan password" disabled={submitting || demoSubmitting} />
+              {message ? <InlineNotice role="alert" tone="danger">{message}</InlineNotice> : null}
+              <div className={tw("grid gap-2 pt-1 sm:grid-cols-2")}>
+                <PrimaryButton className={tw("w-full")} tone="login" type="submit" disabled={submitting || demoSubmitting}>{submitting ? "Memeriksa akun..." : "Masuk"}</PrimaryButton>
+                <SecondaryButton type="button" tone="loginSecondary" disabled={submitting || demoSubmitting} onClick={handleTeacherDemoLogin} className={tw("w-full")}>{demoSubmitting ? "Membuka demo…" : "Jelajahi Demo CMS"}</SecondaryButton>
+              </div>
             </div>
           </form>
         </section>

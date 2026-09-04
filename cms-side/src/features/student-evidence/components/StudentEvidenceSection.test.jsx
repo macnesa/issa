@@ -75,7 +75,7 @@ describe('StudentEvidenceSection Teacher', () => {
     }));
 
     render(<StudentEvidenceSection studentId="1" />);
-    expect(screen.getByText('Memuat evidence siswa...')).toBeInTheDocument();
+    expect(screen.getByText('Memuat bukti siswa...')).toBeInTheDocument();
     resolveRequest([evidence]);
 
     expect(await screen.findByText('Kolase bentuk')).toBeInTheDocument();
@@ -113,7 +113,7 @@ describe('StudentEvidenceSection Teacher', () => {
   it('membuka edit dengan metadata terisi dan tanpa file input', async () => {
     await renderEvidenceSection();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit metadata' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Edit detail' }));
     const dialog = screen.getByRole('dialog');
 
     expect(within(dialog).getByText('Edit metadata evidence')).toBeInTheDocument();
@@ -147,7 +147,7 @@ describe('StudentEvidenceSection Teacher', () => {
     );
     await screen.findByText(evidence.title);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit metadata' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Edit detail' }));
     const dialog = screen.getByRole('dialog');
     fireEvent.change(within(dialog).getByLabelText('Judul'), {
       target: { value: '  Kolase geometri  ' },
@@ -186,7 +186,7 @@ describe('StudentEvidenceSection Teacher', () => {
     updateStudentEvidenceMetadata.mockReturnValue(correctionRequest.promise);
     await renderEvidenceSection();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit metadata' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Edit detail' }));
     const dialog = screen.getByRole('dialog');
     const saveButton = within(dialog).getByRole('button', {
       name: 'Simpan koreksi',
@@ -204,7 +204,7 @@ describe('StudentEvidenceSection Teacher', () => {
 
   it('cancel edit tidak mengubah evidence dan mengembalikan fokus', async () => {
     await renderEvidenceSection();
-    const editButton = screen.getByRole('button', { name: 'Edit metadata' });
+    const editButton = screen.getByRole('button', { name: 'Edit detail' });
     fireEvent.click(editButton);
     const dialog = screen.getByRole('dialog');
     fireEvent.change(within(dialog).getByLabelText('Judul'), {
@@ -236,7 +236,7 @@ describe('StudentEvidenceSection Teacher', () => {
     );
     await screen.findByText(evidence.title);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Cabut evidence' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cabut bukti' }));
     const dialog = screen.getByRole('dialog');
     expect(
       within(dialog).getByText('Cabut bukti perkembangan ini?')
@@ -282,7 +282,7 @@ describe('StudentEvidenceSection Teacher', () => {
   it('menampilkan error 502 yang ramah dan mempertahankan dialog', async () => {
     retractStudentEvidence.mockRejectedValue({ status: 502 });
     await renderEvidenceSection();
-    fireEvent.click(screen.getByRole('button', { name: 'Cabut evidence' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cabut bukti' }));
     const dialog = screen.getByRole('dialog');
     fireEvent.change(within(dialog).getByLabelText('Alasan pencabutan'), {
       target: { value: 'Evidence salah dibagikan.' },
@@ -307,7 +307,7 @@ describe('StudentEvidenceSection Teacher', () => {
     updateStudentEvidenceMetadata.mockRejectedValue({ status: 403 });
     render(<StudentEvidenceSection studentId="1" />);
     await screen.findByText(evidence.title);
-    fireEvent.click(screen.getByRole('button', { name: 'Edit metadata' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Edit detail' }));
     fireEvent.click(screen.getByRole('button', { name: 'Simpan koreksi' }));
 
     const alert = await screen.findByRole('alert');
@@ -321,7 +321,7 @@ describe('StudentEvidenceSection Teacher', () => {
 
   it('Escape menutup retraction sebelum request dan fokus kembali', async () => {
     await renderEvidenceSection();
-    const trigger = screen.getByRole('button', { name: 'Cabut evidence' });
+    const trigger = screen.getByRole('button', { name: 'Cabut bukti' });
     fireEvent.click(trigger);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
@@ -344,7 +344,7 @@ describe('StudentEvidenceSection Teacher', () => {
     render(<StudentEvidenceSection studentId="1" />);
     await screen.findByText(evidence.title);
     fireEvent.click(screen.getByRole('button', {
-      name: 'Buka viewer Kolase bentuk',
+      name: 'Buka bukti Kolase bentuk',
     }));
 
     const viewer = screen.getByRole('dialog');

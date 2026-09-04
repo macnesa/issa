@@ -93,7 +93,11 @@ export default function LineChart({ data: scoreRecords }) {
   };
 
   return (
-    <>
+    <div
+      className="lesson-chart__visual"
+      role="img"
+      aria-label="Grafik tren nilai berdasarkan urutan assessment"
+    >
       <ReactApexChart
         className="w-full"
         options={chartConfiguration.options}
@@ -102,6 +106,6 @@ export default function LineChart({ data: scoreRecords }) {
         height={250}
         width="100%"
       />
-    </>
+    </div>
   );
 }

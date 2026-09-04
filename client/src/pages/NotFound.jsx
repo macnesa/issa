@@ -9,7 +9,7 @@ export default function PageNotFound() {
         <p className="page-supporting-text">
           Halaman yang Anda cari tidak tersedia atau sudah dipindahkan.
         </p>
-        <ButtonLink to="/">Kembali ke Ringkasan</ButtonLink>
+        <ButtonLink to="/">Kembali ke Hari ini</ButtonLink>
       </Surface>
     </PageContainer>
   );

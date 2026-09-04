@@ -9,7 +9,7 @@ export const issaFlowbiteApplyTheme = {
 
 export const issaFlowbiteTheme = createTheme({
   button: {
-    base: "issa-button inline-flex items-center justify-center gap-2 rounded-control border border-transparent text-center font-bold leading-tight transition-[background-color,border-color,color,box-shadow,transform] duration-default enabled:active:translate-x-px enabled:active:translate-y-px enabled:active:shadow-none focus:ring-0 focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:border-issa-border disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:shadow-none motion-reduce:transition-none",
+    base: "issa-button inline-flex items-center justify-center gap-2 rounded-control border border-transparent text-center font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-default focus:ring-0 focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus disabled:cursor-not-allowed disabled:border-issa-border disabled:bg-issa-disabled disabled:text-issa-text-disabled disabled:shadow-none motion-reduce:transition-none",
     disabled: "pointer-events-none opacity-100",
     size: {
       xs: "h-auto min-h-control-compact px-3 text-xs",
@@ -20,17 +20,17 @@ export const issaFlowbiteTheme = createTheme({
       login: "h-auto min-h-[2.8rem] px-4 py-2.5 text-[0.8rem]",
     },
     color: {
-      primary: "border-issa-text bg-issa-accent text-issa-inverse enabled:hover:bg-issa-text",
-      secondary: "border-issa-border-strong bg-issa-surface text-issa-text enabled:hover:border-issa-accent enabled:hover:bg-issa-subtle",
-      tertiary: "border-transparent bg-transparent text-issa-accent enabled:hover:bg-issa-subtle enabled:hover:text-issa-text",
+      primary: "border-issa-accent bg-issa-accent text-issa-inverse shadow-[0_1px_2px_rgba(24,50,59,0.10)] enabled:hover:border-[color-mix(in_srgb,var(--issa-accent)_78%,black)] enabled:hover:bg-[color-mix(in_srgb,var(--issa-accent)_84%,black)]",
+      secondary: "border-issa-border bg-issa-surface text-issa-text shadow-[0_1px_2px_rgba(24,50,59,0.04)] enabled:hover:border-issa-border-strong enabled:hover:bg-issa-subtle",
+      tertiary: "border-transparent bg-transparent text-issa-accent enabled:hover:bg-[color-mix(in_srgb,var(--issa-selection)_14%,transparent)] enabled:hover:text-issa-text",
       destructive: "border-issa-danger bg-issa-danger text-issa-inverse enabled:hover:bg-[color-mix(in_srgb,var(--issa-danger)_84%,black)] focus-visible:outline-[color-mix(in_srgb,var(--issa-danger)_38%,var(--issa-surface))]",
-      login: "!rounded-[0.08rem] border-2 border-[#173e52] bg-[#245b70] font-extrabold uppercase tracking-[0.12em] text-issa-inverse shadow-[0.12rem_0.14rem_0_#88a5ae] enabled:hover:bg-[#173e52] disabled:opacity-60",
-      loginSecondary: "!rounded-[0.08rem] border-2 border-[#245b70] bg-transparent font-extrabold uppercase tracking-[0.1em] text-[#245b70] enabled:hover:bg-[#e8f4f2] disabled:opacity-60",
+      login: "border-issa-accent bg-issa-accent font-semibold text-issa-inverse enabled:hover:border-[color-mix(in_srgb,var(--issa-accent)_78%,black)] enabled:hover:bg-[color-mix(in_srgb,var(--issa-accent)_86%,black)] disabled:opacity-60",
+      loginSecondary: "border-issa-border-strong bg-transparent font-semibold text-issa-text enabled:hover:border-issa-accent enabled:hover:bg-issa-subtle disabled:opacity-60",
     },
   },
   badge: {
     root: {
-      base: "inline-flex h-fit items-center gap-1 rounded-full border border-current px-2 py-1 text-status font-semibold leading-tight",
+      base: "inline-flex h-fit items-center gap-1 rounded-full border border-transparent px-2.5 py-1 text-status font-semibold leading-tight",
       color: {
         issaNeutral: "bg-issa-subtle text-issa-muted",
         issaSuccess: "bg-[color-mix(in_srgb,var(--issa-success)_10%,var(--issa-surface))] text-issa-success",
@@ -142,7 +142,7 @@ export const issaFlowbiteTheme = createTheme({
     },
   },
   alert: {
-    base: "flex flex-col gap-2 rounded-surface border border-issa-border border-l-accent bg-issa-subtle p-4 text-supporting",
+    base: "flex flex-col gap-2 rounded-surface border border-issa-border bg-issa-surface p-4 text-supporting shadow-[0_1px_2px_rgba(24,50,59,0.04)]",
     borderAccent: "border-l-accent",
     color: {
       gray: "border-issa-border-strong border-l-issa-border-strong text-issa-muted",
@@ -212,14 +212,14 @@ export const issaFlowbiteTheme = createTheme({
     },
     content: {
       base: "issa-dialog-container relative w-full outline-none",
-      inner: "issa-dialog-panel relative flex max-h-[calc(100dvh_-_var(--issa-space-8))] flex-col overflow-hidden rounded-dialog border border-issa-border-strong bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both]",
+      inner: "issa-dialog-panel relative flex max-h-[calc(100dvh_-_var(--issa-space-8))] flex-col overflow-hidden rounded-dialog border border-issa-border bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both]",
     },
     body: {
       base: "issa-dialog-body flex-1 overflow-y-auto overflow-x-hidden p-4 text-body text-issa-text",
       popup: "p-4",
     },
     header: {
-      base: "issa-dialog-header flex items-start justify-between gap-4 border-b border-issa-border p-4",
+      base: "issa-dialog-header flex items-start justify-between gap-4 border-b border-issa-border p-5",
       popup: "border-b border-issa-border p-4",
       title: "issa-dialog-title text-section-title font-bold leading-tight text-issa-text",
       close: {
@@ -228,7 +228,7 @@ export const issaFlowbiteTheme = createTheme({
       },
     },
     footer: {
-      base: "issa-dialog-footer flex flex-wrap justify-end gap-2 border-t border-issa-border p-4",
+      base: "issa-dialog-footer flex flex-wrap justify-end gap-2 border-t border-issa-border p-5",
       popup: "border-t border-issa-border",
     },
   },
@@ -245,7 +245,7 @@ export const issaFlowbiteTheme = createTheme({
       },
     },
     head: {
-      base: "group/head bg-issa-subtle text-table-header uppercase tracking-metadata text-issa-muted",
+      base: "group/head bg-issa-subtle text-table-header tracking-metadata text-issa-muted",
       cell: {
         base: "bg-issa-subtle p-3 font-bold whitespace-nowrap",
       },

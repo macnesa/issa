@@ -96,7 +96,12 @@ function getChangeContent(change) {
 
 function RecentChangesSkeleton() {
   return (
-    <div className="record-skeleton" aria-label="Memuat perubahan terbaru">
+    <div
+      className="record-skeleton"
+      role="status"
+      aria-live="polite"
+      aria-label="Memuat perubahan terbaru"
+    >
       {[0, 1, 2].map((rowIndex) => <span key={rowIndex} />)}
     </div>
   );

@@ -22,7 +22,12 @@ function EvidenceStateMessage({ tone, title, description, onRetry }) {
 
 function EvidenceSkeleton() {
   return (
-    <div className="record-skeleton" aria-label="Memuat bukti perkembangan">
+    <div
+      className="record-skeleton"
+      role="status"
+      aria-live="polite"
+      aria-label="Memuat bukti perkembangan"
+    >
       {[0, 1].map((rowIndex) => <span key={rowIndex} />)}
     </div>
   );
@@ -124,7 +129,12 @@ export default function StudentEvidenceSection({ studentId, refreshKey = 0 }) {
                   onClick={() => setSelectedEvidence(evidence)}
                   aria-label={`Buka gambar ${evidence.title}`}
                 >
-                  <img src={evidence.file?.url} alt={evidence.title} />
+                  <img
+                    src={evidence.file?.url}
+                    alt={evidence.title}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </button>
                 <article>
                   <div className="evidence-list__meta">

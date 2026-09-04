@@ -1,6 +1,6 @@
 import { tw } from "../shared/ui/tw";
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Modal,
   ModalBody,
@@ -13,9 +13,7 @@ import {
   isTeacherDemoSession,
 } from "../offline-workspace/authIdentity";
 import { clearTeacherOfflineData } from "../offline-workspace/mutationQueue";
-import {
-  hasUnsyncedAttendanceChanges,
-} from "../offline-workspace/attendanceOffline";
+import { hasUnsyncedAttendanceChanges } from "../offline-workspace/attendanceOffline";
 import {
   DestructiveButton,
   InlineNotice,
@@ -23,39 +21,51 @@ import {
 } from "../shared/ui/ui";
 import Icon from "../shared/ui/Icon";
 import issaLogo from "../../assets/img/logo.png";
+import { workflowOwners } from "./workflowRoutes";
 
 const navigation = [
-  { to: "/", label: "Dashboard", icon: "dashboard", end: true },
-  { to: "/attendance", label: "Kehadiran", icon: "fact_check" },
-  { to: "/classroom-debrief", label: "Classroom Debrief", icon: "edit_note" },
-  { to: "/schedule", label: "Jadwal", icon: "calendar_month" },
+  {
+    to: workflowOwners.today,
+    label: "Hari ini",
+    mobileLabel: "Hari ini",
+    icon: "today",
+    matches: (pathname) => pathname === "/",
+  },
+  {
+    to: workflowOwners.students,
+    label: "Siswa",
+    mobileLabel: "Siswa",
+    icon: "group",
+    matches: (pathname) => pathname.startsWith("/students") || pathname.startsWith("/scores"),
+  },
+  {
+    to: workflowOwners.class,
+    label: "Kelas",
+    mobileLabel: "Kelas",
+    icon: "school",
+    matches: (pathname) => pathname === "/class" || pathname === "/attendance" || pathname === "/schedule",
+  },
 ];
 
-export default function Sidebar({ status = null }) {
+export default function Sidebar({ status = null, onSearch = null }) {
   const navigate = useNavigate();
-  const [teacherIdentity, setTeacherIdentity] = useState(
-    getActiveTeacherIdentity
-  );
+  const { pathname } = useLocation();
+  const [teacherIdentity, setTeacherIdentity] = useState(getActiveTeacherIdentity);
   const [logoutConfirmationOpen, setLogoutConfirmationOpen] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
   const [logoutError, setLogoutError] = useState("");
   const teacherName = teacherIdentity?.name?.trim();
   const isDemo = isTeacherDemoSession();
+  const currentDomain = useMemo(
+    () => navigation.find((item) => item.matches(pathname))?.label
+      || (pathname === "/classroom-debrief" ? "Catat kelas" : "Ruang kerja"),
+    [pathname]
+  );
 
   useEffect(() => {
-    const refreshTeacherIdentity = () => {
-      setTeacherIdentity(getActiveTeacherIdentity());
-    };
-    window.addEventListener(
-      "issa:teacher-identity-changed",
-      refreshTeacherIdentity
-    );
-    return () => {
-      window.removeEventListener(
-        "issa:teacher-identity-changed",
-        refreshTeacherIdentity
-      );
-    };
+    const refreshTeacherIdentity = () => setTeacherIdentity(getActiveTeacherIdentity());
+    window.addEventListener("issa:teacher-identity-changed", refreshTeacherIdentity);
+    return () => window.removeEventListener("issa:teacher-identity-changed", refreshTeacherIdentity);
   }, []);
 
   const completeTeacherLogout = async () => {
@@ -103,81 +113,112 @@ export default function Sidebar({ status = null }) {
   };
 
   return (
-    <aside className={tw("teacher-sidebar relative [z-index:var(--issa-z-shell)] flex w-full min-w-0 flex-col [border-bottom:var(--issa-border-width)_solid_var(--issa-text)] bg-issa-text text-issa-inverse lg:sticky lg:top-0 lg:[width:var(--teacher-sidebar-width)] lg:[height:100svh] lg:[min-height:32rem] lg:[border-right:var(--issa-border-width)_solid_var(--issa-text)] lg:[border-bottom:0]")}>
-      <div className={tw("teacher-sidebar__brand flex min-w-0 [min-height:var(--teacher-utility-height)] items-center justify-between gap-4 [border-bottom:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_28%,_______transparent_____)] py-2 px-4 lg:pr-4 lg:pl-4")}>
-        <div className={tw("teacher-sidebar__identity flex min-w-0 items-center gap-3 max-sm:gap-2")}>
-          <div className={tw("teacher-sidebar__seal h-12 w-12 flex-none max-sm:h-10 max-sm:w-10")}>
-            <img className={tw("block h-full w-full object-contain")} src={issaLogo} alt="ISSA" />
+    <>
+      <aside className={tw("teacher-sidebar relative z-shell w-full min-w-0 border-b border-issa-border bg-issa-page lg:sticky lg:top-0 lg:flex lg:h-[100svh] lg:min-h-[34rem] lg:flex-col lg:border-b-0 lg:border-r")}>
+        <div className={tw("teacher-sidebar__brand flex h-14 min-w-0 items-center justify-between gap-3 px-4 lg:h-auto lg:px-4 lg:pb-5 lg:pt-5")}>
+          <Link className={tw("flex min-w-0 items-center gap-2.5 rounded-control focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus")} to="/" aria-label="ISSA Hari ini">
+            <span className={tw("grid h-8 w-8 flex-none place-items-center rounded-lg border border-issa-border bg-issa-surface p-1.5 lg:h-9 lg:w-9")}>
+              <img className={tw("block h-full w-full object-contain")} src={issaLogo} alt="" />
+            </span>
+            <span className={tw("min-w-0")}>
+              <strong className={tw("block text-product font-bold tracking-product text-issa-text")}>ISSA</strong>
+              <span className={tw("block truncate text-metadata text-issa-muted lg:hidden")}>{currentDomain}</span>
+              <span className={tw("hidden text-metadata text-issa-muted lg:block")}>Ruang kerja guru</span>
+            </span>
+          </Link>
+          <div className={tw("flex items-center gap-1 lg:hidden")}>
+            {status && <div className={tw("[&_.offline-status__summary]:h-10 [&_.offline-status__summary]:min-h-10 [&_.offline-status__summary]:w-10 [&_.offline-status__summary]:justify-center [&_.offline-status__summary]:px-0 [&_.offline-status__label]:hidden [&_.offline-status__summary_.material-symbols-rounded]:hidden")}>{status}</div>}
+            {onSearch && (
+              <button
+                type="button"
+                onClick={onSearch}
+                className={tw("grid h-10 w-10 place-items-center rounded-control text-issa-muted transition-colors duration-fast hover:bg-issa-subtle hover:text-issa-text focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus")}
+                aria-label="Cari"
+                aria-keyshortcuts="Control+K Meta+K"
+              >
+                <Icon name="search" className={tw("text-lg")} />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleTeacherLogout}
+              className={tw("grid h-10 w-10 place-items-center rounded-control text-issa-muted transition-colors duration-fast hover:bg-issa-subtle hover:text-issa-text focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus")}
+              aria-label="Keluar"
+            >
+              <Icon name="logout" className={tw("text-lg")} />
+            </button>
           </div>
-          <p className={tw("grid min-w-0 gap-1 text-metadata font-medium leading-tight text-issa-inverse-muted")}>
-            <strong className={tw("text-product font-bold tracking-product text-issa-inverse")}>ISSA CMS</strong>
-            <span>Ruang kerja guru</span>
-          </p>
         </div>
-        <SecondaryButton
-          type="button"
-          onClick={handleTeacherLogout}
-          className={tw("teacher-sidebar__mobile-logout flex-none lg:hidden")}
-        >
-          Keluar
-        </SecondaryButton>
-      </div>
 
-      <nav className={tw("teacher-sidebar__navigation min-w-0 overflow-x-auto [border-bottom:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_24%,_______transparent_____)] py-2 px-3 [scrollbar-width:thin] [scrollbar-color:var(--issa-border-strong)_transparent] lg:[overflow-x:visible] lg:[padding:var(--issa-space-6)_var(--issa-space-4)] max-sm:pr-2 max-sm:pl-2")} aria-label="Navigasi utama">
-        <ul className={tw("flex w-max min-w-full gap-1 lg:grid lg:w-full lg:min-w-0")}>
-          {navigation.map((navigationItem) => (
-            <li key={navigationItem.to}>
-              <NavLink
-                end={navigationItem.end}
-                to={navigationItem.to}
-                className={({ isActive }) => tw(
-                  "teacher-sidebar__nav-link relative flex min-h-control items-center gap-3 rounded-control border border-transparent border-l-emphasis border-l-transparent px-3 py-2 text-button font-semibold leading-tight text-issa-inverse-muted transition-colors duration-default hover:border-[color-mix(in_srgb,var(--issa-text-inverse-muted)_28%,transparent)] hover:border-l-issa-selection hover:bg-[color-mix(in_srgb,var(--issa-surface-subtle)_10%,transparent)] hover:text-issa-inverse focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus motion-reduce:transition-none max-sm:justify-center max-sm:gap-1 max-sm:px-1 max-sm:text-supporting",
-                  isActive && "is-active border-issa-border-strong border-l-issa-selection bg-issa-subtle text-issa-text hover:border-issa-border-strong hover:border-l-issa-selection hover:bg-issa-subtle hover:text-issa-text"
+        <nav
+          className={tw("teacher-sidebar__navigation fixed inset-x-0 bottom-0 z-shell border-t border-issa-border bg-[color-mix(in_srgb,var(--issa-surface)_96%,transparent)] px-2 pb-[max(0.45rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-10px_30px_rgba(32,40,38,0.07)] backdrop-blur-xl lg:static lg:z-auto lg:border-0 lg:bg-transparent lg:px-3 lg:pb-0 lg:pt-0 lg:shadow-none lg:backdrop-blur-none")}
+          aria-label="Navigasi utama"
+        >
+          <ul className={tw("grid grid-cols-4 gap-1 lg:grid-cols-1 lg:gap-0.5")}>
+            {navigation.map((item) => {
+              const active = item.matches(pathname);
+              return (
+                <li key={item.to}>
+                  <Link
+                    to={item.to}
+                    aria-label={item.label}
+                    aria-current={active ? "page" : undefined}
+                    className={tw(
+                      "teacher-sidebar__nav-link group relative flex min-h-[3.2rem] min-w-0 flex-col items-center justify-center gap-1 rounded-control px-2 py-1.5 text-center text-metadata font-semibold text-issa-muted transition-colors duration-fast hover:bg-issa-subtle hover:text-issa-text focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus motion-reduce:transition-none lg:min-h-[2.65rem] lg:flex-row lg:justify-start lg:gap-3 lg:px-3 lg:py-2 lg:text-left lg:text-button",
+                      active && "is-active bg-issa-subtle text-issa-text lg:before:absolute lg:before:left-0 lg:before:top-1/2 lg:before:h-5 lg:before:w-0.5 lg:before:-translate-y-1/2 lg:before:rounded-full lg:before:bg-issa-accent"
+                    )}
+                  >
+                    <Icon name={item.icon} className={tw("flex-none text-[1.15rem] lg:w-5 lg:text-center", active && "text-issa-accent")} />
+                    <span className={tw("truncate lg:hidden")}>{item.mobileLabel}</span>
+                    <span className={tw("hidden truncate lg:block")}>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+            <li>
+              <Link
+                to={workflowOwners.classCapture}
+                aria-label="Catat kelas"
+                aria-current={pathname === "/classroom-debrief" ? "page" : undefined}
+                className={tw(
+                  "teacher-sidebar__capture flex min-h-[3.2rem] min-w-0 flex-col items-center justify-center gap-1 rounded-control bg-issa-accent px-2 py-1.5 text-center text-metadata font-semibold text-issa-inverse transition-[background-color,transform] duration-fast hover:bg-[color-mix(in_srgb,var(--issa-accent)_86%,black)] focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus active:translate-y-px motion-reduce:transition-none lg:mt-4 lg:min-h-[2.65rem] lg:flex-row lg:justify-start lg:gap-3 lg:px-3 lg:py-2 lg:text-left lg:text-button"
                 )}
               >
-                <Icon
-                  name={navigationItem.icon}
-                  className={tw("teacher-sidebar__nav-icon [width:1.25rem] [flex:0_0_1.25rem] text-xl text-center")}
-                />
-                <span className={tw("teacher-sidebar__nav-label min-w-0 [overflow-wrap:anywhere] max-sm:[overflow-wrap:normal] max-sm:whitespace-nowrap")}>
-                  {navigationItem.label}
-                </span>
-              </NavLink>
+                <Icon name="add" className={tw("flex-none text-[1.15rem] lg:w-5 lg:text-center")} />
+                <span className={tw("truncate")}>Catat kelas</span>
+              </Link>
             </li>
-          ))}
-        </ul>
-      </nav>
+          </ul>
+        </nav>
 
-      <footer className={tw("teacher-sidebar__context flex min-w-0 items-center justify-end gap-2 [margin-top:auto] [border-top:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_28%,_______transparent_____)] [background:color-mix(in_srgb,_var(--issa-text)_88%,_black)] py-2 px-3 lg:grid lg:[grid-template-columns:minmax(0,_1fr)] lg:[align-items:initial] lg:justify-items-stretch lg:gap-3 lg:p-4")}>
-        {status && (
-          <div className={tw("teacher-sidebar__status min-w-0 [&_.offline-status]:w-full [&_.offline-status]:justify-start [&_.offline-status_details]:w-full [&_.offline-status_summary]:w-full lg:w-full max-sm:flex-1")}>
-            {status}
-          </div>
-        )}
-        {isDemo && (
-          <div className={tw("teacher-sidebar__demo border-l-emphasis border-issa-selection px-3 py-2 text-issa-inverse")}>
-            <strong className={tw("block text-metadata font-bold uppercase tracking-metadata")}>Mode demo</strong>
-            <span className={tw("mt-1 block text-metadata text-issa-inverse-muted")}>Akses hanya-baca</span>
-          </div>
-        )}
-        {teacherName && (
-          <div className={tw("teacher-sidebar__teacher hidden min-w-0 items-center gap-2 [border-top:var(--issa-border-width)_solid_____color-mix(_______in_srgb,_______var(--issa-text-inverse-muted)_24%,_______transparent_____)] pt-3 lg:flex")}>
-            <Icon className={tw("flex-none text-section-title text-issa-selection")} name="account_circle" />
-            <div className={tw("grid min-w-0 gap-1")}>
-              <span className={tw("text-metadata text-issa-inverse-muted")}>Guru</span>
-              <strong className={tw("overflow-hidden text-ellipsis whitespace-nowrap text-supporting font-semibold text-issa-inverse")}>{teacherName}</strong>
+        <footer className={tw("teacher-sidebar__context mt-auto hidden min-w-0 border-t border-issa-border px-3 pb-4 pt-3 lg:grid lg:gap-2")}>
+          {status && (
+            <div className={tw("min-w-0 [&_.offline-status]:w-full [&_.offline-status]:justify-start [&_.offline-status_details]:w-full [&_.offline-status_summary]:w-full")}>{status}</div>
+          )}
+          {isDemo && (
+            <div className={tw("rounded-control bg-[color-mix(in_srgb,var(--issa-warning)_8%,var(--issa-surface))] px-3 py-2")}>
+              <strong className={tw("block text-metadata font-semibold text-issa-warning")}>Mode demo</strong>
+              <span className={tw("mt-0.5 block text-metadata text-issa-muted")}>Akses hanya-baca</span>
             </div>
-          </div>
-        )}
-        <SecondaryButton
-          type="button"
-          onClick={handleTeacherLogout}
-          className={tw("teacher-sidebar__logout flex-none lg:w-full lg:justify-center max-lg:hidden")}
-        >
-          <Icon className={tw("text-section-title")} name="logout" />
-          Keluar
-        </SecondaryButton>
-      </footer>
+          )}
+          {teacherName && (
+            <div className={tw("flex min-w-0 items-center gap-2.5 rounded-control px-2 py-2")}>
+              <span className={tw("grid h-8 w-8 flex-none place-items-center rounded-full bg-issa-subtle text-issa-accent")}>
+                <Icon className={tw("text-lg")} name="account_circle" />
+              </span>
+              <div className={tw("min-w-0 flex-1")}>
+                <span className={tw("block text-metadata text-issa-muted")}>Guru aktif</span>
+                <strong className={tw("block truncate text-supporting font-semibold text-issa-text")}>{teacherName}</strong>
+              </div>
+            </div>
+          )}
+          <SecondaryButton type="button" onClick={handleTeacherLogout} className={tw("w-full justify-center")}>
+            <Icon className={tw("text-lg")} name="logout" />
+            Keluar
+          </SecondaryButton>
+        </footer>
+      </aside>
+
       <Modal
         className={tw("teacher-logout-dialog")}
         dismissible={!logoutPending}
@@ -189,34 +230,30 @@ export default function Sidebar({ status = null }) {
       >
         <ModalHeader>Perubahan kehadiran belum disinkronkan</ModalHeader>
         <ModalBody className={tw("teacher-logout-dialog__body")}>
-              <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>Masih ada perubahan kehadiran yang belum disinkronkan.</p>
-              <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>
-                Untuk mencegah data guru berikutnya tercampur, perubahan
-                lokal harus dihapus sebelum keluar.
-              </p>
-              {logoutError && (
-                <InlineNotice className={tw("mt-3")} role="alert" tone="danger">
-                  {logoutError}
-                </InlineNotice>
-              )}
+          <p className={tw("text-body leading-relaxed text-issa-muted")}>Masih ada perubahan kehadiran yang belum disinkronkan.</p>
+          <p className={tw("mt-2 text-body leading-relaxed text-issa-muted")}>Untuk mencegah data guru berikutnya tercampur, perubahan lokal harus dihapus sebelum keluar.</p>
+          {logoutError && (
+            <InlineNotice className={tw("mt-3")} role="alert" tone="danger">{logoutError}</InlineNotice>
+          )}
         </ModalBody>
-        <ModalFooter className={tw("teacher-logout-dialog__actions gap-3 [&_button]:max-w-full [&_button]:whitespace-normal")}>
-              <SecondaryButton
-                type="button"
-                disabled={logoutPending}
-                onClick={() => setLogoutConfirmationOpen(false)}
-              >
-                Tetap masuk
-              </SecondaryButton>
-              <DestructiveButton
-                type="button"
-                disabled={logoutPending}
-                onClick={completeTeacherLogout}
-              >
-                Hapus perubahan lokal dan keluar
-              </DestructiveButton>
+        <ModalFooter className={tw("teacher-logout-dialog__footer")}>
+          <SecondaryButton
+            type="button"
+            disabled={logoutPending}
+            onClick={() => setLogoutConfirmationOpen(false)}
+          >
+            Batal
+          </SecondaryButton>
+          <DestructiveButton
+            type="button"
+            loading={logoutPending}
+            loadingLabel="Menghapus data lokal…"
+            onClick={completeTeacherLogout}
+          >
+            Hapus perubahan lokal dan keluar
+          </DestructiveButton>
         </ModalFooter>
       </Modal>
-    </aside>
+    </>
   );
 }

@@ -27,6 +27,9 @@
   },
   "scripts": {
     "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run test && npm run build",
     "build": "vite build",
     "preview": "vite preview",
     "test:student-insights": "vitest run src/features/student-insights",

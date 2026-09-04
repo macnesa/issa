@@ -260,7 +260,7 @@ describe("Teacher authentication offline lifecycle", () => {
     expect(localStorage.getItem("access_token")).toBe("legacy-token");
   });
 
-  test("Tetap masuk closes confirmation without clearing session", async () => {
+  test("Batal closes confirmation without clearing session", async () => {
     authLifecycleMocks.hasUnsyncedAttendance.mockResolvedValue(true);
     localStorage.setItem("access_token", "legacy-token");
     saveLastKnownTeacherIdentity({ id: 9, name: "Guru Demo" });
@@ -268,7 +268,7 @@ describe("Teacher authentication offline lifecycle", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "Keluar" })[0]);
 
     fireEvent.click(await screen.findByRole("button", {
-      name: "Tetap masuk",
+      name: "Batal",
     }));
 
     await waitFor(() => {

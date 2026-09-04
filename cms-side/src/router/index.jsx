@@ -1,10 +1,10 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import TeacherLayout from "../layouts/TeacherLayout";
 import Dashboard from "../pages/Dashboard";
-import Scores from "../pages/Scores";
-import StudentDetail from "../pages/AddStudent";
+import StudentsWorkspace from "../pages/StudentsWorkspace";
 import Login from "../pages/Login";
 import Schedule from "../pages/Schedule";
+import ClassWorkspace from "../pages/ClassWorkspace";
 import Attendance from "../pages/Attendance";
 import ClassroomDebriefWorkspace from "../features/classroom-debrief/ClassroomDebriefWorkspace";
 import {
@@ -35,8 +35,10 @@ const router = createBrowserRouter([
     loader: requireTeacherAuthentication,
     children: [
       { path: "/", element: <Dashboard /> },
-      { path: "/students/:studentId", element: <StudentDetail /> },
-      { path: "/scores/:studentId", element: <Scores /> },
+      { path: "/students", element: <StudentsWorkspace /> },
+      { path: "/students/:studentId", element: <StudentsWorkspace /> },
+      { path: "/scores/:studentId", element: <StudentsWorkspace initialWorkspace="assessment" /> },
+      { path: "/class", element: <ClassWorkspace /> },
       { path: "/attendance", element: <Attendance /> },
       { path: "/classroom-debrief", element: <ClassroomDebriefWorkspace /> },
       { path: "/schedule", element: <Schedule /> },

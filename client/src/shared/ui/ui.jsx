@@ -5,7 +5,11 @@ function joinClasses(...classes) {
 }
 
 export function PageContainer({ as: Component = 'main', className = '', children }) {
-  return <Component className={joinClasses('page-container', className)}>{children}</Component>;
+  return (
+    <Component id="parent-main-content" tabIndex={-1} className={joinClasses('page-container', className)}>
+      {children}
+    </Component>
+  );
 }
 
 export function PageHeader({ title, description, kicker, wide = false, children }) {

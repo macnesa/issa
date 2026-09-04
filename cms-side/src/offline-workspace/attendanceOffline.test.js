@@ -217,6 +217,33 @@ describe("Attendance offline durable workspace", () => {
     }
   );
 
+  test.each(["applied", "duplicate"])(
+    "%s can reconcile after the local workspace snapshot is missing",
+    async (status) => {
+      const mutation = await enqueueMutation(mutationInput());
+
+      await reconcileSyncResults({
+        teacherId: 1,
+        mutations: [mutation],
+        results: [{
+          clientMutationId: mutation.clientMutationId,
+          status,
+          serverRecord: serverRecord(),
+        }],
+        now: () => new Date(fixedNow),
+      });
+
+      expect(await listTeacherMutations(1)).toEqual([]);
+      const snapshot = await getWorkspaceSnapshot(1, 7);
+      expect(snapshot.attendanceRecords).toEqual([
+        expect.objectContaining({
+          status: "Izin",
+          version: 5,
+        }),
+      ]);
+    }
+  );
+
   test("network retry retains the original clientMutationId and overlay", async () => {
     await saveBaseline();
     await enqueueMutation(mutationInput(), {

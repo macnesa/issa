@@ -31,7 +31,7 @@ function renderWithTheme(children) {
   );
 }
 
-describe("Institutional Ledger shared UI", () => {
+describe("Fieldwork shared UI", () => {
   test("surface variants and semantic status tones remain explicit", () => {
     const { container } = renderWithTheme(
       <>
@@ -147,9 +147,9 @@ describe("Institutional Ledger shared UI", () => {
       .toHaveClass("issa-button--destructive", "bg-issa-danger");
     expect(screen.getByRole("button", { name: "Hapus" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Masuk" }))
-      .toHaveClass("min-h-[2.8rem]", "!rounded-[0.08rem]", "issa-button--login");
+      .toHaveClass("min-h-[2.8rem]", "rounded-control", "issa-button--login");
     expect(screen.getByRole("button", { name: "Jelajahi Demo" }))
-      .toHaveClass("min-h-[2.8rem]", "!rounded-[0.08rem]", "issa-button--loginSecondary");
+      .toHaveClass("min-h-[2.8rem]", "rounded-control", "issa-button--loginSecondary");
   });
 
   test("workspace tabs support click and roving keyboard activation", () => {

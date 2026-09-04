@@ -30,7 +30,7 @@ export default function AttendanceRecordEditor({
   const statusLabel = attendanceSyncLabels[record.syncState]
     || attendanceSyncLabels.synced;
   const attendanceDateLabel = formatDateDisplay(record.attendanceDate)
-    || "Tanggal attendance belum tersedia";
+    || "Tanggal kehadiran belum tersedia";
 
   return (
     <div

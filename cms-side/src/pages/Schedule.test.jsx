@@ -1,21 +1,26 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import Schedule from "./Schedule";
 
 const schedulePageMocks = vi.hoisted(() => ({
   dispatch: vi.fn(),
   fetchClassSchedule: vi.fn(() => ({ type: "schedule/list" })),
+  fetchStudentList: vi.fn(() => ({ type: "student/list" })),
   schedules: [],
+  students: { rows: [{ id: 7, name: "Ayu", Class: { name: "1A" } }] },
 }));
 
 vi.mock("react-redux", () => ({
   useDispatch: () => schedulePageMocks.dispatch,
   useSelector: (selector) => selector({
     schedules: { schedules: schedulePageMocks.schedules },
+    students: { students: schedulePageMocks.students },
   }),
 }));
 
 vi.mock("../store/action/ActionCreator", () => ({
   fetchClassSchedule: schedulePageMocks.fetchClassSchedule,
+  fetchStudentList: schedulePageMocks.fetchStudentList,
 }));
 
 describe("Schedule route states", () => {
@@ -31,10 +36,10 @@ describe("Schedule route states", () => {
       day: "Monday",
       Lesson: { name: "Matematika", KKM: 75 },
     }];
-    render(<Schedule />);
+    render(<MemoryRouter initialEntries={["/schedule"]}><Schedule /></MemoryRouter>);
 
     expect(await screen.findByRole("heading", {
-      name: "Jadwal kelas",
+      name: "Jadwal",
     })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Senin" }))
       .toBeInTheDocument();
@@ -43,7 +48,7 @@ describe("Schedule route states", () => {
   });
 
   test("renders the empty state for a class without a schedule", async () => {
-    render(<Schedule />);
+    render(<MemoryRouter initialEntries={["/schedule"]}><Schedule /></MemoryRouter>);
     expect(await screen.findByText("Jadwal belum tersedia"))
       .toBeInTheDocument();
   });
@@ -52,7 +57,7 @@ describe("Schedule route states", () => {
     schedulePageMocks.dispatch.mockRejectedValue(
       new Error("Jadwal gagal diambil")
     );
-    render(<Schedule />);
+    render(<MemoryRouter initialEntries={["/schedule"]}><Schedule /></MemoryRouter>);
 
     expect(await screen.findByText("Jadwal gagal diambil"))
       .toBeInTheDocument();

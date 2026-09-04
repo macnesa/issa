@@ -7,9 +7,9 @@ import {
   InlineNotice,
   PrimaryButton,
   SecondaryButton,
-  Surface,
 } from "../../../shared/ui/ui";
 import { localDateValue, parseLocalDateValue } from "../../../utils/recordDates";
+import { RESOURCE_STATUS } from "../../../shared/data/resourceTruth";
 import {
   formatJournalDate,
   journalDateValue,
@@ -82,7 +82,7 @@ export default function JournalEntryForm({
   }, [editingEntry]);
 
   useEffect(() => {
-    if (evidenceStatus !== "success") return;
+    if (![RESOURCE_STATUS.KNOWN, RESOURCE_STATUS.EMPTY, RESOURCE_STATUS.PARTIAL].includes(evidenceStatus)) return;
     setForm((current) => {
       if (
         !current.evidenceId ||
@@ -189,12 +189,12 @@ export default function JournalEntryForm({
   const selectedCaptureType = journalVoiceCaptureTypes[form.voiceCaptureType];
 
   return (
-    <Surface className={tw(
-      "journal-entry-form m-4 overflow-hidden",
+    <div className={tw(
+      "journal-entry-form min-w-0 border-y border-issa-border",
       editing && "is-editing border-issa-warning"
     )}>
-      <div className={tw("journal-entry-form__heading border-b border-issa-border p-4 bg-issa-subtle [&_p]:text-issa-accent [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold [&>span]:block [&>span]:mt-1 [&>span]:text-issa-muted [&>span]:text-supporting")}>
-        <p>{editing ? "Correction mode" : "New journal entry"}</p>
+      <div className={tw("journal-entry-form__heading px-0 pb-3 pt-5 bg-transparent [&_p]:text-issa-accent [&_p]:text-metadata [&_p]:font-medium [&_p]:tracking-normal [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-semibold [&>span]:block [&>span]:mt-1 [&>span]:text-issa-muted [&>span]:text-supporting")}>
+        <p>{editing ? "Mode koreksi" : "Catatan baru"}</p>
         <h3>{editing ? "Koreksi catatan" : "Catat perjalanan belajar"}</h3>
         {editing && (
           <span>Perubahan akan ditandai sebagai catatan yang diedit.</span>
@@ -207,7 +207,7 @@ export default function JournalEntryForm({
             Tidak tersedia dalam mode demo.
           </InlineNotice>
         )}
-        <div className={tw("journal-entry-form__fields grid gap-4 p-4 md:grid-cols-2")}>
+        <div className={tw("journal-entry-form__fields grid gap-4 py-5 md:grid-cols-2")}>
           <SelectField
             id="student-journal-type"
             label="Jenis catatan"
@@ -248,17 +248,17 @@ export default function JournalEntryForm({
 
           <SelectField
             id="student-journal-evidence"
-            label="Evidence terkait"
+            label="Bukti terkait"
             value={form.evidenceId}
             options={evidenceOptions}
-            placeholder="Tidak dihubungkan ke evidence"
+            placeholder="Tidak dihubungkan ke bukti"
             onChange={(value) => updateField("evidenceId", value)}
             helperText={
-              evidenceStatus === "error"
-                ? evidenceError || "Evidence siswa belum dapat dimuat."
-                : "Opsional · pilih satu evidence milik siswa ini."
+              evidenceStatus === RESOURCE_STATUS.ERROR
+                ? evidenceError || "Bukti siswa belum dapat dimuat."
+                : "Opsional · pilih satu bukti milik siswa ini."
             }
-            disabled={readOnly || submitting || evidenceStatus === "loading"}
+            disabled={readOnly || submitting || evidenceStatus === RESOURCE_STATUS.LOADING}
           />
 
           <div className={tw("issa-control-field min-w-0 journal-entry-form__content col-span-full")}>
@@ -272,7 +272,7 @@ export default function JournalEntryForm({
             </div>
             <Textarea
               id="student-journal-content"
-              className={tw("journal-entry-form__textarea min-h-28 resize-y leading-[1.55]")}
+              className={tw("journal-entry-form__textarea !min-h-28 resize-y leading-[1.55]")}
               color={errors.content ? "failure" : "gray"}
               value={form.content}
               onChange={(event) => updateField("content", event.target.value)}
@@ -299,7 +299,7 @@ export default function JournalEntryForm({
           </div>
         </div>
 
-        <div className={tw("journal-entry-form__actions flex flex-wrap items-center gap-2 border-t border-issa-border p-4 max-sm:[&>.issa-button]:w-full")}>
+        <div className={tw("journal-entry-form__actions flex flex-wrap items-center gap-2 border-t border-issa-border py-4 max-sm:[&>.issa-button]:w-full")}>
           <PrimaryButton type="submit" disabled={submitting || readOnly}>
             {submitting
               ? "Menyimpan..."
@@ -325,6 +325,6 @@ export default function JournalEntryForm({
           </p>
         </div>
       </form>
-    </Surface>
+    </div>
   );
 }

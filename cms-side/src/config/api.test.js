@@ -11,7 +11,7 @@ describe('CMS API base URL', () => {
     })).toBe('https://issa-api.macnesa.com');
   });
 
-  test('preserves configured local and preview API targets', () => {
+  test('preserves configured local API targets during local development', () => {
     expect(resolveApiBaseUrl({
       configuredApiBaseUrl: 'http://localhost:3000/',
       location: {
@@ -19,5 +19,15 @@ describe('CMS API base URL', () => {
         origin: 'http://localhost:3001',
       },
     })).toBe('http://localhost:3000');
+  });
+
+  test('rejects localhost API targets on remote preview hosts', () => {
+    expect(() => resolveApiBaseUrl({
+      configuredApiBaseUrl: 'http://localhost:3000/',
+      location: {
+        hostname: 'issa-preview.web.app',
+        origin: 'https://issa-preview.web.app',
+      },
+    })).toThrow(/remote CMS host cannot use a localhost API target/i);
   });
 });

@@ -2,6 +2,29 @@ import { tw } from "./tw";
 
 function IconGlyph({ name }) {
   switch (name) {
+    case "today":
+      return <>
+        <rect x="3" y="5" width="18" height="16" rx="1.5" />
+        <path d="M7 3v4M17 3v4M3 10h18" />
+        <path d="M8 14h8M8 17h5" />
+      </>;
+    case "group":
+      return <>
+        <circle cx="9" cy="9" r="3" />
+        <circle cx="16.5" cy="10" r="2.5" />
+        <path d="M3.5 19c.5-3.4 2.3-5.2 5.5-5.2s5 1.8 5.5 5.2M14 14.3c3.5-.4 5.6 1.2 6.2 4.7" />
+      </>;
+    case "school":
+      return <>
+        <path d="m3 9 9-5 9 5-9 5z" />
+        <path d="M6 11.5V17c3.8 2.3 8.2 2.3 12 0v-5.5M21 9v6" />
+      </>;
+    case "add":
+      return <path d="M12 5v14M5 12h14" />;
+    case "chevron_right":
+      return <path d="m9 6 6 6-6 6" />;
+    case "arrow_back":
+      return <path d="M19 12H5M10 7l-5 5 5 5" />;
     case "dashboard":
       return <>
         <rect x="3.5" y="3.5" width="6.5" height="6.5" />

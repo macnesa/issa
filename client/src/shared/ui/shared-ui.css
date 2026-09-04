@@ -1,7 +1,10 @@
 .page-container {
   width: min(100%, var(--issa-container));
   margin-inline: auto;
-  padding: var(--issa-space-6) var(--issa-space-4) 7rem;
+  padding:
+    var(--issa-space-6)
+    var(--issa-space-4)
+    calc(7rem + env(safe-area-inset-bottom));
 }
 
 .page-grid,
@@ -43,6 +46,10 @@
   gap: var(--issa-space-4);
 }
 
+.section-header > div {
+  min-width: 0;
+}
+
 .section-heading {
   margin: var(--issa-space-1) 0 0;
   color: var(--issa-text);
@@ -82,6 +89,15 @@
   font-size: 0.8125rem;
   font-weight: 700;
   text-underline-offset: 0.2em;
+}
+
+a.text-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: calc(var(--issa-space-2) * -1) calc(var(--issa-space-1) * -1);
+  padding-inline: var(--issa-space-1);
 }
 
 .text-link:hover {
@@ -360,6 +376,7 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 .lesson-row__title,
 .history-record__title {
   margin: 0;
+  overflow-wrap: anywhere;
   color: var(--issa-text);
   font-size: 0.9375rem;
   font-weight: 700;
@@ -377,6 +394,7 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   inset: 0;
   background: rgba(10, 27, 37, 0.76);
   backdrop-filter: blur(0.2rem);
+  animation: dialog-backdrop-in 140ms ease-out;
 }
 
 .dialog-frame {
@@ -395,6 +413,8 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   border-radius: var(--issa-dialog-radius);
   background: var(--issa-text);
   box-shadow: var(--issa-shadow-dialog);
+  transform-origin: center;
+  animation: dialog-panel-in 180ms ease-out;
 }
 
 .student-context {
@@ -553,6 +573,10 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 }
 
 .parent-profile__button {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
   border-radius: var(--issa-control-radius);
 }
 
@@ -611,6 +635,8 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   border-radius: var(--issa-surface-radius);
   background: var(--issa-surface);
   box-shadow: var(--issa-shadow-offset);
+  transform-origin: top right;
+  animation: parent-profile-menu-in 140ms ease-out;
 }
 
 .parent-profile__identity {
@@ -655,7 +681,7 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 
 .parent-bottom-nav {
   position: fixed;
-  bottom: var(--issa-space-4);
+  bottom: max(var(--issa-space-4), env(safe-area-inset-bottom));
   left: 50%;
   z-index: 50;
   width: calc(100% - 2rem);
@@ -697,6 +723,14 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   background: var(--issa-yellow);
   color: var(--issa-text);
   transform: translateY(-0.15rem);
+}
+
+.parent-bottom-nav__link:active {
+  transform: translateY(1px);
+}
+
+.parent-bottom-nav__link--active:active {
+  transform: translateY(calc(-0.15rem + 1px));
 }
 
 .parent-bottom-nav__icon {
@@ -742,6 +776,9 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   border-radius: var(--issa-control-radius);
   background: white;
   padding: var(--issa-space-2);
+  overscroll-behavior-inline: contain;
+  scrollbar-color: var(--issa-aqua-strong) transparent;
+  scrollbar-width: thin;
 }
 
 .attendance-heatmap__chart {
@@ -749,7 +786,7 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 }
 
 .activities-page > * {
-  width: min(100%, 52rem);
+  width: min(100%, 44rem);
   margin-inline: auto;
 }
 
@@ -871,7 +908,15 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   font-size: 0.8125rem;
 }
 
+.assessment-summary__metrics--single .metric-card:last-child {
+  grid-column: 1 / -1;
+}
+
 .lesson-chart .apexcharts-canvas { margin-top: var(--issa-space-4); }
+
+.lesson-chart__visual {
+  min-width: 0;
+}
 
 .student-context__kicker { color: var(--issa-aqua); }
 .student-context__nim {
@@ -1002,7 +1047,7 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 }
 
 .evidence-dialog__close {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   border-color: rgba(255, 255, 255, 0.45);
   background: rgba(255, 255, 255, 0.1);
   color: white;
@@ -1368,6 +1413,7 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 
 .login-page {
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   background: var(--issa-text);
   color: white;
@@ -1377,9 +1423,14 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   display: grid;
   width: min(100%, var(--issa-container));
   min-height: 100vh;
+  min-height: 100dvh;
   grid-template-rows: auto 1fr;
   margin-inline: auto;
-  padding: var(--issa-space-6) var(--issa-space-4);
+  padding:
+    max(var(--issa-space-6), env(safe-area-inset-top))
+    max(var(--issa-space-4), env(safe-area-inset-right))
+    max(var(--issa-space-6), env(safe-area-inset-bottom))
+    max(var(--issa-space-4), env(safe-area-inset-left));
 }
 
 .login-brand {
@@ -1585,10 +1636,38 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   gap: var(--issa-space-6);
 }
 
+.overview-summary-grid,
+.overview-summary-grid__attendance {
+  display: grid;
+  gap: var(--issa-space-6);
+}
+
+.overview-summary-grid {
+  grid-column: 1 / -1;
+}
+
 .overview-support-grid__column {
   display: grid;
   align-content: start;
   gap: var(--issa-space-6);
+}
+
+@keyframes parent-profile-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem) scale(0.985);
+  }
+}
+
+@keyframes dialog-backdrop-in {
+  from { opacity: 0; }
+}
+
+@keyframes dialog-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem) scale(0.99);
+  }
 }
 
 @media (min-width: 640px) {
@@ -1615,6 +1694,12 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
 @media (min-width: 768px) {
   .page-container { padding-inline: var(--issa-space-6); }
   .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .assessment-summary__metrics--single {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .assessment-summary__metrics--single .metric-card:last-child {
+    grid-column: auto;
+  }
   .evidence-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .evidence-list > li:nth-child(even) {
     border-left: 1px solid var(--issa-border);
@@ -1627,11 +1712,10 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   .page-container { padding-block: var(--issa-space-8); }
   .page-grid--split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .overview-page { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); }
-  .overview-page > :first-child,
-  .overview-page > :nth-child(2),
-  .overview-page > :nth-child(5),
-  .overview-page > :nth-child(6),
-  .overview-page > :nth-child(7) { grid-column: 1 / -1; }
+  .overview-page > * { grid-column: 1 / -1; }
+  .overview-summary-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
   .student-context__main {
     min-height: 17rem;
     grid-template-columns: minmax(0, 1fr) 12rem;
@@ -1652,6 +1736,24 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   }
   .parent-nav { display: flex; }
   .parent-bottom-nav { display: none; }
+  .attendance-history .history-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .progress-summary {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.7fr) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--issa-space-6);
+  }
+  .progress-summary__metrics {
+    grid-template-columns: repeat(2, minmax(0, 12rem));
+    justify-content: end;
+    margin-top: 0;
+  }
+  .progress-lessons .lesson-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .progress-lessons .lesson-row { height: 100%; }
   .schedule-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .login-frame { padding: var(--issa-space-8) var(--issa-space-12); }
   .login-composition {
@@ -1665,6 +1767,16 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   }
 }
 
+@media (min-width: 1200px) {
+  .overview-support-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .overview-support-grid__column {
+    display: contents;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .issa-button,
   .primary-button,
@@ -1674,4 +1786,8 @@ textarea.form-input { min-height: 7rem; resize: vertical; }
   .runtime-retry,
   .lesson-row { transition: none; }
   .notice--floating { animation: none; }
+  .record-skeleton span { animation: none; }
+  .parent-profile__menu,
+  .dialog-backdrop,
+  .dialog-panel { animation: none; }
 }

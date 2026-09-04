@@ -1,116 +1,94 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import HeatmapDua from '../features/attendance/components/HeatmapChartDua';
 import { fetchStudentOverview } from '../store/actions/actionCreator';
 import { EmptyState, ErrorState, LoadingState } from '../shared/ui/ResourceStates';
-import {
-  PageContainer,
-  PageHeader,
-  SectionHeader,
-  StatusBadge,
-  Surface,
-} from '../shared/ui/ui';
-import {
-  calculateAttendanceSummary,
-  getTodayAttendance,
-  groupAttendanceHistoryByMonth,
-} from '../features/student-overview/helpers';
+import StudentIdentity from '../features/student-overview/components/StudentIdentity';
+import { getTodayAttendance } from '../features/student-overview/helpers';
+import { formatParentDate } from '../features/parent-journey/parentJourney';
+import { parseParentDate } from '../utils/parentDates';
 
 const statuses = ['Hadir', 'Sakit', 'Izin', 'Alfa'];
 
-function formatAttendanceDate(attendanceDate) {
-  const date = new Date(attendanceDate);
-  if (Number.isNaN(date.getTime())) return 'Tanggal tidak tersedia';
-  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+export function recordsInLastDays(records, days, now = new Date()) {
+  const lowerBound = new Date(now);
+  lowerBound.setHours(23, 59, 59, 999);
+  lowerBound.setDate(lowerBound.getDate() - (days - 1));
+  lowerBound.setHours(0, 0, 0, 0);
+  return records.filter((record) => {
+    const date = parseParentDate(record.createdAt);
+    return !Number.isNaN(date.getTime()) && date >= lowerBound && date <= now;
+  });
 }
 
 export default function AttendancePage() {
   const dispatch = useDispatch();
-  const { studentDetail: attendanceResource } = useSelector((state) => state.student);
-  const { data: studentDetail, loading, loaded, error } = attendanceResource;
-  const { attendance } = studentDetail;
+  const resource = useSelector((state) => state.student.studentDetail);
+  const { data: studentDetail, loading, error } = resource;
+  const attendance = studentDetail.attendance;
   const todayAttendance = useMemo(() => getTodayAttendance(attendance), [attendance]);
-  const attendanceSummary = useMemo(() => calculateAttendanceSummary(attendance), [attendance]);
-  const attendanceHistoryByMonth = useMemo(() => groupAttendanceHistoryByMonth(attendance), [attendance]);
+  const last30Days = useMemo(() => recordsInLastDays(attendance, 30), [attendance]);
+  const last30Counts = useMemo(() => last30Days.reduce((result, record) => {
+    if (statuses.includes(record.status)) result[record.status] += 1;
+    return result;
+  }, { Hadir: 0, Sakit: 0, Izin: 0, Alfa: 0 }), [last30Days]);
+  const history = useMemo(() => attendance.slice().sort((left, right) => {
+    const rightTime = new Date(right.createdAt).getTime();
+    const leftTime = new Date(left.createdAt).getTime();
+    return (Number.isNaN(rightTime) ? 0 : rightTime) - (Number.isNaN(leftTime) ? 0 : leftTime);
+  }), [attendance]);
 
-  if (loading) return <PageContainer><LoadingState label="Memuat kehadiran..." /></PageContainer>;
-  if (error) return <PageContainer><ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} /></PageContainer>;
+  if (loading) return <main id="parent-main-content" tabIndex={-1} className="page-container"><LoadingState label="Memuat kehadiran..." /></main>;
+  if (error) return <main id="parent-main-content" tabIndex={-1} className="page-container"><ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} /></main>;
 
   return (
-    <PageContainer className="page-grid page-grid--split">
-      <PageHeader
-        title="Kehadiran"
-        description="Histori dan ringkasan kehadiran siswa."
-        wide
-      />
+    <main id="parent-main-content" tabIndex={-1} className="page-container parent-new-page parent-attendance-detail">
+      <StudentIdentity profile={studentDetail.profile} compact />
+      <header className="parent-new-heading">
+        <span>Detail · Kehadiran</span>
+        <h1>Riwayat kehadiran.</h1>
+        <p>Ringkasan di bawah hanya mencakup 30 hari terakhir. Histori menampilkan semua catatan yang tersedia dari sekolah.</p>
+        <Link className="parent-inline-link" to="/journey">Kembali ke Perjalanan</Link>
+      </header>
 
-      <Surface className="surface--full attendance-today" aqua offset>
-        <div>
-          <p className="section-kicker">Hari ini</p>
-          <h2 className="section-heading">Kehadiran</h2>
-          <p className="page-supporting-text">
-            {todayAttendance
-              ? 'Kehadiran hari ini sudah tercatat.'
-              : 'Belum ada catatan kehadiran hari ini.'}
-          </p>
+      <section className="parent-attendance-now">
+        <span>Hari ini</span>
+        <strong>{todayAttendance?.status || 'Belum tercatat'}</strong>
+      </section>
+
+      <section className="parent-attendance-period" aria-labelledby="attendance-30-heading">
+        <div className="parent-section-title">
+          <span>30 hari terakhir</span>
+          <h2 id="attendance-30-heading">Kehadiran tercatat</h2>
         </div>
-        <StatusBadge status={todayAttendance?.status} />
-      </Surface>
-
-      <Surface aqua>
-        <SectionHeader kicker="Rekam rutin" title="Ringkasan Kehadiran" />
-        <dl className="metric-grid">
+        <dl>
           {statuses.map((status) => (
-            <div key={status} className="metric-card">
-              <dt className="metric-label">{status}</dt>
-              <dd className="metric-value">{attendanceSummary[status]}</dd>
+            <div key={status}>
+              <dt>{status}</dt>
+              <dd>{last30Counts[status]}</dd>
             </div>
           ))}
         </dl>
-      </Surface>
+      </section>
 
-      <Surface>
-        <SectionHeader kicker="Rekam kehadiran" title="Histori Kehadiran" />
-        {!attendanceHistoryByMonth.length ? (
-          <EmptyState message="Belum ada kehadiran yang tercatat." />
+      <section className="parent-attendance-history" aria-labelledby="attendance-history-heading">
+        <div className="parent-section-title">
+          <span>Histori tersedia</span>
+          <h2 id="attendance-history-heading">Catatan per hari</h2>
+        </div>
+        {!history.length ? (
+          <EmptyState message="Belum ada catatan kehadiran yang tersedia." />
         ) : (
-          <div className="attendance-history">
-            {attendanceHistoryByMonth.map((attendanceMonth) => (
-              <section key={attendanceMonth.key}>
-                <h3>{attendanceMonth.label}</h3>
-                <ul className="history-list">
-                  {attendanceMonth.records.map((attendanceRecord) => (
-                    <li
-                      className="history-record"
-                      key={attendanceRecord.id ?? `${attendanceRecord.createdAt}-${attendanceRecord.status}`}
-                    >
-                      <time>{formatAttendanceDate(attendanceRecord.createdAt)}</time>
-                      <StatusBadge status={attendanceRecord.status}>
-                        {attendanceRecord.status || 'Status belum tersedia'}
-                      </StatusBadge>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+          <ol>
+            {history.map((record) => (
+              <li key={record.id ?? record.createdAt}>
+                <time>{formatParentDate(record.createdAt)}</time>
+                <strong>{record.status || 'Belum tercatat'}</strong>
+              </li>
             ))}
-          </div>
+          </ol>
         )}
-      </Surface>
-
-      {!!attendance.length && (
-        <Surface className="surface--full">
-          <SectionHeader
-            kicker="Visual pendukung"
-            title="Visual Kehadiran"
-            description="Visual pendukung histori kehadiran."
-          />
-          <div className="attendance-heatmap">
-            <HeatmapDua data={attendance} />
-          </div>
-        </Surface>
-      )}
-
-      {loaded && !attendance.length && <span className="sr-only">Attendance data is empty.</span>}
-    </PageContainer>
+      </section>
+    </main>
   );
 }

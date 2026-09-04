@@ -5,5 +5,6 @@ export async function fetchStudentLearningJournal(studentId, { signal } = {}) {
     `/students/${studentId}/journal`,
     { signal }
   );
-  return Array.isArray(data) ? data : [];
+  if (!Array.isArray(data)) throw new Error('Catatan belajar belum dapat dimuat.');
+  return data;
 }

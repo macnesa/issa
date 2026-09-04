@@ -157,6 +157,9 @@ export const fetchStudentOverview = () => {
     dispatch({ type: STUDENT_DETAIL_REQUEST });
     try {
       const { data: studentResponse } = await apiClient.get('/public/detail');
+      if (!studentResponse?.id || !Array.isArray(studentResponse.Attendances) || !Array.isArray(studentResponse.Scores)) {
+        throw new Error('Data anak belum dapat dimuat secara lengkap.');
+      }
       dispatch({ type: STUDENT_DETAIL_SUCCESS, payload: mapStudentResponseToOverview(studentResponse) });
       return true;
     } catch (apiError) {
@@ -175,6 +178,7 @@ export const fetchClassSchedule = () => {
     dispatch({ type: CLASS_SCHEDULE_REQUEST });
     try {
       const { data: scheduleResponse } = await apiClient.get('/public/schedule');
+      if (!Array.isArray(scheduleResponse)) throw new Error('Jadwal belum dapat dimuat.');
       dispatch({ type: CLASS_SCHEDULE_SUCCESS, payload: mapScheduleResponseToEntries(scheduleResponse) });
     } catch (apiError) {
       if (apiError?.response?.status !== 401) {
@@ -191,7 +195,8 @@ export const fetchSchoolActivities = () => {
     dispatch({ type: ACTIVITY_REQUEST });
     try {
       const { data: activityResponse } = await apiClient.get('/public/activity');
-      dispatch({ type: ACTIVITY_SUCCESS, payload: Array.isArray(activityResponse) ? activityResponse : [] });
+      if (!Array.isArray(activityResponse)) throw new Error('Kabar sekolah belum dapat dimuat.');
+      dispatch({ type: ACTIVITY_SUCCESS, payload: activityResponse });
     } catch (apiError) {
       if (apiError?.response?.status !== 401) {
         dispatch({ type: ACTIVITY_FAILURE, payload: normalizeApiError(apiError) });

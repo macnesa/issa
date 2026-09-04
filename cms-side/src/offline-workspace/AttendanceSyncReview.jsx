@@ -68,9 +68,9 @@ export default function AttendanceSyncReview({ workspace }) {
       {attendanceConflicts.length > 0 && (
         <section
           className={tw("offline-status__review-list mt-3 border-t border-issa-border pt-3")}
-          aria-label="Konflik attendance"
+          aria-label="Konflik kehadiran"
         >
-          <h3 className={tw("text-label font-bold text-issa-text")}>Attendance perlu ditinjau</h3>
+          <h3 className={tw("text-label font-bold text-issa-text")}>Kehadiran perlu ditinjau</h3>
           {attendanceConflicts.map((record) => (
             <div className={tw("mt-2 grid gap-2 rounded-control border border-issa-border bg-issa-subtle p-3")} key={record.clientMutationId}>
               <p className={tw("text-supporting font-semibold text-issa-text")}>{record.mutation.payload.attendanceDate}</p>
@@ -93,9 +93,9 @@ export default function AttendanceSyncReview({ workspace }) {
       {failedAttendances.length > 0 && (
         <section
           className={tw("offline-status__review-list mt-3 border-t border-issa-border pt-3")}
-          aria-label="Attendance gagal disinkronkan"
+          aria-label="Kehadiran gagal disinkronkan"
         >
-          <h3 className={tw("text-label font-bold text-issa-text")}>Attendance gagal disinkronkan</h3>
+          <h3 className={tw("text-label font-bold text-issa-text")}>Kehadiran gagal disinkronkan</h3>
           {failedAttendances.map((mutation) => (
             <div className={tw("mt-2 grid gap-2 rounded-control border border-issa-border bg-issa-subtle p-3")} key={mutation.clientMutationId}>
               <p className={tw("text-supporting font-semibold text-issa-text")}>
@@ -139,7 +139,7 @@ export default function AttendanceSyncReview({ workspace }) {
         show={Boolean(activeConflict)}
         size="issaCompact"
       >
-        <ModalHeader>Konflik attendance</ModalHeader>
+        <ModalHeader>Konflik kehadiran</ModalHeader>
         <ModalBody>
             <div className={tw("offline-conflict-dialog__header")}>
               <p className={tw("mt-2 text-body leading-normal text-issa-muted")}>

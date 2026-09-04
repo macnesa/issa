@@ -64,10 +64,7 @@ describe("production Attendance update path", () => {
         </tbody>
       </table>
     );
-    fireEvent.click(screen.getByRole("button", {
-      name: "Status kehadiran Ari Wibowo",
-    }));
-    fireEvent.click(await screen.findByRole("option", { name: "Izin" }));
+    fireEvent.click(screen.getByRole("button", { name: "Izin — Ari Wibowo" }));
 
     await waitFor(async () => {
       expect(await listTeacherMutations(1)).toEqual([
@@ -94,15 +91,34 @@ describe("production Attendance update path", () => {
 
     expect(container.querySelector('[data-label="Kelas"]')).toHaveTextContent("1A");
     expect(container.querySelector('[data-label="Status kehadiran"]'))
-      .toContainElement(screen.getByRole("button", {
-        name: "Status kehadiran Ari Wibowo",
-      }));
+      .toContainElement(screen.getByRole("button", { name: "Hadir — Ari Wibowo" }));
     expect(container.querySelector('[data-label="Record"]'))
       .toContainElement(screen.getByRole("button", { name: "Lihat record" }));
     expect(container.querySelector(".attendance-register__row"))
       .toHaveClass("max-lg:grid");
     expect(attendanceRouteSource)
       .toMatch(/attendance-register__table[^"]*\bmin-w-0\b/);
+  });
+
+  test("refreshes the owning list after a new online Attendance is created", async () => {
+    const onAttendanceSaved = vi.fn().mockResolvedValue(undefined);
+    attendanceUiMocks.dispatch.mockResolvedValueOnce({ id: 88 });
+    render(
+      <table>
+        <tbody>
+          <TableAttendances
+            data={{ ...student, Attendances: [] }}
+            attendanceDate="2026-07-22"
+            onAttendanceSaved={onAttendanceSaved}
+          />
+        </tbody>
+      </table>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Hadir — Ari Wibowo" }));
+
+    await waitFor(() => expect(onAttendanceSaved).toHaveBeenCalledTimes(1));
+    expect(await screen.findByText("Kehadiran dicatat.")).toBeInTheDocument();
   });
 
   test("Attendance create remains online-only", async () => {
@@ -117,13 +133,10 @@ describe("production Attendance update path", () => {
         </tbody>
       </table>
     );
-    fireEvent.click(screen.getByRole("button", {
-      name: "Status kehadiran Ari Wibowo",
-    }));
-    fireEvent.click(await screen.findByRole("option", { name: "Hadir" }));
+    fireEvent.click(screen.getByRole("button", { name: "Hadir — Ari Wibowo" }));
 
     expect(await screen.findByText(
-      "Attendance baru hanya dapat dicatat saat online."
+      "Kehadiran baru hanya dapat dicatat saat online."
     )).toBeInTheDocument();
     expect(attendanceUiMocks.dispatch).not.toHaveBeenCalled();
     expect(await listTeacherMutations(1)).toEqual([]);

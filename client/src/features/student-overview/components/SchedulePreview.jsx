@@ -10,9 +10,9 @@ export default function SchedulePreview({ resource, schedule, onRetry }) {
         title="Jadwal Mingguan"
         action={<Link to="/schedule" className="text-link">Lihat jadwal</Link>}
       />
-      {resource.loading && <LoadingState label="Loading schedule..." />}
+      {resource.loading && <LoadingState label="Memuat jadwal..." />}
       {resource.error && <ErrorState error={resource.error} onRetry={onRetry} />}
-      {resource.loaded && !schedule && <EmptyState message="No schedule is available yet." />}
+      {resource.loaded && !schedule && <EmptyState message="Belum ada jadwal yang tersedia." />}
       {schedule && !resource.loading && !resource.error && (
         <div className="schedule-preview">
           <strong>{schedule.label}</strong>

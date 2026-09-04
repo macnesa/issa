@@ -1,9 +1,9 @@
-const DEFAULT_MESSAGE = 'Something went wrong';
+const DEFAULT_MESSAGE = 'Terjadi kendala. Silakan coba lagi.';
 
 function getMessageForHttpStatus(httpStatus) {
-  if (httpStatus === 403) return 'You do not have access to this resource.';
-  if (httpStatus === 404) return 'The requested data was not found.';
-  if (httpStatus >= 500) return 'The server is unavailable. Please try again later.';
+  if (httpStatus === 403) return 'Anda tidak memiliki akses ke data ini.';
+  if (httpStatus === 404) return 'Data yang diminta tidak ditemukan.';
+  if (httpStatus >= 500) return 'Server sedang tidak tersedia. Silakan coba lagi nanti.';
   return DEFAULT_MESSAGE;
 }
 
@@ -24,7 +24,11 @@ export default function normalizeApiError(apiError) {
         : '';
 
   if (!status && (apiError?.request || apiError?.code === 'ERR_NETWORK')) {
-    return { status: null, code: 'NETWORK_ERROR', message: 'Cannot connect to the server. Please try again.' };
+    return {
+      status: null,
+      code: 'NETWORK_ERROR',
+      message: 'Tidak dapat terhubung ke server. Silakan coba lagi.',
+    };
   }
 
   return {

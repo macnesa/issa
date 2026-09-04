@@ -161,9 +161,9 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
 
   return (
     <div className={tw("evidence-upload border-b border-issa-border")}>
-      <div className={tw("evidence-upload__heading p-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
+      <div className={tw("evidence-upload__heading px-5 pb-3 pt-5 bg-issa-surface [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-medium [&_p]:tracking-normal [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-semibold")}>
         <p>Upload evidence</p>
-        <h3>Tambahkan satu foto record siswa</h3>
+        <h3>Tambahkan satu foto bukti siswa</h3>
       </div>
 
       <form className={tw("evidence-upload__form grid gap-4 p-4")} onSubmit={handleSubmit} noValidate>
@@ -252,7 +252,7 @@ export default function EvidenceUploadForm({ demoReadOnly = false, onUpload }) {
           />
           <div className={tw("issa-control-field min-w-0 evidence-upload__description col-span-full")}>
             <label className={tw("issa-control-label block mb-1 text-issa-text text-label font-semibold")} htmlFor="student-evidence-description">
-              Deskripsi <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-metadata uppercase")}>Opsional</span>
+              Deskripsi <span className={tw("issa-control-label__optional ml-2 text-issa-muted text-metadata font-medium tracking-normal")}>Opsional</span>
             </label>
             <Textarea
               id="student-evidence-description"

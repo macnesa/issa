@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogBackdrop,
@@ -10,6 +11,8 @@ import {
 } from '../studentEvidence.constants';
 
 export default function EvidenceViewer({ evidence, onClose }) {
+  const [failedUrl, setFailedUrl] = useState(null);
+  useEffect(() => setFailedUrl(null), [evidence?.file?.url, Boolean(evidence)]);
   return (
     <Dialog
       open={Boolean(evidence)}
@@ -39,11 +42,12 @@ export default function EvidenceViewer({ evidence, onClose }) {
           </header>
           {evidence && (
             <>
-              <img
+              {failedUrl === evidence.file?.url ? <p role="status" className="p-4 text-white">Gambar belum dapat dimuat. Tutup dan coba buka kembali dokumentasi.</p> : <img
                 className="block max-h-[calc(100vh-13rem)] w-full bg-[#081d27] object-contain"
                 src={evidence.file?.url}
                 alt={evidence.title}
-              />
+                onError={() => setFailedUrl(evidence.file?.url)}
+              />}
               <div className="flex flex-wrap items-baseline gap-x-[0.8rem] gap-y-[0.35rem] px-[1.1rem] pb-4 pt-[0.85rem] text-[0.76rem] text-[#d9e8e9]">
                 <span className="font-extrabold text-[#b7dce1]">
                   {evidenceCategoryLabels[evidence.category]

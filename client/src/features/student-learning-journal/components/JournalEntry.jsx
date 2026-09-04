@@ -59,7 +59,12 @@ export default function JournalEntry({ entry, index, onOpenEvidence }) {
               onClick={() => onOpenEvidence(entry.evidence)}
               aria-label={`Buka evidence ${entry.evidence.title}`}
             >
-              <img src={entry.evidence.file?.url} alt={entry.evidence.title} />
+              <img
+                src={entry.evidence.file?.url}
+                alt={entry.evidence.title}
+                loading="lazy"
+                decoding="async"
+              />
             </button>
             <div>
               <span>Evidence terkait</span>

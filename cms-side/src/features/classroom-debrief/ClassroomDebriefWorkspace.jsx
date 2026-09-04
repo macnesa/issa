@@ -6,21 +6,30 @@ import { getActiveTeacherIdentity, isTeacherDemoSession } from "../../offline-wo
 import { DEMO_READ_ONLY_MESSAGE } from "../../auth/demoAccess";
 import SelectField from "../../shared/ui/form-controls/SelectField";
 import { tw } from "../../shared/ui/tw";
-import { InlineNotice, PageContainer, PageHeader, PrimaryButton, SecondaryButton, StatusBadge, Surface } from "../../shared/ui/ui";
+import { InlineNotice, PageContainer, PageHeader, PrimaryButton, SecondaryButton, StatusBadge } from "../../shared/ui/ui";
 import { confirmClassroomDebriefDrafts, fetchDebriefLessons, generateClassroomDebriefDrafts } from "./classroomDebriefApi";
+import { parseScoreInput } from "../scores/scoreValue";
 
-const recordTypeLabels = { attendance: "Attendance", feedback: "Feedback", journal: "Journal", score: "Score" };
+const recordTypeLabels = { attendance: "Kehadiran", feedback: "Feedback", journal: "Catatan", score: "Nilai" };
 const attendanceStatuses = ["Hadir", "Sakit", "Alfa", "Izin"];
 const journalTypes = ["observation", "strength", "challenge", "milestone", "student_reflection", "support_note"];
+const journalTypeLabels = {
+  observation: "Observasi",
+  strength: "Kekuatan",
+  challenge: "Tantangan",
+  milestone: "Pencapaian",
+  student_reflection: "Refleksi siswa",
+  support_note: "Catatan dukungan",
+};
 const attendanceStatusOptions = [
-  { value: "", label: "Resolve attendance status" },
+  { value: "", label: "Pilih status kehadiran" },
   ...attendanceStatuses.map((status) => ({ value: status, label: status })),
 ];
-const journalTypeOptions = journalTypes.map((type) => ({ value: type, label: type }));
+const journalTypeOptions = journalTypes.map((type) => ({ value: type, label: journalTypeLabels[type] }));
 const reflectionCaptureOptions = [
-  { value: "", label: "Select capture type" },
-  { value: "direct_quote", label: "Direct quote" },
-  { value: "paraphrased", label: "Paraphrased" },
+  { value: "", label: "Pilih bentuk refleksi" },
+  { value: "direct_quote", label: "Kutipan langsung" },
+  { value: "paraphrased", label: "Parafrasa" },
 ];
 function localDateValue() {
   const date = new Date();
@@ -64,8 +73,8 @@ function draftReady(draft) {
       && (draft.values.type !== "student_reflection" || ["direct_quote", "paraphrased"].includes(draft.values.voiceCaptureType));
   }
   if (draft.type === "score") {
-    const score = Number(draft.values.value);
-    return Number.isInteger(score) && score >= 0 && score <= 100
+    const score = parseScoreInput(draft.values.value);
+    return score !== null
       && Boolean(draft.context?.lesson?.id) && Boolean(draft.selectedAssignmentId);
   }
   return attendanceStatuses.includes(draft.values.status);
@@ -87,9 +96,11 @@ function confirmationItem(draft, observedAt) {
     } };
   }
   if (draft.type === "score") {
+    const score = parseScoreInput(draft.values.value);
+    if (score === null) throw new Error("Nilai belum valid.");
     return { ...common, payload: {
-      assignmentId: Number(draft.selectedAssignmentId), description: "Classroom Debrief",
-      lessonId: Number(draft.context.lesson.id), recordedAt: observedAt, value: Number(draft.values.value),
+      assignmentId: Number(draft.selectedAssignmentId), description: "Catatan kelas",
+      lessonId: Number(draft.context.lesson.id), recordedAt: observedAt, value: score,
     } };
   }
   return { ...common, payload: { attendanceDate: localDateValue(), status: draft.values.status } };
@@ -124,19 +135,19 @@ function confirmationErrorMessage(error) {
   if (error?.code === "invalid_classroom_debrief_confirmation" || error?.status === 400) {
     return "Pilihan draf belum dapat disimpan. Tinjau data yang dipilih, lalu coba lagi.";
   }
-  return "Record belum dapat disimpan. Draf Anda tetap tersedia untuk dicoba lagi.";
+  return "Data belum dapat disimpan. Draf Anda tetap tersedia untuk dicoba lagi.";
 }
 
 function itemFailureMessage(code) {
   const safeMessages = {
-    assessment_not_found: "Assessment tidak lagi tersedia. Pilih assessment lain.",
-    invalid_attendance_status: "Status attendance perlu diperbaiki.",
+    assessment_not_found: "Penilaian tidak lagi tersedia. Pilih penilaian lain.",
+    invalid_attendance_status: "Status kehadiran perlu diperbaiki.",
     invalid_draft: "Isi draf perlu diperiksa kembali.",
     invalid_score: "Nilai harus berupa angka bulat dari 0 sampai 100.",
-    lesson_not_found: "Lesson tidak lagi tersedia.",
+    lesson_not_found: "Pelajaran tidak lagi tersedia.",
     student_not_found: "Siswa tidak lagi tersedia. Pilih siswa lain.",
   };
-  return safeMessages[code] || "Record ini belum dapat disimpan. Periksa draf, lalu coba lagi.";
+  return safeMessages[code] || "Data ini belum dapat disimpan. Periksa draf, lalu coba lagi.";
 }
 
 function recordTypeCounts(drafts) {
@@ -157,33 +168,33 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
   const beginEditing = () => applyChange({ editing: true, editSnapshot: { values: { ...draft.values } } }, { markEdited: false, clearFailure: false });
   const saveEditing = () => applyChange({ editing: false, editSnapshot: null });
   const cancelEditing = () => applyChange({ editing: false, editSnapshot: null, values: { ...(draft.editSnapshot?.values || draft.values) } }, { markEdited: false, clearFailure: false });
-  const displayStatus = saved ? "Committed" : failed ? "Failed" : !draft.selected ? "Discarded"
-    : draft.editing ? "Editing" : !draftReady(draft) ? "Needs clarification" : draft.edited ? "Edited" : "Ready";
+  const displayStatus = saved ? "Tersimpan" : failed ? "Gagal" : !draft.selected ? "Dibuang"
+    : draft.editing ? "Mengedit" : !draftReady(draft) ? "Perlu klarifikasi" : draft.edited ? "Diedit" : "Siap";
   const statusTone = saved || (draft.selected && draftReady(draft) && !failed) ? "success"
     : failed ? "danger" : draft.selected ? "warning" : "neutral";
   const studentName = draft.studentResolution?.student?.name || draft.studentReference || "Siswa perlu dipilih";
 
   return (
-    <article className={tw("debrief-draft min-w-0 overflow-hidden rounded-surface border border-issa-border-strong bg-issa-surface")}>
-      <header className={tw("flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-issa-border bg-issa-subtle px-4 py-3")}>
+    <article className={tw("debrief-draft min-w-0 overflow-hidden rounded-surface border border-issa-border bg-issa-surface shadow-[0_1px_2px_rgba(24,50,59,0.035)]")}>
+      <header className={tw("flex min-w-0 flex-wrap items-start justify-between gap-3 px-5 pb-2 pt-5")}>
         <div className={tw("min-w-0")}>
-          <p className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>{recordTypeLabels[draft.type] || draft.type}</p>
-          <h3 className={tw("mt-1 text-section-title font-bold text-issa-text")}>{studentName}</h3>
+          <p className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>{recordTypeLabels[draft.type] || draft.type}</p>
+          <h3 className={tw("mt-1 text-section-title font-semibold text-issa-text")}>{studentName}</h3>
         </div>
         <StatusBadge status={displayStatus} tone={statusTone} />
       </header>
-      <div className={tw("grid min-w-0 gap-3 p-4")}>
+      <div className={tw("grid min-w-0 gap-4 px-5 pb-5 pt-3")}>
         <p className={tw("text-metadata font-semibold text-issa-muted")}>
-          {saved ? "Canonical record saved" : draft.selected ? "Selected for final confirmation" : "Excluded from confirmation"}
+          {saved ? "Data tersimpan" : draft.selected ? "Dipilih untuk konfirmasi akhir" : "Tidak ikut disimpan"}
         </p>
-        <div className={tw("border-l-emphasis border-issa-accent bg-issa-subtle px-3 py-2")}>
-          <p className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>Source excerpt</p>
+        <div className={tw("rounded-lg bg-issa-subtle px-3 py-2.5")}>
+          <p className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>Kutipan sumber</p>
           <blockquote className={tw("mt-1 whitespace-pre-wrap text-supporting text-issa-text")}>“{draft.sourceExcerpt}”</blockquote>
         </div>
 
         {draft.selected && studentCandidates.length > 0 && (
           <fieldset className={tw("grid min-w-0 gap-2")}>
-            <legend className={tw("text-label font-bold text-issa-text")}>Which student?</legend>
+            <legend className={tw("text-label font-bold text-issa-text")}>Siswa mana?</legend>
             {studentCandidates.map((candidate) => (
               <label className={tw("flex min-h-control min-w-0 items-center gap-2 rounded-control px-2 hover:bg-issa-subtle")} key={candidate.studentId}>
                 <Radio color="issa" name={`${draft.draftId}-student`} checked={Number(draft.selectedStudentId) === candidate.studentId} disabled={interactionLocked} onChange={() => applyChange({ selectedStudentId: candidate.studentId })} />
@@ -194,7 +205,7 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
         )}
         {draft.selected && draft.type === "score" && assessmentCandidates.length > 0 && (
           <fieldset className={tw("grid min-w-0 gap-2")}>
-            <legend className={tw("text-label font-bold text-issa-text")}>Which assessment?</legend>
+            <legend className={tw("text-label font-bold text-issa-text")}>Penilaian mana?</legend>
             {assessmentCandidates.map((candidate) => (
               <label className={tw("flex min-h-control min-w-0 items-center gap-2 rounded-control px-2 hover:bg-issa-subtle")} key={candidate.assignmentId}>
                 <Radio color="issa" name={`${draft.draftId}-assignment`} checked={Number(draft.selectedAssignmentId) === candidate.assignmentId} disabled={interactionLocked} onChange={() => applyChange({ selectedAssignmentId: candidate.assignmentId })} />
@@ -206,52 +217,52 @@ function DraftEditor({ draft, interactionLocked, onChange }) {
 
         {draft.selected && draft.editing && draft.type === "feedback" && (
           <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Feedback</span>
-            <Textarea className={tw("debrief-draft__feedback-textarea min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
+            <Textarea className={tw("debrief-draft__feedback-textarea !min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
           </label>
         )}
         {draft.selected && draft.editing && draft.type === "journal" && (
           <div className={tw("grid min-w-0 gap-3")}>
-            <SelectField id={`classroom-debrief-journal-type-${draft.draftId}`} label="Journal type"
+            <SelectField id={`classroom-debrief-journal-type-${draft.draftId}`} label="Jenis catatan"
               value={draft.values.type} options={journalTypeOptions} disabled={interactionLocked}
               onChange={(type) => updateValues({ type, voiceCaptureType: null })} />
             {draft.values.type === "student_reflection" && (
-              <SelectField id={`classroom-debrief-reflection-capture-${draft.draftId}`} label="Reflection capture"
+              <SelectField id={`classroom-debrief-reflection-capture-${draft.draftId}`} label="Bentuk refleksi"
                 value={draft.values.voiceCaptureType || ""} options={reflectionCaptureOptions} disabled={interactionLocked}
                 onChange={(voiceCaptureType) => updateValues({ voiceCaptureType: voiceCaptureType || null })} />
             )}
-            <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Journal content</span>
-              <Textarea className={tw("debrief-draft__journal-textarea min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
+            <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Isi catatan</span>
+              <Textarea className={tw("debrief-draft__journal-textarea !min-h-28 resize-y")} value={draft.values.content} disabled={interactionLocked} onChange={(event) => updateValues({ content: event.target.value })} />
             </label>
           </div>
         )}
         {draft.selected && draft.editing && draft.type === "score" && (
-          <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Score</span>
+          <label className={tw("grid min-w-0 gap-1")}><span className={tw("text-label font-semibold")}>Nilai</span>
             <TextInput className={tw("debrief-draft__score-input")} type="number" min="0" max="100" value={draft.values.value} disabled={interactionLocked} onChange={(event) => updateValues({ value: event.target.value })} />
           </label>
         )}
         {draft.selected && draft.type === "attendance" && (
-          <SelectField id={`classroom-debrief-attendance-status-${draft.draftId}`} label="Canonical attendance status"
+          <SelectField id={`classroom-debrief-attendance-status-${draft.draftId}`} label="Status kehadiran"
             value={draft.values.status} options={attendanceStatusOptions} disabled={interactionLocked}
-            helperText={draft.payload?.minutesLate ? `The canonical attendance record cannot store ${draft.payload.minutesLate} minutes late.` : undefined}
+            helperText={draft.payload?.minutesLate ? `Data kehadiran hanya menyimpan status; detail terlambat ${draft.payload.minutesLate} menit tidak ikut tersimpan.` : undefined}
             onChange={(status) => applyChange({ values: { ...draft.values, status } })} />
         )}
         {draft.selected && !draft.editing && (
           <p className={tw("whitespace-pre-wrap text-body text-issa-text")}>
             {draft.type === "feedback" || draft.type === "journal" ? draft.values.content
-              : draft.type === "score" ? `Score: ${draft.values.value}` : `Status: ${draft.values.status || "Needs clarification"}`}
+              : draft.type === "score" ? `Nilai: ${draft.values.value}` : `Status: ${draft.values.status || "Perlu klarifikasi"}`}
           </p>
         )}
         {failed && <InlineNotice tone="danger">{itemFailureMessage(draft.result.code)}</InlineNotice>}
-        {saved && <InlineNotice tone="success">Record saved.</InlineNotice>}
+        {saved && <InlineNotice tone="success">Data disimpan.</InlineNotice>}
         {!saved && (
           <div className={tw("flex min-w-0 flex-wrap gap-2 max-sm:flex-col max-sm:[&>button]:w-full")}>
             {draft.selected && draft.type !== "attendance" && !draft.editing && <SecondaryButton type="button" disabled={interactionLocked} onClick={beginEditing}>Edit</SecondaryButton>}
             {draft.selected && draft.type !== "attendance" && draft.editing && <>
-              <SecondaryButton type="button" disabled={interactionLocked} onClick={saveEditing}>Save edit</SecondaryButton>
-              <SecondaryButton type="button" disabled={interactionLocked} onClick={cancelEditing}>Cancel edit</SecondaryButton>
+              <SecondaryButton type="button" disabled={interactionLocked} onClick={saveEditing}>Simpan edit</SecondaryButton>
+              <SecondaryButton type="button" disabled={interactionLocked} onClick={cancelEditing}>Batalkan</SecondaryButton>
             </>}
             {!draft.editing && <SecondaryButton type="button" disabled={interactionLocked} onClick={() => applyChange({ selected: !draft.selected, result: null }, { markEdited: false })}>
-              {draft.selected ? "Discard" : "Restore"}
+              {draft.selected ? "Buang" : "Pulihkan"}
             </SecondaryButton>}
           </div>
         )}
@@ -276,7 +287,7 @@ export default function ClassroomDebriefWorkspace() {
   const [confirmationState, setConfirmationState] = useState({ pending: false, error: "", outcome: "idle" });
   const observedAt = useMemo(() => new Date().toISOString(), [drafts.length > 0]);
   const lessonOptions = useMemo(() => [
-    { value: "", label: "No lesson selected" },
+    { value: "", label: "Tanpa pelajaran spesifik" },
     ...lessons.map((lesson) => ({ value: String(lesson.id), label: lesson.name })),
   ], [lessons]);
 
@@ -293,7 +304,7 @@ export default function ClassroomDebriefWorkspace() {
     if (generationInFlightRef.current) return;
     const normalizedText = text.trim();
     if (normalizedText.length < 3) {
-      setGenerationState({ pending: false, error: "Tell us what happened in class." });
+      setGenerationState({ pending: false, error: "Ceritakan apa yang terjadi di kelas." });
       return;
     }
     generationInFlightRef.current = true;
@@ -354,80 +365,66 @@ export default function ClassroomDebriefWorkspace() {
     setGenerationState({ pending: false, error: "" });
     setConfirmationState({ pending: false, error: "", outcome: "idle" });
   };
-  const teacherLabel = teacher?.name || "Active teacher session";
-  const classLabel = reviewContext?.class?.name || "Active class from this session";
+  const teacherLabel = teacher?.name || "Sesi guru aktif";
+  const classLabel = reviewContext?.class?.name || "Kelas aktif dari sesi ini";
 
   return (
     <PageContainer className={tw("classroom-debrief-workspace min-w-0 text-issa-text")}>
-      <PageHeader eyebrow="Teacher review instrument" title="Classroom Debrief"
-        description="Turn one class note into reviewable drafts. Nothing becomes a student record until you confirm it."
-        metadata={`${teacherLabel} · ${classLabel}`} />
-      {isDemo && <InlineNotice className={tw("mb-4")} tone="warning">Demo mode can generate and review drafts, but cannot save canonical records.</InlineNotice>}
+      <PageHeader
+        title="Catat kelas"
+        description="Tulis apa yang terjadi. Sistem menyusun draf; Anda meninjau sebelum data disimpan."
+        metadata={`${teacherLabel} · ${classLabel}`}
+      />
+      {isDemo && <InlineNotice className={tw("mb-5")} tone="warning">Mode demo dapat membuat dan meninjau draf, tetapi tidak dapat menyimpan data.</InlineNotice>}
 
       {!drafts.length && (
-        <Surface className={tw("overflow-hidden")}>
-          <form aria-busy={generationState.pending} className={tw("grid min-w-0 gap-5 p-5")} onSubmit={generateDrafts}>
-            <label className={tw("grid min-w-0 gap-1")} htmlFor="classroom-debrief-text">
-              <span className={tw("text-label font-bold")}>What happened in class?</span>
-              <Textarea aria-describedby="classroom-debrief-text-count classroom-debrief-generation-status" aria-label="What happened in class?"
-                id="classroom-debrief-text" className={tw("classroom-debrief-workspace__textarea min-h-[10rem] resize-y")} maxLength={4000} value={text}
-                onChange={(event) => setText(event.target.value)}
-                placeholder="Example: Alya worked independently, Rafi arrived late, and Nadia scored 82 on the fraction quiz." />
-              <small id="classroom-debrief-text-count" className={tw("text-metadata text-issa-muted")}>{text.length}/4000</small>
-            </label>
-            <SelectField id="classroom-debrief-lesson" label="Lesson context (optional)"
-              value={lessonId} options={lessonOptions} onChange={setLessonId} />
-            <div aria-live="polite" id="classroom-debrief-generation-status" role="status">
-              {generationState.pending && <InlineNotice>Generating reviewable drafts. No records are being saved.</InlineNotice>}
-              {generationState.error && <InlineNotice role="alert" tone="danger">{generationState.error}</InlineNotice>}
-            </div>
-            <div className={tw("flex justify-end max-sm:[&>button]:w-full")}>
-              <PrimaryButton type="submit" loading={generationState.pending} loadingLabel="Generating drafts…">Generate drafts</PrimaryButton>
-            </div>
-          </form>
-        </Surface>
+        <form aria-busy={generationState.pending} className={tw("grid min-w-0 gap-6 border-y border-issa-border py-6")} onSubmit={generateDrafts}>
+          <div className={tw("grid min-w-0 gap-2")}>
+            <label className={tw("text-section-title font-semibold text-issa-text")} htmlFor="classroom-debrief-text">Apa yang terjadi di kelas?</label>
+            <p className={tw("max-w-[48rem] text-supporting leading-relaxed text-issa-muted")}>Catat kejadian dalam bahasa natural. Belum ada data siswa yang disimpan pada tahap ini.</p>
+            <Textarea aria-describedby="classroom-debrief-text-count classroom-debrief-generation-status" aria-label="Apa yang terjadi di kelas?" id="classroom-debrief-text" className={tw("classroom-debrief-workspace__textarea mt-2 !min-h-[12rem] resize-y text-body")} maxLength={4000} value={text} onChange={(event) => setText(event.target.value)} placeholder="Contoh: Alya bekerja mandiri, Rafi datang terlambat, dan Nadia mendapat 82 pada kuis pecahan." />
+            <small id="classroom-debrief-text-count" className={tw("justify-self-end text-metadata tabular-nums text-issa-muted")}>{text.length}/4000</small>
+          </div>
+          <div className={tw("grid gap-5 sm:grid-cols-[minmax(0,_22rem)_1fr] sm:items-end")}>
+            <SelectField id="classroom-debrief-lesson" label="Konteks pelajaran (opsional)" value={lessonId} options={lessonOptions} onChange={setLessonId} />
+            <div className={tw("flex justify-end max-sm:[&>button]:w-full")}><PrimaryButton type="submit" loading={generationState.pending} loadingLabel="Menyusun draf…">Susun draf</PrimaryButton></div>
+          </div>
+          <div aria-live="polite" id="classroom-debrief-generation-status" role="status">
+            {generationState.pending && <InlineNotice>Menyusun draf untuk ditinjau. Belum ada data yang disimpan.</InlineNotice>}
+            {generationState.error && <InlineNotice role="alert" tone="danger">{generationState.error}</InlineNotice>}
+          </div>
+        </form>
       )}
 
       {drafts.length > 0 && (
-        <div className={tw("grid min-w-0 gap-5")}>
-          <Surface className={tw("grid min-w-0 gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center")}>
+        <div className={tw("grid min-w-0 gap-6")}>
+          <section className={tw("grid min-w-0 gap-4 border-y border-issa-border py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center")}>
             <div>
-              <h2 ref={reviewHeadingRef} tabIndex={-1} className={tw("text-section-title font-bold outline-none")}>{drafts.length} drafts ready for review</h2>
-              <p className={tw("mt-1 text-supporting text-issa-muted")}>{readyDrafts.length} ready · {clarificationCount} needs clarification · {discardedDraftCount} discarded · {savedDrafts.length} saved</p>
-              <p className={tw("mt-1 text-metadata text-issa-muted")}>Class {classLabel}{reviewContext?.lesson?.name ? ` · ${reviewContext.lesson.name}` : ""}</p>
+              <p className={tw("text-eyebrow font-semibold text-issa-accent")}>Tinjau</p>
+              <h2 ref={reviewHeadingRef} tabIndex={-1} className={tw("mt-1 text-section-title font-semibold text-issa-text outline-none")}>{drafts.length} draf siap ditinjau</h2>
+              <p className={tw("mt-1 text-supporting text-issa-muted")}>{readyDrafts.length} siap · {clarificationCount} perlu klarifikasi · {discardedDraftCount} dibuang · {savedDrafts.length} disimpan</p>
+              <p className={tw("mt-1 text-metadata text-issa-muted")}>Kelas {classLabel}{reviewContext?.lesson?.name ? ` · ${reviewContext.lesson.name}` : ""}</p>
             </div>
-            <SecondaryButton type="button" disabled={confirmationState.pending} onClick={resetWorkspace}>Start another Debrief</SecondaryButton>
-          </Surface>
-          <div className={tw("grid min-w-0 gap-4 xl:grid-cols-2")}>
-            {drafts.map((draft) => <DraftEditor key={draft.draftId} draft={draft} interactionLocked={confirmationState.pending} onChange={(updatedDraft) => updateDraft(draft.draftId, updatedDraft)} />)}
-          </div>
+            <SecondaryButton type="button" disabled={confirmationState.pending} onClick={resetWorkspace}>Catat lagi</SecondaryButton>
+          </section>
+
+          <div className={tw("grid min-w-0 gap-4 xl:grid-cols-2")}>{drafts.map((draft) => <DraftEditor key={draft.draftId} draft={draft} interactionLocked={confirmationState.pending} onChange={(updatedDraft) => updateDraft(draft.draftId, updatedDraft)} />)}</div>
+
           <div aria-live="polite" ref={confirmationStatusRef} role="status" tabIndex={-1} className={tw("grid gap-2 outline-none")}>
             {confirmationState.error && <InlineNotice role="alert" tone="danger">{confirmationState.error}</InlineNotice>}
-            {confirmationState.outcome === "complete" && <InlineNotice tone="success">
-              {savedDrafts.length} records saved. Review is complete: {savedCounts.map((item) => `${item.value} ${item.label}`).join(", ")}.
-            </InlineNotice>}
-            {confirmationState.outcome === "partial" && <InlineNotice tone="warning">
-              {savedDrafts.length} records saved. Failed drafts remain selected; successful records will not be sent again.
-            </InlineNotice>}
+            {confirmationState.outcome === "complete" && <InlineNotice tone="success">{savedDrafts.length} data disimpan. Tinjauan selesai: {savedCounts.map((item) => `${item.value} ${item.label}`).join(", ")}.</InlineNotice>}
+            {confirmationState.outcome === "partial" && <InlineNotice tone="warning">{savedDrafts.length} data disimpan. Draf yang gagal tetap dipilih; data yang berhasil tidak akan dikirim ulang.</InlineNotice>}
             {isDemo && <InlineNotice tone="warning">{DEMO_READ_ONLY_MESSAGE}</InlineNotice>}
           </div>
-          <Surface className={tw("grid min-w-0 gap-4 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end")}>
+
+          <section className={tw("grid min-w-0 gap-4 border-t border-issa-border pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end")}>
             <div>
-              <h2 className={tw("text-label font-bold text-issa-text")}>Ready to save</h2>
-              <p className={tw("mt-1 text-supporting text-issa-muted")}>
-                {clarificationCount > 0
-                  ? `${clarificationCount} selected draft${clarificationCount === 1 ? " needs" : "s need"} clarification before confirmation.`
-                  : `${readyDrafts.length} selected record${readyDrafts.length === 1 ? "" : "s"} will be saved. No AI request is made.`}
-              </p>
-              {confirmationCounts.length > 0 && <dl className={tw("mt-2 flex flex-wrap gap-x-4 gap-y-1 text-metadata")}>
-                {confirmationCounts.map((item) => <div className={tw("flex gap-1")} key={item.type}><dt className={tw("text-issa-muted")}>{item.label}</dt><dd className={tw("font-bold text-issa-text")}>{item.value}</dd></div>)}
-              </dl>}
+              <h2 className={tw("text-label font-semibold text-issa-text")}>Siap disimpan</h2>
+              <p className={tw("mt-1 max-w-[46rem] text-supporting text-issa-muted")}>{clarificationCount > 0 ? `${clarificationCount} draf terpilih masih memerlukan klarifikasi sebelum disimpan.` : `${readyDrafts.length} data terpilih akan disimpan. Tidak ada permintaan AI tambahan.`}</p>
+              {confirmationCounts.length > 0 && <dl className={tw("mt-2 flex flex-wrap gap-x-4 gap-y-1 text-metadata")}>{confirmationCounts.map((item) => <div className={tw("flex gap-1")} key={item.type}><dt className={tw("text-issa-muted")}>{item.label}</dt><dd className={tw("font-semibold text-issa-text")}>{item.value}</dd></div>)}</dl>}
             </div>
-            <PrimaryButton type="button" disabled={isDemo || selectedDrafts.length === 0 || clarificationCount > 0}
-              loading={confirmationState.pending} loadingLabel="Saving records…" onClick={confirmDrafts}>
-              Confirm {readyDrafts.length} record{readyDrafts.length === 1 ? "" : "s"}
-            </PrimaryButton>
-          </Surface>
+            <PrimaryButton type="button" disabled={isDemo || selectedDrafts.length === 0 || clarificationCount > 0} loading={confirmationState.pending} loadingLabel="Menyimpan data…" onClick={confirmDrafts}>Simpan {readyDrafts.length} data</PrimaryButton>
+          </section>
         </div>
       )}
     </PageContainer>

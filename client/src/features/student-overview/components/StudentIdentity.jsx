@@ -1,17 +1,19 @@
-export default function StudentIdentity({ profile }) {
+export default function StudentIdentity({ profile, compact = false }) {
   const studentName = profile.name || 'Siswa';
   const studentInitial = studentName.slice(0, 1).toUpperCase();
 
   return (
-    <section className="student-context">
+    <section className={`student-context${compact ? ' student-context--compact' : ''}`} aria-label={`Siswa ${studentName}`}>
       <div className="student-context__main">
         <div>
-          <p className="section-kicker student-context__kicker">Rekam perkembangan siswa</p>
-          <h1 className="student-context__name">{studentName}</h1>
-          <p className="student-context__nim">
-            <strong>NIM</strong>
-            <span>{profile.nim || 'Belum tersedia'}</span>
-          </p>
+          <p className="section-kicker student-context__kicker">ISSA Parent</p>
+          <p className="student-context__name">{studentName}</p>
+          {!compact && (
+            <p className="student-context__nim">
+              <strong>NIM</strong>
+              <span>{profile.nim || 'Belum tersedia'}</span>
+            </p>
+          )}
         </div>
         <div className="student-context__avatar">
           {profile.imageUrl ? (

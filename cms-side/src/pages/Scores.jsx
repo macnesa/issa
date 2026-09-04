@@ -62,7 +62,7 @@ export default function Scores() {
   return (
     <PageContainer className={tw("score-workspace text-issa-text")}>
       <PageHeader
-        eyebrow="Rekam akademik"
+        eyebrow="Akademik"
         title="Nilai siswa"
         description="Catat dan tinjau hasil penilaian siswa dalam satu ruang kerja."
       />
@@ -72,7 +72,7 @@ export default function Scores() {
           description="Siswa ini tidak tersedia pada kelas Anda."
         />
       ) : (
-        <div className={tw("score-workspace__stack grid gap-4")}>
+        <div className={tw("score-workspace__stack grid gap-5")}>
           <StudentContextHeader
             student={student}
             classLabel={authorizedClassName}

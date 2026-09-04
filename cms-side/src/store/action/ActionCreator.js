@@ -21,30 +21,42 @@ function requestError(responseBody, response, fallbackMessage) {
 
 // STUDENT ONLY //
 
-export const fetchStudentList = (studentSearchQuery = {}, pageIndex) => {
+const studentListRequestSequences = new Map();
+
+export const fetchStudentList = (
+  studentSearchQuery = {},
+  pageIndex,
+  { signal, requestKey } = {}
+) => {
   void 'ISSA:CMS.STUDENT.FETCH_LIST';
   const params = new URLSearchParams();
   if (studentSearchQuery.name?.trim()) params.set('name', studentSearchQuery.name.trim());
   if (pageIndex) params.set('pageIndex', pageIndex);
   const url = `${baseUrl}/students${params.toString() ? `?${params.toString()}` : ''}`;
 
-  return (dispatch, getState) => {
-    return fetch(`${url}`, {
+  return async (dispatch) => {
+    const requestId = requestKey
+      ? (studentListRequestSequences.get(requestKey) || 0) + 1
+      : null;
+    if (requestKey) studentListRequestSequences.set(requestKey, requestId);
+
+    const response = await fetch(`${url}`, {
       headers: {
         access_token: localStorage.access_token,
       },
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('Network was not ok');
-        }
-        return response.json();
-      })
-      .then((studentListResponse) => {
-        dispatch(storeStudentList(studentListResponse));
-        return studentListResponse;
-      })
-      .catch((error) => Promise.reject(error));
+      signal,
+    });
+    if (!response.ok) {
+      throw new Error('Network was not ok');
+    }
+    const studentListResponse = await response.json();
+    const requestWasSuperseded = requestKey
+      && requestId !== studentListRequestSequences.get(requestKey);
+    if (signal?.aborted || requestWasSuperseded) {
+      return studentListResponse;
+    }
+    dispatch(storeStudentList(studentListResponse));
+    return studentListResponse;
   };
 };
 
@@ -632,10 +644,7 @@ export const createAttendanceRecord = (attendancePayload) => {
         }
         return data;
       })
-      .then((data) => {
-        dispatch(fetchStudentList());
-        return data;
-      })
+      .then((data) => data)
       .catch((error) => Promise.reject(error));
   };
 };
@@ -659,10 +668,7 @@ export const updateAttendanceRecord = (attendancePayload) => {
         }
         return data;
       })
-      .then((data) => {
-        dispatch(fetchStudentList());
-        return data;
-      })
+      .then((data) => data)
       .catch((error) => Promise.reject(error));
   };
 };

@@ -62,10 +62,10 @@ export default function JournalTimeline({
 
   return (
     <div className={tw("journal-timeline border-t border-issa-border")}>
-      <div className={tw("journal-timeline__heading p-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold [&>span]:block [&>span]:mt-1 [&>span]:text-issa-muted [&>span]:text-supporting")}>
-        <p>Shared record</p>
-        <h3>Riwayat perjalanan belajar</h3>
-        <span>Urutan catatan mengikuti record terbaru dari server.</span>
+      <div className={tw("journal-timeline__heading px-0 pb-3 pt-5 bg-transparent [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-medium [&_p]:tracking-normal [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-semibold [&>span]:block [&>span]:mt-1 [&>span]:text-issa-muted [&>span]:text-supporting")}>
+        <p>Riwayat catatan</p>
+        <h3>Catatan perjalanan belajar</h3>
+        <span>Urutan catatan mengikuti data terbaru dari server.</span>
       </div>
 
       <ol className={tw("journal-timeline__list m-0 p-0 list-none")}>
@@ -86,7 +86,7 @@ export default function JournalTimeline({
               </div>
               <article>
                 <header className={tw("journal-timeline__entry-header flex min-w-0 items-baseline justify-between gap-3 max-sm:items-start max-sm:flex-col")}>
-                  <div className={tw("journal-timeline__labels text-issa-muted text-metadata font-bold tracking-metadata uppercase")}>
+                  <div className={tw("journal-timeline__labels text-issa-muted text-metadata font-semibold tracking-normal")}>
                     <span>{type?.label || entry.type}</span>
                     {capture && <span>· {capture.label}</span>}
                     {entry.wasEdited && (
@@ -112,7 +112,7 @@ export default function JournalTimeline({
 
                 {entry.evidence && (
                   <div
-                    className={tw(`journal-timeline__evidence flex min-w-0 items-center gap-3 mt-3 border border-issa-border rounded-surface p-3 bg-issa-subtle [&_img]:w-12 [&_img]:h-12 [&_img]:flex-none [&_img]:rounded-control [&_img]:object-cover [&>div]:grid [&>div]:min-w-0 [&>div]:gap-1 [&_span]:text-issa-muted [&_span]:text-metadata [&_small]:text-issa-muted [&_small]:text-metadata [&_strong]:text-issa-text [&_strong]:text-supporting ${
+                    className={tw(`journal-timeline__evidence flex min-w-0 items-center gap-3 mt-3 border border-issa-border rounded-surface p-3 bg-issa-subtle [&_img]:w-12 [&_img]:h-12 [&_img]:flex-none [&_img]:rounded-xl [&_img]:object-cover [&>div]:grid [&>div]:min-w-0 [&>div]:gap-1 [&_span]:text-issa-muted [&_span]:text-metadata [&_small]:text-issa-muted [&_small]:text-metadata [&_strong]:text-issa-text [&_strong]:text-supporting ${
                       evidenceRetracted
                         ? "journal-timeline__evidence--retracted border-issa-warning"
                         : ""

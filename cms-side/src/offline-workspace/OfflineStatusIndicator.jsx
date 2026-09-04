@@ -41,19 +41,19 @@ export default function OfflineStatusIndicator() {
       aria-label="Status sinkronisasi workspace"
     >
       <details className={tw("offline-status__details group relative lg:w-full")}>
-        <summary className={tw("offline-status__summary inline-flex min-h-control cursor-pointer list-none items-center gap-2 rounded-control border border-issa-border-strong bg-issa-surface px-3 py-2 text-status font-bold text-issa-text transition-colors duration-default marker:hidden hover:border-issa-accent hover:bg-issa-subtle focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-4 focus-visible:outline-issa-focus motion-reduce:transition-none [&::-webkit-details-marker]:hidden lg:w-full")}>
+        <summary aria-label={`Status sinkronisasi: ${statusLabel}`} className={tw("offline-status__summary inline-flex min-h-control cursor-pointer list-none items-center gap-2 rounded-control border border-issa-border bg-issa-surface px-3 py-2 text-status font-semibold text-issa-text shadow-[0_1px_2px_rgba(24,50,59,0.04)] transition-colors duration-default marker:hidden hover:border-issa-border-strong hover:bg-issa-subtle focus-visible:outline focus-visible:outline-emphasis focus-visible:outline-offset-2 focus-visible:outline-issa-focus motion-reduce:transition-none [&::-webkit-details-marker]:hidden lg:w-full")}>
           <span className={tw("flex min-w-0 items-center gap-2")}>
             <span className={tw("offline-status__signal h-[0.52rem] w-[0.52rem] flex-none rounded-full border-emphasis border-[color-mix(in_srgb,var(--issa-text)_18%,transparent)]", workspace.connectionAvailable ? "bg-issa-success" : "bg-issa-warning")} aria-hidden="true" />
-            <span>{statusLabel}</span>
+            <span className={tw("offline-status__label max-sm:hidden")}>{statusLabel}</span>
           </span>
           <Icon className={tw("ml-auto flex-none transition-transform duration-default group-open:rotate-180 motion-reduce:transition-none")} name="expand_more" />
         </summary>
-        <div className={tw("offline-status__panel absolute right-0 top-[calc(100%_+_var(--issa-space-2))] w-[min(21rem,calc(100vw_-_2rem))] max-w-[calc(100vw_-_1.75rem)] rounded-dialog border border-issa-border-strong bg-issa-surface p-4 text-issa-text shadow-dialog lg:bottom-[calc(100%_+_var(--issa-space-2))] lg:left-0 lg:right-auto lg:top-auto max-sm:left-0 max-sm:right-auto")}>
+        <div className={tw("offline-status__panel fixed left-4 right-4 top-[4.25rem] z-popover w-auto max-w-none rounded-dialog border border-issa-border-strong bg-issa-surface p-4 text-issa-text shadow-dialog lg:absolute lg:bottom-[calc(100%_+_var(--issa-space-2))] lg:left-0 lg:right-auto lg:top-auto lg:w-[min(21rem,calc(100vw_-_2rem))] lg:max-w-[calc(100vw_-_1.75rem)]")}>
           <dl className={tw("grid grid-cols-2 gap-x-4 gap-y-2")}>
-            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>Koneksi</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.connectionAvailable ? "Online" : "Offline"}</dd></div>
-            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>Menunggu</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.pendingCount}</dd></div>
-            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>Perlu ditinjau</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.conflictCount}</dd></div>
-            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>Gagal</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.failedCount}</dd></div>
+            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>Koneksi</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.connectionAvailable ? "Online" : "Offline"}</dd></div>
+            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>Menunggu</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.pendingCount}</dd></div>
+            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>Perlu ditinjau</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.conflictCount}</dd></div>
+            <div className={tw("border-b border-issa-border pb-2")}><dt className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>Gagal</dt><dd className={tw("mt-1 text-body font-semibold text-issa-text")}>{workspace.failedCount}</dd></div>
           </dl>
           <p className={tw("mt-3 text-supporting leading-normal text-issa-muted")}>Sinkronisasi terakhir: {formatLastSync(workspace.lastSuccessfulSyncAt)}</p>
           {workspace.authRequired && (

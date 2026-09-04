@@ -14,7 +14,6 @@ const rootReducer = combineReducers({
   teachers: teacherReducer,
   lessons: lessonReducer,
   histories: historyReducer,
-  schedules: scheduleReducer,
   transactions: transactionReducer,
 });
 

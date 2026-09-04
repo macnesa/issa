@@ -148,7 +148,6 @@ export async function mergeWorkspaceSnapshot({
     studentSummary: null,
     attendanceRecords: [],
     journalEntries: [],
-    cachedAt: cachedAt || timestamp,
     ...existing,
     ...sanitizeSlice(snapshotSlice),
     cachedAt: cachedAt || timestamp,
@@ -197,7 +196,7 @@ export async function mergeAttendanceServerRecord({
         ? normalizedRecord
         : record
     ))
-    : [...existing.attendanceRecords, normalizedRecord];
+    : [...existingRecords, normalizedRecord];
   return mergeWorkspaceSnapshot({
     teacherId,
     studentId: normalizedStudentId,

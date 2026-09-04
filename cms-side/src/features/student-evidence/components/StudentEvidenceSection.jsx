@@ -8,6 +8,13 @@ import {
   LoadingState,
   SecondaryButton,
 } from "../../../shared/ui/ui";
+import {
+  RESOURCE_PROVENANCE,
+  RESOURCE_STATUS,
+  resourceError,
+  resourceFromData,
+  resourceLoading,
+} from "../../../shared/data/resourceTruth";
 import { formatRecordedDate } from "../../../utils/recordDates";
 import {
   createStudentEvidence,
@@ -24,16 +31,15 @@ import EvidenceMetadataDialog from "./EvidenceMetadataDialog";
 import EvidenceRetractionDialog from "./EvidenceRetractionDialog";
 import EvidenceViewerDialog from "./EvidenceViewerDialog";
 
+const ignoreEvidenceLoaded = () => {};
+
 export default function StudentEvidenceSection({
   demoReadOnly = false,
   studentId,
   onEvidenceChanged = () => {},
+  onEvidenceLoaded = ignoreEvidenceLoaded,
 }) {
-  const [resource, setResource] = useState({
-    status: "loading",
-    data: [],
-    error: "",
-  });
+  const [resource, setResource] = useState(() => resourceLoading({ data: [], scope: "evidence" }));
   const [editingEvidence, setEditingEvidence] = useState(null);
   const [retractingEvidence, setRetractingEvidence] = useState(null);
   const [viewingEvidence, setViewingEvidence] = useState(null);
@@ -43,11 +49,20 @@ export default function StudentEvidenceSection({
 
   const loadEvidences = useCallback(async ({ signal } = {}) => {
     const requestId = ++requestSequence.current;
-    setResource((current) => ({ ...current, status: "loading", error: "" }));
+    setResource((current) => resourceLoading({
+      data: current.data || [],
+      provenance: current.provenance,
+      scope: "evidence",
+    }));
     try {
       const evidenceList = await fetchStudentEvidences(studentId, { signal });
       if (signal?.aborted || requestId !== requestSequence.current) return;
-      setResource({ status: "success", data: evidenceList, error: "" });
+      const nextResource = resourceFromData(evidenceList, {
+        provenance: RESOURCE_PROVENANCE.SERVER,
+        scope: "evidence",
+      });
+      setResource(nextResource);
+      await Promise.resolve(onEvidenceLoaded(evidenceList, nextResource));
       setViewingEvidence((current) => (
         current && !evidenceList.some((evidence) => evidence.id === current.id)
           ? null
@@ -55,13 +70,13 @@ export default function StudentEvidenceSection({
       ));
     } catch (error) {
       if (signal?.aborted || requestId !== requestSequence.current) return;
-      setResource({
-        status: "error",
+      setResource(resourceError(error?.message || "Bukti perkembangan belum dapat dimuat.", {
         data: [],
-        error: error?.message || "Bukti perkembangan belum dapat dimuat.",
-      });
+        provenance: RESOURCE_PROVENANCE.SERVER,
+        scope: "evidence",
+      }));
     }
-  }, [studentId]);
+  }, [onEvidenceLoaded, studentId]);
 
   useEffect(() => {
     const requestController = new AbortController();
@@ -138,8 +153,8 @@ export default function StudentEvidenceSection({
     }
     setStatusMessage(
       kind === "retracted"
-        ? "Evidence berhasil dicabut."
-        : "Metadata evidence berhasil diperbarui."
+        ? "Bukti berhasil dicabut."
+        : "Metadata bukti berhasil diperbarui."
     );
     await Promise.all([
       loadEvidences(),
@@ -151,9 +166,9 @@ export default function StudentEvidenceSection({
     <>
       <LedgerShell
         className={tw("student-evidence-record min-w-0")}
-        eyebrow="Student evidence"
+        eyebrow="Bukti siswa"
         title="Bukti perkembangan"
-        description="Foto dan metadata menjadi bagian dari record perkembangan siswa."
+        description="Foto dan keterangan yang membantu guru memahami perkembangan siswa."
       >
 
         <EvidenceUploadForm
@@ -162,42 +177,42 @@ export default function StudentEvidenceSection({
         />
 
         <div className={tw("student-evidence-history border-t border-issa-border")}>
-          <div className={tw("student-evidence-history__heading p-4 bg-issa-subtle [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-bold [&_p]:tracking-metadata [&_p]:uppercase [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-bold")}>
-            <p>Evidence history</p>
+          <div className={tw("student-evidence-history__heading px-0 pb-3 pt-5 bg-transparent [&_p]:text-issa-muted [&_p]:text-metadata [&_p]:font-medium [&_p]:tracking-normal [&_h3]:mt-1 [&_h3]:text-issa-text [&_h3]:text-section-title [&_h3]:font-semibold")}>
+            <p>Riwayat bukti</p>
             <h3>Daftar bukti perkembangan</h3>
           </div>
           <p
-            className={tw("student-evidence-history__status min-h-6 py-2 px-4 text-issa-muted text-metadata")}
+            className={tw("student-evidence-history__status min-h-6 py-2 text-issa-muted text-metadata")}
             role="status"
             aria-live="polite"
           >
             {statusMessage}
           </p>
 
-          {resource.status === "loading" && (
-            <LoadingState label="Memuat evidence siswa..." />
+          {resource.status === RESOURCE_STATUS.LOADING && (
+            <LoadingState label="Memuat bukti siswa..." />
           )}
-          {resource.status === "error" && (
+          {resource.status === RESOURCE_STATUS.ERROR && (
             <ErrorState message={resource.error} onRetry={() => loadEvidences()} />
           )}
-          {resource.status === "success" && resource.data.length === 0 && (
+          {resource.status === RESOURCE_STATUS.EMPTY && (
             <EmptyState title="Belum ada bukti perkembangan untuk siswa ini." />
           )}
-          {resource.status === "success" && resource.data.length > 0 && (
+          {resource.status === RESOURCE_STATUS.KNOWN && resource.data.length > 0 && (
             <ol className={tw("student-evidence-history__list m-0 p-0 list-none")}>
               {resource.data.map((evidence, index) => (
-                <li className={tw("grid [grid-template-columns:5rem_minmax(0,_1fr)] gap-3 p-4 [&+&]:border-t [&+&]:border-issa-border max-sm:grid-cols-1")} key={evidence.id}>
+                <li className={tw("grid [grid-template-columns:5rem_minmax(0,_1fr)] gap-4 py-4 [&+&]:border-t [&+&]:border-issa-border max-sm:grid-cols-1")} key={evidence.id}>
                   <span className={tw("student-evidence-history__index hidden")} aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <button
                     type="button"
-                    className={tw("student-evidence-history__thumbnail [width:5rem] [height:5rem] overflow-hidden border border-issa-border-strong rounded-control p-0 bg-issa-subtle focus-visible:outline-emphasis focus-visible:outline-issa-focus focus-visible:outline-offset-1 max-sm:w-full max-sm:[height:12rem] [&_img]:w-full [&_img]:h-full [&_img]:object-cover")}
+                    className={tw("student-evidence-history__thumbnail [width:5rem] [height:5rem] overflow-hidden rounded-control p-0 bg-issa-subtle ring-1 ring-issa-border focus-visible:outline-emphasis focus-visible:outline-issa-focus focus-visible:outline-offset-1 max-sm:w-full max-sm:[height:12rem] [&_img]:w-full [&_img]:h-full [&_img]:object-cover")}
                     onClick={(event) => {
                       rememberTrigger(event);
                       setViewingEvidence(evidence);
                     }}
-                    aria-label={`Buka viewer ${evidence.title}`}
+                    aria-label={`Buka bukti ${evidence.title}`}
                   >
                     {evidence.file?.url ? (
                       <img src={evidence.file.url} alt="" />
@@ -230,7 +245,7 @@ export default function StudentEvidenceSection({
                           setEditingEvidence(evidence);
                         }}
                       >
-                        Edit metadata
+                        Edit detail
                       </SecondaryButton>
                       <DestructiveButton
                         compact
@@ -242,7 +257,7 @@ export default function StudentEvidenceSection({
                           setRetractingEvidence(evidence);
                         }}
                       >
-                        Cabut evidence
+                        Cabut bukti
                       </DestructiveButton>
                       {demoReadOnly && (
                         <span className={tw("student-evidence-history__demo text-issa-muted text-metadata")}>

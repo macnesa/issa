@@ -21,7 +21,7 @@ export default function ModalAttendances({ data, id, studentName }) {
   return (
     <>
       <SecondaryButton compact type="button" onClick={() => setIsOpen(true)} className={tw("attendance-register__record-action max-lg:w-full")}>
-        Lihat record
+        Lihat riwayat
       </SecondaryButton>
       <Modal
         dismissible
@@ -29,11 +29,11 @@ export default function ModalAttendances({ data, id, studentName }) {
         show={isOpen}
         size="issaCompact"
       >
-        <ModalHeader id={`${id}-title`}>Record attendance</ModalHeader>
+        <ModalHeader id={`${id}-title`}>Riwayat kehadiran</ModalHeader>
         <ModalBody className={tw("attendance-record-dialog__body grid max-h-80 gap-2 text-supporting leading-normal text-issa-muted")}>
           <p className={tw("font-semibold text-issa-text")}>{studentName}</p>
-          {isEmpty(records) && <EmptyState title="Belum ada attendance" />}
-          {records.map((record) => <div key={record.id} className={tw("attendance-record-dialog__entry flex items-center justify-between gap-3 border border-issa-border rounded-surface p-3")}><span>{formatDateDisplay(record.attendanceDate) || "Tanggal attendance belum tersedia"}</span><StatusBadge status={record.status} /></div>)}
+          {isEmpty(records) && <EmptyState title="Belum ada kehadiran" />}
+          {records.map((record) => <div key={record.id} className={tw("attendance-record-dialog__entry flex items-center justify-between gap-3 border border-issa-border rounded-surface p-3")}><span>{formatDateDisplay(record.attendanceDate) || "Tanggal kehadiran belum tersedia"}</span><StatusBadge status={record.status} /></div>)}
         </ModalBody>
         <ModalFooter>
           <SecondaryButton type="button" onClick={() => setIsOpen(false)}>Tutup</SecondaryButton>

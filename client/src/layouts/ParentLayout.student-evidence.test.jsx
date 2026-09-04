@@ -26,6 +26,7 @@ vi.mock('react-router', () => ({
     testState.outletContext = context;
     return null;
   },
+  useLocation: () => ({ pathname: '/' }),
 }));
 
 vi.mock('../navigation/Header', () => ({ default: () => null }));

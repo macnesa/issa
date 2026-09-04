@@ -62,6 +62,7 @@ function initializeRealtimeServer(httpServer, { allowedOrigins }) {
   return io;
 }
 
+
 module.exports = {
   authenticateParentAccessToken,
   getParentRoom,

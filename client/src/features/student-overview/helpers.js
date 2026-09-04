@@ -2,6 +2,7 @@ import { buildProgressOverview } from '../progress/helpers.js';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import orderBy from 'lodash/orderBy';
+import { parseParentDate } from '../../utils/parentDates';
 
 const attendanceStatuses = ['Hadir', 'Sakit', 'Izin', 'Alfa'];
 
@@ -16,7 +17,7 @@ const scheduleDayLabels = {
 };
 
 function getLocalDateKey(dateValue) {
-  const date = new Date(dateValue);
+  const date = parseParentDate(dateValue);
 
   if (Number.isNaN(date.getTime())) return '';
 

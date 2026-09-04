@@ -16,41 +16,56 @@ export default function ScoreHistory({ scores, student }) {
   return (
     <LedgerShell
       className={tw("score-history-ledger")}
-      eyebrow="Rekam akademik"
+      eyebrow="Riwayat"
       title="Riwayat nilai"
       description="Status ditentukan berdasarkan KKM mata pelajaran."
-      overflow={scoreRecords.length > 0}
       empty={scoreRecords.length === 0}
       emptyTitle="Belum ada nilai tercatat"
       emptyDescription="Catat penilaian pertama untuk membuka riwayat akademik siswa."
     >
       {scoreRecords.length > 0 && (
-          <Table className={tw("score-history-ledger__table [min-width:58rem]")} hoverable>
-            <TableHead>
-              <TableRow>
-                <TableHeadCell>No.</TableHeadCell>
-                <TableHeadCell>Mata pelajaran</TableHeadCell>
-                <TableHeadCell>Penilaian</TableHeadCell>
-                <TableHeadCell>KKM</TableHeadCell>
-                <TableHeadCell>Nilai</TableHeadCell>
-                <TableHeadCell>Status</TableHeadCell>
-                {showPredikat && <TableHeadCell>Predikat</TableHeadCell>}
-                <TableHeadCell>Tanggal</TableHeadCell>
-                <TableHeadCell>Aksi</TableHeadCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {scoreRecords.map((score, index) => (
-                <TableScores
-                  key={score.id}
-                  data={score}
-                  student={student}
-                  recordIndex={index + 1}
-                  showPredikat={showPredikat}
-                />
-              ))}
-            </TableBody>
-          </Table>
+        <>
+          <div className={tw("score-history-mobile-list border-y border-issa-border md:hidden")}>
+            {scoreRecords.map((score, index) => (
+              <TableScores
+                key={`mobile-${score.id}`}
+                data={score}
+                student={student}
+                recordIndex={index + 1}
+                showPredikat={showPredikat}
+                mobile
+              />
+            ))}
+          </div>
+          <div className={tw("score-history-desktop-table hidden overflow-x-auto md:block")}>
+            <Table className={tw("score-history-ledger__table [min-width:58rem]")} hoverable>
+              <TableHead>
+                <TableRow>
+                  <TableHeadCell>No.</TableHeadCell>
+                  <TableHeadCell>Mata pelajaran</TableHeadCell>
+                  <TableHeadCell>Penilaian</TableHeadCell>
+                  <TableHeadCell>KKM</TableHeadCell>
+                  <TableHeadCell>Nilai</TableHeadCell>
+                  <TableHeadCell>Status</TableHeadCell>
+                  {showPredikat && <TableHeadCell>Predikat</TableHeadCell>}
+                  <TableHeadCell>Tanggal</TableHeadCell>
+                  <TableHeadCell>Aksi</TableHeadCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {scoreRecords.map((score, index) => (
+                  <TableScores
+                    key={score.id}
+                    data={score}
+                    student={student}
+                    recordIndex={index + 1}
+                    showPredikat={showPredikat}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </>
       )}
     </LedgerShell>
   );

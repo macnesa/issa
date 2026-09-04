@@ -108,7 +108,7 @@ export default function History(params) {
             </tbody>
           </table>
           <div className={tw("mb-[5rem]")}>
-            <Pagination data={histories} />
+            <Pagination data={histories} onPageChange={(nextPage) => dispatch(historiesFetch(query, nextPage))} ariaLabel="Paginasi riwayat" />
           </div>
         </div>
       )}

@@ -1,13 +1,13 @@
 
-import { Outlet } from "react-router"
+import { Outlet, useLocation } from "react-router"
 import Header from "../navigation/Header"
-import BottomNav from "../navigation/BottomNav" 
+import BottomNav from "../navigation/BottomNav"
 import { fetchStudentOverview } from "../store/actions/actionCreator"
 import { useDispatch, useSelector } from "react-redux"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { hasParentSession } from '../utils/session'
 import { ErrorState, EmptyState, LoadingState } from '../shared/ui/ResourceStates'
-import { Notice } from '../shared/ui/ui'
+import { Notice, PageContainer } from '../shared/ui/ui'
 import {
   connectParentSocket,
   isEvidenceRecordEventForActiveStudent,
@@ -16,8 +16,9 @@ import {
 } from '../realtime/parentSocket'
 
 
-export default function ParentLayout() { 
+export default function ParentLayout() {
   const dispatch = useDispatch()
+  const location = useLocation()
   const [studentInsightsRefreshKey, setStudentInsightsRefreshKey] = useState(0)
   const [studentEvidenceRefreshKey, setStudentEvidenceRefreshKey] = useState(0)
   const [studentJournalRefreshKey, setStudentJournalRefreshKey] = useState(0)
@@ -25,17 +26,21 @@ export default function ParentLayout() {
   const refetchTimer = useRef(null)
   const noticeTimer = useRef(null)
   const pendingRecordTypes = useRef(new Set())
-  
+
   const {
     student: { studentDetail: studentDetailResource },
   } = useSelector((state) => state);
-  
-  
-  useEffect(() => {  
+
+
+  useEffect(() => {
     if (hasParentSession() && !studentDetailResource.loaded && !studentDetailResource.loading) {
       dispatch(fetchStudentOverview())
-    } 
+    }
   }, [dispatch, studentDetailResource.loaded, studentDetailResource.loading]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname])
 
   const { data: studentDetail, loading, loaded, error } = studentDetailResource;
   const studentId = studentDetail.profile.id;
@@ -91,20 +96,27 @@ export default function ParentLayout() {
     pendingRecordTypes.current.clear();
   }, []);
 
-  const content = loading && !studentDetail.profile.id
-    ? <LoadingState label="Loading student profile..." />
+  const content = !loaded && !error && !studentDetail.profile.id
+    ? <PageContainer><LoadingState label="Memuat profil siswa..." /></PageContainer>
     : error
-      ? <ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} />
+      ? (
+        <PageContainer>
+          <ErrorState error={error} onRetry={() => dispatch(fetchStudentOverview())} />
+        </PageContainer>
+      )
       : loaded && studentDetail.profile.id === null
-        ? <EmptyState message="Student profile is not available." />
+        ? <PageContainer><EmptyState message="Profil siswa belum tersedia." /></PageContainer>
         : <Outlet context={{
           studentEvidenceRefreshKey,
           studentInsightsRefreshKey,
           studentJournalRefreshKey,
         }} />;
-  
+
   return (
     <div className="parent-app">
+      <a className="skip-link" href="#parent-main-content">
+        Lewati ke konten utama
+      </a>
       <Header />
       {showRealtimeNotice && (
         <Notice

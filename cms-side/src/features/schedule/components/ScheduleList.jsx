@@ -1,10 +1,36 @@
 import { tw } from "../../../shared/ui/tw";
-import { LedgerShell, Surface } from "../../../shared/ui/ui";
+
+const dayLabels = { Monday: "Senin", Tuesday: "Selasa", Wednesday: "Rabu", Thursday: "Kamis", Friday: "Jumat" };
 
 export default function ScheduleList({ days, schedulesByDay }) {
-  const dayLabels = { Monday: "Senin", Tuesday: "Selasa", Wednesday: "Rabu", Thursday: "Kamis", Friday: "Jumat" };
-  return <LedgerShell className={tw("weekly-timetable")} eyebrow="Jadwal mingguan" title="Lima hari sekolah"><div className={tw("weekly-timetable__days grid gap-3 p-4 sm:grid-cols-2 lg:[grid-template-columns:repeat(5,_minmax(0,_1fr))]")}>{days.map((day) => {
-    const entries = schedulesByDay[day] || [];
-    return <Surface as="section" key={day} className={tw("weekly-timetable__day min-w-0 overflow-hidden")}><div className={tw("weekly-timetable__day-header border-b border-issa-border p-3 bg-issa-subtle")}><h2 className={tw("weekly-timetable__day-name text-issa-text text-section-title font-bold")}>{dayLabels[day] || day}</h2></div>{entries.length ? <ul className={tw("weekly-timetable__lessons m-0 p-0 list-none")}>{entries.map((schedule) => <li key={schedule.id} className={tw("weekly-timetable__lesson p-3 [&+&]:border-t [&+&]:border-issa-border")}><p className={tw("weekly-timetable__lesson-name text-issa-text text-body font-semibold leading-normal")}>{schedule.Lesson?.name || "Mata pelajaran belum tersedia"}</p><span className={tw("weekly-timetable__lesson-kkm block mt-1 text-issa-muted text-metadata")}>{schedule.Lesson?.KKM != null ? `KKM ${schedule.Lesson.KKM}` : "KKM —"}</span></li>)}</ul> : <p className={tw("weekly-timetable__empty block p-3 mt-1 text-issa-muted text-metadata")}>Belum ada mata pelajaran.</p>}</Surface>;
-  })}</div></LedgerShell>;
+  return (
+    <div className={tw("schedule-week min-w-0 border-y border-issa-border lg:grid lg:grid-cols-5 lg:divide-x lg:divide-issa-border")}>
+      {days.map((day) => {
+        const items = schedulesByDay[day] || [];
+        return (
+          <section key={day} className={tw("min-w-0 px-0 py-4 lg:px-4 lg:first:pl-0 lg:last:pr-0 max-lg:border-b max-lg:border-issa-border max-lg:last:border-b-0")} aria-labelledby={`schedule-${day}`}>
+            <div className={tw("mb-3 flex items-baseline justify-between gap-3")}>
+              <h2 id={`schedule-${day}`} className={tw("text-supporting font-semibold text-issa-text")}>{dayLabels[day] || day}</h2>
+              <span className={tw("text-metadata tabular-nums text-issa-muted")}>{items.length}</span>
+            </div>
+            {items.length ? (
+              <ol className={tw("m-0 list-none p-0")}>
+                {items.map((schedule, index) => (
+                  <li key={schedule.id || `${day}-${index}`} className={tw("grid grid-cols-[1.5rem_minmax(0,_1fr)] gap-2 border-t border-issa-border py-3 first:border-t-0 first:pt-0")}>
+                    <span className={tw("pt-0.5 text-metadata tabular-nums text-issa-muted")}>{String(index + 1).padStart(2, "0")}</span>
+                    <div className={tw("min-w-0")}>
+                      <strong className={tw("block text-supporting font-semibold text-issa-text")}>{schedule.Lesson?.name || schedule.name || "Pelajaran"}</strong>
+                      {(schedule.startTime || schedule.endTime) && <span className={tw("mt-1 block text-metadata text-issa-muted")}>{schedule.startTime || ""}{schedule.endTime ? `–${schedule.endTime}` : ""}</span>}
+                      {schedule.Lesson?.KKM !== undefined && schedule.Lesson?.KKM !== null && <span className={tw("mt-1 block text-metadata text-issa-muted")}>KKM {schedule.Lesson.KKM}</span>}
+                      {schedule.Teacher?.name && <span className={tw("mt-1 block text-metadata text-issa-muted")}>{schedule.Teacher.name}</span>}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : <p className={tw("text-metadata text-issa-muted")}>Tidak ada jadwal.</p>}
+          </section>
+        );
+      })}
+    </div>
+  );
 }

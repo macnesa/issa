@@ -17,6 +17,7 @@ import {
   assertTeacherMutationAllowed,
   readApiError,
 } from "../../../auth/demoAccess";
+import { parseScoreInput } from "../scoreValue";
 
 export default function CreateScoreForm({ studentId, onCreated }) {
   const { isDemo } = useOfflineWorkspace();
@@ -54,18 +55,22 @@ export default function CreateScoreForm({ studentId, onCreated }) {
     () => assignments.map((assignment) => ({ value: String(assignment.id), label: assignment.name })),
     [assignments],
   );
+  const scoreInputValid = parseScoreInput(form.value) !== null;
   const dependencyMessage = loadingOptions
     ? "Pilihan mata pelajaran dan penilaian sedang dimuat."
     : !form.LessonId
       ? "Pilih mata pelajaran terlebih dahulu."
       : !form.AssignmentId
         ? "Pilih penilaian untuk melanjutkan."
-        : "";
+        : !scoreInputValid
+          ? "Isi nilai bulat 0–100."
+          : "";
   const submitDisabled = loadingOptions
     || submitting
     || isDemo
     || !form.LessonId
-    || !form.AssignmentId;
+    || !form.AssignmentId
+    || !scoreInputValid;
 
   const handleStudentScoreSubmit = (event) => {
     void 'ISSA:CMS.SCORE.CREATE_STUDENT_SCORE';
@@ -75,8 +80,8 @@ export default function CreateScoreForm({ studentId, onCreated }) {
       return;
     }
     assertTeacherMutationAllowed();
-    const scoreValue = Number(form.value);
-    if (!form.LessonId || !form.AssignmentId || !Number.isInteger(scoreValue) || scoreValue < 0 || scoreValue > 100) {
+    const scoreValue = parseScoreInput(form.value);
+    if (!form.LessonId || !form.AssignmentId || scoreValue === null) {
       setMessage("Pilih mata pelajaran dan penilaian, lalu isi nilai bulat 0–100.");
       return;
     }
@@ -124,11 +129,11 @@ export default function CreateScoreForm({ studentId, onCreated }) {
   return (
     <LedgerShell
       className={tw("score-entry-ledger")}
-      eyebrow="Rekam akademik"
+      eyebrow="Penilaian baru"
       title="Catat nilai"
       description="Pilih mata pelajaran dan penilaian yang sesuai."
     >
-      <form onSubmit={handleStudentScoreSubmit} className={tw("score-entry-ledger__form p-4 max-sm:p-4")}>
+      <form onSubmit={handleStudentScoreSubmit} className={tw("score-entry-ledger__form py-5")}>
         <div className={tw("score-entry-ledger__fields grid gap-4 lg:[grid-template-columns:repeat(12,_minmax(0,_1fr))] lg:[align-items:end]")}>
           <SelectField
             id="score-lesson"
@@ -158,7 +163,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
             className={tw("score-entry-ledger__threshold flex [min-height:4rem] flex-col justify-center py-2 px-3 lg:col-span-3")}
             aria-live="polite"
           >
-            <span className={tw("text-issa-muted text-metadata font-bold tracking-metadata uppercase")}>Ambang ketuntasan</span>
+            <span className={tw("text-issa-muted text-metadata font-semibold tracking-normal")}>Ambang ketuntasan</span>
             <strong className={tw("mt-1 text-issa-text text-section-title leading-tight")}>{selectedLesson?.KKM != null ? selectedLesson.KKM : "—"}</strong>
             <small className={tw("mt-1 text-issa-muted text-metadata")}>
               {selectedLesson?.KKM != null
@@ -211,7 +216,7 @@ export default function CreateScoreForm({ studentId, onCreated }) {
       </form>
       {message && (
         <InlineNotice
-          className={tw("score-entry-ledger__message [margin:0_var(--issa-space-4)_var(--issa-space-4)] max-sm:[margin:0_var(--issa-space-4)_var(--issa-space-4)]")}
+          className={tw("score-entry-ledger__message mb-5")}
           tone={message.includes("berhasil") ? "success" : "danger"}
         >
           {message}

@@ -54,7 +54,7 @@ describe("TeacherAttentionQueue", () => {
       .toBeInTheDocument();
   });
 
-  it("menampilkan satu perubahan, satu fakta, konteks yang hilang, dan satu aksi", async () => {
+  it("menampilkan beberapa alasan relevan untuk siswa yang sama", async () => {
     const onCountChange = vi.fn();
     global.fetch = vi.fn(() => mockFetchResponse([attentionItem]));
     renderQueue({ onCountChange });
@@ -62,19 +62,13 @@ describe("TeacherAttentionQueue", () => {
     expect(await screen.findByText("Ari Wibowo")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Perlu ditinjau" }))
       .toBeInTheDocument();
-    expect(screen.getByText(
-      "Perubahan kehadiran dalam 30 hari terakhir."
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      "Kehadiran tercatat 81% pada 21 hari yang memiliki catatan."
-    )).toBeInTheDocument();
-    expect(screen.getByText(
-      "Belum ada catatan mengenai penyebab perubahan kehadiran."
-    )).toBeInTheDocument();
-    expect(screen.queryByText(/Nilai terbaru Matematika/)).not.toBeInTheDocument();
+    expect(screen.getByText("2 alasan untuk ditinjau")).toBeInTheDocument();
+    expect(screen.getByText("Kehadiran")).toBeInTheDocument();
+    expect(screen.getByText("81% pada 21 hari tercatat dalam 30 hari terakhir.")).toBeInTheDocument();
+    expect(screen.getByText("Penilaian")).toBeInTheDocument();
+    expect(screen.getByText("Matematika: 68 setelah 72. Di bawah KKM 75.")).toBeInTheDocument();
     expect(screen.queryByText("Data yang terlihat")).not.toBeInTheDocument();
     expect(screen.queryByText("Interpretasi sistem")).not.toBeInTheDocument();
-    expect(screen.queryByText("Langkah berikut")).not.toBeInTheDocument();
     expect(screen.queryByText(/NIM 2026071001/)).not.toBeInTheDocument();
 
     const row = screen.getByText("Ari Wibowo").closest("li");
@@ -82,7 +76,7 @@ describe("TeacherAttentionQueue", () => {
     expect(screen.getByRole("link", { name: "Tinjau siswa Ari Wibowo" }))
       .toHaveAttribute("href", "/students/7");
     expect(screen.getByRole("link", { name: "Tinjau siswa Ari Wibowo" }))
-      .toHaveTextContent("Tinjau siswa");
+      .toHaveTextContent("Buka siswa");
     expect(onCountChange).toHaveBeenLastCalledWith(1);
   });
 
@@ -91,7 +85,7 @@ describe("TeacherAttentionQueue", () => {
     renderQueue();
 
     expect(await screen.findByText(
-      "Tidak ada tindak lanjut yang ditandai saat ini."
+      "Tidak ada siswa yang perlu ditinjau saat ini."
     )).toBeInTheDocument();
   });
 

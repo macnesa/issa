@@ -10,6 +10,7 @@ import {
   subscribeToConnectionStatus,
 } from "../../offline-workspace/connectionStatus";
 import { searchTeacherRecords } from "./teacherSearchApi";
+import { studentRecordPath, studentTimelinePath, workflowOwners } from "../../navigation/workflowRoutes";
 
 const EMPTY_SEARCH = {
   query: "",
@@ -26,14 +27,14 @@ const groupIcons = {
 };
 
 function destinationForResult(groupType, item) {
-  if (
-    ["student", "journal", "feedback"].includes(groupType)
-    && item.studentId
-  ) {
-    return `/students/${item.studentId}`;
+  if (groupType === "student" && item.studentId) {
+    return studentRecordPath(item.studentId);
   }
-  if (groupType === "lesson") return "/schedule";
-  return "/";
+  if (["journal", "feedback"].includes(groupType) && item.studentId) {
+    return studentTimelinePath(item.studentId);
+  }
+  if (groupType === "lesson") return workflowOwners.classSchedule;
+  return workflowOwners.today;
 }
 
 function formatResultDate(value) {
@@ -192,9 +193,9 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
       loop
       shouldFilter={false}
       overlayClassName={tw("issa-dialog-backdrop fixed z-dialog-backdrop inset-0 [background:var(--issa-dialog-backdrop)] [animation:issa-dialog-backdrop-in_var(--issa-motion-default)_ease_both] teacher-command-palette__overlay")}
-      contentClassName={tw("issa-dialog-panel teacher-command-palette fixed left-4 right-4 top-[clamp(var(--issa-space-3),8vh,4.5rem)] z-dialog mx-auto grid w-auto max-w-[42rem] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden rounded-dialog border-emphasis border-issa-border-strong bg-issa-surface shadow-dialog [max-height:calc(100dvh_-_var(--issa-space-6))] max-[640px]:left-2 max-[640px]:right-2 max-[640px]:top-2 max-[640px]:[max-height:calc(100dvh_-_var(--issa-space-4))]")}
+      contentClassName={tw("issa-dialog-panel teacher-command-palette fixed left-4 right-4 top-[clamp(var(--issa-space-3),8vh,4.5rem)] z-dialog mx-auto grid w-auto max-w-[44rem] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden rounded-dialog border border-issa-border bg-issa-surface shadow-dialog [max-height:calc(100dvh_-_var(--issa-space-6))] max-[640px]:left-2 max-[640px]:right-2 max-[640px]:top-2 max-[640px]:[max-height:calc(100dvh_-_var(--issa-space-4))]")}
     >
-      <div className={tw("teacher-command-palette__search-row grid h-16 min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b-emphasis border-issa-border-strong bg-issa-surface px-4 focus-within:border-b-issa-selection focus-within:[box-shadow:inset_0_calc(-1_*_var(--issa-border-width-emphasis))_0_var(--issa-selection)] max-[640px]:h-14 max-[640px]:gap-2 max-[640px]:px-3")}>
+      <div className={tw("teacher-command-palette__search-row grid h-16 min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-issa-border bg-issa-surface px-5 focus-within:border-b-issa-border-strong max-[640px]:h-14 max-[640px]:gap-2 max-[640px]:px-3")}>
         <Icon
           name="search"
           className={tw("teacher-command-palette__search-icon flex-none text-issa-accent text-xl")}
@@ -205,7 +206,7 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
           placeholder="Cari data ISSA…"
           className={tw("teacher-command-palette__input h-full min-h-0 min-w-0 w-full border-0 bg-transparent p-0 text-body leading-normal text-issa-text outline-none [box-shadow:none] placeholder:text-issa-muted placeholder:opacity-100 focus:outline-none focus-visible:outline-none focus-visible:outline-offset-0")}
         />
-        <kbd className={tw("teacher-command-palette__escape hidden flex-none rounded-control border border-issa-border-strong bg-issa-subtle px-2 py-1 font-sans text-metadata font-bold leading-none text-issa-muted sm:inline")}>
+        <kbd className={tw("teacher-command-palette__escape hidden flex-none rounded-md bg-issa-subtle px-2 py-1 font-sans text-metadata font-semibold leading-none text-issa-muted sm:inline")}>
           ESC
         </kbd>
         <button
@@ -293,18 +294,18 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
           <Command.Group
             key={group.type}
             heading={group.label}
-            className={tw("teacher-command-palette__group mb-2 min-w-0 overflow-hidden border-t border-issa-border first:border-t-0 [&_[cmdk-group-heading]]:border-l-option [&_[cmdk-group-heading]]:border-issa-accent [&_[cmdk-group-heading]]:bg-issa-subtle [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-table-header [&_[cmdk-group-heading]]:font-bold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-product [&_[cmdk-group-heading]]:text-issa-accent")}
+            className={tw("teacher-command-palette__group mb-3 min-w-0 overflow-hidden border-t border-issa-border first:border-t-0 [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:text-table-header [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:tracking-normal [&_[cmdk-group-heading]]:text-issa-muted")}
           >
             {group.items.map((item) => (
               <Command.Item
                 key={`${group.type}-${item.id}`}
                 value={`${group.type}-${item.id}`}
                 onSelect={() => openSearchResult(group.type, item)}
-                className={tw("teacher-command-palette__item mt-1 flex min-w-0 cursor-pointer items-start gap-3 rounded-surface border border-transparent border-l-accent p-3 outline-none transition-colors duration-default hover:border-l-issa-border-strong hover:bg-issa-page data-[selected=true]:border-issa-border-strong data-[selected=true]:border-l-issa-accent data-[selected=true]:bg-issa-subtle data-[selected=true]:text-issa-text data-[selected=true]:[&_.teacher-command-palette__item-icon]:border-issa-border-strong data-[selected=true]:[&_.teacher-command-palette__item-icon]:bg-issa-surface data-[selected=true]:[&_.teacher-command-palette__item-icon]:text-issa-text data-[selected=true]:[&_.teacher-command-palette__item-arrow]:opacity-100 motion-reduce:transition-none max-[640px]:gap-2 max-[640px]:px-2 max-[640px]:py-3")}
+                className={tw("teacher-command-palette__item mt-1 flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border border-transparent p-3 outline-none transition-colors duration-default hover:bg-issa-subtle data-[selected=true]:border-issa-border data-[selected=true]:bg-issa-subtle data-[selected=true]:text-issa-text data-[selected=true]:[&_.teacher-command-palette__item-icon]:border-issa-border-strong data-[selected=true]:[&_.teacher-command-palette__item-icon]:bg-issa-surface data-[selected=true]:[&_.teacher-command-palette__item-icon]:text-issa-text data-[selected=true]:[&_.teacher-command-palette__item-arrow]:opacity-100 motion-reduce:transition-none max-[640px]:gap-2 max-[640px]:px-2 max-[640px]:py-3")}
               >
                 <Icon
                   name={groupIcons[group.type] || "search"}
-                  className={tw("teacher-command-palette__item-icon grid [width:var(--issa-control-height-compact)] [height:var(--issa-control-height-compact)] [flex:0_0_var(--issa-control-height-compact)] place-items-center [margin-top:0.125rem] border border-issa-border rounded-control bg-issa-subtle text-issa-accent [font-size:1.125rem]")}
+                  className={tw("teacher-command-palette__item-icon grid [width:var(--issa-control-height-compact)] [height:var(--issa-control-height-compact)] [flex:0_0_var(--issa-control-height-compact)] place-items-center [margin-top:0.125rem] rounded-lg bg-issa-subtle text-issa-accent [font-size:1.125rem]")}
                 />
                 <span className={tw("teacher-command-palette__item-copy min-w-0 flex-1")}>
                   <span className={tw("teacher-command-palette__item-heading flex min-w-0 flex-wrap items-baseline justify-between [gap:var(--issa-space-1)_var(--issa-space-3)]")}>
@@ -336,7 +337,7 @@ export default function TeacherCommandPalette({ open, onOpenChange }) {
         ))}
       </Command.List>
 
-      <div className={tw("teacher-command-palette__footer flex min-w-0 items-center justify-between gap-3 border-t border-issa-border-strong bg-issa-subtle px-4 py-2 text-metadata text-issa-muted [overflow-wrap:anywhere] [&_kbd]:rounded-control [&_kbd]:border [&_kbd]:border-issa-border-strong [&_kbd]:bg-issa-surface [&_kbd]:px-1 [&_kbd]:py-0.5 [&_kbd]:font-sans [&_kbd]:text-metadata [&_kbd]:font-bold [&_kbd]:leading-none [&_kbd]:text-issa-text")}>
+      <div className={tw("teacher-command-palette__footer flex min-w-0 items-center justify-between gap-3 border-t border-issa-border bg-issa-surface px-5 py-2.5 text-metadata text-issa-muted [overflow-wrap:anywhere] [&_kbd]:rounded-control [&_kbd]:border [&_kbd]:border-issa-border-strong [&_kbd]:bg-issa-surface [&_kbd]:px-1 [&_kbd]:py-0.5 [&_kbd]:font-sans [&_kbd]:text-metadata [&_kbd]:font-bold [&_kbd]:leading-none [&_kbd]:text-issa-text")}>
         <span>Hasil diurutkan oleh server</span>
         <span className={tw("teacher-command-palette__footer-hints hidden flex-none items-center gap-2 sm:flex")}>
           <span className={tw("inline-flex gap-1")}><kbd>↑</kbd><kbd>↓</kbd></span>

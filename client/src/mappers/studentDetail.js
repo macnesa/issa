@@ -43,14 +43,17 @@ export function mapStudentResponseToOverview(studentResponse) {
       return {
         id: attendanceRecord.id ?? null,
         status: attendanceRecord.status ?? '',
-        createdAt: attendanceRecord.createdAt ?? null,
+        // Keep the existing overview shape; consumers receive the school day,
+        // not the time a delayed/offline record happened to be inserted.
+        createdAt: attendanceRecord.attendanceDate ?? attendanceRecord.createdAt ?? null,
       };
     }),
     scores: scores.map((scoreResponse) => {
       const score = toPlainObjectRecord(scoreResponse);
       const lesson = toPlainObjectRecord(score.Lesson);
       const assignment = toPlainObjectRecord(score.Assignment);
-      const scoreValue = Number(score.value);
+      const scoreValue = score.value === null || score.value === undefined || score.value === ''
+        ? NaN : Number(score.value);
       const rawKkm = lesson.KKM;
       const kkm = isNil(rawKkm) || rawKkm === ''
         ? null
@@ -66,7 +69,7 @@ export function mapStudentResponseToOverview(studentResponse) {
         value: Number.isFinite(scoreValue) ? scoreValue : null,
         category: score.category ?? '',
         passed: passedFromStatus || passedFromValue,
-        recordedAt: score.createdAt ?? null,
+        recordedAt: score.recordedAt ?? score.createdAt ?? null,
         lesson: {
           id: lesson.id ?? null,
           name: lesson.name ?? '',

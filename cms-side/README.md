@@ -1,70 +1,120 @@
-# Getting Started with Create React App
+# ISSA Teacher CMS
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Teacher-facing CMS built with React 18, Vite, Redux, React Query, and an IndexedDB-backed offline workspace.
 
-## Available Scripts
+## Requirements
 
-In the project directory, you can run:
+- Node.js 20+
+- npm
+- API base URL for the environment you are running
 
-### `npm start`
+## Local development
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+cp .env.example .env.local
+npm ci
+npm run dev
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The Vite development server runs on:
 
-### `npm test`
+```text
+http://localhost:3001
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+By default, `.env.example` points the CMS to a local API on `http://localhost:3000`. Change `VITE_API_BASE_URL` in `.env.local` if your local API uses another address.
 
-### `npm run build`
+## Environment
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The frontend reads:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```text
+VITE_API_BASE_URL
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Rules:
 
-### `npm run eject`
+- `issa.macnesa.com` and `issa-cms.macnesa.com` always use `https://issa-api.macnesa.com`.
+- Local development may use a localhost API target.
+- A production build is rejected when `VITE_API_BASE_URL` points to localhost, preventing a deployable artifact from accidentally embedding a local API address.
+- Preview environments should set an explicit deployable HTTPS API URL.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Tests
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Run the complete test suite:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm test
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Watch mode:
 
-## Learn More
+```bash
+npm run test:watch
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Feature-specific test commands remain available:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm run test:student-insights
+npm run test:student-evidence
+npm run test:student-learning-journal
+```
 
-### Code Splitting
+## Production build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Set a deployable API URL, then build:
 
-### Analyzing the Bundle Size
+```bash
+VITE_API_BASE_URL=https://issa-api.macnesa.com npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Vite writes the production artifact to:
 
-### Making a Progressive Web App
+```text
+dist/
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+`npm run check` runs the full test suite followed by a production build.
 
-### Advanced Configuration
+## Firebase Hosting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+`firebase.json` serves `dist/` and rewrites application routes to `index.html`.
 
-### Deployment
+Typical release flow:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm ci
+npm test
+VITE_API_BASE_URL=https://issa-api.macnesa.com npm run build
+firebase deploy --only hosting
+```
 
-### `npm run build` fails to minify
+The Firebase configuration also applies baseline security headers. A successful deploy command is not a substitute for production verification.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Fieldwork architecture documents
+
+The active teacher experience is governed by separate layers:
+
+- `src/shared/ui/FIELDWORK_UI_SYSTEM.md` — visual and interaction system.
+- `FIELDWORK_DOMAIN_MODEL.md` — domain, canonicality, time, and UI truth contract.
+- `FIELDWORK_DATA_CONTRACT_AUDIT.md` — source-grounded mapping of current APIs/data to the Fieldwork model and the bounded next architecture step.
+- `src/shared/data/RESOURCE_TRUTH_CONTRACT.md` — runtime status/provenance semantics used by the migrated Student data surfaces.
+- `src/navigation/WORKFLOW_OWNERSHIP.md` — canonical task ownership and shortcut rules for the low-learning-curve teacher flow.
+
+The domain documents remain architecture constraints rather than backend-migration approval. The Resource Truth contract is now implemented client-side; it does not alter persistence schemas.
+
+## Offline behavior
+
+The CMS includes an offline application shell and IndexedDB-backed teacher workspace. Pending mutations are synchronized when connectivity returns. Do not clear browser storage on a device with unsynchronized teacher work unless that data loss is intentional.
+
+## Codebook scripts
+
+The repository still exposes:
+
+```bash
+npm run codebook:check
+npm run codebook:index
+```
+
+Those commands expect `../scripts/check-codebook.js`. They only work when this CMS directory is inside the parent workspace that provides that script.

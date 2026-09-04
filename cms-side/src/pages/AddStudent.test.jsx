@@ -33,6 +33,8 @@ const studentDetailMocks = vi.hoisted(() => ({
   },
 }));
 
+const defaultStudentDetail = studentDetailMocks.student;
+
 vi.mock("react-redux", () => ({
   useDispatch: () => studentDetailMocks.dispatch,
   useSelector: (selector) => selector({
@@ -78,14 +80,6 @@ vi.mock("../offline-workspace/attendanceOffline", () => ({
   }),
 }));
 
-vi.mock("../features/attendance/components/AttendanceRecordEditor", () => ({
-  default: ({ readOnly }) => (
-    <div data-testid="attendance-editor">
-      Attendance editor {readOnly ? "read-only" : "editable"}
-    </div>
-  ),
-}));
-
 vi.mock("../features/student-learning-journal/components/StudentLearningJournalSection", () => ({
   default: () => <div>Jurnal siswa</div>,
 }));
@@ -102,6 +96,14 @@ vi.mock("../features/feedback/components/FeedbackForm", () => ({
 
 vi.mock("../features/feedback/components/FeedbackHistory", () => ({
   default: () => <div>Histori feedback</div>,
+}));
+
+vi.mock("../features/scores/components/CreateScoreForm", () => ({
+  default: () => <div>Score form</div>,
+}));
+
+vi.mock("../features/scores/components/ScoreHistory", () => ({
+  default: ({ scores }) => <div>Score history {scores?.[0]?.Lesson?.name}</div>,
 }));
 
 vi.mock("../features/ai-learning-narrative/AiNarrativeWorkspace", () => ({
@@ -125,22 +127,15 @@ function renderStudentDetail() {
   );
 }
 
-describe("Student Detail institutional workspace", () => {
+describe("Student Detail Fieldwork workspace", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    studentDetailMocks.student = defaultStudentDetail;
     studentDetailMocks.isDemo = false;
-    studentDetailMocks.fetchStudentDetail.mockReturnValue({
-      type: "student/detail",
-    });
-    studentDetailMocks.fetchStudentList.mockReturnValue({
-      type: "student/list",
-    });
-    studentDetailMocks.storeStudentDetail.mockReturnValue({
-      type: "student/store",
-    });
-    studentDetailMocks.dispatch.mockResolvedValue(
-      studentDetailMocks.student
-    );
+    studentDetailMocks.fetchStudentDetail.mockReturnValue({ type: "student/detail" });
+    studentDetailMocks.fetchStudentList.mockReturnValue({ type: "student/list" });
+    studentDetailMocks.storeStudentDetail.mockReturnValue({ type: "student/store" });
+    studentDetailMocks.dispatch.mockResolvedValue(studentDetailMocks.student);
     studentDetailMocks.loadWorkspace.mockResolvedValue({
       student: studentDetailMocks.student,
       snapshot: { journalEntries: [] },
@@ -149,57 +144,69 @@ describe("Student Detail institutional workspace", () => {
     vi.stubGlobal("fetch", vi.fn(() => response([])));
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
+  afterEach(() => vi.unstubAllGlobals());
 
-  test("menampilkan identitas faktual dan kelima tab yang dapat dipindahkan", async () => {
+  test("menggunakan Ringkasan, Perjalanan, dan Penilaian sebagai tiga konteks record", async () => {
     renderStudentDetail();
 
-    expect(await screen.findByRole("heading", {
-      name: "Ayu Pratama",
-      level: 1,
-    })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Ayu Pratama", level: 1 })).toBeInTheDocument();
     expect(screen.getByText("2026071001")).toHaveClass("issa-no-wrap");
     expect(screen.getByText("1A")).toBeInTheDocument();
 
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs).toHaveLength(5);
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "student-workspace-summary"
+    expect(screen.getAllByRole("tab")).toHaveLength(3);
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("id", "student-workspace-summary");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Perjalanan" }));
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("id", "student-workspace-timeline");
+    expect(screen.getByText("Matematika: 88")).toBeInTheDocument();
+
+    expect(screen.queryByRole("button", { name: "Kehadiran" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Kelola di Kelas" })).toHaveAttribute(
+      "href",
+      "/attendance?studentId=7&name=Ayu+Pratama&date=2026-07-29"
     );
 
-    fireEvent.click(screen.getByRole("tab", { name: "Kehadiran" }));
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "student-workspace-attendance"
-    );
-    expect(screen.getByTestId("attendance-editor")).toHaveTextContent(
-      "editable"
-    );
-
-    fireEvent.click(screen.getByRole("tab", { name: "Nilai" }));
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "student-workspace-scores"
-    );
-    expect(screen.getByText("Matematika")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("tab", { name: "Jurnal & Bukti" }));
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "student-workspace-journal-evidence"
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
+    fireEvent.click(screen.getByRole("button", { name: "Catatan" }));
     expect(screen.getByText("Jurnal siswa")).toBeInTheDocument();
-    expect(screen.getByText("Bukti siswa")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Tutup" }));
 
-    fireEvent.click(screen.getByRole("tab", { name: "Feedback" }));
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "student-workspace-feedback"
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
+    fireEvent.click(screen.getByRole("button", { name: "Bukti" }));
+    expect(screen.getByText("Bukti siswa")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Tutup" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
+    fireEvent.click(screen.getByRole("button", { name: "Feedback" }));
     expect(screen.getByText("Form feedback editable")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Penilaian" }));
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("id", "student-workspace-assessment");
+    expect(screen.getByText(/Score history Matematika/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Catat nilai" }));
+    expect(screen.getByText("Score form")).toBeInTheDocument();
+  });
+
+  test("proyeksi student yang tidak menyertakan histori tidak diklaim sebagai empty", async () => {
+    studentDetailMocks.student = {
+      id: 7,
+      name: "Ayu Pratama",
+      NIM: "2026071001",
+      Class: { name: "1A" },
+    };
+    studentDetailMocks.loadWorkspace.mockResolvedValue({
+      student: studentDetailMocks.student,
+      snapshot: null,
+      source: "remote",
+    });
+
+    renderStudentDetail();
+
+    expect(await screen.findByText("Histori kehadiran tidak tersedia")).toBeInTheDocument();
+    expect(
+      screen.getByText("Detail siswa ini tidak menyertakan proyeksi penilaian.")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Belum ada nilai")).not.toBeInTheDocument();
   });
 
   test("mode demo tetap membaca record tetapi mengunci editor mutasi", async () => {
@@ -207,29 +214,22 @@ describe("Student Detail institutional workspace", () => {
     renderStudentDetail();
 
     await screen.findByRole("heading", { name: "Ayu Pratama" });
-    fireEvent.click(screen.getByRole("tab", { name: "Kehadiran" }));
-    expect(screen.getByTestId("attendance-editor")).toHaveTextContent(
-      "read-only"
-    );
-
-    fireEvent.click(screen.getByRole("tab", { name: "Feedback" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Perjalanan" }));
+    expect(screen.queryByRole("button", { name: "Kehadiran" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
+    fireEvent.click(screen.getByRole("button", { name: "Feedback" }));
     expect(screen.getByText("Form feedback read-only")).toBeInTheDocument();
     expect(studentDetailMocks.updateStudentRecord).not.toHaveBeenCalled();
   });
 
-  test("keyboard tab berpindah ke workspace berikutnya", async () => {
+  test("keyboard tab berpindah dari Ringkasan ke Perjalanan", async () => {
     renderStudentDetail();
-    const summary = await screen.findByRole("tab", { name: "Ringkasan" });
-
-    fireEvent.keyDown(summary, { key: "ArrowRight" });
+    const overview = await screen.findByRole("tab", { name: "Ringkasan" });
+    fireEvent.keyDown(overview, { key: "ArrowRight" });
 
     await waitFor(() => {
-      expect(screen.getByRole("tab", { name: "Kehadiran" }))
-        .toHaveAttribute("aria-selected", "true");
+      expect(screen.getByRole("tab", { name: "Perjalanan" })).toHaveAttribute("aria-selected", "true");
     });
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "student-workspace-attendance"
-    );
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("id", "student-workspace-timeline");
   });
 });

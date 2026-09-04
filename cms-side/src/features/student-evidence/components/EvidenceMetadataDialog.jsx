@@ -26,9 +26,9 @@ function correctionErrorMessage(error) {
     return "Perubahan data tidak tersedia dalam mode demo.";
   }
   if (error?.status === 401 || error?.status === 403) {
-    return "Evidence tidak dapat dikoreksi. Evidence mungkin dibuat oleh guru lain.";
+    return "Bukti tidak dapat dikoreksi. Bukti mungkin dibuat oleh guru lain.";
   }
-  return error?.message || "Koreksi evidence gagal disimpan.";
+  return error?.message || "Koreksi bukti gagal disimpan.";
 }
 
 export default function EvidenceMetadataDialog({
@@ -77,7 +77,7 @@ export default function EvidenceMetadataDialog({
       nextErrors.title = "Judul wajib diisi dan maksimal 120 karakter.";
     }
     if (!evidenceCategoryOptions.some(({ value }) => value === form.category)) {
-      nextErrors.category = "Pilih kategori evidence yang valid.";
+      nextErrors.category = "Pilih kategori bukti yang valid.";
     }
     if (!parseLocalDateValue(form.observedAt)) {
       nextErrors.observedAt = "Tanggal observasi wajib valid.";
@@ -87,7 +87,7 @@ export default function EvidenceMetadataDialog({
     }
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      setStatusMessage("Periksa kembali metadata evidence.");
+      setStatusMessage("Periksa kembali metadata bukti.");
       return;
     }
 
@@ -125,7 +125,7 @@ export default function EvidenceMetadataDialog({
       show={Boolean(evidence)}
       size="issaWide"
     >
-      <ModalHeader>Edit metadata evidence</ModalHeader>
+      <ModalHeader>Edit metadata bukti</ModalHeader>
       <form onSubmit={handleSubmit} noValidate>
         <ModalBody>
           <p className={tw("issa-dialog-copy mt-1 px-4 text-supporting leading-normal text-issa-muted")}>
@@ -145,7 +145,7 @@ export default function EvidenceMetadataDialog({
           <div className={tw("evidence-metadata-dialog__notice grid gap-1 m-4 [&_span]:text-issa-muted [&_span]:text-metadata")}>
             <strong>Gambar tidak dapat diganti dari form ini.</strong>
             <span>
-              Untuk mengganti gambar, cabut evidence lalu unggah evidence baru.
+              Untuk mengganti gambar, cabut bukti lalu unggah bukti baru.
             </span>
           </div>
 

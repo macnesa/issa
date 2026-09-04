@@ -39,7 +39,7 @@ export default function LoginForm({
             </span>
             <div className="login-brand__copy">
               <strong>ISSA Parent</strong>
-              <span>Rekam perkembangan siswa</span>
+              <span>Jendela perkembangan anak</span>
             </div>
           </div>
           <a
@@ -60,10 +60,9 @@ export default function LoginForm({
         <div className="login-composition">
           <section className="login-context">
             <p>Akses orang tua</p>
-            <h1>Ikuti perkembangan anak dengan jelas.</h1>
+            <h1>Ikuti cerita belajar anak.</h1>
             <span>
-              Kehadiran, perkembangan akademik, jurnal, bukti belajar, dan
-              catatan guru tersedia dalam satu rekam sekolah.
+              Kabar dari guru, hasil karya, dan jadwal sekolah anak dalam satu tempat.
             </span>
           </section>
 

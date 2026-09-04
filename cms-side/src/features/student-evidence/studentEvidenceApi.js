@@ -97,5 +97,5 @@ export async function retractStudentEvidence(studentId, evidenceId, reason) {
     }
   );
 
-  return parseResponse(response, "Evidence gagal dicabut.");
+  return parseResponse(response, "Bukti gagal dicabut.");
 }

@@ -1,7 +1,13 @@
 export const parentNavigation = [
-  { label: 'Ringkasan', path: '/', end: true },
-  { label: 'Kehadiran', path: '/attendance' },
-  { label: 'Perkembangan', shortLabel: 'Progres', path: '/progress' },
-  { label: 'Jadwal', path: '/schedule' },
-  { label: 'Aktivitas', path: '/activities' },
+  { label: 'Hari ini', path: '/', end: true, activePrefixes: ['/'] },
+  { label: 'Perjalanan', path: '/journey', activePrefixes: ['/journey', '/attendance', '/progress'] },
+  { label: 'Jadwal', path: '/schedule', activePrefixes: ['/schedule'] },
 ];
+
+export function isParentNavigationActive(navigationItem, pathname) {
+  if (!navigationItem || typeof pathname !== 'string') return false;
+  if (navigationItem.end) return pathname === navigationItem.path;
+  return (navigationItem.activePrefixes || [navigationItem.path]).some((prefix) => (
+    pathname === prefix || pathname.startsWith(`${prefix}/`)
+  ));
+}

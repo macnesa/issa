@@ -1,5 +1,5 @@
 const express = require('express');
-const { authenticateTeacherRequest } = require('../../middlewares/authentication');
+const { authenticateActorRequest, authenticateTeacherRequest } = require('../../middlewares/authentication');
 const {
   requireWritableAccount,
 } = require('../../middlewares/public-demo-access');
@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get(
   '/:id/feedbacks',
-  authenticateTeacherRequest,
+  authenticateActorRequest,
   feedbackController.getStudentFeedbackHistory
 );
 

@@ -33,7 +33,7 @@ describe("Feedback controls in demo mode", () => {
     expect(props.onAiDraftRequested).toHaveBeenCalledTimes(1);
     expect(props.onFeedbackChange).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("button", {
-      name: "Simpan Feedback",
+      name: "Simpan feedback",
     })).toBeDisabled();
     expect(screen.getByText(
       "Draft AI belum disimpan. Penyimpanan dinonaktifkan dalam mode demo."

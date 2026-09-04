@@ -213,34 +213,34 @@ function Workspace({
       theme={{
         content: {
           base: "ai-workspace relative w-full max-h-[calc(100dvh_-_var(--issa-space-8))] overflow-x-hidden overflow-y-auto outline-none max-[640px]:max-h-[96dvh]",
-          inner: "relative flex flex-col overflow-visible rounded-dialog border-emphasis border-issa-border-strong bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] max-[640px]:rounded-b-none max-[640px]:border-x-0 max-[640px]:border-b-0",
+          inner: "relative flex flex-col overflow-visible rounded-dialog border border-issa-border-strong bg-issa-surface shadow-dialog [animation:issa-dialog-panel-in_var(--issa-motion-slow)_ease_both] max-[640px]:rounded-b-none max-[640px]:border-x-0 max-[640px]:border-b-0",
         },
       }}
     >
-          <header className={tw("ai-workspace__header flex min-w-0 items-start justify-between gap-4 border-b-emphasis border-issa-border-strong bg-issa-text px-6 py-4 max-[640px]:px-4")}>
+          <header className={tw("ai-workspace__header flex min-w-0 items-start justify-between gap-4 border-b border-issa-border bg-issa-surface px-6 py-5 max-[640px]:px-4")}>
             <div className={tw("ai-workspace__header-copy min-w-0")}>
-              <p className={tw("ai-workspace__eyebrow text-issa-focus text-eyebrow font-bold tracking-product uppercase")}>
-                AI-assisted drafting instrument
+              <p className={tw("ai-workspace__eyebrow text-issa-accent text-eyebrow font-semibold tracking-normal")}>
+                Draf berbantuan AI
               </p>
               <ModalHeader
                 className={tw("contents")}
                 theme={{
                   base: "contents",
-                  title: "ai-workspace__title mt-1 text-issa-inverse text-page-title font-bold leading-tight",
+                  title: "ai-workspace__title mt-1 text-issa-text text-page-title font-semibold leading-tight",
                 }}
               >
                 Susun draf perkembangan
               </ModalHeader>
-              <p className={tw("ai-workspace__intro [max-width:65ch] mt-2 text-issa-inverse-muted text-supporting leading-normal")}>
-                Record sekolah menjadi dasar draf. Guru meninjau, mengedit, dan
-                memutuskan apakah isi dipindahkan ke Feedback.
+              <p className={tw("ai-workspace__intro [max-width:65ch] mt-2 text-issa-muted text-supporting leading-relaxed")}>
+                Catatan sekolah menjadi dasar draf. Guru tetap meninjau, mengedit, dan
+                memutuskan apakah isi layak dipindahkan ke feedback.
               </p>
             </div>
             <TertiaryButton
               type="button"
               compact
-              className={tw("ai-workspace__close min-w-control border-issa-border-strong p-1 text-2xl leading-none text-issa-inverse enabled:hover:bg-[color-mix(in_srgb,var(--issa-surface)_10%,transparent)] enabled:hover:text-issa-inverse")}
-              aria-label="Tutup workspace"
+              className={tw("ai-workspace__close min-w-control border-transparent p-1 text-2xl leading-none text-issa-muted enabled:hover:bg-issa-subtle enabled:hover:text-issa-text")}
+              aria-label="Tutup draf"
               onClick={closeWorkspace}
             >
               ×
@@ -376,11 +376,11 @@ function Workspace({
           {draft && (
             <div className={tw(bodyClasses)}>
               <div
-                className={tw("ai-workspace__draft-notice grid gap-1 border border-issa-border-strong border-l-accent border-l-issa-accent bg-issa-subtle px-4 py-3 text-supporting leading-normal text-issa-text [&_strong]:text-metadata [&_strong]:uppercase [&_strong]:tracking-metadata")}
+                className={tw("ai-workspace__draft-notice grid gap-1 border-y border-issa-border bg-transparent py-3 text-supporting leading-normal text-issa-text [&_strong]:text-metadata [&_strong]:font-semibold [&_strong]:text-issa-accent")}
                 role="status"
               >
                 <strong>
-                  AI-assisted draft · belum menjadi Feedback
+                  Draf berbantuan AI · belum menjadi feedback
                 </strong>
                 <span>
                   Guru tetap perlu meninjau setiap pernyataan dan sumber sebelum
@@ -429,7 +429,7 @@ function Workspace({
               <div className={tw("ai-workspace__draft-sections grid min-w-0 gap-4")}>
                 {sections.map((section, sectionIndex) => (
                   <section
-                    className={tw("ai-workspace__draft-section min-w-0 border border-issa-border-strong [border-left:0.25rem_solid_var(--issa-accent)] bg-issa-page p-4")}
+                    className={tw("ai-workspace__draft-section min-w-0 border-y border-issa-border bg-transparent py-4")}
                     key={section.localId}
                   >
                     <div className={tw("ai-workspace__draft-section-header mb-3 flex min-w-0 items-start justify-between gap-4 max-[640px]:flex-col max-[640px]:gap-2")}>
@@ -477,7 +477,7 @@ function Workspace({
                     </label>
                     {section.directQuote && (
                       <blockquote className={tw("ai-workspace__quote mt-3 grid min-w-0 gap-2 border border-issa-border border-l-accent border-l-issa-info bg-issa-surface p-3 text-issa-text")}>
-                        <span className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-muted")}>
+                        <span className={tw("text-metadata font-semibold tracking-normal text-issa-muted")}>
                           Kutipan siswa yang tercatat
                         </span>
                         <p className={tw("[overflow-wrap:anywhere] leading-normal")}>
@@ -527,8 +527,8 @@ function Workspace({
                   aria-label={`Detail sumber ${selectedSource.sourceRef}`}
                   tabIndex={0}
                 >
-                  <small className={tw("text-metadata font-bold uppercase tracking-metadata text-issa-accent")}>
-                    Source record · {selectedSource.sourceRef}
+                  <small className={tw("text-metadata font-semibold tracking-normal text-issa-accent")}>
+                    Catatan sumber · {selectedSource.sourceRef}
                   </small>
                   <strong>{selectedSource.label}</strong>
                   <span className={tw("text-metadata text-issa-muted")}>

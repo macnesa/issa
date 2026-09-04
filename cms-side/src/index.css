@@ -19,39 +19,39 @@
 @tailwind utilities;
 
 :root {
-  /* Institutional Ledger System: canonical semantic colors. */
-  --issa-page: #f2f7f6;
-  --issa-surface: #fffdf7;
-  --issa-surface-subtle: #edf6f4;
-  --issa-surface-disabled: #edf2f1;
-  --issa-text: #173e52;
-  --issa-text-muted: #61757c;
-  --issa-text-disabled: #78898d;
-  --issa-text-inverse: var(--issa-surface);
-  --issa-text-inverse-muted: #c7e1eb;
-  --issa-accent: #245e73;
-  --issa-selection: #6bbfbc;
-  --issa-border: #d7e5e3;
-  --issa-border-strong: #aac9ca;
-  --issa-success: #047857;
-  --issa-warning: #b45309;
-  --issa-danger: #b91c1c;
-  --issa-info: #0369a1;
-  --issa-focus: #b9e3e0;
+  /* Fieldwork: human, light-first operational workspace. */
+  --issa-page: #f6f6f2;
+  --issa-surface: #fcfcfa;
+  --issa-surface-subtle: #efefea;
+  --issa-surface-disabled: #ecece7;
+  --issa-text: #25312f;
+  --issa-text-muted: #68736f;
+  --issa-text-disabled: #929a96;
+  --issa-text-inverse: #fbfcfa;
+  --issa-text-inverse-muted: #dce6e2;
+  --issa-accent: #356f66;
+  --issa-selection: #d8e9e4;
+  --issa-border: #dedfd9;
+  --issa-border-strong: #c8ccc5;
+  --issa-success: #27765a;
+  --issa-warning: #a66218;
+  --issa-danger: #b6423c;
+  --issa-info: #3c6f8e;
+  --issa-focus: #75aaa1;
 
-  /* Institutional geometry and elevation. */
+  /* Instrument-like geometry: compact controls, restrained surfaces. */
   --issa-control-height: 2.5rem;
   --issa-control-height-compact: 2.25rem;
-  --issa-radius-control: 0.25rem;
-  --issa-radius-surface: 0.375rem;
-  --issa-radius-dialog: 0.5rem;
+  --issa-radius-control: 0.5rem;
+  --issa-radius-surface: 0.625rem;
+  --issa-radius-dialog: 0.75rem;
   --issa-radius-pill: 999px;
   --issa-border-width: 1px;
   --issa-border-width-emphasis: 2px;
-  --issa-shadow-elevated: 0.2rem 0.22rem 0 rgba(23, 62, 82, 0.12);
-  --issa-shadow-dialog: 0 0.75rem 2rem rgba(14, 42, 58, 0.18);
+  --issa-shadow-elevated: 0 1px 2px rgba(37, 49, 47, 0.035), 0 8px 22px rgba(37, 49, 47, 0.045);
+  --issa-shadow-dialog: 0 1.5rem 4rem rgba(30, 42, 39, 0.17);
 
-  /* Institutional spacing, typography, width, motion, and layers. */
+  /* Operational rhythm: readable density without dashboard-card spacing. */
   --issa-space-1: 0.25rem;
   --issa-space-2: 0.5rem;
   --issa-space-3: 0.75rem;
@@ -59,13 +59,13 @@
   --issa-space-6: 1.5rem;
   --issa-space-8: 2rem;
   --issa-space-12: 3rem;
-  --issa-content-max: 80rem;
-  --issa-font-size-product: 0.75rem;
+  --issa-content-max: 92rem;
+  --issa-font-size-product: 0.8125rem;
   --issa-font-size-eyebrow: 0.75rem;
-  --issa-font-size-page-title: clamp(1.75rem, 2.5vw, 2.125rem);
+  --issa-font-size-page-title: clamp(1.625rem, 2vw, 2rem);
   --issa-font-size-section-title: 1.125rem;
-  --issa-font-size-body: 0.875rem;
-  --issa-font-size-supporting: 0.8125rem;
+  --issa-font-size-body: 0.9375rem;
+  --issa-font-size-supporting: 0.875rem;
   --issa-font-size-label: 0.875rem;
   --issa-font-size-metadata: 0.75rem;
   --issa-font-size-table: 0.875rem;
@@ -78,9 +78,9 @@
   --issa-weight-bold: 700;
   --issa-line-height-tight: 1.25;
   --issa-line-height-body: 1.5;
-  --issa-tracking-title: -0.02em;
-  --issa-tracking-metadata: 0.08em;
-  --issa-tracking-product: 0.1em;
+  --issa-tracking-title: -0.025em;
+  --issa-tracking-metadata: 0.015em;
+  --issa-tracking-product: 0.025em;
   --issa-motion-fast: 120ms;
   --issa-motion-default: 160ms;
   --issa-motion-slow: 220ms;
@@ -88,10 +88,10 @@
   --issa-z-dialog-backdrop: 140;
   --issa-z-dialog: 150;
   --issa-z-popover: 160;
-  --issa-dialog-backdrop: rgba(14, 42, 58, 0.52);
+  --issa-dialog-backdrop: rgba(24, 32, 30, 0.42);
 
   /*
-   * Compatibility aliases remain until Prompt 2 migrates every feature.
+   * Compatibility aliases remain only for feature-level migration safety.
    * New shared and reference surfaces use the --issa-* contract directly.
    */
   --page: var(--issa-page);
