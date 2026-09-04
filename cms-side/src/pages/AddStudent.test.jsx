@@ -167,17 +167,17 @@ describe("Student Detail Fieldwork workspace", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
-    fireEvent.click(screen.getByRole("button", { name: "Catatan" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Catatan Catat observasi/ }));
     expect(screen.getByText("Jurnal siswa")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tutup" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
-    fireEvent.click(screen.getByRole("button", { name: "Bukti" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bukti Tambahkan/ }));
     expect(screen.getByText("Bukti siswa")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tutup" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
-    fireEvent.click(screen.getByRole("button", { name: "Feedback" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Feedback Tulis/ }));
     expect(screen.getByText("Form feedback editable")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "Penilaian" }));
@@ -217,7 +217,7 @@ describe("Student Detail Fieldwork workspace", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Perjalanan" }));
     expect(screen.queryByRole("button", { name: "Kehadiran" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tambah" }));
-    fireEvent.click(screen.getByRole("button", { name: "Feedback" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Feedback Tulis/ }));
     expect(screen.getByText("Form feedback read-only")).toBeInTheDocument();
     expect(studentDetailMocks.updateStudentRecord).not.toHaveBeenCalled();
   });

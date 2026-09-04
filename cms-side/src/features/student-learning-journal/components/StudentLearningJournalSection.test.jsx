@@ -202,14 +202,14 @@ describe("StudentLearningJournalSection Teacher", () => {
     );
     await screen.findByText(observationEntry.content);
     fireEvent.click(screen.getByRole("button", { name: "Edit" }));
-    expect(screen.getByRole("button", { name: "Evidence terkait" }))
+    expect(screen.getByRole("button", { name: "Bukti terkait" }))
       .toHaveTextContent("Hasil latihan Matematika");
 
     rerender(<StudentLearningJournalSection studentId="1" refreshKey={1} />);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Evidence terkait" }))
-        .toHaveTextContent("Tidak dihubungkan ke evidence");
+      expect(screen.getByRole("button", { name: "Bukti terkait" }))
+        .toHaveTextContent("Tidak dihubungkan ke bukti");
     });
     expect(
       await screen.findByText("Evidence terkait telah dicabut.")
@@ -340,7 +340,7 @@ describe("StudentLearningJournalSection Teacher", () => {
     fireEvent.change(screen.getByLabelText("Isi catatan"), {
       target: { value: "Ari menggunakan diagram untuk memeriksa jawabannya." },
     });
-    await selectOption("Evidence terkait", /Hasil latihan Matematika/);
+    await selectOption("Bukti terkait", /Hasil latihan Matematika/);
 
     const submitButton = screen.getByRole("button", { name: "Simpan catatan" });
     fireEvent.click(submitButton);
@@ -452,7 +452,7 @@ describe("StudentLearningJournalSection Teacher", () => {
       observationEntry.content
     );
     expect(
-      screen.getByRole("button", { name: "Evidence terkait" })
+      screen.getByRole("button", { name: "Bukti terkait" })
     ).toHaveTextContent("Hasil latihan Matematika");
 
     fireEvent.change(screen.getByLabelText("Isi catatan"), {

@@ -116,7 +116,7 @@ describe('StudentEvidenceSection Teacher', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Edit detail' }));
     const dialog = screen.getByRole('dialog');
 
-    expect(within(dialog).getByText('Edit metadata evidence')).toBeInTheDocument();
+    expect(within(dialog).getByText('Edit metadata bukti')).toBeInTheDocument();
     expect(within(dialog).getByLabelText('Judul')).toHaveValue('Kolase bentuk');
     expect(within(dialog).getByRole('button', { name: 'Kategori' }))
       .toHaveTextContent('Karya');
@@ -251,7 +251,7 @@ describe('StudentEvidenceSection Teacher', () => {
     });
     await act(async () => {
       fireEvent.click(
-        within(dialog).getByRole('button', { name: 'Cabut evidence' })
+        within(dialog).getByRole('button', { name: 'Cabut bukti' })
       );
     });
     expect(
@@ -264,7 +264,7 @@ describe('StudentEvidenceSection Teacher', () => {
     });
     await act(async () => {
       fireEvent.click(
-        within(dialog).getByRole('button', { name: 'Cabut evidence' })
+        within(dialog).getByRole('button', { name: 'Cabut bukti' })
       );
     });
 
@@ -288,7 +288,7 @@ describe('StudentEvidenceSection Teacher', () => {
       target: { value: 'Evidence salah dibagikan.' },
     });
     fireEvent.click(
-      within(dialog).getByRole('button', { name: 'Cabut evidence' })
+      within(dialog).getByRole('button', { name: 'Cabut bukti' })
     );
 
     const alert = await within(dialog).findByRole('alert');
@@ -312,7 +312,7 @@ describe('StudentEvidenceSection Teacher', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent(
-      'Evidence tidak dapat dikoreksi. Evidence mungkin dibuat oleh guru lain.'
+      'Bukti tidak dapat dikoreksi. Bukti mungkin dibuat oleh guru lain.'
     );
     expect(alert).toHaveClass('issa-inline-notice--danger');
     expect(fetchStudentEvidences).toHaveBeenCalledTimes(2);
@@ -350,7 +350,7 @@ describe('StudentEvidenceSection Teacher', () => {
     const viewer = screen.getByRole('dialog');
     expect(within(viewer).getByAltText('Kolase bentuk')).toBeInTheDocument();
     fireEvent.click(
-      within(viewer).getByRole('button', { name: 'Cabut evidence' })
+      within(viewer).getByRole('button', { name: 'Cabut bukti' })
     );
 
     const retractionDialog = screen.getByRole('dialog');
@@ -363,7 +363,7 @@ describe('StudentEvidenceSection Teacher', () => {
     );
     await act(async () => {
       fireEvent.click(
-        within(retractionDialog).getByRole('button', { name: 'Cabut evidence' })
+        within(retractionDialog).getByRole('button', { name: 'Cabut bukti' })
       );
     });
 

@@ -17,7 +17,7 @@ describe("ModalAttendances", () => {
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Lihat record" }));
+    fireEvent.click(screen.getByRole("button", { name: "Lihat riwayat" }));
 
     const dialog = screen.getByRole("dialog", { name: "Riwayat kehadiran" });
     expect(within(dialog).getByText("21/07/2026")).toBeInTheDocument();

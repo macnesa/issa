@@ -215,7 +215,7 @@ describe("Classroom Debrief workspace", () => {
     }));
     await chooseOption("Status kehadiran", "Hadir");
 
-    expect(screen.getByText(/4 ready · 0 needs clarification · 1 discarded/))
+    expect(screen.getByText(/4 siap · 0 perlu klarifikasi · 1 dibuang/))
       .toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", {
       name: "Simpan 4 data",

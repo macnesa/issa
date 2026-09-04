@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import StudentsWorkspace from "./StudentsWorkspace";
 
@@ -74,7 +75,11 @@ describe("Students master-detail workspace", () => {
     expect(screen.getByText("Pilih siswa")).toBeInTheDocument();
     expect(screen.queryByTestId("student-record")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("link", { name: /Ayu/ }));
+    await waitFor(() => expect(screen.queryByText("Memuat siswa...")).not.toBeInTheDocument());
+    const studentLink = screen.getByRole("link", { name: /Ayu/ });
+    expect(studentLink).toHaveAttribute("href", "/students/7");
+    expect(studentLink).toBeInTheDocument();
+    await act(async () => userEvent.click(studentLink));
 
     await waitFor(() => expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/7"));
     expect(screen.getByTestId("student-record")).toHaveTextContent("Record 7 · summary");
@@ -93,7 +98,7 @@ describe("Students master-detail workspace", () => {
     renderWorkspace("/students/7?view=timeline");
 
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalled());
-    fireEvent.click(screen.getByRole("link", { name: /Bima/ }));
+    fireEvent.click(await screen.findByRole("link", { name: /Bima/ }));
 
     await waitFor(() => expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/8?view=timeline"));
     expect(screen.getByTestId("student-record")).toHaveTextContent("Record 8 · timeline");
@@ -109,7 +114,8 @@ describe("Students master-detail workspace", () => {
       count: 1,
       rows: [{ id: 8, name: "Bima", NIM: "2026071002", Class: { name: "1A" }, Attendances: [] }],
     });
-    fireEvent.change(screen.getByLabelText("Cari siswa"), { target: { value: "Bima" } });
+    await screen.findByRole("link", { name: /Bima/ });
+    fireEvent.change(screen.getByRole("searchbox", { name: "Cari siswa" }), { target: { value: "Bima" } });
     fireEvent.click(screen.getByRole("button", { name: "Cari siswa" }));
 
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalledTimes(2));
@@ -130,7 +136,7 @@ describe("Students master-detail workspace", () => {
     await waitFor(() => expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/7?view=timeline"));
     fireEvent.click(screen.getByRole("button", { name: "Siswa" }));
     await waitFor(() => expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students?view=timeline"));
-    fireEvent.click(screen.getByRole("link", { name: /Bima/ }));
+    fireEvent.click(await screen.findByRole("link", { name: /Bima/ }));
     await waitFor(() => expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/8?view=timeline"));
   });
   test("score deep-link membuka record yang sama langsung pada Penilaian", async () => {

@@ -93,7 +93,7 @@ describe("production Attendance update path", () => {
     expect(container.querySelector('[data-label="Status kehadiran"]'))
       .toContainElement(screen.getByRole("button", { name: "Hadir — Ari Wibowo" }));
     expect(container.querySelector('[data-label="Record"]'))
-      .toContainElement(screen.getByRole("button", { name: "Lihat record" }));
+      .toContainElement(screen.getByRole("button", { name: "Lihat riwayat" }));
     expect(container.querySelector(".attendance-register__row"))
       .toHaveClass("max-lg:grid");
     expect(attendanceRouteSource)

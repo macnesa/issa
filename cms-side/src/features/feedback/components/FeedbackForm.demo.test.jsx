@@ -24,7 +24,7 @@ describe("Feedback controls in demo mode", () => {
     const props = renderFeedbackForm();
 
     fireEvent.click(screen.getByRole("button", {
-      name: "Buat draft dengan AI",
+      name: "Buat draf dengan AI",
     }));
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "Draft diubah secara lokal" },
@@ -36,7 +36,7 @@ describe("Feedback controls in demo mode", () => {
       name: "Simpan feedback",
     })).toBeDisabled();
     expect(screen.getByText(
-      "Draft AI belum disimpan. Penyimpanan dinonaktifkan dalam mode demo."
+      "Draf AI belum disimpan. Penyimpanan dinonaktifkan dalam mode demo."
     )).toBeInTheDocument();
   });
 });

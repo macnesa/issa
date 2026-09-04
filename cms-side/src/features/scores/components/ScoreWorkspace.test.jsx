@@ -137,7 +137,7 @@ describe("CreateScoreForm", () => {
     fireEvent.change(screen.getByLabelText("Penilaian"), {
       target: { value: "2" },
     });
-    expect(submitButton).toBeEnabled();
+    expect(submitButton).toBeDisabled();
 
     const scoreInput = screen.getByLabelText("Nilai siswa");
     expect(scoreInput).toHaveAttribute("type", "number");
@@ -146,6 +146,7 @@ describe("CreateScoreForm", () => {
     expect(scoreInput).toHaveAttribute("step", "1");
 
     fireEvent.change(scoreInput, { target: { value: "82" } });
+    expect(submitButton).toBeEnabled();
     fireEvent.submit(container.querySelector("form"));
 
     await waitFor(() => {
@@ -245,7 +246,7 @@ describe("ScoreHistory", () => {
     expect(screen.getByRole("columnheader", { name: "Predikat" }))
       .toBeInTheDocument();
 
-    const row = screen.getByText("Matematika").closest("tr");
+    const row = within(screen.getByRole("table")).getByText("Matematika").closest("tr");
     const status = within(row).getByText("Lulus");
     const predikat = within(row).getByText("B");
     expect(status.closest("td")).not.toBe(predikat.closest("td"));
@@ -264,10 +265,10 @@ describe("ScoreHistory", () => {
       .not.toBeInTheDocument();
   });
 
-  test("mempertahankan aksi pembaruan dan payload nilai yang ada", async () => {
+  test.each(["table", "article"])("mempertahankan aksi pembaruan dan payload nilai pada %s", async (surface) => {
     render(<ScoreHistory scores={[score]} student={student} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Ubah" }));
+    fireEvent.click(within(screen.getByRole(surface)).getByRole("button", { name: "Ubah" }));
     fireEvent.change(screen.getByLabelText("Nilai siswa"), {
       target: { value: "90" },
     });
@@ -291,9 +292,9 @@ describe("ScoreHistory", () => {
     scoreMocks.isDemo = true;
     render(<ScoreHistory scores={[score]} student={student} />);
 
-    expect(screen.getByText("Matematika")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Ubah" })).toBeDisabled();
-    expect(screen.getByText("Tidak tersedia dalam mode demo."))
+    expect(within(screen.getByRole("table")).getByText("Matematika")).toBeInTheDocument();
+    screen.getAllByRole("button", { name: "Ubah" }).forEach((button) => expect(button).toBeDisabled());
+    expect(within(screen.getByRole("table")).getByText("Tidak tersedia dalam mode demo."))
       .toBeInTheDocument();
     expect(scoreMocks.updateStudentScore).not.toHaveBeenCalled();
   });
