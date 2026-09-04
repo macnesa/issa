@@ -47,8 +47,10 @@ function LocationProbe() {
   );
 }
 
-function renderWorkspace(initialEntry = "/students") {
-  return render(
+let resolveInitialRoster;
+
+async function renderWorkspace(initialEntry = "/students") {
+  const view = render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <LocationProbe />
       <Routes>
@@ -58,6 +60,13 @@ function renderWorkspace(initialEntry = "/students") {
       </Routes>
     </MemoryRouter>
   );
+  expect(screen.getByText("Memuat siswa...")).toBeInTheDocument();
+  // Commit the fetch completion and newly mounted Links' passive effects
+  // together. React Router 6.8 activates navigate() in useEffect; observing
+  // a Link in the DOM alone does not guarantee that effect has run.
+  await act(async () => resolveInitialRoster(workspaceMocks.students));
+  await waitFor(() => expect(screen.queryByText("Memuat siswa...")).not.toBeInTheDocument());
+  return view;
 }
 
 describe("Students master-detail workspace", () => {
@@ -65,10 +74,13 @@ describe("Students master-detail workspace", () => {
     vi.clearAllMocks();
     workspaceMocks.fetchStudentList.mockImplementation((query, page, options) => ({ query, page, options }));
     workspaceMocks.dispatch.mockResolvedValue(workspaceMocks.students);
+    workspaceMocks.dispatch.mockImplementationOnce(() => new Promise((resolve) => {
+      resolveInitialRoster = resolve;
+    }));
   });
 
   test("route Students tetap membuka roster sampai guru memilih siswa", async () => {
-    renderWorkspace();
+    await renderWorkspace();
 
     expect(await screen.findByRole("heading", { name: "1A", level: 1 })).toBeInTheDocument();
     expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students");
@@ -87,7 +99,7 @@ describe("Students master-detail workspace", () => {
   });
 
   test("direct student deep-link tidak diganti dengan siswa pertama dari page roster", async () => {
-    renderWorkspace("/students/99");
+    await renderWorkspace("/students/99");
 
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalled());
     expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/99");
@@ -95,7 +107,7 @@ describe("Students master-detail workspace", () => {
   });
 
   test("view aktif bertahan ketika guru berpindah siswa", async () => {
-    renderWorkspace("/students/7?view=timeline");
+    await renderWorkspace("/students/7?view=timeline");
 
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalled());
     fireEvent.click(await screen.findByRole("link", { name: /Bima/ }));
@@ -106,7 +118,7 @@ describe("Students master-detail workspace", () => {
 
 
   test("search memperbarui roster tanpa mengganti siswa yang sedang dibuka", async () => {
-    renderWorkspace("/students/7?view=timeline");
+    await renderWorkspace("/students/7?view=timeline");
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalled());
 
     workspaceMocks.dispatch.mockResolvedValueOnce({
@@ -119,11 +131,12 @@ describe("Students master-detail workspace", () => {
     fireEvent.click(screen.getByRole("button", { name: "Cari siswa" }));
 
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.queryByText("Memuat siswa...")).not.toBeInTheDocument());
     expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/7?view=timeline");
   });
 
   test("perubahan view masuk history browser dan mobile back mempertahankan view", async () => {
-    renderWorkspace("/students/7");
+    await renderWorkspace("/students/7");
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalled());
 
     fireEvent.click(screen.getByRole("button", { name: "Buka Perjalanan test" }));
@@ -140,7 +153,7 @@ describe("Students master-detail workspace", () => {
     await waitFor(() => expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/students/8?view=timeline"));
   });
   test("score deep-link membuka record yang sama langsung pada Penilaian", async () => {
-    renderWorkspace("/scores/8");
+    await renderWorkspace("/scores/8");
 
     await waitFor(() => expect(workspaceMocks.dispatch).toHaveBeenCalled());
     expect(screen.getByLabelText("Lokasi aktif")).toHaveTextContent("/scores/8");
