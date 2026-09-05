@@ -145,6 +145,34 @@ describe("Attendance offline durable workspace", () => {
     expect(effective.clientMutationId).toBe("attendance-local-1");
   });
 
+  test("uses an explicit empty server response instead of presenting a stale snapshot as synced", async () => {
+    await saveBaseline();
+
+    const effectiveRecords = await loadAttendanceOverlayState({
+      teacherId: 1,
+      studentId: 7,
+      serverRecords: [],
+    });
+
+    expect(effectiveRecords).toEqual([]);
+  });
+
+  test("retains an unsynced local update when the explicit server response is empty", async () => {
+    await saveBaseline();
+    await enqueueMutation(mutationInput());
+
+    const [effective] = await loadAttendanceOverlayState({
+      teacherId: 1,
+      studentId: 7,
+      serverRecords: [],
+    });
+
+    expect(effective).toEqual(expect.objectContaining({
+      status: "Izin",
+      syncState: "pending",
+    }));
+  });
+
   test("never exposes another Teacher's overlay", async () => {
     await saveBaseline(1);
     await saveBaseline(2);

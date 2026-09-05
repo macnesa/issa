@@ -103,7 +103,7 @@ export function applyAttendanceOverlays({
 export async function loadAttendanceOverlayState({
   teacherId,
   studentId,
-  serverRecords = [],
+  serverRecords,
 }) {
   if (!teacherId) {
     return applyAttendanceOverlays({ serverRecords });
@@ -113,17 +113,39 @@ export async function loadAttendanceOverlayState({
     listTeacherMutations(teacherId),
     listSyncConflicts(teacherId),
   ]);
-  const baseline = snapshot?.attendanceRecords?.length
-    ? snapshot.attendanceRecords
-    : serverRecords;
+  const studentMutations = mutations.filter((record) => (
+    isAttendanceForStudent(record, studentId)
+  ));
+  const studentConflicts = conflicts.filter((record) => (
+    isAttendanceForStudent(record.mutation, studentId)
+  ));
+  const localEntityKeys = new Set([
+    ...studentMutations.map((record) => record.entityKey),
+    ...studentConflicts.map((record) => record.mutation?.entityKey),
+  ]);
+  const explicitServerRecords = Array.isArray(serverRecords)
+    ? serverRecords
+    : null;
+  const serverEntityKeys = new Set((explicitServerRecords || []).map((record) => (
+    attendanceEntityKey(
+      record.studentId ?? record.StudentId,
+      record.attendanceDate
+    )
+  )));
+  const unsyncedSnapshotRecords = (snapshot?.attendanceRecords || []).filter((record) => {
+    const entityKey = attendanceEntityKey(
+      record.studentId ?? record.StudentId,
+      record.attendanceDate
+    );
+    return localEntityKeys.has(entityKey) && !serverEntityKeys.has(entityKey);
+  });
+  const baseline = explicitServerRecords
+    ? [...explicitServerRecords, ...unsyncedSnapshotRecords]
+    : (snapshot?.attendanceRecords || []);
   return applyAttendanceOverlays({
     serverRecords: baseline,
-    mutations: mutations.filter((record) => (
-      isAttendanceForStudent(record, studentId)
-    )),
-    conflicts: conflicts.filter((record) => (
-      isAttendanceForStudent(record.mutation, studentId)
-    )),
+    mutations: studentMutations,
+    conflicts: studentConflicts,
   });
 }
 
